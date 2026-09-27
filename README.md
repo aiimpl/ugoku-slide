@@ -55,6 +55,21 @@ make qa      # build/qa/<名前>/ にスライドごとの画像
 
 雛形を足すときは `src/decks/NN-名前.html` を作って `make build` するだけです。決まりは [src/DECKS.md](src/DECKS.md)。
 
+## 紹介動画
+
+`make video` で、紹介動画（1920×1080・30fps・26秒・BGM つき）を `build/video/ugoku-slide_26s.mp4` に作ります。
+実際のスライドをブラウザで開き、スライダーやクリックを台本どおりに動かしながら1コマずつ撮っています。
+撮影中はページの時計（CSS アニメーションと `performance.now`）を約8分の1の速さに落としているので、撮影に時間がかかってもなめらかに仕上がります。
+BGM は NumPy で合成しています（`video/music.py`）。場面の切り替わりは、すべて拍に合わせています。
+
+```
+video/record.py      ゆっくり撮影して 30fps のコマにする
+video/fx.js・fx.css  撮影用のテロップ・カーソル・クリックの演出
+video/stages.py      冒頭・早送り・一覧の壁・頼み方・締めの場面（HTML）
+video/music.py       BGM（26秒・120BPM）
+video/make_video.py  台本（場面の順番と操作）と書き出し
+```
+
 ## ライセンス
 
 MIT。社内資料・商談・研修・販売物への組み込みまで自由に使えます。スライドの中の会社名・人名・数字はすべて架空のサンプルです。

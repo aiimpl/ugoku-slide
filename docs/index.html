@@ -33,6 +33,10 @@ nav a{text-decoration:none;color:var(--muted)}nav a:hover{color:var(--ink)}
 .hero{padding:72px 0 40px;display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(38px,5.2vw,68px);line-height:1.12;letter-spacing:-.03em;margin:0 0 20px;font-weight:900}
 .hero h1 em{font-style:normal;color:var(--accent)}
+.hero .ln{display:block}
+.hero .ph{display:inline-block}
+.hero h1{font-size:clamp(34px,4.6vw,64px)}
+.hero .lede{font-size:18px;line-height:1.9}
 .hero p{font-size:18px;color:var(--muted);margin:0 0 26px}
 .stats{display:flex;gap:28px;margin-bottom:28px}
 .stats b{display:block;font:800 34px/1.1 "Inter",sans-serif;letter-spacing:-.03em}
@@ -86,6 +90,10 @@ kbd{display:inline-block;min-width:28px;padding:1px 8px;border-radius:6px;border
 details.faq{border-bottom:1px solid var(--line);padding:14px 0}
 details.faq summary{cursor:pointer;font-weight:700;font-size:16px}
 details.faq p{color:var(--muted);margin:10px 0 0;font-size:15px}
+.legal h3{font-size:18px;margin:0 0 10px}
+.legal ol{margin:0;padding-left:1.4em;color:var(--muted);font-size:15px;line-height:1.85}
+.legal li{margin-bottom:6px}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:700;font-size:14px;transition:.3s;z-index:50}
 .toast.on{opacity:1;transform:translateX(-50%)}
@@ -106,8 +114,8 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
 <main class="wrap">
   <div class="hero">
     <div>
-      <h1>押すと、根拠が開く。<br>動かすと、<em>再計算</em>。</h1>
-      <p>1ファイルで完結する「動くスライド」の雛形を 50 種類。どれも無料で、何本でもダウンロードできます。Claude に渡して「この内容に作り替えて」と頼むだけで、自分の資料になります。</p>
+      <h1><span class="ln"><span class="ph">押すと、</span><span class="ph">根拠が開く。</span></span><span class="ln"><span class="ph">動かすと、</span><span class="ph"><em>再計算</em>。</span></span></h1>
+      <p class="lede"><span class="ln"><span class="ph">1ファイルで完結する</span><span class="ph">「動くスライド」の</span><span class="ph">雛形を 50 種類。</span></span><span class="ln"><span class="ph">どれも無料で、</span><span class="ph">何本でも</span><span class="ph">ダウンロードできます。</span></span><span class="ln"><span class="ph">Claude に渡して</span><span class="ph">「この内容に作り替えて」と</span><span class="ph">頼むだけで、</span><span class="ph">自分の資料になります。</span></span></p>
       <div class="stats"><div><b>50</b><span>デザイン</span></div><div><b>350</b><span>枚のスライド</span></div><div><b>0円</b><span>MIT ライセンス</span></div></div>
       <div class="row" style="display:flex;gap:10px;flex-wrap:wrap">
         <a class="btn primary big" href="ugoku-slide-all.zip" download>全部まとめてダウンロード（zip）</a>
@@ -243,9 +251,34 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <details class="faq"><summary>相手のパソコンやスマホでも見られる？</summary><p>Chrome・Edge・Safari・Firefox の最近の版で動きます。画面の大きさに合わせて 16:9 のまま拡大縮小するので、レイアウトは崩れません。スマホは横向きで、左右にスワイプするとページが送れます。</p></details>
     <details class="faq"><summary>HTML が分からなくても直せる？</summary><p>Claude に頼めば直せます。各ファイルの先頭に「使える部品と書き方」の説明が入っているので、Claude はそれを読んで同じ作りのまま中身を書き換えます。</p></details>
   </section>
+
+  <section id="legal">
+    <h2 class="sec">利用規約・プライバシーポリシー</h2>
+    <div class="two legal">
+      <div>
+        <h3>利用規約</h3>
+        <ol>
+          <li>このサイトの雛形・コード・画像は、どなたでも無料で自由に使えます。個人・仕事・商用を問いません。改変・再配布・販売物への組み込みもできます（MIT ライセンス）。</li>
+          <li>使うための申し込み・連絡・クレジット表記は不要です。</li>
+          <li>雛形の中の会社名・人名・数字はすべて架空のサンプルです。実在のものとは関係ありません。</li>
+          <li>内容の正確さや、使った結果については保証できません。ご自身の判断と責任でお使いください。</li>
+          <li>この規約は予告なく変わることがあります。変わったときはこのページに載せます。</li>
+        </ol>
+      </div>
+      <div>
+        <h3>プライバシーポリシー</h3>
+        <ol>
+          <li>このサイトは、氏名・メールアドレスなどの個人情報を一切取得していません。登録やログインもありません。</li>
+          <li>アクセス解析・広告・Cookie は使っていません。</li>
+          <li>ダウンロードした雛形は、あなたのパソコンの中だけで動きます。入力した文字や数字がどこかに送られることはありません。</li>
+          <li>サイトは GitHub Pages で公開し、文字の表示に Google Fonts を使っています。そのため、閲覧時の通信記録（IP アドレスなど）が GitHub と Google の方針に沿って扱われることがあります。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer><div class="wrap">動くスライド（ugoku-slide）— MIT License · <a href="https://github.com/aiimpl/ugoku-slide">github.com/aiimpl/ugoku-slide</a> · 作：<a href="https://x.com/ai_impl">@ai_impl</a></div></footer>
+<footer><div class="wrap foot"><span>© 2026 ai_impl　動くスライド（ugoku-slide）</span><span><a href="#legal">利用規約</a> · <a href="#legal">プライバシーポリシー</a> · MIT License · <a href="https://github.com/aiimpl/ugoku-slide">GitHub</a> · <a href="https://x.com/ai_impl">@ai_impl</a></span></div></footer>
 <div class="toast" id="toast"></div>
 
 <script>
