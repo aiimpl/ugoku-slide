@@ -1,0 +1,270 @@
+<!--meta
+{"title":"CI を 14分 → 4分 にした話","style":"ターミナル（黒画面）","use":"技術LT","group":"テック・未来",
+ "aim":"社内の技術LT（5分）で、エンジニアが CI の高速化を共有し、ほかのチームにも同じ設定を入れてもらうための資料。",
+ "desc":"黒い画面に等幅の文字、プロンプトと点滅カーソル。設定ファイルは → で1段ずつ強調し、テスト数と並列数を動かすと何秒速くなるかが出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=M+PLUS+1+Code:wght@400;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0c0c0c; --surface:#141414; --ink:#d7d7d7; --muted:#8a8a8a; --line:#2a2a2a;
+  --accent:#5fd75f; --accent-ink:#0c0c0c; --amb:#ffaf00; --blu:#5fafff; --red:#ff5f5f; --frame:#000;
+  --good:#5fd75f; --bad:#ff5f5f; --radius:0px; --shadow:none;
+  --font:"JetBrains Mono","M PLUS 1 Code","Hiragino Sans",ui-monospace,monospace;
+  --font-head:var(--font); --font-num:var(--font); --head-weight:800; --head-track:0;
+  --pad-y:52px; --pad-x:72px;
+}
+.slide{isolation:isolate;padding-bottom:84px}
+.slide>.bg{background:radial-gradient(ellipse at 50% 40%,#141414 0%,#0c0c0c 70%)}
+.slide>.bg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgb(0 0 0 / .22) 0 1px,transparent 1px 3px)}
+/* tmux 風の状態表示 */
+.tmux{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;gap:0;background:var(--accent);color:#0c0c0c;font:700 15px var(--font);white-space:pre}
+.tmux>span{padding:0 14px;height:100%;display:flex;align-items:center}
+.tmux .s{background:#0c0c0c;color:var(--accent)}
+.tmux .w{font-weight:400}
+.tmux .w.on{font-weight:800;background:#87ff87}
+.tmux .sp{flex:1}
+
+/* ---- 文字 ---- */
+.cmd{font-size:20px;color:var(--muted);margin-bottom:16px;white-space:pre}
+.cmd .p{color:var(--accent);font-weight:700}
+.cmd .d{color:var(--blu)}
+.cmd b{color:var(--ink);font-weight:400}
+h1{font-size:96px;line-height:1.18;color:#fff;letter-spacing:-.02em}
+h2{font-size:40px;line-height:1.4;margin-bottom:30px;color:#fff}
+h2::before{content:"# ";color:var(--accent)}
+.g{color:var(--accent)}.a{color:var(--amb)}.b{color:var(--blu)}.rd{color:var(--red)}
+.cur{display:inline-block;width:.6em;height:1.05em;vertical-align:-.12em;background:var(--accent);animation:blink 1.1s steps(1) infinite;margin-left:.08em}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.cur{animation:none}}
+.lead{font-size:22px;line-height:1.8;color:var(--ink)}
+.foot{bottom:48px;color:var(--muted);font-size:15px}
+.foot::before{content:"// "}
+.box{border:1px solid var(--line);padding:20px 24px;position:relative}
+.box>.lbl{position:absolute;top:-12px;left:16px;padding:0 8px;background:var(--bg);color:var(--muted);font-size:15px}
+
+/* ---- 部品 ---- */
+details.why{background:transparent;border:1px dashed #3a3a3a;border-radius:0}
+details.why>summary{color:var(--amb);font-weight:700}
+details.why>summary::before{content:"[+]";background:none;width:auto;height:auto;border-radius:0;font-size:17px;transform:none!important}
+details.why[open]>summary::before{content:"[-]"}
+details.why>.body{color:var(--ink);font-size:18px}
+details.why.float[open]>.body{background:#111;border:1px dashed #3a3a3a;border-radius:0}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:28px}
+input[type=range]::-webkit-slider-runnable-track{height:18px;background:repeating-linear-gradient(90deg,#333 0 9px,transparent 9px 12px)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:22px;margin-top:-2px;background:var(--accent)}
+input[type=range]::-moz-range-track{height:18px;background:#333}
+input[type=range]::-moz-range-thumb{width:12px;height:22px;border:0;border-radius:0;background:var(--accent)}
+.field{margin-bottom:30px}
+.field>label{font-size:18px;color:var(--muted)}
+.field>label::before{content:"--";color:var(--blu);margin-right:.4em}
+.field>label{justify-content:flex-start;gap:.6em}
+.field>label b{font-size:20px;color:var(--amb);font-weight:700;margin-left:auto}
+.meter{height:22px;border-radius:0;background:repeating-linear-gradient(90deg,#262626 0 10px,transparent 10px 13px)}
+.meter>i{border-radius:0;background:repeating-linear-gradient(90deg,var(--accent) 0 10px,transparent 10px 13px)}
+.meter.alt>i{background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 13px)}
+pre.code{background:#101010;border:1px solid var(--line);border-radius:0;font:19px/1.62 "JetBrains Mono","M PLUS 1 Code",monospace;padding:18px 20px;color:var(--ink)}
+pre.code .ln::before{color:#555}
+pre.code.hl-on .ln{opacity:.28}
+pre.code.hl-on .ln.hl{background:rgb(95 215 95 / .1);box-shadow:inset 3px 0 0 var(--accent)}
+pre.code .k{color:var(--blu)}pre.code .s{color:var(--amb)}pre.code .c{color:#6a6a6a}pre.code .d{color:#d787ff}
+
+/* ---- 表紙 ---- */
+.boot{font-size:18px;line-height:1.75;color:var(--muted);white-space:pre;margin-bottom:28px}
+.boot .ok{color:var(--accent)}
+.title-arrow{display:inline-block;color:var(--amb)}
+.who{display:flex;gap:56px;margin-top:48px;font-size:19px;color:var(--muted);border-top:1px dashed #333;padding-top:22px}
+.who b{display:block;color:var(--ink);font-weight:400;font-size:22px;margin-top:2px}
+
+/* ---- 待ち時間 ---- */
+.stages{display:grid;gap:22px}
+.st{display:grid;grid-template-columns:120px 1fr 90px;gap:18px;align-items:center;font-size:24px}
+.st b{font-weight:400;text-align:right;color:var(--ink)}
+.st .meter{height:36px}
+.st.hot .meter>i{background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 13px)}
+.st.hot span,.st.hot b{color:var(--red)}
+.st .meter>i{animation:grow 1s var(--ease) both}
+@keyframes grow{from{width:0}}
+.waste{font:800 200px/1 var(--font);letter-spacing:-.04em;color:#fff}
+.waste small{font-size:34px;color:var(--muted);font-weight:400;margin-left:8px;letter-spacing:0}
+
+.calcline{margin-top:auto;margin-bottom:10px;border-top:1px dashed #333;padding-top:20px;font-size:26px;display:flex;gap:18px;align-items:baseline;white-space:pre}
+.calcline .out{margin-left:auto;color:#fff;font-weight:700}
+/* ---- 設定 ---- */
+.cfg{display:grid;grid-template-columns:1fr 390px;gap:34px;align-items:start}
+.chg{display:grid;gap:18px}
+.chg>div{border-left:3px solid #333;padding:4px 0 4px 18px}
+.chg b{display:block;font-size:22px;color:#fff;margin-bottom:4px}
+.chg span{font-size:18px;color:var(--muted);line-height:1.65;display:block}
+.chg i{font-style:normal;color:var(--accent)}
+
+/* ---- 計算 ---- */
+.sim{display:grid;grid-template-columns:470px 1fr;gap:48px}
+.res{font-size:22px}
+.res .row{display:grid;grid-template-columns:110px 1fr 110px;gap:16px;align-items:center;margin-bottom:20px}
+.res .meter{height:30px}
+.res .row b{text-align:right;font-weight:700;color:#fff}
+.saved{margin-top:30px;border:1px solid var(--accent);padding:22px 28px}
+.saved small{color:var(--muted);font-size:18px}
+.saved .v{font:800 120px/1.05 var(--font);color:var(--accent);letter-spacing:-.03em}
+.saved .v2{font-size:22px;color:var(--ink);margin-top:6px}
+
+/* ---- グラフ ---- */
+.chart{border-bottom:1px solid #444;height:360px;gap:26px;margin-bottom:44px}
+.chart>.col>i{border-radius:0;background:repeating-linear-gradient(0deg,var(--accent) 0 8px,transparent 8px 11px)}
+.chart>.col.dim>i{background:repeating-linear-gradient(0deg,var(--red) 0 8px,transparent 8px 11px);opacity:.85}
+.chart>.col::before{font:700 18px var(--font);color:#fff}
+.chart>.col::after{font:400 16px var(--font);color:var(--muted)}
+
+/* ---- ハマりどころ ---- */
+.warn{display:grid;gap:30px}
+.warn>div{display:grid;grid-template-columns:130px 1fr;gap:20px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:28px}
+.warn .tag{font-weight:800;font-size:20px;color:#0c0c0c;background:var(--amb);padding:2px 10px;text-align:center}
+.warn b{font-size:30px;color:#fff;display:block;margin-bottom:6px}
+.warn span{font-size:21px;color:var(--muted);line-height:1.7}
+
+/* ---- 締め ---- */
+.next{display:grid;gap:18px;font-size:28px;line-height:1.6;margin-top:10px}
+.next>div::before{content:"> ";color:var(--accent)}
+.next code{color:var(--amb);font-family:inherit}
+.bye{margin-top:auto;font-size:22px;color:var(--muted)}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w on"> 0:title* </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="boot">[<span class="ok">  OK  </span>] 発表者を検出しました：サンプル開発部 基盤チーム
+[<span class="ok">  OK  </span>] 持ち時間：5分</div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>./talk --title</b></div>
+    <h1>CI を <span class="rd">14分</span> <span class="title-arrow">→</span> <span class="g">4分</span><br>にした話<span class="cur"></span></h1>
+    <div class="who"><div>whoami<b>基盤チーム 見本 太郎</b></div><div>date<b>2026-10-09</b></div><div>repo<b>sample-shop/web</b></div></div>
+    <aside class="notes">5分のLT。最初の一言は「CI、遅くないですか」。手を挙げてもらうと場が温まる。</aside>
+  </section>
+
+  <section class="slide" data-title="待ち時間">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w on"> 1:wait* </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>ci-stats --last 30d</b></div>
+    <h2>1人あたり1日 <span class="rd">40分</span>、CI を待っていた。</h2>
+    <div class="split" style="grid-template-columns:1.1fr .9fr;gap:56px;align-items:start">
+      <div class="box"><span class="lbl">1回の内訳（平均 13分50秒）</span>
+        <div class="stages" style="margin-top:6px">
+          <div class="st"><span>install</span><div class="meter"><i style="width:23%"></i></div><b>3:10</b></div>
+          <div class="st"><span>lint</span><div class="meter"><i style="width:8%"></i></div><b>1:05</b></div>
+          <div class="st hot"><span>test</span><div class="meter"><i style="width:63%"></i></div><b>8:40</b></div>
+          <div class="st"><span>build</span><div class="meter"><i style="width:10%"></i></div><b>0:55</b></div>
+        </div>
+        <details class="why" style="margin-top:22px"><summary>どう測ったか</summary><div class="body">直近30日の実行記録 2,140回から平均をとった。1人1日の待ち時間 ＝ 1回 13.8分 × 1人あたり 2.9回。</div></details>
+      </div>
+      <div>
+        <div class="waste"><span data-count="40"></span><small>分/日</small></div>
+        <p class="lead" style="margin-top:18px">チーム12人で、1日<span class="a"> 8時間</span>。<br>ほぼ1人分の1日が、待ち時間に消えていた。<br><span class="rd">test が全体の6割。</span></p>
+      </div>
+    </div>
+    <div class="calcline"><span class="g">$</span> echo "$((12 * 40)) 分/日"<span class="out">480 分/日 ＝ <span class="a">8 時間</span> ＝ ほぼ1人分</span></div>
+    <p class="foot">数字は架空のサンプルです</p>
+    <aside class="notes">「1人分の1日が消えている」がこのページの言いたいこと。内訳は赤い test だけ見てもらえばいい。</aside>
+  </section>
+
+  <section class="slide" data-title="設定">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w on"> 2:config* </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>git diff <span class="d">ci/test.yml</span></b></div>
+    <h2>変えたのは、設定の3か所だけ。</h2>
+    <div class="cfg">
+      <pre class="code" data-lang="yaml" data-highlight="3-5|7-9|11-13">
+test:
+  # 1. 依存物をキャッシュする
+  cache:
+    key: deps-${{ hash("package-lock.json") }}
+    paths: [node_modules]
+  # 2. テストを 6 台に分ける
+  parallel: 6
+  split_by: timings
+  timings_file: .ci/timings.json
+  # 3. 遅いテストの記録を残す
+  after:
+    - save-timings .ci/timings.json
+    - report --slowest 20
+</pre>
+      <div class="chg">
+        <div><b><i>1.</i> キャッシュ</b><span>install の 3分10秒が 20秒に。lock が変わった時だけ入れ直す。</span></div>
+        <div><b><i>2.</i> 6台に分ける</b><span>かかった時間の記録を見て、均等になるよう振り分ける。</span></div>
+        <div><b><i>3.</i> 記録を残す</b><span>毎回の時間を保存して、次の振り分けに使う。</span></div>
+      </div>
+    </div>
+    <aside class="notes">→ を押すたびに、3か所が順に光る。ここは読ませずに「ここ、ここ、ここ」と指すだけ。</aside>
+  </section>
+
+  <section class="slide" data-title="並列の見積もり">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w on"> 3:sim* </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>./estimate --interactive</b></div>
+    <h2>あなたのリポジトリなら、何秒速くなるか。</h2>
+    <div class="sim fill" data-calc data-let="before = n*avg + 90 + 190; after = 90 + 20 + n*avg/p; saved = before - after; bill = p*(110) + n*avg">
+      <div>
+        <div class="field"><label>tests <b data-show="n" data-unit=" 本"></b></label><input type="range" name="n" min="100" max="3000" step="50" value="1200"></div>
+        <div class="field"><label>avg <b data-show="avg" data-format="dec1" data-unit=" 秒/本"></b></label><input type="range" name="avg" min="0.1" max="2" step="0.1" value="0.5"></div>
+        <div class="field"><label>parallel <b data-show="p" data-unit=" 台"></b></label><input type="range" name="p" min="1" max="16" value="6"></div>
+        <details class="why float"><summary>見積もりの式</summary><div class="body">前 ＝ テスト × 平均 ＋ 準備 90秒 ＋ install 190秒<br>後 ＝ 準備 90秒 ＋ 起動 20秒 ＋ テスト × 平均 ÷ 台数（キャッシュで install はほぼ0）<br>台数を増やすほど、使うマシン時間は少し増える。</div></details>
+      </div>
+      <div class="res">
+        <div class="row"><span>before</span><div class="meter alt" data-bar="before" data-max="max(before,1)"><i></i></div><b data-out="before/60" data-format="dec1" data-unit="分"></b></div>
+        <div class="row"><span>after</span><div class="meter" data-bar="after" data-max="max(before,1)"><i></i></div><b data-out="after/60" data-format="dec1" data-unit="分"></b></div>
+        <div class="saved"><small>1回あたり、速くなる時間</small>
+          <div class="v"><span data-out="saved" data-unit="秒"></span></div>
+          <div class="v2">マシン時間は 1回 <span class="a" data-out="bill/60" data-format="dec1" data-unit="分"></span></div></div>
+      </div>
+    </div>
+    <aside class="notes">聞いている人に自分のテスト本数を聞いて、その場で入れる。台数を16にしても伸びが鈍る、というのも見せておく。</aside>
+  </section>
+
+  <section class="slide" data-title="結果">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w on"> 4:result* </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>ci-stats --weekly --metric=p50</b></div>
+    <h2>入れた週から、待ち時間は <span class="g">3分の1</span> に。</h2>
+    <div class="split fill" style="grid-template-columns:1.3fr .7fr;gap:50px">
+      <div class="chart">
+        <div class="col dim" style="--v:92" data-label="W35" data-val="13.8"><i></i></div>
+        <div class="col dim" style="--v:90" data-label="W36" data-val="13.5"><i></i></div>
+        <div class="col dim" style="--v:94" data-label="W37" data-val="14.1"><i></i></div>
+        <div class="col" style="--v:41" data-label="W38" data-val="6.2"><i></i></div>
+        <div class="col" style="--v:27" data-label="W39" data-val="4.1"><i></i></div>
+        <div class="col" style="--v:26" data-label="W40" data-val="3.9"><i></i></div>
+        <div class="col" style="--v:25" data-label="W41" data-val="3.8"><i></i></div>
+      </div>
+      <div>
+        <div class="box"><span class="lbl">単位：分（中央値）</span>
+          <p class="lead" style="margin:0"><span class="rd">■</span> 導入前<br><span class="g">■</span> 導入後<br><br>W38 は途中から切り替えたので、まだ長い。</p></div>
+        <p class="lead step" style="margin-top:26px">マシン代は <span class="a">+12%</span>。<br>待ち時間の人件費に比べれば誤差。</p>
+      </div>
+    </div>
+    <p class="foot">数字は架空のサンプルです</p>
+  </section>
+
+  <section class="slide" data-title="ハマりどころ">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w on"> 5:warn* </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>grep -n WARN postmortem.log</b></div>
+    <h2>入れる前に、この3つだけ気をつけて。</h2>
+    <div class="warn">
+      <div class="step"><span class="tag">WARN 1</span><div><b>テスト同士が DB を取り合う</b><span>台ごとに DB 名を変える（末尾に台の番号を付ける）。これで半日溶けた。</span></div></div>
+      <div class="step"><span class="tag">WARN 2</span><div><b>初回は振り分けが偏る</b><span>時間の記録がまだないので、1回目だけはファイル数で分ける。</span></div></div>
+      <div class="step"><span class="tag">WARN 3</span><div><b>キャッシュが古いまま残る</b><span>lock ファイルの中身で鍵を作る。日付で作ると、入れ直しが起きない。</span></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="次の一歩">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w on"> 6:exit* </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>cat NEXT.md</b></div>
+    <h2>あなたのチームにも、30分で入ります。</h2>
+    <div class="next">
+      <div class="step">設定の見本：<code>platform/ci-templates/test.yml</code></div>
+      <div class="step">相談会：毎週木曜 16:00 ／ 会議室 B</div>
+      <div class="step">質問はチャットの <code>#ci-help</code> へ</div>
+    </div>
+    <div class="box" style="margin-top:34px"><span class="lbl">入れ方（3行）</span>
+      <div class="boot" style="margin:0;font-size:21px;color:var(--ink)"><span class="g">$</span> cp platform/ci-templates/test.yml ci/test.yml
+<span class="g">$</span> ci timings init        <span style="color:#6a6a6a"># 初回の記録を作る</span>
+<span class="g">$</span> git push                <span style="color:#6a6a6a"># 次の実行から6台に分かれる</span></div></div>
+    <div class="bye"><span class="p g">~/ci-talk $</span> exit<span class="cur"></span></div>
+    <aside class="notes">最後は「今週の相談会に来てくれたら、その場で一緒に入れます」で締める。質問は1つだけ受ける。</aside>
+  </section>
+
+</main>

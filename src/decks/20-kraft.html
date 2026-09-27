@@ -1,0 +1,284 @@
+<!--meta
+{"title":"はじめての革小物ワークショップ","style":"クラフト紙","use":"手づくりワークショップの案内","group":"和・ナチュラル",
+ "aim":"小さな革工房の主宰者が、店頭の説明会で参加を迷っている人に、作れるもの・当日の流れ・費用を見せて、その場で申し込んでもらうための資料。",
+ "desc":"クラフト紙の地に、マスキングテープで留めた紙とスタンプ。作る数と革のランクを動かすと参加費の合計が出て、革の手入れのクイズもできる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Kiwi+Maru:wght@400;500&display=swap"}
+-->
+<style>
+:root{
+  --bg:#c9a57b; --surface:#fbf8f1; --ink:#3b2a1a; --muted:#6b5540; --line:#d9c9ae;
+  --accent:#b0322a; --accent-ink:#fff; --green:#3f6b4f; --frame:#8f7050; --good:#3f6b4f; --bad:#b0322a;
+  --radius:3px; --shadow:0 2px 3px rgb(59 42 26 / .18),0 12px 24px -8px rgb(59 42 26 / .35);
+  --font:"Kiwi Maru","Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif;
+  --font-head:"Klee One","Hiragino Mincho ProN","Yu Mincho",serif; --font-num:"Klee One","Kiwi Maru",serif;
+  --head-weight:600; --head-track:.04em; --pad-y:56px; --pad-x:84px;
+}
+.slide{isolation:isolate}
+/* クラフト紙：繊維のむら */
+.slide>.bg{background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .12 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .1 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23m)'/%3E%3C/svg%3E"),
+  radial-gradient(ellipse at 30% 20%,#d4b38b,#c29d71 70%)}
+/* 紙・テープ・スタンプ */
+.paper{background:var(--surface);box-shadow:var(--shadow);position:relative;border-radius:2px}
+.paper.grid-p{background:linear-gradient(rgb(95 140 170 / .12) 1px,transparent 1px) 0 0/100% 32px,var(--surface)}
+.tape{position:absolute;width:130px;height:34px;background:repeating-linear-gradient(90deg,rgb(255 255 255 / .18) 0 8px,transparent 8px 16px),rgb(150 200 180 / .78);
+  box-shadow:0 1px 2px rgb(0 0 0 / .12);clip-path:polygon(3% 0,97% 4%,100% 50%,96% 100%,2% 96%,0 45%);z-index:2}
+.tape.pk{background:repeating-linear-gradient(45deg,rgb(255 255 255 / .35) 0 6px,transparent 6px 12px),rgb(232 160 150 / .8)}
+.tape.yl{background:radial-gradient(circle,rgb(255 255 255 / .5) 2px,transparent 2.5px) 0 0/12px 12px,rgb(236 200 110 / .82)}
+.stamp{position:absolute;z-index:3;display:grid;place-items:center;text-align:center;color:var(--accent);border:4px solid var(--accent);border-radius:50%;font:600 26px/1.2 var(--font-head);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.1 1.35'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23s)'/%3E%3C/svg%3E");
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.1 1.35'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23s)'/%3E%3C/svg%3E")}
+.stamp::before{content:"";position:absolute;inset:6px;border:1.5px solid var(--accent);border-radius:50%}
+.stitch{outline:2px dashed rgb(59 42 26 / .45);outline-offset:-12px}
+
+/* ---- 文字 ---- */
+h1,h2{font-family:var(--font-head)}
+h2{font-size:46px;line-height:1.4;margin-bottom:26px}
+h2 em{font-style:normal;background:linear-gradient(transparent 60%,rgb(236 200 110 / .9) 60% 92%,transparent 92%)}
+.kicker{display:inline-block;align-self:flex-start;font:500 17px var(--font);letter-spacing:.14em;color:var(--surface);background:var(--ink);padding:4px 14px;border-radius:2px}
+.lead{font-size:22px;line-height:1.85;color:var(--ink)}
+.foot{color:var(--ink);font-size:15px}
+.hand{font-family:var(--font-head)}
+
+/* ---- 部品 ---- */
+details.why{background:var(--surface);border:0;border-radius:2px;box-shadow:var(--shadow)}
+details.why>summary{color:var(--ink);font-weight:500}
+details.why>summary::before{background:var(--accent);color:#fff}
+details.why>.body{color:var(--muted);font-size:18px}
+details.why.float[open]>.body{border:0;box-shadow:var(--shadow)}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:32px}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:5px;background:#8a6a48;box-shadow:inset 0 1px 2px rgb(0 0 0 / .3);
+  background-image:repeating-linear-gradient(90deg,transparent 0 10px,rgb(255 255 255 / .6) 10px 16px);background-size:100% 2px;background-repeat:no-repeat;background-position:0 50%}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e0b27a,#9a6a3c);border:2px solid var(--ink)}
+input[type=range]::-moz-range-track{height:10px;border-radius:5px;background:#8a6a48}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#b8844f;border:2px solid var(--ink)}
+input[type=checkbox]{accent-color:var(--accent);width:24px;height:24px}
+.field>label{color:var(--ink);font-size:19px}
+.field>label b{font:600 28px var(--font-num);color:var(--ink)}
+.quiz .choices{gap:20px}
+.quiz .choices>button{background:var(--surface);border:0;border-radius:2px;box-shadow:var(--shadow);font:500 26px var(--font);color:var(--ink);padding:28px 26px 28px 70px;position:relative}
+.quiz .choices>button::before{content:attr(data-k);position:absolute;left:18px;top:50%;margin-top:-17px;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font:600 19px var(--font-head)}
+.quiz.answered .choices>button[data-correct]{background:#e8f0e6;border:0;outline:3px solid var(--green)}
+.quiz.answered .choices>button.picked:not([data-correct]){background:#f6e3de;border:0;outline:3px solid var(--accent)}
+.quiz .explain{font-size:20px;color:var(--ink);background:var(--surface);padding:16px 22px;box-shadow:var(--shadow)}
+
+/* ---- 表紙 ---- */
+.tag-wrap{position:absolute;left:90px;top:84px;width:700px}
+.tag{position:relative;transform:rotate(-2deg);padding:62px 60px 44px}
+.tag h1{font-size:76px;line-height:1.3;letter-spacing:.04em}
+.tag .sub{font-size:22px;margin-top:22px;line-height:1.8}
+.tag .info{display:flex;gap:0;margin-top:30px;border-top:2px dashed rgb(59 42 26 / .4);padding-top:18px}
+.tag .info>div{padding-right:24px;margin-right:24px;border-right:1px solid var(--line)}
+.tag .info>div:last-child{border:0}
+.tag .info small{display:block;font-size:16px;color:var(--muted)}
+.tag .info b{font:600 28px var(--font-head);white-space:nowrap}
+.hole{position:absolute;right:40px;top:40px;width:34px;height:34px;border-radius:50%;background:#b8936a;box-shadow:inset 0 2px 4px rgb(0 0 0 / .4)}
+.cover-deco{position:absolute;right:60px;top:110px;width:380px;height:500px}
+.card-sw{position:absolute;box-shadow:var(--shadow);border-radius:4px}
+
+/* ---- 作れるもの ---- */
+.items{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:6px}
+.items>div>.paper{padding:18px 18px 22px}
+.items .ph{height:250px;border-radius:2px;display:grid;place-items:center;background:#e9dfcd}
+.items .ph svg{width:210px;height:185px}
+.items h3{font:600 34px/1.3 var(--font-head);margin:16px 0 6px}
+.items p{font-size:21px;line-height:1.7;margin:0;color:var(--muted)}
+.items .meta{display:flex;gap:10px;margin-top:12px}
+.items .meta span{font-size:16px;border:1.5px solid var(--ink);border-radius:999px;padding:2px 12px}
+.items .lv{color:var(--accent);letter-spacing:.1em}
+
+/* ---- 流れ ---- */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:10px}
+.flow>div>.paper{padding:26px 24px 30px;min-height:360px}
+.flow .t{font:600 52px/1 var(--font-head)}
+.flow .t small{font-size:20px;margin-left:4px}
+.flow h3{font:600 24px/1.45 var(--font-head);margin:14px 0 8px}
+.flow p{font-size:20px;line-height:1.8;color:var(--muted);margin:0}
+.flow .ic{position:absolute;right:16px;top:14px;width:50px;height:50px;border-radius:50%;border:2px dashed var(--ink);display:grid;place-items:center;font:600 24px var(--font-head)}
+
+/* ---- 参加費 ---- */
+.fee{display:grid;grid-template-columns:500px 1fr;gap:44px}
+.fee .form{padding:34px 34px 30px}
+.fee .field{margin-bottom:30px}
+.chk{display:flex;align-items:center;gap:12px;font-size:19px;margin-top:4px}
+.receipt{padding:30px 34px;font-family:var(--font-head)}
+.receipt::before{content:"";position:absolute;left:0;right:0;bottom:-12px;height:12px;background:linear-gradient(135deg,var(--surface) 50%,transparent 50%) 0 0/16px 12px,linear-gradient(-135deg,var(--surface) 50%,transparent 50%) 0 0/16px 12px}
+.receipt .ttl{text-align:center;font-size:24px;letter-spacing:.4em;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.receipt .ln{display:flex;justify-content:space-between;font-size:22px;padding:16px 0;border-bottom:1px dashed var(--line)}
+.receipt .ln b{font-weight:600}
+.receipt .tot{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px}
+.receipt .tot span{font-size:22px}
+.receipt .tot b{font:600 88px/1 var(--font-num);letter-spacing:-.01em}
+.receipt .per{text-align:right;font-size:19px;color:var(--muted);margin-top:6px}
+
+/* ---- クイズ ---- */
+.qz{display:grid;grid-template-columns:1fr 360px;gap:44px;align-items:start}
+.memo{padding:28px 28px 30px;transform:rotate(2deg)}
+.memo h3{font:600 32px var(--font-head);margin-bottom:10px}
+.memo p{font-size:21px;line-height:1.8;color:var(--muted);margin:0}
+
+/* ---- 持ち物 ---- */
+.bring{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.bring .paper{padding:34px 36px 38px;min-height:400px}
+.bring h3{font:600 30px var(--font-head);margin-bottom:14px}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:22px;font-size:25px}
+.check li{padding-left:40px;position:relative}
+.check li::before{content:"";position:absolute;left:0;top:.2em;width:24px;height:24px;border:2px solid var(--ink);border-radius:3px}
+.check li.ok::after{content:"";position:absolute;left:6px;top:.05em;width:10px;height:20px;border:solid var(--green);border-width:0 4px 4px 0;transform:rotate(40deg)}
+.check li small{display:block;font-size:19px;color:var(--muted)}
+.map svg{width:100%;height:auto;display:block}
+
+/* ---- 締め ---- */
+.apply{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:10px}
+.apply>div>.paper{padding:30px 30px 34px;min-height:290px}
+.apply .n{font:600 60px/1 var(--font-head);color:var(--accent)}
+.apply h3{font:600 32px/1.4 var(--font-head);margin:10px 0 8px}
+.apply p{font-size:21px;line-height:1.75;color:var(--muted);margin:0}
+.contact{margin-top:44px;display:flex;gap:40px;align-items:center;font-size:22px}
+.contact b{font:600 34px var(--font-head)}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"></div>
+    <div class="cover-deco" aria-hidden="true">
+      <div class="card-sw" style="left:60px;top:30px;width:260px;height:190px;background:#8a4b2a;transform:rotate(8deg)"><div class="stitch" style="position:absolute;inset:0;border-radius:4px"></div></div>
+      <div class="card-sw" style="left:0;top:170px;width:300px;height:210px;background:#3f5a46;transform:rotate(-6deg)"><div class="stitch" style="position:absolute;inset:0;border-radius:4px"></div></div>
+      <div class="card-sw" style="left:120px;top:300px;width:250px;height:170px;background:#b8844f;transform:rotate(4deg)"><div class="stitch" style="position:absolute;inset:0;border-radius:4px"></div></div>
+    </div>
+    <div class="tag-wrap">
+      <div class="tag paper grid-p"><span class="hole"></span><div class="stamp" style="right:44px;top:104px;width:150px;height:150px;transform:rotate(-14deg);font-size:24px">参加者<br>募集中</div>
+        <span class="kicker">サンプル革工房 ／ ワークショップ</span>
+        <h1 style="margin-top:22px">はじめての、<br>革の名刺入れ。</h1>
+        <p class="sub">道具はぜんぶ貸します。<br>3時間で、自分で縫った1つを持ち帰れます。</p>
+        <div class="info"><div><small>日にち</small><b>11月の土曜</b></div><div><small>時間</small><b>10時〜13時</b></div><div><small>定員</small><b>各回6名</b></div></div>
+      </div>
+      <span class="tape" style="left:-30px;top:-8px;transform:rotate(-28deg)"></span>
+      <span class="tape pk" style="right:-26px;bottom:18px;transform:rotate(-24deg)"></span>
+    </div>
+    <aside class="notes">「はじめての人しか来ません」と最初に言う。経験者向けではないことが、いちばんの安心材料になる。</aside>
+  </section>
+
+  <section class="slide" data-title="作れるもの">
+    <div class="bg"></div>
+    <span class="kicker">作れるもの</span>
+    <h2 style="margin-top:14px">3つから、<em>ひとつ選んで</em>作ります。</h2>
+    <div class="items">
+      <div class="step"><div class="paper" style="transform:rotate(-1.5deg)"><span class="tape" style="left:50%;margin-left:-65px;top:-16px;transform:rotate(3deg)"></span>
+        <div class="ph"><svg viewBox="0 0 170 150" fill="none" stroke="#3b2a1a" stroke-width="3"><rect x="30" y="40" width="110" height="74" rx="8" fill="#8a4b2a"/><rect x="38" y="48" width="94" height="58" rx="4" stroke="#fbf8f1" stroke-dasharray="5 4" stroke-width="2"/><path d="M30 60h110" stroke-width="2"/></svg></div>
+        <h3>名刺入れ</h3><p>いちばん人気。仕事で毎日使える。</p><div class="meta"><span class="lv">むずかしさ ★★☆</span><span>3時間</span></div></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(1.2deg)"><span class="tape yl" style="left:50%;margin-left:-65px;top:-16px;transform:rotate(-4deg)"></span>
+        <div class="ph"><svg viewBox="0 0 170 150" fill="none" stroke="#3b2a1a" stroke-width="3"><path d="M55 30h60a14 14 0 0 1 14 14v70a14 14 0 0 1-14 14H55a14 14 0 0 1-14-14V44a14 14 0 0 1 14-14z" fill="#3f5a46"/><path d="M52 42h66v70H52z" stroke="#fbf8f1" stroke-dasharray="5 4" stroke-width="2"/><circle cx="85" cy="18" r="10"/><path d="M85 28v8"/></svg></div>
+        <h3>キーケース</h3><p>ホックの取りつけまで体験できる。</p><div class="meta"><span class="lv">むずかしさ ★★★</span><span>3時間</span></div></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(-.8deg)"><span class="tape pk" style="left:50%;margin-left:-65px;top:-16px;transform:rotate(2deg)"></span>
+        <div class="ph"><svg viewBox="0 0 170 150" fill="none" stroke="#3b2a1a" stroke-width="3"><circle cx="70" cy="80" r="44" fill="#b8844f"/><circle cx="70" cy="80" r="35" stroke="#fbf8f1" stroke-dasharray="5 4" stroke-width="2"/><circle cx="112" cy="62" r="34" fill="#8a4b2a"/><circle cx="112" cy="62" r="26" stroke="#fbf8f1" stroke-dasharray="5 4" stroke-width="2"/></svg></div>
+        <h3>コースター 2枚</h3><p>親子で参加するならこれ。1時間半で終わる。</p><div class="meta"><span class="lv">むずかしさ ★☆☆</span><span>1.5時間</span></div></div></div>
+    </div>
+    <aside class="notes">→ で1つずつ出す。迷っている人には「名刺入れ」をすすめる。完成したときの満足度がいちばん高い。</aside>
+  </section>
+
+  <section class="slide" data-title="当日の流れ">
+    <div class="bg"></div>
+    <span class="kicker">当日の流れ</span>
+    <h2 style="margin-top:14px">3時間のうち、<em>半分は縫う時間</em>です。</h2>
+    <div class="flow">
+      <div class="step"><div class="paper" style="transform:rotate(-1deg)"><span class="ic">1</span><div class="t">10:00</div><h3>革と糸の色を選ぶ</h3><p>12色の革と8色の糸から、好きな組み合わせを。</p></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(.8deg)"><span class="ic">2</span><div class="t">10:30</div><h3>型紙どおりに切る</h3><p>定規と専用の刃物で。ここだけは講師が横につきます。</p></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(-.6deg)"><span class="ic">3</span><div class="t">11:00</div><h3>ひと針ずつ縫う</h3><p>穴はあけてあるので、糸を通していくだけ。</p></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(1.2deg)"><span class="ic">4</span><div class="t">12:30</div><h3>磨いて、名入れ</h3><p>ふちを磨いて仕上げ。最後にお茶を出します。</p></div></div>
+    </div>
+    <details class="why" style="margin-top:34px;width:620px"><summary>なぜ縫いは手でやるの？</summary><div class="body">ミシンを使えば30分で終わります。でも、手で縫った糸はほつれにくく、自分で直せます。10年使える1つを作ってほしいので、手縫いにしています。</div></details>
+  </section>
+
+  <section class="slide" data-title="参加費">
+    <div class="bg"></div>
+    <span class="kicker">参加費　動かせます</span>
+    <h2 style="margin-top:14px">名刺入れ1つなら、<em>4,500円</em>です。</h2>
+    <div class="fee" data-calc data-let="mat = r==1?800:(r==2?1500:2800); per = 3000 + k*(mat + name*500); total = per*p">
+      <div class="paper form" style="transform:rotate(-.6deg)">
+        <div class="field"><label>一緒に参加する人数 <b data-show="p" data-unit="人"></b></label><input type="range" name="p" min="1" max="4" value="1"></div>
+        <div class="field"><label>1人が作る数 <b data-show="k" data-unit="個"></b></label><input type="range" name="k" min="1" max="3" value="1"></div>
+        <div class="field"><label>革のランク（1 練習用・2 定番・3 上質） <b data-show="r"></b></label><input type="range" name="r" min="1" max="3" value="2"></div>
+        <label class="chk"><input type="checkbox" name="name"> 名入れの刻印をつける（1個 +500円）</label>
+      </div>
+      <div>
+        <div class="paper receipt">
+          <div class="ttl">おかいけい</div>
+          <div class="ln"><span>参加費（道具・講習）</span><b>3,000円 × 人数</b></div>
+          <div class="ln"><span>材料費（1個あたり）</span><b data-out="mat" data-format="yen"></b></div>
+          <div class="ln"><span>1人あたり</span><b data-out="per" data-format="yen"></b></div>
+          <div class="tot"><span>合計</span><b data-out="total" data-format="yen"></b></div>
+        </div>
+        <p class="foot" style="position:static;margin-top:26px">当日、現金かカードで。金額は架空のサンプルです。</p>
+      </div>
+    </div>
+    <aside class="notes">親子で来る人には、人数を2、作る数を1、ランクを1にして見せる。7,600円になる。</aside>
+  </section>
+
+  <section class="slide" data-title="手入れクイズ">
+    <div class="bg"></div>
+    <span class="kicker">ちょっとクイズ</span>
+    <h2 style="margin-top:14px">革を長持ちさせるのは、どれ？</h2>
+    <div class="qz">
+      <div class="quiz">
+        <div class="choices">
+          <button data-k="A">汚れたら、水でしっかり洗う</button>
+          <button data-k="B" data-correct>月に1度、少しのクリームで磨く</button>
+          <button data-k="C">濡れたら、ドライヤーで早く乾かす</button>
+        </div>
+        <p class="explain">答えは B。革は乾くとひび割れます。クリームは米つぶ1つ分で十分。濡れたときは、陰で自然に乾かしてください。</p>
+      </div>
+      <div class="paper memo"><span class="tape yl" style="left:30px;top:-16px;transform:rotate(-6deg)"></span>
+        <h3>おみやげつき</h3><p>当日は、手入れ用のクリーム（小びん）と、布を1枚ずつお持ち帰りいただきます。</p>
+        <div class="stamp" style="position:relative;width:120px;height:120px;margin:22px 0 0 auto;font-size:20px;transform:rotate(10deg)">手入れ<br>つき</div>
+      </div>
+    </div>
+    <aside class="notes">会場で手を挙げてもらう。「水で洗う」を選ぶ人が意外と多い。</aside>
+  </section>
+
+  <section class="slide" data-title="持ち物と会場">
+    <div class="bg"></div>
+    <span class="kicker">持ち物と会場</span>
+    <h2 style="margin-top:14px">持ってくるのは、<em>手ぶらでOK</em>。</h2>
+    <div class="bring">
+      <div class="paper" style="transform:rotate(-1deg)"><span class="tape" style="left:-24px;top:10px;transform:rotate(-38deg)"></span>
+        <h3>持ち物</h3>
+        <ul class="check">
+          <li class="ok">なし<small>道具・エプロンはすべて貸します</small></li>
+          <li class="ok">名入れの文字（刻印するなら）<small>英字で8文字まで</small></li>
+          <li>老眼鏡（ふだん使う方は）<small>細かい作業が少しあります</small></li>
+        </ul>
+      </div>
+      <div class="paper map" style="transform:rotate(1deg);padding:22px 26px"><span class="tape pk" style="right:-20px;top:-6px;transform:rotate(30deg)"></span>
+        <h3>会場　サンプル革工房</h3>
+        <svg viewBox="0 0 460 190" fill="none" stroke="#3b2a1a" stroke-width="2.5" stroke-linecap="round">
+          <path d="M0 120 C120 118 260 124 460 116" stroke-width="10" stroke="#d9c9ae"/><path d="M300 0 C296 70 304 130 300 190" stroke-width="10" stroke="#d9c9ae"/>
+          <path d="M0 120 C120 118 260 124 460 116M300 0 C296 70 304 130 300 190" stroke-dasharray="2 8"/>
+          <rect x="40" y="136" width="70" height="40" rx="4"/><text x="75" y="162" font-family="Kiwi Maru,sans-serif" font-size="16" fill="#3b2a1a" stroke="none" text-anchor="middle">駅</text>
+          <path d="M110 150 C190 150 250 90 336 76" stroke="#b0322a" stroke-dasharray="6 7"/>
+          <path d="M346 50l20 18-20 18-20-18z" fill="#b0322a" stroke="none"/>
+          <text x="376" y="62" font-family="Klee One,serif" font-size="20" fill="#b0322a" stroke="none">工房</text>
+          <text x="180" y="100" font-family="Klee One,serif" font-size="17" fill="#3b2a1a" stroke="none">徒歩 5分</text>
+        </svg>
+        <p class="lead" style="font-size:19px;margin:6px 0 0">見本駅 東口から徒歩5分。2階の窓に革の看板があります。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="申し込み">
+    <div class="bg"></div>
+    <span class="kicker">申し込み</span>
+    <h2 style="margin-top:14px">今日この場で、<em>日にちだけ</em>決めてください。</h2>
+    <div class="apply">
+      <div class="step"><div class="paper" style="transform:rotate(-1deg)"><div class="n">1</div><h3>日にちを選ぶ</h3><p>11月の土曜、4回。各回6名まで。</p></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(.7deg)"><div class="n">2</div><h3>用紙に名前を書く</h3><p>作るものと革の色は、当日決めても大丈夫。</p></div></div>
+      <div class="step"><div class="paper" style="transform:rotate(-.5deg)"><div class="n">3</div><h3>手ぶらで来る</h3><p>お代は当日でかまいません。</p></div></div>
+    </div>
+    <div class="contact"><span>電話・店頭でも受けつけます</span><b>000-0000-0000</b><span class="muted">（水曜定休）</span></div>
+    <div style="position:absolute;right:84px;bottom:44px"><div class="stamp" style="position:relative;width:150px;height:150px;transform:rotate(-12deg);font-size:24px">お待ち<br>してます</div></div>
+    <aside class="notes">申込用紙は机に置いておく。「作るものは当日決めていい」と言うと、その場で書いてくれる人が増える。</aside>
+  </section>
+
+</main>

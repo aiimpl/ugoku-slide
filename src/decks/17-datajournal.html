@@ -1,0 +1,306 @@
+<!--meta
+{"title":"国内アウトドア用品市場 2026 調査報告","style":"データジャーナリズム","use":"市場調査レポート","group":"データ・図解",
+ "aim":"調査会社のアナリストが、依頼元への報告会で国内アウトドア用品市場の調査結果を、新聞のデータ記事のように読ませて説明するための資料。",
+ "desc":"新聞のデータ記事のような見出しと注記つきのグラフ。買い手の変化はタブで年代・地域・買う場所を切り替え、参加人口と支出を動かすと市場規模を推計できる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700;900&family=Roboto+Condensed:wght@400;600;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f7f4ec; --surface:#fffdf7; --ink:#1a1a1a; --muted:#5c5750; --line:#d8d2c4;
+  --accent:#b93a0b; --accent-ink:#fff; --blue:#1f5f8b; --frame:#e6e0d2; --good:#1f5f8b; --bad:#b93a0b;
+  --radius:0px; --shadow:none;
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI",sans-serif;
+  --serif:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  --font-head:var(--serif); --font-num:"Roboto Condensed","Hiragino Sans",sans-serif;
+  --head-weight:900; --head-track:.01em; --pad-y:48px; --pad-x:72px;
+}
+.slide{isolation:isolate}
+.slide>.bg{background:radial-gradient(rgb(0 0 0 / .035) 1px,transparent 1px) 0 0/5px 5px,var(--bg)}
+/* 紙面の頭：欄名と線 */
+.rule{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--ink);padding-bottom:8px;margin-bottom:22px;font:600 15px var(--font-num);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.rule b{color:var(--accent);letter-spacing:.2em}
+.rule .pg{margin-left:auto;letter-spacing:.08em}
+h2{font-size:44px;line-height:1.35;margin:0 0 10px;font-weight:900}
+.dek{font:500 21px/1.7 var(--serif);color:var(--muted);margin:0 0 22px;max-width:1000px}
+h2 em,.hl{font-style:normal;color:var(--accent)}
+.note{font:italic 500 17px/1.6 var(--serif);color:var(--ink)}
+.src{position:absolute;left:72px;right:72px;bottom:24px;font:400 14px/1.5 var(--font-num);color:var(--muted);border-top:1px solid var(--line);padding-top:8px;letter-spacing:.02em}
+.num{font-family:var(--font-num)}
+.lead{font:500 21px/1.85 var(--serif);color:var(--ink)}
+
+/* ---- 部品 ---- */
+details.why{background:transparent;border:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);border-radius:0}
+details.why>summary{color:var(--ink);font:700 17px var(--font);padding:10px 0}
+details.why>summary::before{background:var(--ink);color:var(--bg);border-radius:0;width:20px;height:20px;font-size:16px}
+details.why>.body{padding:0 0 14px;color:var(--muted);font:400 17px/1.75 var(--serif)}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--ink);border-radius:0;padding:14px 18px;box-shadow:6px 6px 0 rgb(0 0 0 / .08)}
+.tabs{background:none;border-radius:0;padding:0;gap:26px;border-bottom:1px solid var(--line);width:100%;margin-bottom:24px}
+.tabs>[data-tab]{border-radius:0;padding:8px 0 10px;background:none;color:var(--muted);font:700 19px var(--font);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs>[data-tab][aria-selected=true]{background:none;color:var(--ink);box-shadow:none;border-color:var(--accent)}
+input[type=range]{accent-color:var(--ink)}
+.field>label{color:var(--ink);font-size:18px}
+.field>label b{font:700 24px var(--font-num)}
+.meter{border-radius:0;height:10px;background:var(--line)}
+.meter>i{border-radius:0;background:var(--accent)}
+
+/* ---- グラフ：細い軸と点線の目盛り ---- */
+.chart{height:330px;gap:22px;border-bottom:1.5px solid var(--ink);padding-top:30px;margin-bottom:36px;
+  background:repeating-linear-gradient(to top,transparent 0 65px,rgb(0 0 0 / .14) 65px 66px)}
+.chart>.col>i{border-radius:0;background:#b9b2a5}
+.chart>.col.hot>i{background:var(--accent)}
+.chart>.col.dim>i{background:repeating-linear-gradient(-45deg,#b9b2a5 0 2px,transparent 2px 7px);outline:1px solid #b9b2a5;outline-offset:-1px}
+.chart>.col::before{font:700 17px var(--font-num);color:var(--ink)}
+.chart>.col.hot::before{color:var(--accent);font-size:20px}
+.chart>.col::after{font:400 16px var(--font-num);color:var(--muted)}
+.ann{position:absolute;font:italic 500 17px/1.5 var(--serif);color:var(--ink);padding-left:12px;border-left:1px solid var(--ink)}
+.ann b{font-style:normal;font-family:var(--font-num);color:var(--accent)}
+.plot{position:relative}
+
+/* ---- 表紙 ---- */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:4px double var(--ink);padding-bottom:10px}
+.mast .name{font:900 34px/1 var(--serif);letter-spacing:.08em}
+.mast .name small{font:600 15px var(--font-num);letter-spacing:.24em;color:var(--muted);margin-left:14px;vertical-align:4px}
+.mast .iss{font:600 15px var(--font-num);letter-spacing:.14em;color:var(--muted);text-align:right}
+.cv{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;margin-top:30px;flex:1}
+.cv h1{font-size:88px;line-height:1.16;font-weight:900;letter-spacing:.01em}
+.cv .dek{margin-top:22px;font-size:22px}
+.byline{margin-top:20px;font:600 15px var(--font-num);letter-spacing:.14em;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.byline b{color:var(--ink);font:700 16px var(--font);letter-spacing:.02em}
+.fig{border-left:1px solid var(--line);padding-left:36px;display:flex;flex-direction:column}
+.fig .cap{font:700 16px var(--font);margin-bottom:4px}
+.fig .cap span{font:400 15px var(--font-num);color:var(--muted);margin-left:8px}
+.fig svg{width:100%;height:auto;display:block;margin-top:6px}
+.fig .big{font:700 110px/1 var(--font-num);color:var(--accent);letter-spacing:-.02em;margin-top:10px}
+.fig .big small{font:900 30px var(--serif);color:var(--ink);margin-left:6px}
+
+.mini{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink);margin-top:18px}
+.mini>div{padding:10px 12px 0 0}
+.mini>div+div{border-left:1px solid var(--line);padding-left:14px}
+.mini small{display:block;font-size:15px;color:var(--muted)}
+.mini b{font:700 30px var(--font-num)}
+.plot .chart{height:380px;padding-top:100px;margin-bottom:30px}
+/* ---- ドットプロット ---- */
+.dpwrap{display:grid;grid-template-columns:1fr 330px;gap:44px}
+.dp{display:grid;grid-template-columns:150px 1fr 150px;gap:18px;align-items:center;padding:17px 0;border-bottom:1px solid var(--line)}
+.dp .nm{font:700 20px var(--font)}
+.dp .tr{position:relative;height:24px;background:linear-gradient(90deg,transparent calc(50% - .5px),rgb(0 0 0 / .12) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px))}
+.dp .tr::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px dotted #9d968a}
+.dp i{position:absolute;top:50%}
+.dp .seg{height:4px;margin-top:-2px;background:#c9c2b5}
+.dp.up .seg{background:rgb(185 58 11 / .35)}
+.dp .d0,.dp .d1{width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%}
+.dp .d0{background:var(--bg);border:2.5px solid #8a847a}
+.dp .d1{background:var(--accent)}
+.dp.down .d1{background:var(--blue)}
+.dp .vv{font:400 19px var(--font-num);text-align:right;color:var(--muted)}
+.dp .vv s{text-decoration:none}
+.dp .vv b{font-weight:700;color:var(--accent);font-size:22px}
+.dp.down .vv b{color:var(--blue)}
+.axis{display:grid;grid-template-columns:150px 1fr 150px;gap:18px;font:400 15px var(--font-num);color:var(--muted);margin-top:8px}
+.axis div{display:flex;justify-content:space-between}
+.key{display:flex;gap:22px;font-size:17px;color:var(--muted);margin-bottom:6px}
+.key i{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-1px;margin-right:6px}
+.side{border-left:1px solid var(--line);padding-left:30px}
+.side .q{font:900 30px/1.45 var(--serif);margin-bottom:16px}
+
+/* ---- 数字で見る ---- */
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:3px solid var(--ink)}
+.facts>div{padding:22px 28px 26px;border-right:1px solid var(--line)}
+.facts>div:first-child{padding-left:0}
+.facts>div:last-child{border-right:0}
+.facts .v{font:700 150px/1 var(--font-num);letter-spacing:-.03em;color:var(--ink)}
+.facts .v small{font:900 32px var(--serif);margin-left:4px;letter-spacing:0}
+.facts .v.hl{color:var(--accent)}
+.facts p{font:500 23px/1.75 var(--serif);margin:14px 0 0;color:var(--ink)}
+
+/* ---- 推計 ---- */
+.est{display:grid;grid-template-columns:420px 1fr;gap:56px}
+.est .field{margin-bottom:34px}
+.est .vs{margin-top:22px}
+.eq{font:500 20px/1.7 var(--serif);color:var(--muted);border-top:1px solid var(--ink);padding-top:12px;margin-top:8px}
+.eq b{font-family:var(--font-num);color:var(--ink)}
+.mkt{font:700 180px/0.95 var(--font-num);letter-spacing:-.03em;color:var(--accent)}
+.vs{display:grid;grid-template-columns:150px 1fr 120px;gap:16px;align-items:center;font-size:18px;margin-top:14px}
+.vs b{font:700 24px var(--font-num);text-align:right}
+.vs .meter{height:16px}
+.vs .meter.alt>i{background:#8a847a}
+
+/* ---- 締め ---- */
+.take{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:3px solid var(--ink)}
+.take>div{padding:18px 26px 22px;border-right:1px solid var(--line)}
+.take>div:first-child{padding-left:0}
+.take>div:last-child{border-right:0}
+.take .n{font:700 64px/1 var(--font-num);color:var(--accent)}
+.take b{display:block;font:900 31px/1.45 var(--serif);margin:12px 0 10px}
+.take p{font:500 20px/1.8 var(--serif);margin:0;color:var(--muted)}
+.meth{margin-top:auto;margin-bottom:28px;display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);font-size:17px}
+.meth>div{padding:12px 16px;border-right:1px solid var(--line)}
+.meth>div:last-child{border-right:0}
+.meth small{display:block;font:600 14px var(--font-num);letter-spacing:.16em;color:var(--muted)}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <div class="mast"><div class="name">データノート<small>SAMPLE RESEARCH</small></div><div class="iss">第38号　2026年10月<br>国内アウトドア用品市場</div></div>
+    <div class="cv">
+      <div>
+        <h1>軽さが、<br>市場を<br><span class="hl">1.6倍</span>にした。</h1>
+        <p class="dek">国内のアウトドア用品は、この5年で 3,120億円から 5,010億円へ。伸びを引っぱったのは、1kg を切る「持ち歩ける道具」と、20代の買い手だった。</p>
+        <div class="byline">文・分析　<b>サンプル調査室 消費財チーム</b></div>
+      </div>
+      <div class="fig">
+        <div class="cap">国内のアウトドア用品の売上<span>億円、2016〜2026年</span></div>
+        <svg viewBox="0 0 480 260" aria-hidden="true">
+          <g stroke="#1a1a1a" stroke-opacity=".14"><line x1="0" y1="40" x2="480" y2="40"/><line x1="0" y1="110" x2="480" y2="110"/><line x1="0" y1="180" x2="480" y2="180"/></g>
+          <line x1="0" y1="250" x2="480" y2="250" stroke="#1a1a1a" stroke-width="1.5"/>
+          <path d="M0 196 L48 190 L96 186 L144 181 L192 170 L240 158 L288 139 L336 110 L384 123 L432 96 L480 44 L480 250 L0 250Z" fill="#b93a0b" fill-opacity=".1"/>
+          <path d="M0 196 L48 190 L96 186 L144 181 L192 170 L240 158 L288 139 L336 110 L384 123 L432 96 L480 44" fill="none" stroke="#b93a0b" stroke-width="3"/>
+          <circle cx="480" cy="44" r="6" fill="#b93a0b"/>
+          <line x1="384" y1="123" x2="384" y2="70" stroke="#1a1a1a"/>
+          <text x="376" y="62" font-family="Noto Serif JP,serif" font-style="italic" font-size="15" text-anchor="end" fill="#1a1a1a">2023年、一度だけ落ちた</text>
+        </svg>
+        <div class="big">5,010<small>億円</small></div>
+        <div class="mini"><div><small>20代の買い手</small><b>12→21%</b></div><div><small>1kg未満の寄与</small><b>64%</b></div><div><small>メーカー直販</small><b>9→18%</b></div></div>
+      </div>
+    </div>
+    <aside class="notes">見出しで結論を言い切る。「1.6倍」「軽い道具」「20代」。この3語が今日の話のすべて。</aside>
+  </section>
+
+  <section class="slide" data-title="市場規模">
+    <div class="bg"></div>
+    <div class="rule"><b>01</b>市場規模<span class="pg">2 / 7</span></div>
+    <h2>一度の落ちこみを越えて、<em>6年で最高</em>を更新した。</h2>
+    <p class="dek">2023年はキャンプ需要の反動で7%減。そこから3年続けて伸び、2026年は5,010億円の見込み。</p>
+    <div class="plot">
+      <div class="chart">
+        <div class="col" style="--v:57" data-label="2020" data-val="3,120"><i></i></div>
+        <div class="col" style="--v:63" data-label="2021" data-val="3,480"><i></i></div>
+        <div class="col" style="--v:72" data-label="2022" data-val="3,950"><i></i></div>
+        <div class="col" style="--v:67" data-label="2023" data-val="3,700"><i></i></div>
+        <div class="col" style="--v:75" data-label="2024" data-val="4,130"><i></i></div>
+        <div class="col" style="--v:83" data-label="2025" data-val="4,560"><i></i></div>
+        <div class="col hot" style="--v:91" data-label="2026見込" data-val="5,010"><i></i></div>
+      </div>
+      <div class="ann step" style="left:44%;top:6px;width:270px">反動で <b>−7%</b>。<br>テント・大型の道具が落ちた</div>
+      <div class="ann step" style="left:73%;top:6px;width:230px">1kg未満の道具が<br>伸びの <b>64%</b> を占める</div>
+    </div>
+    <div class="src">単位：億円（メーカー出荷額ベース、税抜）。出典：サンプル調査室 推計。数字は架空のサンプルです。</div>
+    <aside class="notes">→ で注記が2つ出る。1つ目で「落ちた年」、2つ目で「何が伸ばしたか」。グラフは読ませず、注記だけを読む。</aside>
+  </section>
+
+  <section class="slide" data-title="買い手の変化">
+    <div class="bg"></div>
+    <div class="rule"><b>02</b>買い手<span class="pg">3 / 7</span></div>
+    <h2>買い手は<em>若返り</em>、買う場所はネットに移った。</h2>
+    <div class="dpwrap" data-tabs>
+      <div>
+        <div class="tabs"><button data-tab="age">年代</button><button data-tab="reg">地域</button><button data-tab="ch">買う場所</button></div>
+        <div class="key"><span><i style="border:2.5px solid #8a847a"></i>2021年</span><span><i style="background:var(--accent)"></i>2026年（増えた）</span><span><i style="background:var(--blue)"></i>2026年（減った）</span></div>
+        <div data-panel="age">
+        <div class="dp up"><span class="nm">20代</span><div class="tr"><i class="seg" style="left:24.0%;width:18.0%"></i><i class="d0" style="left:24.0%"></i><i class="d1" style="left:42.0%"></i></div><span class="vv"><s>12</s> → <b>21%</b></span></div>
+        <div class="dp up"><span class="nm">30代</span><div class="tr"><i class="seg" style="left:48.0%;width:6.0%"></i><i class="d0" style="left:48.0%"></i><i class="d1" style="left:54.0%"></i></div><span class="vv"><s>24</s> → <b>27%</b></span></div>
+        <div class="dp down"><span class="nm">40代</span><div class="tr"><i class="seg" style="left:50.0%;width:8.0%"></i><i class="d0" style="left:58.0%"></i><i class="d1" style="left:50.0%"></i></div><span class="vv"><s>29</s> → <b>25%</b></span></div>
+        <div class="dp down"><span class="nm">50代</span><div class="tr"><i class="seg" style="left:32.0%;width:10.0%"></i><i class="d0" style="left:42.0%"></i><i class="d1" style="left:32.0%"></i></div><span class="vv"><s>21</s> → <b>16%</b></span></div>
+        <div class="dp down"><span class="nm">60代以上</span><div class="tr"><i class="seg" style="left:22.0%;width:6.0%"></i><i class="d0" style="left:28.0%"></i><i class="d1" style="left:22.0%"></i></div><span class="vv"><s>14</s> → <b>11%</b></span></div>
+        </div>
+        <div data-panel="reg">
+        <div class="dp down"><span class="nm">首都圏</span><div class="tr"><i class="seg" style="left:68.0%;width:8.0%"></i><i class="d0" style="left:76.0%"></i><i class="d1" style="left:68.0%"></i></div><span class="vv"><s>38</s> → <b>34%</b></span></div>
+        <div class="dp down"><span class="nm">関西</span><div class="tr"><i class="seg" style="left:32.0%;width:2.0%"></i><i class="d0" style="left:34.0%"></i><i class="d1" style="left:32.0%"></i></div><span class="vv"><s>17</s> → <b>16%</b></span></div>
+        <div class="dp up"><span class="nm">中部</span><div class="tr"><i class="seg" style="left:26.0%;width:2.0%"></i><i class="d0" style="left:26.0%"></i><i class="d1" style="left:28.0%"></i></div><span class="vv"><s>13</s> → <b>14%</b></span></div>
+        <div class="dp up"><span class="nm">九州・沖縄</span><div class="tr"><i class="seg" style="left:18.0%;width:6.0%"></i><i class="d0" style="left:18.0%"></i><i class="d1" style="left:24.0%"></i></div><span class="vv"><s>9</s> → <b>12%</b></span></div>
+        <div class="dp up"><span class="nm">北海道・東北</span><div class="tr"><i class="seg" style="left:22.0%;width:4.0%"></i><i class="d0" style="left:22.0%"></i><i class="d1" style="left:26.0%"></i></div><span class="vv"><s>11</s> → <b>13%</b></span></div>
+        </div>
+        <div data-panel="ch">
+        <div class="dp down"><span class="nm">専門店</span><div class="tr"><i class="seg" style="left:62.0%;width:30.0%"></i><i class="d0" style="left:92.0%"></i><i class="d1" style="left:62.0%"></i></div><span class="vv"><s>46</s> → <b>31%</b></span></div>
+        <div class="dp up"><span class="nm">総合通販</span><div class="tr"><i class="seg" style="left:56.0%;width:18.0%"></i><i class="d0" style="left:56.0%"></i><i class="d1" style="left:74.0%"></i></div><span class="vv"><s>28</s> → <b>37%</b></span></div>
+        <div class="dp up"><span class="nm">メーカー直販</span><div class="tr"><i class="seg" style="left:18.0%;width:18.0%"></i><i class="d0" style="left:18.0%"></i><i class="d1" style="left:36.0%"></i></div><span class="vv"><s>9</s> → <b>18%</b></span></div>
+        <div class="dp up"><span class="nm">中古・フリマ</span><div class="tr"><i class="seg" style="left:10.0%;width:8.0%"></i><i class="d0" style="left:10.0%"></i><i class="d1" style="left:18.0%"></i></div><span class="vv"><s>5</s> → <b>9%</b></span></div>
+        <div class="dp down"><span class="nm">ホームセンター</span><div class="tr"><i class="seg" style="left:10.0%;width:14.0%"></i><i class="d0" style="left:24.0%"></i><i class="d1" style="left:10.0%"></i></div><span class="vv"><s>12</s> → <b>5%</b></span></div>
+        </div>
+        <div class="axis"><span></span><div><span>0%</span><span>25%</span><span>50%</span></div><span></span></div>
+      </div>
+      <div class="side">
+        <div data-panel="age"><p class="q">20代の割合は、5年で <span class="hl">ほぼ倍</span>。</p><p class="lead">一人で出かける「ソロ」の広がりが大きい。40代以上は数では減っていないが、割合は下がった。</p></div>
+        <div data-panel="reg"><p class="q">地域の差は、<span class="hl">小さく</span>なった。</p><p class="lead">首都圏の割合が下がり、九州・北海道が上がった。近場で楽しむ人が増えた。</p></div>
+        <div data-panel="ch"><p class="q">専門店の割合は、<span class="hl">3分の2</span>に。</p><p class="lead">メーカー直販が倍に。中古・フリマも伸び、「売れる道具を買う」人が出てきた。</p></div>
+      </div>
+    </div>
+    <div class="src">購入者に占める割合。出典：サンプル調査室 消費者調査（2021年 n=4,120、2026年 n=4,380）。数字は架空のサンプルです。</div>
+    <aside class="notes">タブを押すたびに左の図と右の要点が一緒に切り替わる。質疑で「地域は？」と聞かれたら地域タブへ。</aside>
+  </section>
+
+  <section class="slide" data-title="数字で見る">
+    <div class="bg"></div>
+    <div class="rule"><b>03</b>数字で見る<span class="pg">4 / 7</span></div>
+    <h2>3つの数字が、この市場の今を表している。</h2>
+    <div class="facts" style="margin-top:14px">
+      <div class="step"><div class="v hl"><span data-count="64"></span><small>%</small></div><p>この5年の伸びのうち、重さ1kg未満の道具が占めた割合。</p></div>
+      <div class="step"><div class="v"><span data-count="2.4"  data-format="dec1"></span><small>回</small></div><p>1人が1年に出かける回数。2021年の3.1回から減ったが、1回の支出は増えた。</p></div>
+      <div class="step"><div class="v"><span data-count="38"></span><small>%</small></div><p>道具を「あとで売る」つもりで選ぶ人。20代では 52%。</p></div>
+    </div>
+    <details class="why" style="margin-top:28px"><summary>調べ方</summary><div class="body">2026年7月、全国の18〜69歳のうち、過去1年にアウトドア用品を買った 4,380人にネットで聞いた。性・年代・地域の割合を人口に合わせて補正している。</div></details>
+    <div class="src">出典：サンプル調査室 消費者調査（2026年）。数字は架空のサンプルです。</div>
+  </section>
+
+  <section class="slide" data-title="市場規模の推計">
+    <div class="bg"></div>
+    <div class="rule"><b>04</b>推計<span class="pg">5 / 7</span></div>
+    <h2>市場は「人数 × 支出 × 買う人の割合」で読める。</h2>
+    <div class="est fill" data-calc data-let="m = p*1e4*e*r/100">
+      <div>
+        <div class="field"><label>アウトドアをする人 <b data-show="p" data-unit="万人"></b></label><input type="range" name="p" min="1500" max="3500" step="10" value="2530"></div>
+        <div class="field"><label>買う人の1年の支出 <b data-show="e" data-format="yen"></b></label><input type="range" name="e" min="20000" max="80000" step="1000" value="44000"></div>
+        <div class="field"><label>その年に買う人の割合 <b data-show="r" data-unit="%"></b></label><input type="range" name="r" min="20" max="80" value="45"></div>
+        <p class="eq">初期値は2026年の推計：<b>2,530万人 × 44,000円 × 45%</b>。</p>
+      </div>
+      <div>
+        <div class="note">推計した市場規模</div>
+        <div class="mkt"><span data-out="m/1e8"></span><small style="font:900 44px var(--serif);margin-left:6px;color:var(--ink)">億円</small></div>
+        <div class="vs"><span>この推計</span><div class="meter" data-bar="m" data-max="8000e8"><i></i></div><b data-out="m/1e8" data-unit="億"></b></div>
+        <div class="vs"><span>2026年 見込み</span><div class="meter alt" data-bar="5010e8" data-max="8000e8"><i></i></div><b>5,010億</b></div>
+        <details class="why float" style="margin-top:20px"><summary>数字を動かして分かること</summary><div class="body">人数が1割減っても、支出が 5,000円上がれば市場は保てる。この5年は、まさにその形で伸びてきた（人数 −4%、支出 +31%）。</div></details>
+      </div>
+    </div>
+    <div class="src">数字は架空のサンプルです。</div>
+    <aside class="notes">「人が減ったら市場は縮むのでは？」への答えがこのページ。人数を 2,280万に下げて、支出を 49,000円に上げてみせる。</aside>
+  </section>
+
+  <section class="slide" data-title="見通し">
+    <div class="bg"></div>
+    <div class="rule"><b>05</b>見通し<span class="pg">6 / 7</span></div>
+    <h2>伸びは続くが、2028年からは<em>ゆるやか</em>になる。</h2>
+    <p class="dek">20代の参加が一巡し、伸びの中心は「買い替え」に移る。2030年は 6,000億円前後の見込み。</p>
+    <div class="plot">
+      <div class="chart">
+        <div class="col" style="--v:62" data-label="2024" data-val="4,130"><i></i></div>
+        <div class="col" style="--v:68" data-label="2025" data-val="4,560"><i></i></div>
+        <div class="col hot" style="--v:75" data-label="2026" data-val="5,010"><i></i></div>
+        <div class="col dim" style="--v:80" data-label="2027予測" data-val="5,350"><i></i></div>
+        <div class="col dim" style="--v:84" data-label="2028予測" data-val="5,620"><i></i></div>
+        <div class="col dim" style="--v:87" data-label="2029予測" data-val="5,840"><i></i></div>
+        <div class="col dim" style="--v:90" data-label="2030予測" data-val="6,010"><i></i></div>
+      </div>
+      <div class="ann step" style="left:3%;top:30px;width:300px">年 <b>+10%</b> で伸びた3年</div>
+      <div class="ann step" style="left:58%;top:10px;width:300px">2028年から年 <b>+3〜5%</b> に</div>
+    </div>
+    <div class="src">斜線は予測。単位：億円。出典：サンプル調査室 推計。数字は架空のサンプルです。</div>
+  </section>
+
+  <section class="slide" data-title="示唆">
+    <div class="bg"></div>
+    <div class="rule"><b>06</b>示唆<span class="pg">7 / 7</span></div>
+    <h2>作り手が次の3年でやるべき3つのこと。</h2>
+    <div class="take">
+      <div class="step"><span class="n">1</span><b>「軽さ」を<br>基準に品ぞろえを組む</b><p>1kg未満の道具を主力に。重い大型品は、貸し出しと組み合わせて売る。</p></div>
+      <div class="step"><span class="n">2</span><b>直販と中古を<br>自分でつかむ</b><p>売るときの値段が選ぶ理由になる。自社で買い取り、手入れして売り直す。</p></div>
+      <div class="step"><span class="n">3</span><b>買い替えの<br>きっかけを作る</b><p>伸びの中心は買い替えへ。修理・部品・下取りで接点を切らさない。</p></div>
+    </div>
+    <div class="meth">
+      <div><small>調査の期間</small>2026年6〜8月</div><div><small>消費者調査</small>4,380人（ネット）</div><div><small>聞き取り</small>メーカー・販売店 22社</div><div><small>お問い合わせ</small>サンプル調査室 消費財チーム</div>
+    </div>
+    <aside class="notes">最後に「御社の場合はどれから」と問いかけて質疑に移る。</aside>
+  </section>
+
+</main>

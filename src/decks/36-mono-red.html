@@ -1,0 +1,212 @@
+<!--meta
+{"title":"取締役会 月次報告 2027年5月度","style":"モノクロ＋赤一点","use":"取締役会の月次報告","group":"ビジネス定番",
+ "aim":"経営企画が月次の取締役会で先月の業績を報告し、予算との差のうち判断が要る1点に議論を集中させるための資料。",
+ "desc":"グレーの濃淡だけで組み、判断が要るところだけを赤にする。原材料の値上がりと価格転嫁の割合を動かすと、通期の利益見込みがその場で変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#e8e8e6; --surface:#f5f5f4; --ink:#1c1c1c; --muted:#555553; --line:#c4c4c1;
+  --accent:#cf1f1f; --accent-ink:#fff; --good:#1c1c1c; --bad:#cf1f1f; --frame:#b9b9b6;
+  --g1:#d3d3d0; --g2:#a9a9a6; --g3:#6f6f6c; --g4:#3a3a39;
+  --radius:0px; --shadow:none;
+  --font:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"IBM Plex Sans JP","Hiragino Sans",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --head-weight:700; --head-track:0; --pad-y:92px; --pad-x:72px;
+}
+/* 資料のヘッダー帯 */
+.slide::before{content:"取締役会　月次報告　2027年5月度　｜　社外秘";position:absolute;left:72px;top:30px;font:500 14px var(--mono);letter-spacing:.08em;color:var(--g3)}
+.slide::after{content:attr(data-no);position:absolute;right:72px;top:28px;font:500 16px var(--mono);color:var(--ink)}
+.slide>.bg{border-top:1px solid transparent}
+.slide>.bg::before{content:"";position:absolute;left:72px;right:72px;top:58px;height:1px;background:var(--g2)}
+.slide.cover::before,.slide.cover::after{display:none}
+.slide.cover>.bg::before{display:none}
+.kicker{font:500 15px var(--mono);letter-spacing:.14em;color:var(--g3);text-transform:uppercase;margin-bottom:10px}
+h1{font-size:76px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+h2{font-size:40px;line-height:1.4;font-weight:700;margin-bottom:30px;max-width:1040px}
+h2 em,.red{font-style:normal;color:var(--accent)}
+.lead{font-size:22px;line-height:1.8;color:var(--muted)}
+.mono{font-family:var(--mono)}
+/* グレーの濃淡の面 */
+.tone{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.tone>div{padding:26px 30px 28px;min-height:250px;display:flex;flex-direction:column}
+.tone>div:nth-child(1){background:var(--surface)}
+.tone>div:nth-child(2){background:var(--g1)}
+.tone>div:nth-child(3){background:var(--g4);color:#f2f2f0}
+.tone .l{font:500 15px var(--mono);letter-spacing:.08em;color:inherit;opacity:.8}
+.tone .v{font:700 84px/1 var(--font-num);letter-spacing:-.03em;margin:18px 0 10px;font-variant-numeric:tabular-nums}
+.tone .v small{font-size:26px;margin-left:6px;letter-spacing:0;font-weight:500}
+.tone .d{margin-top:auto;font-size:19px;border-top:1px solid currentColor;padding-top:12px;display:flex;justify-content:space-between}
+.tone .d b{font:500 20px var(--mono)}
+.tone .alert{outline:4px solid var(--accent);outline-offset:-4px}
+.tone .alert .v,.tone .alert .d b{color:var(--accent)}
+.chart{height:360px;gap:22px;border-bottom:2px solid var(--ink);padding-top:40px;margin-bottom:40px}
+.chart>.col>i{border-radius:0;background:var(--g3)}
+.chart>.col.dim>i{background:var(--g2)}
+.chart>.col.red>i{background:var(--accent)}
+.chart>.col.red::before{color:#fff}
+.chart>.col::before{font:500 18px var(--mono);bottom:calc(var(--v) * 1% - 46px);color:#fff;z-index:1}
+.chart>.col.dim::before{color:var(--ink)}
+.chart>.col::after{font:500 16px var(--mono);color:var(--g3)}
+.budget{position:absolute;left:0;right:0;border-top:2px dashed var(--ink);pointer-events:none}
+.budget span{position:absolute;right:0;top:-26px;font:500 14px var(--mono);background:var(--bg);padding:0 6px}
+.note{border-left:4px solid var(--g4);padding:4px 0 4px 20px;font-size:20px;line-height:1.75}
+.note.red{border-color:var(--accent);color:var(--ink)}
+.field>label{font-size:19px;color:var(--ink)}
+.field>label b{font:500 26px var(--mono)}
+input[type=range]{accent-color:var(--g4)}
+.meter{height:22px;border-radius:0;background:var(--g1)}
+.meter>i{border-radius:0;background:var(--g4)}
+.meter.red>i{background:var(--accent)}
+.out-big{font:700 104px/1 var(--font-num);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.out-big small{font-size:30px;font-weight:500;margin-left:6px;letter-spacing:0}
+.box{background:var(--surface);padding:26px 30px}
+details.why{border:1px solid var(--g2);border-radius:0;background:var(--surface);margin-top:18px}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{border-radius:0;background:var(--g4);color:#fff}
+details.why>.body{font-size:18px;color:var(--ink)}
+details.why.float[open]>.body{border-radius:0;border:1px solid var(--g2);box-shadow:0 8px 24px rgb(0 0 0 / .12)}
+table.t{font-size:21px}
+table.t th{font:500 14px var(--mono);letter-spacing:.08em;color:var(--g3);border-bottom:2px solid var(--ink)}
+table.t td{padding:24px 14px;border-bottom:1px solid var(--line)}
+.st{display:inline-block;font:500 14px var(--mono);padding:3px 10px;background:var(--g1);color:var(--ink);letter-spacing:.06em}
+.st.dark{background:var(--g4);color:#fff}
+.st.red{background:var(--accent);color:#fff}
+ol.list{gap:16px;font-size:24px}
+ol.list>li::before{border-radius:0;background:var(--g4);font-family:var(--mono)}
+ol.list>li.red::before{background:var(--accent)}
+.foot{font:500 14px var(--mono);color:var(--g3);bottom:30px;left:72px}
+.opt{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink)}
+.opt>div{padding:22px 26px 26px 0;min-height:300px;display:flex;flex-direction:column}
+.opt .fx{margin-top:auto}
+.opt>div+div{padding-left:26px;border-left:1px solid var(--g2)}
+.opt .k{font:500 15px var(--mono);color:var(--g3);letter-spacing:.1em}
+.opt h3{font-size:28px;margin:10px 0 10px}
+.opt p{font-size:20px;line-height:1.75;color:var(--muted);margin:0 0 12px}
+.opt .fx{font:700 36px var(--font-num);letter-spacing:-.02em}
+.opt .pick{background:var(--surface);box-shadow:inset 0 4px 0 var(--accent);padding-left:26px}
+.opt .pick h3,.opt .pick .fx{color:var(--accent)}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-no="01" data-title="表紙">
+    <div class="bg">
+      <div style="position:absolute;right:0;top:0;bottom:0;width:430px;background:var(--g4)"></div>
+      <div style="position:absolute;right:430px;top:0;bottom:0;width:120px;background:var(--g2)"></div>
+      <div style="position:absolute;right:550px;top:0;bottom:0;width:40px;background:var(--g1)"></div>
+    </div>
+    <div class="kicker">Board of Directors · Monthly Report</div>
+    <h1>月次報告<br>2027年5月度</h1>
+    <p class="lead" style="margin-top:28px">サンプル化成株式会社　経営企画部<br>2027年6月12日　取締役会</p>
+    <div style="position:absolute;right:72px;top:84px;width:300px;color:#f2f2f0">
+      <div class="mono" style="font-size:15px;letter-spacing:.1em;opacity:.8">本日の審議事項</div>
+      <div style="font:700 200px/1 var(--font-num);color:#fff;margin-top:6px"><span style="color:var(--accent)">1</span></div>
+      <div style="font-size:21px;line-height:1.7;border-top:1px solid #8a8a88;padding-top:14px;margin-top:10px">主力樹脂の価格改定<br><span style="opacity:.8">（報告 4件・審議 1件）</span></div>
+    </div>
+    <aside class="notes">冒頭で「今日ご判断いただくのは1点だけ」と宣言する。残りは報告なので短く。</aside>
+  </section>
+
+  <section class="slide" data-no="02" data-title="サマリー">
+    <div class="bg"></div>
+    <div class="kicker">01 · Summary</div>
+    <h2>売上はほぼ予算どおり。<br><em>営業利益だけが、予算を 16% 下回った。</em></h2>
+    <div class="tone">
+      <div><div class="l">売上高（5月）</div><div class="v"><span data-count="42.6" data-format="dec1"></span><small>億円</small></div><div class="d"><span>予算比</span><b>98.1%</b></div></div>
+      <div class="alert"><div class="l">営業利益（5月）</div><div class="v"><span data-count="3.1" data-format="dec1"></span><small>億円</small></div><div class="d"><span>予算比</span><b>84.2%</b></div></div>
+      <div><div class="l">受注残（5月末）</div><div class="v"><span data-count="118"></span><small>億円</small></div><div class="d"><span>前月末比</span><b>+3.4%</b></div></div>
+    </div>
+    <p class="note" style="margin-top:26px">利益の不足 0.58億円のうち、0.46億円は原材料（ナフサ）の値上がりによる。数量と売価は計画どおり。</p>
+    <p class="foot">※ 社名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">赤は1か所だけ。「売上は問題ない、利益の話だけをします」と言い切る。</aside>
+  </section>
+
+  <section class="slide" data-no="03" data-title="営業利益の推移">
+    <div class="bg"></div>
+    <div class="kicker">02 · Operating income</div>
+    <h2>利益は3か月続けて予算の線を割っている。</h2>
+    <div class="split" style="grid-template-columns:1.35fr .65fr;gap:56px">
+      <div style="position:relative">
+        <div class="chart">
+          <div class="col dim" style="--v:74" data-label="12月" data-val="3.7"><i></i></div>
+          <div class="col dim" style="--v:78" data-label="1月" data-val="3.9"><i></i></div>
+          <div class="col dim" style="--v:76" data-label="2月" data-val="3.8"><i></i></div>
+          <div class="col" style="--v:70" data-label="3月" data-val="3.5"><i></i></div>
+          <div class="col" style="--v:66" data-label="4月" data-val="3.3"><i></i></div>
+          <div class="col red" style="--v:62" data-label="5月" data-val="3.1"><i></i></div>
+        </div>
+        <div class="budget" style="bottom:calc(40px + 2px + (360px - 40px) * .74)"></div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:15px;color:var(--g3);letter-spacing:.1em;margin-bottom:14px">単位：億円<br>点線＝予算 3.7億円／月</div>
+        <p class="note">3月から、ナフサ価格が 1kL あたり 6.2 万円から 7.4 万円に上がった。</p>
+        <p class="note red" style="margin-top:18px">売価への転嫁は、まだ 0%。</p>
+        <details class="why"><summary>他の要因はないか</summary><div class="body">人件費・物流費は予算内（±1%）。為替は 5月に円安で +0.05億円のプラス。値上がり以外の要因は小さい。</div></details>
+      </div>
+    </div>
+    <aside class="notes">点線が予算。3月以降の3本が線の下にあることを指さす。</aside>
+  </section>
+
+  <section class="slide" data-no="04" data-title="通期見込みの試算">
+    <div class="bg"></div>
+    <div class="kicker">03 · Simulation · 動かせます</div>
+    <h2>原材料が 15% 上がったままなら、<em>転嫁しないと通期で 18億円 減る。</em></h2>
+    <div class="split" style="grid-template-columns:.85fr 1.15fr;gap:60px" data-calc
+      data-let="impact = 120*(rise/100)*(1-pass/100)*(rest/12); fy = 40 - impact">
+      <div>
+        <div class="field"><label>原材料の値上がり（前年比） <b data-show="rise" data-unit="%"></b></label><input type="range" name="rise" min="0" max="30" value="15"></div>
+        <div class="field"><label>売価に転嫁できる割合 <b data-show="pass" data-unit="%"></b></label><input type="range" name="pass" min="0" max="100" step="5" value="0"></div>
+        <div class="field"><label>値上がりが続く月数（残り） <b data-show="rest" data-unit=" か月"></b></label><input type="range" name="rest" min="1" max="12" value="12"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">年間の原材料費 120億円 × 値上がり率 ×（1 − 転嫁率）× 続く月数 ÷ 12。<br>通期の営業利益計画は 40億円。</div></details>
+      </div>
+      <div class="box">
+        <div class="mono" style="font-size:15px;color:var(--g3);letter-spacing:.1em">通期 営業利益の見込み</div>
+        <div class="out-big" style="margin-top:8px"><span data-out="fy" data-format="dec1" data-sign></span><small>億円</small></div>
+        <div style="margin-top:22px;display:grid;gap:16px">
+          <div><div class="row" style="justify-content:space-between;font-size:19px;margin-bottom:6px"><span>計画 40億円 に対して</span><b class="mono" data-out="fy/40*100" data-format="pct"></b></div><div class="meter" data-bar="max(0,fy)" data-max="40"><i></i></div></div>
+          <div><div class="row" style="justify-content:space-between;font-size:19px;margin-bottom:6px"><span class="red">値上がりで失う利益</span><b class="mono red" data-out="impact" data-format="dec1" data-unit=" 億円"></b></div><div class="meter red" data-bar="impact" data-max="40"><i></i></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">転嫁率を 60% まで動かし、計画の 9割に戻るところを見せてから次の審議事項へ。</aside>
+  </section>
+
+  <section class="slide" data-no="05" data-title="審議事項">
+    <div class="bg"></div>
+    <div class="kicker">04 · For decision</div>
+    <h2>審議：主力樹脂の価格を、<br><em>8月から 9% 上げる</em>ことを提案する。</h2>
+    <div class="opt">
+      <div class="step"><div class="k">案 A</div><h3>据え置く</h3><p>取引先との関係は保てるが、通期の利益は計画の 55% にとどまる。</p><div class="fx">利益 22億円</div></div>
+      <div class="step pick"><div class="k">案 B（提案）</div><h3>8月から 9% 上げる</h3><p>値上がり分の 6割を転嫁。上位 20社には6月中に説明に回る。</p><div class="fx">利益 33億円</div></div>
+      <div class="step"><div class="k">案 C</div><h3>全量を転嫁（15%）</h3><p>計画に届くが、2社の切り替えの恐れ。売上 −6億円 の見込み。</p><div class="fx">利益 35億円</div></div>
+    </div>
+    <details class="why" style="max-width:760px;margin-top:22px"><summary>なぜ 9% なのか</summary><div class="body">同業3社が 7〜10% の改定を発表済み（業界紙）。9% なら上位 20社のうち 18社は受け入れる見込みと営業部が回答。</div></details>
+    <aside class="notes">→で案を1つずつ。案Bが赤いのは「提案」だから。案Cを選ばない理由を先に聞かれるので、切り替えリスクの2社名は口頭で。</aside>
+  </section>
+
+  <section class="slide" data-no="06" data-title="その他の報告">
+    <div class="bg"></div>
+    <div class="kicker">05 · Other reports</div>
+    <h2>その他の報告4件は、いずれも計画どおり。</h2>
+    <table class="t">
+      <tr><th>項目</th><th>内容</th><th>状況</th></tr>
+      <tr><td>新工場（第3ライン）</td><td>建屋完成。設備の据え付けを 7月に開始</td><td><span class="st">計画どおり</span></td></tr>
+      <tr><td>人員</td><td>5月末 1,284名（前月 +12名）。技術職の採用は年間計画の 48%</td><td><span class="st">計画どおり</span></td></tr>
+      <tr><td>品質</td><td>重大な品質事故 0件。顧客からの苦情 3件（前年同月 5件）</td><td><span class="st">計画どおり</span></td></tr>
+      <tr><td>内部監査</td><td>購買部門の監査を完了。指摘 2件はいずれも軽微</td><td><span class="st dark">完了</span></td></tr>
+    </table>
+  </section>
+
+  <section class="slide" data-no="07" data-title="本日の決議" style="justify-content:center">
+    <div class="bg"><div style="position:absolute;right:0;top:0;bottom:0;width:180px;background:var(--g1)"></div><div style="position:absolute;right:180px;top:0;bottom:0;width:24px;background:var(--g2)"></div></div>
+    <div class="kicker">06 · Resolution</div>
+    <h2 style="font-size:52px">本日、ご決議いただきたいこと</h2>
+    <ol class="list" style="margin-top:24px;max-width:900px;font-size:28px;gap:26px">
+      <li class="step red"><b class="red">主力樹脂の価格改定（案B：8月から 9%）</b></li>
+      <li class="step">改定の説明のため、営業本部長が上位20社を6月中に訪問する</li>
+      <li class="step">次回（7月）の取締役会で、交渉の結果を報告する</li>
+    </ol>
+    <p class="lead" style="margin-top:40px;font-size:20px">資料の問い合わせ：経営企画部　内線 3100</p>
+  </section>
+
+</main>

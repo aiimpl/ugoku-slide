@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中2数学 一次関数 y = ax + b</title>
+<meta name="description" content="深緑の黒板に手書きのチョーク文字。傾き a と切片 b のスライダーを動かすと、表の数とグラフの線がその場で書き変わる。最後に確かめのクイズ。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yomogi&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-show="x" で入力値そのものを表示
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：黒板 / 中学数学の授業（一次関数）
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted)}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+details.why.float{position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#213f31; --surface:transparent; --ink:#f3f0e6; --muted:#cfd8cf; --line:rgb(243 240 230 / .35);
+  --accent:#f6dd6a; --accent-ink:#213f31; --pink:#f7a8bb; --blue:#9fd6f2; --good:#f6dd6a; --bad:#f7a8bb;
+  --frame:#3b2a1c; --radius:0; --shadow:none;
+  --font:"Yomogi","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif; --head-weight:400; --head-track:.02em;
+  --pad-y:60px; --pad-x:84px;
+}
+/* 木の枠・黒板・チョーク受け */
+.slide>.bg{background:linear-gradient(90deg,#5a3d26,#7a5436 30%,#6a4a30 60%,#5a3d26)}
+.slide>.bg::before{content:"";position:absolute;inset:18px 18px 46px;border-radius:3px;
+  background:
+   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+   radial-gradient(ellipse 420px 120px at 30% 30%,rgb(255 255 255 / .05),transparent 70%),
+   radial-gradient(ellipse 520px 160px at 70% 72%,rgb(255 255 255 / .045),transparent 70%),
+   radial-gradient(ellipse at 50% 40%,#28503d,#1d3a2c 75%);
+  box-shadow:inset 0 0 70px rgb(0 0 0 / .55),0 0 0 3px #3f2b1b}
+.slide>.bg::after{content:"";position:absolute;left:10px;right:10px;bottom:14px;height:26px;border-radius:4px;
+  background:
+   linear-gradient(90deg,transparent 150px,#f3f0e6 150px 206px,transparent 206px 222px,#f6dd6a 222px 272px,transparent 272px 290px,#f7a8bb 290px 330px,transparent 330px),
+   linear-gradient(#8a6040,#5b3c24);
+  background-size:100% 9px,100% 100%;background-position:0 3px,0 0;background-repeat:no-repeat;box-shadow:0 -2px 0 #3f2b1b}
+.slide{color:var(--ink);text-shadow:0 0 1.5px rgb(255 255 255 / .35)}
+.slide h1,.slide h2,.slide .big{font-weight:400}
+/* 右端の日付と日直（黒板の決まりごと） */
+.nicchoku{position:absolute;right:40px;top:44px;writing-mode:vertical-rl;font-size:22px;line-height:1.5;color:var(--ink);letter-spacing:.1em}
+.nicchoku b{font-weight:400;color:var(--accent)}
+.y{color:var(--accent)}.p{color:var(--pink)}.b{color:var(--blue)}
+.kicker{color:var(--pink);font-size:22px;letter-spacing:.2em;text-transform:none;font-weight:400}
+h2{font-size:48px;line-height:1.35;margin-bottom:22px}
+/* 手で引いた線 */
+.uline{background:linear-gradient(transparent 86%,currentColor 86% 92%,transparent 92%)}
+.hand{border:2.5px solid var(--ink);border-radius:255px 18px 225px 18px/18px 225px 18px 255px;padding:18px 26px}
+.hand.y{border-color:var(--accent)}.hand.p{border-color:var(--pink)}
+.eq{font-size:46px;letter-spacing:.06em;white-space:nowrap}
+/* 表 */
+table.t{font-size:32px;border-collapse:collapse;width:auto}
+table.t th,table.t td{border:0;border-right:2px solid var(--line);padding:6px 20px;text-align:center;min-width:88px;color:var(--ink)}
+table.t tr:first-child td,table.t tr:first-child th{border-bottom:2.5px solid var(--ink)}
+table.t th{font-size:30px;font-weight:400;color:var(--accent)}
+table.t .zero{color:var(--pink)}
+.big3{font-size:40px!important}.big3 td{min-width:120px!important}
+.diffrow td,.diffrow th{border:0!important;color:var(--pink)!important;font-size:30px;padding-top:0!important}
+.diffrow span{display:inline-block;transform:translateX(-62px)}
+.diffrow span::before{content:"";display:block;width:70px;height:18px;margin:0 auto -4px;border:2.5px solid var(--pink);border-top:0;border-radius:0 0 40px 40px}
+/* 部品をチョークに */
+.field>label{color:var(--ink);font-size:24px}
+.field>label b{font-family:var(--font);font-size:34px;color:var(--accent);font-weight:400}
+input[type=range]{accent-color:var(--accent);height:34px}
+details.why{border:2px dashed var(--line);border-radius:14px;background:rgb(0 0 0 / .12)}
+details.why>summary{color:var(--accent);font-size:22px;font-weight:400}
+details.why>summary::before{background:transparent;border:2px solid var(--accent);color:var(--accent)}
+details.why>.body{color:var(--ink);font-size:21px}
+.quiz .choices{grid-template-columns:1fr;gap:14px}
+.quiz .choices>button{background:transparent;color:var(--ink);font-size:32px;border:2.5px solid var(--line);
+  border-radius:225px 14px 205px 14px/14px 205px 14px 225px;padding:12px 28px;position:relative;text-shadow:inherit}
+.quiz.answered .choices>button[data-correct]{background:rgb(246 221 106 / .12);border-color:var(--accent)}
+.quiz.answered .choices>button[data-correct]::after{content:"";position:absolute;right:14px;top:50%;width:62px;height:62px;margin-top:-31px;border:4px solid var(--pink);border-radius:50%;transform:rotate(-8deg)}
+.quiz.answered .choices>button.picked:not([data-correct]){background:transparent;border-color:var(--pink);color:var(--muted);text-decoration:line-through}
+.quiz .explain{color:var(--ink);font-size:28px;margin-top:26px}
+ol.list{font-size:30px;gap:20px}
+ol.list>li{padding-left:70px}
+ol.list>li::before{background:transparent;border:2.5px solid var(--accent);color:var(--accent);font-weight:400;font-size:28px;width:50px;height:50px;top:0}
+ul.list{font-size:30px}
+ul.list>li::before{background:var(--pink);border-radius:50% 40% 55% 45%}
+.foot{color:var(--muted);bottom:60px;font-size:16px}
+/* グラフ */
+.plot{width:400px;height:400px;display:block;overflow:hidden}
+.plot .grid line{stroke:rgb(243 240 230 / .16);stroke-width:1.5}
+.plot .ax{stroke:var(--ink);stroke-width:3;stroke-linecap:round;fill:none}
+.plot text{fill:var(--ink);font:22px var(--font)}
+.plot .ln{stroke:var(--accent);stroke-width:6;stroke-linecap:round;transition:all .45s var(--ease)}
+.plot .pt{fill:var(--pink);transition:all .45s var(--ease)}
+.plot .cut{fill:none;stroke:var(--pink);stroke-width:3;transition:all .45s var(--ease)}
+.chalk{filter:url(#chalk42)}
+@media (prefers-reduced-motion:reduce){.plot .ln,.plot .pt,.plot .cut{transition:none}}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"></div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="chalk42"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="3"/></filter></svg>
+    <p class="nicchoku">9月28日（月）<br>日直　<b>佐藤</b>・<b>田中</b></p>
+    <p class="kicker">中2 数学　第3章　一次関数 ①</p>
+    <h1 style="font-size:150px;line-height:1.05;font-weight:400;letter-spacing:.04em">一次関数</h1>
+    <p class="eq y" style="font-size:88px;margin:16px 0 26px">y ＝ <span class="p">a</span>x ＋ <span class="b">b</span></p>
+    <p style="font-size:30px;line-height:1.6;max-width:640px">2つの数 <span class="p">a</span> と <span class="b">b</span> だけで、<br>まっすぐな線が1本決まる。</p>
+    <svg class="chalk" viewBox="0 0 360 300" style="position:absolute;right:120px;bottom:110px;width:380px;height:320px" aria-hidden="true">
+      <path d="M30 260 H340 M60 290 V20" stroke="#f3f0e6" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M335 262 l-14 -8 M335 262 l-14 8 M60 22 l-8 14 M60 22 l8 14" stroke="#f3f0e6" stroke-width="4" stroke-linecap="round"/>
+      <path d="M40 250 L320 60" stroke="#f6dd6a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M150 176 H200 V142" stroke="#9fd6f2" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+      <text x="206" y="168" fill="#9fd6f2" font-size="26" font-family="Yomogi">a</text>
+      <circle cx="60" cy="236" r="10" fill="none" stroke="#f7a8bb" stroke-width="3"/>
+      <text x="74" y="228" fill="#f7a8bb" font-size="26" font-family="Yomogi">b</text>
+    </svg>
+    <aside class="notes">始業のあいさつのあと、表紙を見せて「今日は2つの文字だけで線を決める」とだけ言う。日付と日直は右端の縦書きを書き換える。</aside>
+  </section>
+
+  <section class="slide" data-title="めあて">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">今日のめあて</p>
+    <div class="hand y" style="font-size:46px;line-height:1.5;margin:6px 0 40px;padding:22px 34px;align-self:flex-start">
+      <span class="p">a</span> と <span class="b">b</span> が、グラフの「何を」決めるのか<br>自分のことばで説明できる。
+    </div>
+    <ol class="list" style="font-size:36px;gap:26px">
+      <li class="step">式を読む　　<span class="y">y ＝ 3x ＋ 5</span></li>
+      <li class="step">表をつくる　　x が 1 ふえると、y は？</li>
+      <li class="step">グラフをかく　　<span class="p">かたむき</span>と<span class="b">出発点</span>を見る</li>
+    </ol>
+    <p class="p" style="margin-top:auto;font-size:28px;align-self:flex-end;border-bottom:2.5px solid var(--pink);padding:0 8px 4px">めあてをノートに写そう（2分）</p>
+    <aside class="notes">めあてはノートに写させる（2分）。→キーで3つの手順が1つずつ出る。</aside>
+  </section>
+
+  <section class="slide" data-title="例題">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">例題　水そうに水を入れる</p>
+    <h2>はじめ <span class="b">5 cm</span>、1分ごとに <span class="p">3 cm</span> ずつ高くなる。</h2>
+    <table class="t big3" style="margin-top:4px">
+      <tr><th>x（分）</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+      <tr><th>y（cm）</th><td class="b">5</td><td>8</td><td>11</td><td>14</td><td>17</td><td>20</td></tr>
+      <tr class="step diffrow"><th></th><td></td><td><span>＋3</span></td><td><span>＋3</span></td><td><span>＋3</span></td><td><span>＋3</span></td><td><span>＋3</span></td></tr>
+    </table>
+    <div class="row" style="margin-top:30px;gap:48px;align-items:center">
+      <p class="eq step y hand" style="font-size:80px;margin:0;padding:14px 34px">y ＝ <span class="p">3</span>x ＋ <span class="b">5</span></p>
+      <p class="step" style="font-size:34px;line-height:1.6;margin:0"><span class="p">3</span> は「1分でふえる高さ」<br><span class="b">5</span> は「はじめの高さ」</p>
+    </div>
+    <aside class="notes">表は生徒に言わせながら埋める。「＋3」が並んだところで「この 3 が式のどこにいる？」と聞いてから式を出す。</aside>
+  </section>
+
+  <section class="slide" data-title="動かしてみよう" style="padding-right:70px">
+    <div class="bg"></div>
+    <p class="kicker">動かしてみよう</p>
+    <h2 style="margin-bottom:14px"><span class="p">a</span> はかたむき、<span class="b">b</span> は出発点を動かす。</h2>
+    <div data-calc class="fill" style="display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:start">
+      <div>
+        <p class="eq y" data-formula style="font-size:56px;margin:0 0 14px">y ＝ 2x ＋ 1</p>
+        <div class="field"><label><span>かたむき <span class="p">a</span></span><b data-show="a"></b></label><input type="range" name="a" min="-3" max="3" step="1" value="2"></div>
+        <div class="field"><label><span>切片 <span class="b">b</span></span><b data-show="b"></b></label><input type="range" name="b" min="-4" max="4" step="1" value="1"></div>
+        <table class="t" style="font-size:28px;margin-top:6px">
+          <tr><th style="font-size:26px">x</th><td>−2</td><td>−1</td><td class="zero">0</td><td>1</td><td>2</td></tr>
+          <tr><th style="font-size:26px">y</th><td data-out="a*-2+b"></td><td data-out="a*-1+b"></td><td class="zero" data-out="b"></td><td data-out="a+b"></td><td data-out="a*2+b"></td></tr>
+        </table>
+      </div>
+      <svg class="plot" viewBox="-200 -200 400 400" data-graph aria-label="y = ax + b のグラフ">
+        <g class="grid">
+          <line x1="-160" y1="-200" x2="-160" y2="200"/><line x1="-120" y1="-200" x2="-120" y2="200"/><line x1="-80" y1="-200" x2="-80" y2="200"/><line x1="-40" y1="-200" x2="-40" y2="200"/>
+          <line x1="40" y1="-200" x2="40" y2="200"/><line x1="80" y1="-200" x2="80" y2="200"/><line x1="120" y1="-200" x2="120" y2="200"/><line x1="160" y1="-200" x2="160" y2="200"/>
+          <line y1="-160" x1="-200" y2="-160" x2="200"/><line y1="-120" x1="-200" y2="-120" x2="200"/><line y1="-80" x1="-200" y2="-80" x2="200"/><line y1="-40" x1="-200" y2="-40" x2="200"/>
+          <line y1="40" x1="-200" y2="40" x2="200"/><line y1="80" x1="-200" y2="80" x2="200"/><line y1="120" x1="-200" y2="120" x2="200"/><line y1="160" x1="-200" y2="160" x2="200"/>
+        </g>
+        <path class="ax chalk" d="M-196 0 H196 M0 196 V-196 M186 -8 L196 0 L186 8 M-8 -186 L0 -196 L8 -186"/>
+        <text x="176" y="30">x</text><text x="12" y="-176">y</text><text x="-26" y="28">O</text>
+        <line class="ln chalk" x1="-200" y1="0" x2="200" y2="0"/>
+        <circle class="cut" cx="0" cy="-40" r="13"/>
+        <circle class="pt" cx="-80" cy="0" r="7"/><circle class="pt" cx="-40" cy="0" r="7"/><circle class="pt" cx="40" cy="0" r="7"/><circle class="pt" cx="80" cy="0" r="7"/>
+      </svg>
+    </div>
+    <aside class="notes">まず b だけ動かして「線が上下に平行移動する」、次に a だけ動かして「かたむきが変わる」。a をマイナスにしたとき右下がりになることを生徒に予想させてから動かす。</aside>
+  </section>
+
+  <section class="slide" data-title="まとめ">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">まとめ</p>
+    <div class="grid cols-2" style="gap:44px;margin-top:10px">
+      <div class="hand p">
+        <p style="font-size:40px;margin:0 0 6px"><span class="p" style="font-size:84px;line-height:1">a</span>　かたむき</p>
+        <p style="font-size:27px;line-height:1.6;margin:0">x が 1 ふえると、y が a ふえる。<br>a がマイナスなら、右下がり。</p>
+        <svg class="chalk" viewBox="0 0 400 150" style="width:100%;height:150px;margin-top:12px" aria-hidden="true">
+          <path d="M20 130 H380 M200 145 V6" stroke="#f3f0e6" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M140 145 L260 10" stroke="#f7a8bb" stroke-width="5" stroke-linecap="round"/><path d="M90 140 L310 20" stroke="#f7a8bb" stroke-width="4" stroke-linecap="round" opacity=".6"/><path d="M110 20 L290 140" stroke="#f6dd6a" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 9"/>
+          <text x="262" y="30" fill="#f7a8bb" font-size="22" font-family="Yomogi">a=3</text><text x="312" y="46" fill="#f7a8bb" font-size="22" font-family="Yomogi" opacity=".8">a=1</text><text x="36" y="34" fill="#f6dd6a" font-size="22" font-family="Yomogi">a=−1</text>
+        </svg>
+      </div>
+      <div class="hand" style="border-color:var(--blue)">
+        <p style="font-size:40px;margin:0 0 6px"><span class="b" style="font-size:84px;line-height:1">b</span>　切片</p>
+        <p style="font-size:27px;line-height:1.6;margin:0">x が 0 のときの y。<br>線が y 軸とまじわるところ。</p>
+        <svg class="chalk" viewBox="0 0 400 150" style="width:100%;height:150px;margin-top:12px" aria-hidden="true">
+          <path d="M20 130 H380 M200 145 V6" stroke="#f3f0e6" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M60 110 L340 30" stroke="#9fd6f2" stroke-width="5" stroke-linecap="round"/><path d="M60 150 L340 70" stroke="#9fd6f2" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+          <circle cx="200" cy="70" r="10" fill="none" stroke="#f7a8bb" stroke-width="3"/><circle cx="200" cy="110" r="10" fill="none" stroke="#f7a8bb" stroke-width="3" opacity=".7"/>
+          <text x="100" y="60" fill="#f7a8bb" font-size="22" font-family="Yomogi">(0, b)</text>
+        </svg>
+      </div>
+    </div>
+    <details class="why" style="margin-top:26px;max-width:900px"><summary>なぜ b が y 軸とまじわるところ？</summary><div class="body">y 軸の上では x ＝ 0。式に入れると y ＝ a×0 ＋ b ＝ b。だから、どんな a でも線は (0, b) を通る。</div></details>
+    <aside class="notes">「なぜ」は生徒に先に考えさせてから開く。ここまでで25分が目安。</aside>
+  </section>
+
+  <section class="slide" data-title="確かめ">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <div class="quiz">
+      <p class="kicker">確かめ</p>
+      <p style="font-size:66px;margin:0 0 30px"><span class="y">y ＝ −2x ＋ 3</span> のグラフは？</p>
+      <div class="choices">
+        <button>右上がりで、y 軸と −2 でまじわる</button>
+        <button>右上がりで、y 軸と 3 でまじわる</button>
+        <button data-correct>右下がりで、y 軸と 3 でまじわる</button>
+        <button>右下がりで、y 軸と −2 でまじわる</button>
+      </div>
+      <p class="explain">a ＝ −2 はマイナスなので右下がり。b ＝ 3 なので (0, 3) を通る。x が 1 ふえるごとに、y は 2 ずつへる。</p>
+    </div>
+    <aside class="notes">全員に指で番号を出させてから押す。正解に丸がつく。まちがいが多ければ4枚目に戻って a をマイナスにする。</aside>
+  </section>
+
+  <section class="slide" data-title="宿題">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">ふりかえり・宿題</p>
+    <h2 style="font-size:64px">今日わかったことを、<span class="uline y">1行</span>で書こう。</h2>
+    <div class="hand" style="border-style:dashed;height:130px;margin-bottom:36px;font-size:30px;color:var(--muted);display:flex;align-items:center">a は ……………………、b は …………………… を決める。</div>
+    <ul class="list" style="gap:24px;font-size:34px">
+      <li class="step">宿題　教科書 p.62　問1〜問3</li>
+      <li class="step">次の時間　2つの点から式を求める</li>
+      <li class="step">持ち物　定規と方眼ノート</li>
+    </ul>
+    <p class="foot">教科書のページや名前は架空のサンプルです。</p>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      el.classList.toggle("neg", to < 0);
+      el.classList.toggle("pos", to > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => tween(el, run(f)));
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
+    el._v = 0; tween(el, Number(el.dataset.count));
+  });
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    render();
+    if (prev !== -1) countUp(slides[i]);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+<script>
+/* 4枚目のグラフ：a と b に合わせて線と点を引き直す（1マス＝40px） */
+(() => {
+  const box = document.querySelector("[data-calc]"); const svg = box && box.querySelector("[data-graph]");
+  if (!svg) return;
+  const ln = svg.querySelector(".ln"), cut = svg.querySelector(".cut"), pts = svg.querySelectorAll(".pt"), fx = box.querySelector("[data-formula]");
+  const xs = [-2, -1, 1, 2];
+  const draw = () => {
+    const a = Number(box.querySelector("[name=a]").value), b = Number(box.querySelector("[name=b]").value);
+    const Y = x => -(a * x + b) * 40;
+    ln.setAttribute("x1", -200); ln.setAttribute("y1", Y(-5)); ln.setAttribute("x2", 200); ln.setAttribute("y2", Y(5));
+    cut.setAttribute("cy", Y(0));
+    pts.forEach((p, i) => { p.setAttribute("cx", xs[i] * 40); p.setAttribute("cy", Y(xs[i])); });
+    const ax = a === 0 ? "" : a === 1 ? "x" : a === -1 ? "−x" : (a < 0 ? "−" : "") + Math.abs(a) + "x";
+    const bs = b === 0 ? "" : (ax ? (b < 0 ? " − " : " ＋ ") : (b < 0 ? "−" : "")) + Math.abs(b);
+    fx.textContent = "y ＝ " + ((ax + bs) || "0");
+  };
+  box.addEventListener("input", draw); draw();
+})();
+</script>
+</body>
+</html>

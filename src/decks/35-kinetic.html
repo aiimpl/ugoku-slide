@@ -1,0 +1,171 @@
+<!--meta
+{"title":"VISION 2030","style":"キネティック・タイポ","use":"会社のビジョン発表","group":"ミニマル・タイポ",
+ "aim":"社長が全社キックオフの壇上で新しいビジョンを発表し、社員に3つの言葉を覚えて帰ってもらうための資料。",
+ "desc":"黒地に、1文字ずつ飛び込んで組み上がる言葉。→ を押すたびに次の言葉が動いて現れる。サービスの成長率を動かすと、2030年の売上に占める割合が変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0c0c0e; --surface:#17171b; --ink:#f4f3ee; --muted:#a9a8a2; --line:#34343a;
+  --accent:#ff6a2b; --accent-ink:#0c0c0e; --good:#7ee2a8; --bad:#ff8d7a; --frame:#000;
+  --radius:0px; --shadow:none;
+  --font:"Space Grotesk","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-head:"Dela Gothic One","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-num:"Space Grotesk","Hiragino Sans",sans-serif; --head-weight:400; --head-track:.01em;
+  --pad-y:64px; --pad-x:84px;
+}
+/* 1文字ずつ組み上がる（.kt の文字は下のスクリプトが1字ずつ span に分ける） */
+.kt .ch{display:inline-block;white-space:pre}
+.slide.active .kt .ch{animation:k-up .7s cubic-bezier(.2,.9,.2,1.15) both;animation-delay:calc(var(--i) * 45ms + var(--d, 0ms))}
+.slide.active .kt.zoom .ch{animation-name:k-zoom;animation-duration:.8s}
+.slide.active .kt.side .ch{animation-name:k-side}
+.slide.active .kt.drop .ch{animation-name:k-drop;animation-duration:.9s}
+.slide.active .step:not(.shown) .kt .ch{animation:none;opacity:0}
+@keyframes k-up{from{opacity:0;transform:translateY(.7em) rotate(10deg)}}
+@keyframes k-zoom{from{opacity:0;transform:scale(2.6);filter:blur(10px)}}
+@keyframes k-side{from{opacity:0;transform:translateX(-1.2em) skewX(-20deg)}}
+@keyframes k-drop{0%{opacity:0;transform:translateY(-1.4em) scaleY(1.6)}60%{opacity:1;transform:translateY(.06em) scaleY(.85)}}
+/* 流れ続ける帯（飾り） */
+.band{position:absolute;left:0;white-space:nowrap;font:400 150px/1 var(--font-head);color:transparent;-webkit-text-stroke:1.5px #2c2c33;animation:band 40s linear infinite}
+.band.r{animation-direction:reverse;animation-duration:52s}
+@keyframes band{to{transform:translateX(-50%)}}
+.kicker{font:700 16px var(--font);letter-spacing:.3em;color:var(--accent);display:flex;gap:14px;align-items:center}
+.kicker::before{content:"";width:40px;height:2px;background:var(--accent)}
+h1,h2,.head{font-family:var(--font-head);font-weight:400}
+h1{font-size:118px;line-height:1.1;letter-spacing:.01em}
+h2{font-size:46px;line-height:1.4;margin-bottom:34px}
+.lead{font-size:22px;line-height:1.8;color:var(--muted)}
+.accent{color:var(--accent)}
+.stroke{color:transparent;-webkit-text-stroke:2px var(--ink)}
+.stack>div{font:400 100px/1.22 var(--font-head);white-space:nowrap}
+.word3{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:8px}
+.word3 .w{font:400 84px/1.05 var(--font-head);margin-bottom:26px;white-space:nowrap}
+.word3 .n{font:700 18px var(--font);letter-spacing:.2em;color:var(--accent);margin-bottom:14px}
+.word3 p{font-size:22px;line-height:1.75;color:var(--muted);border-top:2px solid var(--line);padding-top:16px}
+.stop{display:grid;gap:26px;margin-top:10px}
+.stop>div{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;border-top:2px solid var(--line);padding-top:22px}
+.stop .x{font:400 68px/1.2 var(--font-head);position:relative;width:max-content}
+.stop .x::after{content:"";position:absolute;left:-6px;right:-6px;top:52%;height:6px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .6s .35s var(--ease)}
+.stop .shown .x::after{transform:scaleX(1)}
+.stop .to{font-size:26px;line-height:1.6}
+.stop .to b{color:var(--accent);font-weight:700}
+.kpi2{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--line);margin-top:40px}
+.kpi2>div{padding:20px 24px 0 0}
+.kpi2>div+div{padding-left:24px;border-left:2px solid var(--line)}
+.kpi2 .v{font:700 88px/1 var(--font-num);letter-spacing:-.03em}
+.kpi2 .v small{font-size:22px;margin-left:4px;letter-spacing:0;color:var(--muted)}
+.kpi2 .l{font-size:19px;color:var(--muted);margin-top:10px}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:700 30px var(--font-num);color:var(--accent)}
+input[type=range]{accent-color:var(--accent)}
+.meter{height:56px;border-radius:0;background:#26262c;position:relative}
+.meter>i{border-radius:0;background:var(--accent)}
+.share{font:700 200px/.9 var(--font-num);letter-spacing:-.05em}
+.share small{font-size:70px;letter-spacing:-.02em}
+details.why{border:0;border-left:3px solid var(--accent);border-radius:0;background:var(--surface)}
+details.why>summary{color:var(--ink)}
+details.why>summary::before{border-radius:0;background:var(--accent);color:var(--accent-ink)}
+details.why>.body{font-size:19px;color:var(--muted)}
+.foot{font-size:15px}
+@media (prefers-reduced-motion:reduce){.band{animation:none}.slide.active .kt .ch{animation:none!important}}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide cover" data-title="表紙" data-enter="none">
+    <div class="bg"><div class="band" style="bottom:-20px">VISION 2030 — VISION 2030 — VISION 2030 — VISION 2030 — VISION 2030 — VISION 2030 — </div></div>
+    <div class="kicker">SAMPLE SEIKI · KICKOFF 2027</div>
+    <h1 style="margin-top:22px"><span class="kt drop">まだ誰も</span><br><span class="kt drop" style="--d:420ms">見ていない、</span><br><span class="kt zoom accent" style="--d:1000ms">景色へ。</span></h1>
+    <aside class="notes">何も言わずに文字が組み上がるのを待つ。3行目が出たら「今日は、この会社がどこへ向かうかの話をします」。</aside>
+  </section>
+
+  <section class="slide" data-title="なぜ変わるのか" data-enter="none">
+    <div class="bg"></div>
+    <div class="kicker">WHY NOW</div>
+    <div class="stack" style="margin-top:26px">
+      <div class="step"><span class="kt side">部品を売る会社から、</span></div>
+      <div class="step"><span class="kt up accent">動きを売る会社へ。</span></div>
+    </div>
+    <div class="kpi2 step">
+      <div><div class="v"><span data-count="52"></span><small>年</small></div><div class="l">精密モーターをつくってきた年数</div></div>
+      <div><div class="v"><span data-count="2400"></span><small>社</small></div><div class="l">いまの取引先</div></div>
+      <div><div class="v">−<span data-count="18"></span><small>%</small></div><div class="l">この5年での部品単価の下落</div></div>
+    </div>
+    <details class="why" style="max-width:720px;margin-top:26px"><summary>「動きを売る」とは？</summary><div class="body">モーターを1台ずつ売るのではなく、工場のラインが止まらない状態を月額で約束する。故障の予兆を見つけ、止まる前に交換する。</div></details>
+    <p class="foot">社名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">→で1行ずつ。2行目の「動き」を強く読む。数字は読み上げず、指さすだけ。</aside>
+  </section>
+
+  <section class="slide" data-title="3つの言葉" data-enter="none">
+    <div class="bg"><div class="band r" style="bottom:-30px">つなぐ ちいさく ながく つなぐ ちいさく ながく つなぐ ちいさく ながく </div></div>
+    <div class="kicker">3 WORDS</div>
+    <h2 style="margin-top:14px">覚えて帰ってほしいのは、この3語だけ。</h2>
+    <div class="word3">
+      <div class="step"><div class="n">01</div><div class="w"><span class="kt zoom">つなぐ</span></div><p>モーター1台1台をネットにつなぎ、止まる前に気づく。</p></div>
+      <div class="step"><div class="n">02</div><div class="w"><span class="kt zoom">ちいさく</span></div><p>大きな計画より、小さく試して月に1つ出す。</p></div>
+      <div class="step"><div class="n">03</div><div class="w"><span class="kt zoom accent">ながく</span></div><p>売って終わりにせず、10年つきあう。</p></div>
+    </div>
+    <aside class="notes">1語ずつ→。言葉を言ってから説明を読む。最後に3語を続けて言い直す。</aside>
+  </section>
+
+  <section class="slide" data-title="2030年の売上" data-enter="none">
+    <div class="bg"></div>
+    <div class="kicker">2030 · 動かせます</div>
+    <h2 style="margin-top:14px"><span class="kt side">サービスが年 42% 伸びれば、売上の半分になる。</span></h2>
+    <div class="split fill" style="grid-template-columns:.85fr 1.15fr;gap:70px" data-calc
+      data-let="s30 = 40*pow(1+svc/100,4); p30 = 150*pow(1+part/100,4); tot = s30+p30; sh = s30/tot*100">
+      <div>
+        <div class="field"><label>サービスの年成長率 <b data-show="svc" data-unit="%"></b></label><input type="range" name="svc" min="0" max="80" value="42"></div>
+        <div class="field"><label>部品の年成長率 <b data-show="part" data-unit="%"></b></label><input type="range" name="part" min="-10" max="10" value="2"></div>
+        <details class="why"><summary>前提</summary><div class="body">2026年度の売上は部品 150億円、サービス 40億円。それぞれの成長率で4年伸ばした2030年度の姿。</div></details>
+      </div>
+      <div>
+        <div style="font-size:20px;color:var(--muted)">2030年、売上に占めるサービス</div>
+        <div class="share"><span data-out="sh" data-format="dec1"></span><small>%</small></div>
+        <div class="meter" style="margin-top:24px" data-bar="sh" data-max="100"><i></i></div>
+        <div class="row" style="justify-content:space-between;margin-top:14px;font-size:20px"><span>売上合計 <b data-out="tot" data-unit=" 億円"></b></span><span class="muted">サービス <b data-out="s30" data-unit=" 億円" style="color:var(--ink)"></b></span></div>
+      </div>
+    </div>
+    <aside class="notes">部品の成長率をマイナスにしても、サービスが伸びれば会社は大きくなる、という点を見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="やめること" data-enter="none">
+    <div class="bg"></div>
+    <div class="kicker">STOP</div>
+    <h2 style="margin-top:14px">そのかわり、3つのことをやめる。</h2>
+    <div class="stop">
+      <div class="step"><div class="x">値引きで勝つ</div><div class="to">→ 止まらない時間で、<b>選ばれる</b>。</div></div>
+      <div class="step"><div class="x">全部を自社で</div><div class="to">→ ソフトは、<b>得意な会社と組む</b>。</div></div>
+      <div class="step"><div class="x">1年かけて出す</div><div class="to">→ 試作は、<b>1か月で客に見せる</b>。</div></div>
+    </div>
+    <aside class="notes">→を押すと取り消し線が引かれる。「やめる」と言い切ってから、右の言いかえを読む。</aside>
+  </section>
+
+  <section class="slide cover" data-title="明日から" data-enter="none">
+    <div class="bg"><div class="band" style="bottom:-20px">TOMORROW — TOMORROW — TOMORROW — TOMORROW — TOMORROW — TOMORROW — </div></div>
+    <div class="kicker">TOMORROW</div>
+    <h1 style="font-size:104px;margin-top:22px"><span class="kt up">明日から、</span><br><span class="kt drop accent" style="--d:500ms">ひとつだけ。</span></h1>
+    <p class="lead" style="margin-top:30px;max-width:760px">自分の仕事で「つなぐ・ちいさく・ながく」のどれか1つを、今月中に試してください。<br>報告は各部のビジョン担当へ。</p>
+  </section>
+
+</main>
+
+<script>
+/* .kt の文字を1字ずつ span に分ける（文字を書き換えても、そのまま動く） */
+document.querySelectorAll(".kt").forEach(el => {
+  let i = 0;
+  const walk = node => [...node.childNodes].forEach(c => {
+    if (c.nodeType === 3) {
+      const f = document.createDocumentFragment();
+      [...c.textContent].forEach(ch => {
+        if (/^[ \n\t]$/.test(ch)) { f.append(ch); return; }
+        const s = document.createElement("span");
+        s.className = "ch"; s.style.setProperty("--i", i++); s.textContent = ch;
+        f.append(s);
+      });
+      c.replaceWith(f);
+    } else if (c.nodeType === 1 && c.tagName !== "BR") walk(c);
+  });
+  walk(el);
+});
+</script>

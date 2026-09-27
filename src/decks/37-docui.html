@@ -1,0 +1,277 @@
+<!--meta
+{"title":"1on1 ノート 2027年4月","style":"ドキュメント風（ノートアプリ）","use":"1on1・議事録の共有","group":"ビジネス定番",
+ "aim":"チームリーダーが月1回の1on1で、このページを画面共有しながら前回の約束を振り返り、次の1か月の約束を決めるための資料。",
+ "desc":"左に目次、チェックボックスとトグルが並ぶノートアプリのような1ページ。約束にチェックを入れると完了数が変わり、案件数を動かすと来月の残業の見込みが出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=M+PLUS+2:wght@400;500;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#ffffff; --surface:#f7f7f5; --ink:#37352f; --muted:#6f6e69; --line:#e9e9e7;
+  --accent:#2383e2; --accent-ink:#fff; --good:#448361; --bad:#d44c47; --frame:#ececea;
+  --radius:6px; --shadow:none;
+  --font:"Inter","M PLUS 2","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Inter","M PLUS 2",sans-serif; --head-weight:700; --head-track:-.005em;
+  --pad-y:92px; --pad-x:84px;
+}
+.slide{padding-left:calc(272px + 76px);padding-right:84px}
+/* 左の目次（.bg の中。リンクだけ押せる） */
+.side{position:absolute;left:0;top:0;bottom:0;width:272px;background:var(--surface);border-right:1px solid var(--line);padding:18px 10px;font-size:15px;color:#5f5e5b}
+.side a{pointer-events:auto;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:5px;color:inherit;text-decoration:none;line-height:1.3;cursor:pointer}
+.side a:hover{background:#ebebe9}
+.side .ic{font-style:normal;width:16px;text-align:center;color:#9b9a97;font-size:13px}
+.side .ws{display:flex;align-items:center;gap:10px;padding:6px 10px 16px;font-weight:600;color:var(--ink);font-size:15px}
+.side .wsi{width:24px;height:24px;border-radius:5px;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 13px var(--font)}
+.side .grp{padding:8px 10px 4px;font-size:13px;font-weight:600;color:#91918e}
+.side .pg.cur{color:var(--ink);font-weight:600}
+.side .sub{padding-left:16px}
+.side .sub a{font-size:14.5px}
+.side .sub a.on{background:#e3e2e0;color:var(--ink);font-weight:600}
+.crumb{position:absolute;left:300px;top:26px;font-size:15px;color:#7d7c78}
+/* 表紙の帯とアイコン */
+.cover-img{margin:-92px -84px 0 -76px;height:170px;background:
+  radial-gradient(circle at 20% 120%,#f5d9b8 0 30%,transparent 30.5%),
+  radial-gradient(circle at 70% -20%,#cfe2d8 0 34%,transparent 34.5%),
+  linear-gradient(90deg,#e9eef5,#f3ece4)}
+.page-ic{width:92px;height:92px;margin-top:-46px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font:800 32px var(--font-num);color:var(--ink);box-shadow:0 2px 8px rgb(0 0 0 / .06)}
+h1{font-size:48px;line-height:1.3;margin:22px 0 22px;letter-spacing:-.01em}
+h2{font-size:36px;line-height:1.35;margin-bottom:28px}
+h2::before{content:"";display:block;width:100%;height:1px;background:transparent}
+.props{display:grid;gap:0;font-size:21px;max-width:860px}
+.props .p{display:grid;grid-template-columns:180px 1fr;align-items:center;padding:11px 0;border-bottom:1px solid transparent}
+.props .k{color:#7d7c78;display:flex;align-items:center;gap:8px}
+.props .k::before{content:"≡";color:#b3b2ae}
+.props .u{text-decoration:underline;text-decoration-color:#c7c6c2;text-underline-offset:4px}
+.av{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#e8deee;color:#5a3d78;font-size:13px;font-weight:700;margin-right:4px;vertical-align:1px}
+.av.g{background:#dbeddb;color:#2b593f}
+.tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:16px;line-height:1.5}
+.tag.blue{background:#e7f3f8;color:#1f6c9f}.tag.green{background:#edf3ec;color:#2f5f3a}.tag.orange{background:#fbecdd;color:#8a4712}
+.callout{display:flex;gap:16px;align-items:flex-start;background:#f1f1ef;border-radius:6px;padding:20px 24px;font-size:22px;line-height:1.7;margin-top:26px;max-width:860px}
+.callout .ci{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 16px var(--font-num);margin-top:2px}
+.callout.warn{background:#fbf3db}.callout.warn .ci{background:#b07d17}
+.callout.ok{background:#edf3ec}.callout.ok .ci{background:var(--good)}
+/* チェックリスト */
+.todo{display:grid;gap:4px;max-width:860px}
+.chk{display:grid;grid-template-columns:30px 1fr auto auto auto;gap:14px;align-items:center;padding:14px 6px;border-radius:5px;font-size:25px;cursor:pointer}
+.chk:hover{background:#f5f5f3}
+.chk input,.chk .box{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:1.5px solid #5f5e5b;border-radius:3px;cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.chk input:checked{background:var(--accent);border-color:var(--accent)}
+.chk input:checked::after{content:"";width:10px;height:5px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:translateY(-2px) rotate(-45deg)}
+.chk input:checked+span{color:#9b9a97;text-decoration:line-through;text-decoration-color:#b9b8b4}
+.who{font-style:normal;font-size:16px;background:#f1f1ef;border-radius:4px;padding:2px 10px;color:#5f5e5b}
+.est{font-style:normal;font-size:16px;color:#7d7c78;font-variant-numeric:tabular-nums}
+.left{color:#7d7c78;font-weight:500;margin-left:10px}
+.due{font-style:normal;font-size:16px;color:var(--bad);font-variant-numeric:tabular-nums}
+.todo.big .chk{font-size:26px;padding:20px 6px;border-bottom:1px solid var(--line);border-radius:0}
+.prog{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.prog b{font:600 22px var(--font-num)}
+.meter{height:10px;background:#ebebea}
+.meter>i{background:var(--accent)}
+.hint{font-size:17px;color:#7d7c78;margin-top:18px}
+/* タブ（ページ内の切り替え） */
+.tabs{background:none;padding:0;gap:2px;border-radius:0;border-bottom:1px solid var(--line);width:100%;margin-bottom:18px}
+.tabs>[data-tab]{border-radius:5px 5px 0 0;padding:10px 18px;font-size:18px;font-weight:600;color:#7d7c78}
+.tabs>[data-tab][aria-selected=true]{background:none;box-shadow:inset 0 -2px 0 var(--ink);color:var(--ink)}
+.blocks{max-width:860px}
+.bl{font-size:26px;line-height:1.65;margin:0;padding:10px 0 10px 32px;position:relative}
+.bl::before{content:"";position:absolute;left:8px;top:.95em;width:7px;height:7px;border-radius:50%;background:var(--ink)}
+blockquote{margin:22px 0 0;padding:6px 0 6px 22px;border-left:3px solid var(--ink);font-size:24px;line-height:1.7}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;max-width:860px}
+.blk{border:1px solid var(--line);border-radius:6px;padding:20px 22px 22px}
+.blk .bh{font-size:18px;color:#7d7c78}
+.blk .bv{font-size:20px;margin-top:6px}
+.blk .bv b{font:700 72px/1.1 var(--font-num);letter-spacing:-.02em;margin:0 4px}
+.blk .bv b.r{color:var(--bad)}
+.blk p{font-size:19px;color:var(--muted);margin:4px 0 0}
+details.why{border:0;background:none;border-radius:0;margin-top:16px;max-width:860px}
+details.why>summary{color:var(--ink);font-weight:500;padding:8px 4px;font-size:20px}
+details.why>summary::before{content:"▸";background:none;width:18px;height:auto;font-size:16px;color:#5f5e5b}
+details.why[open]>summary::before{transform:rotate(90deg)}
+details.why>.body{padding:4px 0 8px 32px;font-size:19px;color:var(--ink)}
+.calcwrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:860px}
+.field{margin-bottom:28px}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:600 22px var(--font-num)}
+input[type=range]{accent-color:var(--accent)}
+.res{background:var(--surface);border-radius:6px;padding:26px 30px}
+.rrow{display:flex;justify-content:space-between;align-items:baseline;font-size:21px;padding:8px 0}
+.rrow b{font:600 26px var(--font-num)}
+.rrow.col{display:block;border-top:1px solid var(--line);margin-top:8px;padding-top:14px}
+.rrow.col b.big{display:block;white-space:nowrap;line-height:1.1;margin-top:4px}
+.rrow b.big{font-size:80px;letter-spacing:-.02em;color:var(--ink)}
+.res .meter{margin-top:10px;background:linear-gradient(90deg,transparent 44.2%,#d44c47 44.2% 44.6%,transparent 44.6%),#e6e6e3}
+.scale{display:flex;justify-content:space-between;font-size:15px;color:#7d7c78;margin-top:8px}
+.ph{color:#a3a29e}
+.empty{margin-top:22px;max-width:860px;padding:22px 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:22px;color:#a3a29e}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class="on"><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　ページの情報</div></div>
+    <div class="cover-img"></div>
+    <div class="page-ic">1:1</div>
+    <h1>1on1｜青木 × 森　2027年4月</h1>
+    <div class="props">
+      <div class="p"><span class="k">日付</span><span>2027年4月21日（水）16:00–16:30</span></div>
+      <div class="p"><span class="k">参加者</span><span><span class="av">青</span>青木（リーダー）　<span class="av g">森</span>森（メンバー）</span></div>
+      <div class="p"><span class="k">タグ</span><span><span class="tag blue">1on1</span> <span class="tag green">月次</span> <span class="tag orange">負荷の相談</span></span></div>
+      <div class="p"><span class="k">前回</span><span class="u">2027年3月の1on1</span></div>
+    </div>
+    <div class="callout"><span class="ci">!</span><div><b>今日のゴール</b>　来月の担当案件を1つ減らすかどうかを、2人で決める。</div></div>
+    <aside class="notes">画面共有でこのページを開いたまま進める。書き込みはその場で。</aside>
+  </section>
+
+  <section class="slide" data-title="前回の約束">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class="on"><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　前回の約束</div></div>
+    <h2>前回の約束は、5つのうち3つ終わった。</h2>
+    <div class="todo" data-calc data-let="done = c1+c2+c3+c4+c5; left = (1-c1)*3 + (1-c2)*2 + (1-c3)*1 + (1-c4)*4 + (1-c5)*6">
+      <label class="chk"><input type="checkbox" name="c1" checked><span>テスト自動化の手順書を書く</span><em class="est">3h</em><em class="who">森</em></label>
+      <label class="chk"><input type="checkbox" name="c2" checked><span>週1回、設計レビューに同席する</span><em class="est">2h</em><em class="who">森</em></label>
+      <label class="chk"><input type="checkbox" name="c3" checked><span>評価面談の日程を人事と決める</span><em class="est">1h</em><em class="who">青木</em></label>
+      <label class="chk"><input type="checkbox" name="c4"><span>他チームの勉強会で10分話す</span><em class="est">4h</em><em class="who">森</em></label>
+      <label class="chk"><input type="checkbox" name="c5"><span>夜の障害当番を月2回までにする</span><em class="est">6h</em><em class="who">青木</em></label>
+      <div class="prog"><div class="meter" data-bar="done" data-max="5"><i></i></div><b><span data-out="done"></span> / 5 完了　<span class="left">残り <span data-out="left"></span> 時間分</span></b></div>
+    </div>
+    <p class="hint">チェックを押すと、完了数と残りの見積もり時間が変わります。</p>
+    <aside class="notes">終わっていない2つは責めずに「何が邪魔したか」だけ聞く。5つ目はリーダー側の宿題なので先に謝る。</aside>
+  </section>
+
+  <section class="slide" data-title="今月の話">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class="on"><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　今月の話</div></div>
+    <h2>今月の山場は、初めての設計レビュー。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="g">よかったこと</button><button data-tab="b">困っていること</button><button data-tab="c">これからのこと</button></div>
+      <div data-panel="g" class="blocks">
+        <p class="bl">決済まわりの設計を、初めて自分で書いてレビューに出した。</p>
+        <p class="bl">指摘は 12件。うち 9件はその日のうちに直せた。</p>
+        <p class="bl">残り 3件は、次の設計で最初から入れる。</p>
+        <blockquote>「前より質問が具体的になった」— 設計レビューでの佐野さんの一言</blockquote>
+      </div>
+      <div data-panel="b" class="blocks">
+        <p class="bl">案件が3つ重なり、平日の夜に作業する日が週2〜3日ある。</p>
+        <p class="bl">障害当番の夜の呼び出しが、今月は4回あった。</p>
+        <p class="bl">週末に疲れが残り、月曜の午前が進まない。</p>
+        <blockquote>「どれも手放したくないが、どれも中途半端になっている気がする」</blockquote>
+      </div>
+      <div data-panel="c" class="blocks">
+        <p class="bl">1年後には、1つの機能の設計を最初から最後まで持ちたい。</p>
+        <p class="bl">そのために、今年は「設計を書く回数」を増やしたい。</p>
+        <p class="bl">秋の社内勉強会で、決済の設計を発表してみる。</p>
+        <blockquote>リーダーから：年内にあと3回、設計を書く機会をつくる</blockquote>
+      </div>
+    </div>
+    <aside class="notes">タブは本人に選んでもらう。話したことは、その場でこのページに書き足す。</aside>
+  </section>
+
+  <section class="slide" data-title="困りごと">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class="on"><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　困りごとの深掘り</div></div>
+    <h2>夜の作業の原因は、案件の数より「待ち」。</h2>
+    <div class="callout warn"><span class="ci">?</span><div><b>分かったこと</b>　3つの案件のうち2つが、他チームの返事待ちで止まる。止まっている間に別の案件を進め、返事が来た夕方から作業が始まる。</div></div>
+    <div class="cols3">
+      <div class="blk"><div class="bh">案件A　決済の改修</div><div class="bv">待ち <b>0</b> 日</div><p>自分で進められる。</p></div>
+      <div class="blk"><div class="bh">案件B　帳票の出力</div><div class="bv">待ち <b class="r">6</b> 日</div><p>経理チームの確認待ち。</p></div>
+      <div class="blk"><div class="bh">案件C　通知の見直し</div><div class="bv">待ち <b class="r">4</b> 日</div><p>インフラの設定待ち。</p></div>
+    </div>
+    <details class="why"><summary>待ち日数の数え方</summary><div class="body">4月1日〜20日の作業記録から、「他チームの返事がないと次に進めない」状態だった日を数えた（営業日ベース）。</div></details>
+    <aside class="notes">トグルは聞かれたら開く。「原因は森さんではなく段取り」と言葉にして伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="来月の負荷">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class="on"><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　来月の負荷</div></div>
+    <h2>案件を2つにすれば、残業は月 9 時間ほど。</h2>
+    <div class="calcwrap" data-calc data-let="week = cases*hours + meet; over = max(0, week-38)*4.3">
+      <div>
+        <div class="field"><label>担当する案件の数 <b data-show="cases" data-unit=" 件"></b></label><input type="range" name="cases" min="1" max="5" value="2"></div>
+        <div class="field"><label>1案件あたり、週に使う時間 <b data-show="hours" data-unit=" 時間"></b></label><input type="range" name="hours" min="6" max="20" value="14"></div>
+        <div class="field"><label>会議・当番など <b data-show="meet" data-unit=" 時間/週"></b></label><input type="range" name="meet" min="4" max="16" value="12"></div>
+      </div>
+      <div class="res">
+        <div class="rrow"><span>週の作業時間</span><b data-out="week" data-unit=" 時間"></b></div>
+        <div class="rrow col"><span>月の残業（見込み）</span><b class="big" data-out="over" data-unit=" 時間"></b></div>
+        <div class="meter" data-bar="over" data-max="45"><i></i></div>
+        <div class="scale"><span>0</span><span>社内の目安 20時間</span><span>45</span></div>
+      </div>
+    </div>
+    <p class="hint">所定は週38時間。月の残業 ＝ 週の超過 × 4.3 週。数字は架空のサンプルです。</p>
+    <aside class="notes">案件を3にしてみせ、残業が倍以上になるのを2人で確認してから、案件Cを外す案を出す。</aside>
+  </section>
+
+  <section class="slide" data-title="次の約束">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class="on"><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　次の約束</div></div>
+    <h2>次の1か月の約束は3つ。</h2>
+    <div class="todo big">
+      <div class="chk step"><span class="box"></span><span>案件Cを、5月から村井さんに引き継ぐ</span><em class="who">青木</em><em class="due">5/1</em></div>
+      <div class="chk step"><span class="box"></span><span>案件Bの経理確認を、毎週火曜の定例にする</span><em class="who">森</em><em class="due">4/27</em></div>
+      <div class="chk step"><span class="box"></span><span>障害当番を月2回にする（シフト表の更新）</span><em class="who">青木</em><em class="due">4/30</em></div>
+    </div>
+    <div class="callout ok"><span class="ci">✓</span><div>次回の1on1で、最初にこの3つを確認する。</div></div>
+    <details class="why"><summary>案件Cの引き継ぎの範囲</summary><div class="body">設計はここまで森さんが書いた分を残し、実装とテストから村井さんが持つ。5月の第1週は2人で並んで作業する。</div></details>
+    <aside class="notes">→で1つずつ出し、担当と期日を声に出して確認する。</aside>
+  </section>
+
+  <section class="slide" data-title="次回">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class="on"><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　次回の予定</div></div>
+    <h2>次回は 5月19日（水）16:00。</h2>
+    <div class="props" style="margin-top:4px">
+      <div class="p"><span class="k">場所</span><span>3階 小会議室 B（またはオンライン）</span></div>
+      <div class="p"><span class="k">持ちもの</span><span>このページ（約束の3つにチェックを入れておく）</span></div>
+      <div class="p"><span class="k">話したいこと</span><span>下にメモを書いておく</span></div>
+    </div>
+    <div class="todo" style="margin-top:22px">
+      <div class="chk"><span class="box"></span><span>約束の3つの確認</span><em class="who">2人</em></div>
+      <div class="chk"><span class="box"></span><span>案件Cの引き継ぎで困ったこと</span><em class="who">森</em></div>
+      <div class="chk"><span class="box"></span><span class="ph">話したいことを、ここに書き足す …</span></div>
+    </div>
+    <p class="hint">このページを複製すると、翌月の1on1ノートになります。</p>
+  </section>
+
+</main>

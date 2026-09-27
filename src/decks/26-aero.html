@@ -1,0 +1,221 @@
+<!--meta
+{"title":"節水アダプター配布事業のご提案 ／ サンプル市","style":"フルティガー・エアロ","use":"自治体への節水の提案","group":"テック・未来",
+ "aim":"水まわり機器メーカーの営業が、市の環境課との打ち合わせで、節水アダプターの無料配布事業を来年度の予算に入れてもらうため。",
+ "desc":"青空と緑の丘、つやつやの水滴と泡、光沢のあるガラスのパネル。配布する世帯数と1日の節水量を動かすと、年間に減る水の量と市民の水道代が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=BIZ+UDPGothic:wght@400;700&display=swap"}
+-->
+<style>
+/* エンジンの rise/zoom/blur は表示中のスライドにも変形が残るので打ち消す */
+.deck[data-transition] .slide.active{transform:none;filter:none}
+:root{
+  --sky1:#1a8fdc; --sky2:#8fd3ff; --grass:#46b83c;
+  --bg:#dff3ff; --surface:rgb(255 255 255 / .8); --ink:#0b3553; --muted:#27506e; --line:#b6dcf2; --accent:#0a6fb5; --accent-ink:#fff;
+  --frame:#a9d6f2; --radius:22px; --good:#1f8a3a; --bad:#c2412d;
+  --shadow:0 1px 0 #fff inset,0 14px 34px rgb(0 70 130 / .2);
+  --font:"Nunito","BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Nunito",sans-serif; --head-weight:700; --head-track:0;
+}
+.slide{isolation:isolate;padding:58px 80px}
+/* 青空・光・緑の丘 */
+.slide>.bg{overflow:hidden;background:
+  radial-gradient(60% 50% at 82% 8%,rgb(255 255 255 / .95),rgb(255 255 255 / 0) 60%),
+  linear-gradient(180deg,#2d9be6 0%,#79c8f7 42%,#d6f1ff 78%,#f2fbff 100%)}
+.slide>.bg::before{content:"";position:absolute;right:-160px;top:-240px;width:900px;height:900px;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg at 50% 50%,rgb(255 255 255 / .22) 0 4deg,transparent 4deg 14deg);
+  -webkit-mask:radial-gradient(circle,#000 0,transparent 62%);mask:radial-gradient(circle,#000 0,transparent 62%)}
+.hill{position:absolute;left:-10%;right:-10%;bottom:-260px;height:420px;border-radius:50% 50% 0 0/100% 100% 0 0;
+  background:radial-gradient(80% 60% at 50% 0,#b8f58a 0,#58c840 32%,#2c9a33 70%,#1c7a2a 100%);box-shadow:0 -6px 30px rgb(40 140 40 / .25)}
+.hill::after{content:"";position:absolute;left:12%;right:12%;top:12px;height:60px;border-radius:50%;background:linear-gradient(rgb(255 255 255 / .7),rgb(255 255 255 / 0))}
+.hill.b{left:30%;right:-30%;bottom:-300px;background:radial-gradient(80% 60% at 50% 0,#9ee874 0,#3fae36 45%,#1c7a2a 100%)}
+.bub{position:absolute;border-radius:50%;background:
+  radial-gradient(circle at 30% 26%,#fff 0 8%,rgb(255 255 255 / .4) 14%,transparent 24%),
+  radial-gradient(circle,rgb(255 255 255 / .05) 0 58%,rgb(160 225 255 / .5) 70%,rgb(255 255 255 / .95) 73%,transparent 75%)}
+.drop{position:absolute;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.38' cy='.62' r='.7'%3E%3Cstop offset='0' stop-color='%23e9f9ff'/%3E%3Cstop offset='.55' stop-color='%2362c4f5'/%3E%3Cstop offset='1' stop-color='%230a6fb5'/%3E%3C/radialGradient%3E%3ClinearGradient id='h' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.95'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 2C50 2 94 62 94 92A44 44 0 0 1 6 92C6 62 50 2 50 2Z' fill='url(%23g)' stroke='%23ffffff' stroke-opacity='.8' stroke-width='2'/%3E%3Cpath d='M30 70C34 54 44 38 50 28C46 44 42 58 40 76C38 88 26 86 30 70Z' fill='url(%23h)'/%3E%3Cellipse cx='66' cy='110' rx='10' ry='6' fill='%23fff' opacity='.55'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 18px 20px rgb(0 70 130 / .3))}
+/* ガラスのパネル（上半分に光沢） */
+.glass{position:relative;background:linear-gradient(180deg,rgb(255 255 255 / .92),rgb(255 255 255 / .68));border-radius:22px;
+  box-shadow:0 0 0 1px rgb(255 255 255 / .95) inset,0 14px 34px rgb(0 70 130 / .2);backdrop-filter:blur(8px);overflow:hidden}
+.glass::before{content:"";position:absolute;left:0;right:0;top:0;height:46%;background:linear-gradient(rgb(255 255 255 / .75),rgb(255 255 255 / 0));pointer-events:none}
+.glass>*{position:relative}
+/* ゲルのボタン風の見出しラベル */
+.kicker{font:900 19px var(--font);letter-spacing:.08em;color:#fff;text-transform:none;display:inline-flex;align-items:center;gap:10px;align-self:flex-start;
+  padding:9px 22px 9px 16px;border-radius:99px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#46b3f0 0%,#1580c8 50%,#0a5a96 51%,#0e6fb2 100%);box-shadow:0 0 0 1px #0a4f86,0 6px 14px rgb(0 60 120 / .3),inset 0 1px 0 rgb(255 255 255 / .7)}
+.kicker::before{content:"";width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 20%,#b8f58a 30%,#2c9a33 100%);box-shadow:0 0 0 1px #0a4f86}
+.kicker::after{content:"";position:absolute;left:8px;right:8px;top:2px;height:42%;border-radius:99px;background:linear-gradient(rgb(255 255 255 / .8),rgb(255 255 255 / .1))}
+h1,h2{color:var(--ink)}
+h2{font:700 44px/1.35 var(--font);margin:20px 0 24px;text-shadow:0 1px 0 rgb(255 255 255 / .8)}
+h2 em{font-style:normal;color:var(--accent)}
+.lead{color:var(--muted)}
+.foot{color:var(--ink);font-size:16px}
+.kpi .label{font-size:19px;color:var(--muted);font-weight:700}
+.kpi .value{font:900 84px/1.05 var(--font-num);color:var(--ink);letter-spacing:-.01em}
+.kpi .value small{font:700 28px var(--font);margin-left:6px}
+.num3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.num3 .glass{padding:26px 28px}
+.chart{height:280px;gap:16px;border-bottom:2px solid rgb(11 53 83 / .4);padding-top:34px;margin-bottom:38px}
+.chart>.col>i{border-radius:14px 14px 4px 4px;background:linear-gradient(90deg,rgb(255 255 255 / .55),transparent 40%),linear-gradient(180deg,#4fc0f5,#0a6fb5);box-shadow:inset 0 1px 0 #fff}
+.chart>.col.dim>i{background:linear-gradient(90deg,rgb(255 255 255 / .6),transparent 40%),linear-gradient(180deg,#c7d7e3,#8aa6bb)}
+.chart>.col::before{font:800 19px var(--font-num);color:var(--ink)}
+.chart>.col::after{font-size:17px;color:var(--ink);font-weight:700}
+/* 仕組みの3手順 */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;flex:1}
+.how .glass{padding:28px 30px;display:flex;flex-direction:column}
+.how .orb{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;font:900 38px var(--font-num);color:#fff;margin-bottom:22px;
+  background:radial-gradient(circle at 35% 28%,#dff6ff 0 10%,#4fc0f5 34%,#0a5a96 100%);box-shadow:0 0 0 2px #fff,0 10px 20px rgb(0 70 130 / .3);text-shadow:0 1px 2px rgb(0 40 80 / .5)}
+.how h3{font:700 34px/1.4 var(--font);margin:0 0 10px}
+.how p{font-size:23px;line-height:1.75;color:var(--muted);margin:0}
+details.why{border:0;border-radius:16px;background:rgb(255 255 255 / .85);box-shadow:0 0 0 1px #fff inset,0 6px 16px rgb(0 70 130 / .15)}
+details.why>summary{color:var(--accent);font-size:19px}
+details.why>summary::before{background:radial-gradient(circle at 35% 30%,#fff,#4fc0f5 60%,#0a6fb5);color:#fff}
+details.why>.body{color:var(--muted);font-size:18px}
+.field>label{color:var(--ink);font-size:19px;font-weight:700}
+.field>label b{font:900 28px var(--font-num);color:var(--accent)}
+input[type=range]{accent-color:#0a8fd6}
+.res{padding:16px 26px;margin-bottom:12px}
+.res .label{font-size:19px;font-weight:700;color:var(--muted)}
+.res .v{font:900 58px/1.12 var(--font-num);color:var(--ink);white-space:nowrap}
+.res .v small{font:700 24px var(--font);margin-left:6px}
+.res.half{padding:14px 20px}.res.half .v{font-size:40px}.res.half .label{font-size:17px}
+.res.half .label b{color:var(--ink)}
+.meter{height:20px;background:rgb(11 53 83 / .12);box-shadow:inset 0 2px 4px rgb(0 40 80 / .2)}
+.meter>i{background:linear-gradient(180deg,#8be07a,#2c9a33);box-shadow:inset 0 1px 0 rgb(255 255 255 / .8)}
+.plan{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;flex:1}
+.plan .glass{padding:26px 24px;display:flex;flex-direction:column}
+.plan .who{margin-top:auto;align-self:flex-start;font:700 19px var(--font);color:#fff;padding:7px 16px;border-radius:99px;background:linear-gradient(180deg,#8be07a 0,#2c9a33 50%,#1f7f28 51%,#2c9a33 100%);box-shadow:0 0 0 1px #16611d,inset 0 1px 0 rgb(255 255 255 / .7)}
+.stack{display:flex;gap:4px;height:58px;border-radius:14px;overflow:hidden}
+.stack span{display:flex;align-items:center;padding:0 12px;font:700 18px var(--font);color:var(--ink);background:linear-gradient(180deg,#f4f8fb,#cbd9e4);white-space:nowrap;overflow:hidden}
+.stack span.hot{color:#fff;background:linear-gradient(180deg,#4fc0f5 0,#1580c8 50%,#0a5a96 51%,#0e6fb2 100%)}
+.plan b{font:900 104px/1 var(--font-num);color:var(--accent);display:block;letter-spacing:-.03em}
+.plan b small{font:700 34px var(--font);margin-left:4px}
+.plan h3{font:700 30px/1.4 var(--font);margin:22px 0 10px}
+.plan p{font-size:21px;line-height:1.7;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .bub{animation:aero-rise 9s ease-in-out infinite alternate}
+  .slide.active .bub:nth-of-type(2n){animation-duration:12s}
+  .slide.active .drop{animation:aero-bob 4s ease-in-out infinite alternate}
+  @keyframes aero-rise{to{transform:translateY(-26px)}}
+  @keyframes aero-bob{to{transform:translateY(-10px)}}
+}
+</style>
+
+<main class="deck" data-transition="blur">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="hill"></div><div class="hill b"></div>
+      <div class="drop" style="width:250px;height:350px;right:170px;top:120px"></div>
+      <div class="bub" style="width:130px;height:130px;right:80px;top:60px"></div>
+      <div class="bub" style="width:70px;height:70px;right:460px;top:90px"></div>
+      <div class="bub" style="width:50px;height:50px;right:120px;top:470px"></div>
+    </div>
+    <div class="kicker">サンプル市 環境課さま　ご提案</div>
+    <h1 style="font:700 70px/1.3 var(--font);margin:30px 0 22px;text-shadow:0 2px 0 rgb(255 255 255 / .7)">蛇口ひとつで、<br>街の水を 1割 へらす。</h1>
+    <p style="font:700 26px/1.6 var(--font);color:var(--ink);margin:0">節水アダプター 無料配布事業</p>
+    <p style="position:absolute;left:80px;bottom:22px;font:700 20px var(--font);color:#fff;text-shadow:0 1px 3px rgb(0 60 20 / .8);margin:0">株式会社サンプル水まわり　公共営業部</p>
+    <aside class="notes">最初に「今日は、家庭の水を1割減らす、一番安い方法の提案です」と言い切る。</aside>
+  </section>
+
+  <section class="slide" data-title="いまの使い方">
+    <div class="bg"><div class="hill" style="bottom:-340px"></div><div class="bub" style="width:90px;height:90px;right:100px;top:60px"></div></div>
+    <div class="kicker">いまの使い方</div>
+    <h2>家庭の水の <em>4割</em> は、<br>お風呂と台所の蛇口から出ている。</h2>
+    <div class="num3">
+      <div class="glass kpi"><div class="label">市内の世帯数</div><div class="value"><span data-count="12.4" data-format="dec1"></span><small>万世帯</small></div></div>
+      <div class="glass kpi"><div class="label">1世帯・1日の使用量</div><div class="value"><span data-count="214"></span><small>L</small></div></div>
+      <div class="glass kpi"><div class="label">蛇口から出る分</div><div class="value"><span data-count="41"></span><small>%</small></div></div>
+    </div>
+    <div class="glass" style="padding:22px 28px;margin-top:24px">
+      <p style="font:700 19px var(--font);margin:0 0 12px;color:var(--muted)">1日 214L の内訳</p>
+      <div class="stack"><span style="flex:26" class="hot">シャワー・風呂の蛇口 26%</span><span style="flex:15" class="hot">台所 15%</span><span style="flex:21">トイレ 21%</span><span style="flex:17">湯はり 17%</span><span style="flex:15">洗濯 15%</span><span style="flex:6"></span></div>
+      <p style="font-size:20px;margin:14px 0 0;color:var(--ink)">青い2つが、アダプターで絞れる分。出しっぱなしの時間がいちばん長い。</p>
+    </div>
+    <p class="foot">市名・社名・数字は架空のサンプルです。</p>
+    <aside class="notes">数字は開くとカウントアップする。「41%」を指して、次の仕組みの話へ。</aside>
+  </section>
+
+  <section class="slide" data-title="仕組み">
+    <div class="bg"><div class="drop" style="width:120px;height:170px;right:80px;top:40px"></div></div>
+    <div class="kicker">しくみ</div>
+    <h2>付けるだけで、出る水が <em>3割</em> へる。</h2>
+    <div class="how">
+      <div class="glass step"><div class="orb">1</div><h3>蛇口の先に<br>ねじ込む</h3><p>工具はいらない。1か所 30秒。賃貸でも外して返せる。</p></div>
+      <div class="glass step"><div class="orb">2</div><h3>水に空気を<br>まぜる</h3><p>泡の粒で水の量を減らし、手に当たる勢いはそのまま。</p></div>
+      <div class="glass step"><div class="orb">3</div><h3>1日 約40L<br>へる</h3><p>4人家族でシャワーと台所に付けた場合の目安。</p></div>
+    </div>
+    <details class="why"><summary>根拠：実証の結果</summary><div class="body">2026年6〜8月、市内の協力世帯 200 戸（サンプル）で検証。付ける前後の水道メーターを比べ、1世帯1日あたり平均 38.6L 減った。「使いにくくなった」の回答は 4%。</div></details>
+    <aside class="notes">→ で手順を1つずつ出す。実物を持っていき、その場で机の上の蛇口モデルに付けて見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="実証の結果">
+    <div class="bg"><div class="hill" style="bottom:-350px"></div><div class="bub" style="width:110px;height:110px;right:70px;top:40px"></div></div>
+    <div class="kicker">実証の結果</div>
+    <h2>付けた月から、使用量が下がった。</h2>
+    <div class="grid" style="grid-template-columns:1fr 330px;gap:40px;flex:1">
+      <div class="glass" style="padding:10px 30px 0">
+        <div class="chart">
+          <div class="col dim" style="--v:92" data-label="4月" data-val="221"><i></i></div>
+          <div class="col dim" style="--v:95" data-label="5月" data-val="228"><i></i></div>
+          <div class="col" style="--v:78" data-label="6月" data-val="187"><i></i></div>
+          <div class="col" style="--v:76" data-label="7月" data-val="182"><i></i></div>
+          <div class="col" style="--v:77" data-label="8月" data-val="185"><i></i></div>
+        </div>
+      </div>
+      <div class="glass kpi" style="padding:28px;align-self:stretch;display:flex;flex-direction:column;justify-content:center">
+        <div class="label">付けたあとの減り方</div>
+        <div class="value" style="font-size:108px">−17<small>%</small></div>
+        <p style="font-size:19px;line-height:1.7;color:var(--muted);margin:14px 0 0">1世帯1日あたりの使用量（L）。灰色が付ける前、青が付けたあと。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="効果の試算">
+    <div class="bg"><div class="drop" style="width:90px;height:126px;left:36px;bottom:40px"></div></div>
+    <div class="kicker">動かせます</div>
+    <h2>3万世帯に配ると、1年で <em>25mプール 1,000杯分</em>。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:44px" data-calc data-let="m3 = homes*liters*365/1000; yen = m3*price; cost = homes*unit">
+      <div class="glass" style="padding:26px 30px">
+        <div class="field"><label>配る世帯数 <b data-show="homes" data-unit=" 世帯"></b></label><input type="range" name="homes" min="1000" max="60000" step="1000" value="30000"></div>
+        <div class="field"><label>1世帯・1日の節水量 <b data-show="liters" data-unit=" L"></b></label><input type="range" name="liters" min="10" max="60" value="38"></div>
+        <div class="field"><label>水道料金（1m³） <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="150" max="400" step="10" value="260"></div>
+        <div class="field"><label>アダプター（1世帯分） <b data-show="unit" data-format="yen"></b></label><input type="range" name="unit" min="400" max="1600" step="50" value="800"></div>
+      </div>
+      <div>
+        <div class="glass res"><div class="label">1年で減る水の量</div><div class="v"><span data-out="m3"></span><small>m³</small></div><div class="meter" style="margin-top:8px" data-bar="m3" data-max="876000"><i></i></div></div>
+        <div class="glass res"><div class="label">市民の水道代が減る額（1年）</div><div class="v" data-out="yen" data-format="man"></div></div>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px">
+          <div class="glass res half"><div class="label">25mプール（400m³）で</div><div class="v"><span data-out="m3/400"></span><small>杯分</small></div></div>
+          <div class="glass res half"><div class="label">事業費</div><div class="v"><span data-out="cost" data-format="man"></span></div><div class="label" style="margin-top:4px">水道代の <b data-out="cost/yen*12" data-format="dec1" data-unit="か月"></b> 分</div></div>
+        </div>
+        <details class="why float"><summary>事業費と、かかる年数</summary><div class="body">事業費 ＝ 世帯数 × アダプター代（配送込み）。<br>取り戻すまで ＝ 事業費 ÷ 1年で減る水道代 × 12か月。</div></details>
+      </div>
+    </div>
+    <aside class="notes">世帯数を 1万 と 6万 で行き来させる。担当の方に「どこまでなら予算が付くか」を聞きながら動かす。</aside>
+  </section>
+
+  <section class="slide" data-title="進め方">
+    <div class="bg"><div class="hill" style="bottom:-330px"></div><div class="bub" style="width:80px;height:80px;right:90px;top:50px"></div></div>
+    <div class="kicker">進め方</div>
+    <h2>来年6月に配り、9月に効果を報告する。</h2>
+    <div class="plan">
+      <div class="glass step"><b>4<small>月</small></b><h3>予算の確定</h3><p>配布世帯数と、広報の方法を決める。</p><div class="who">担当：市</div></div>
+      <div class="glass step"><b>5<small>月</small></b><h3>申し込み受付</h3><p>市の広報紙と、水道の検針票で案内。</p><div class="who">担当：市</div></div>
+      <div class="glass step"><b>6<small>月</small></b><h3>配布</h3><p>郵送のほか、市民センター 8か所で手渡し。</p><div class="who">担当：当社</div></div>
+      <div class="glass step"><b>9<small>月</small></b><h3>効果の報告</h3><p>検針データで前年同月と比べ、議会へ報告。</p><div class="who">担当：市・当社</div></div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="ご検討のお願い">
+    <div class="bg">
+      <div class="hill"></div><div class="hill b"></div>
+      <div class="drop" style="width:200px;height:280px;right:150px;top:110px"></div>
+      <div class="bub" style="width:110px;height:110px;right:90px;top:70px"></div>
+      <div class="bub" style="width:60px;height:60px;right:420px;top:130px"></div>
+    </div>
+    <div class="kicker">ご検討のお願い</div>
+    <h2 style="font-size:58px;line-height:1.35;margin:28px 0 20px">来年度の予算に、<br><em>2,400万円</em> の枠を。</h2>
+    <p style="font:700 24px/1.7 var(--font);color:var(--ink);margin:0">3万世帯分のアダプター・配送・広報を含みます。<br>実物の見本と、実証データの全文をお渡しします。</p>
+    <p style="position:absolute;left:80px;bottom:22px;font:700 20px var(--font);color:#fff;text-shadow:0 1px 3px rgb(0 60 20 / .8);margin:0">株式会社サンプル水まわり　公共営業部　03-0000-0000</p>
+    <aside class="notes">金額は1つだけ言う。もし予算が厳しければ、1万世帯・800万円の小さな案も用意してあると伝える。</aside>
+  </section>
+
+</main>

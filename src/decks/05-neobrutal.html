@@ -1,0 +1,264 @@
+<!--meta
+{"title":"サンプルキッチン シードラウンド","style":"ネオブルータリズム","use":"スタートアップのピッチ","group":"レトロ・ポップ",
+ "aim":"飲食店向けサービスの創業者が、シード投資家への10分のピッチで、課題の大きさと市場規模を覚えてもらうため。",
+ "desc":"太い黒線、ずらした硬い影、原色のステッカー。勢いで押すピッチ資料。機能はタブで切り替え、店舗数と単価を動かすとTAM・SAM・SOMが出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#fff1d0; --surface:#ffffff; --ink:#111111; --muted:#3b3b3b; --line:#111; --accent:#ff5c93; --accent-ink:#111;
+  --yel:#ffd23f; --mint:#3ddcae; --blue:#7fa8ff; --org:#ff8f3f;
+  --frame:#111; --radius:14px; --shadow:7px 7px 0 #111; --good:#0f7a55; --bad:#c21f4a;
+  --font:"Space Grotesk","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-head:"Dela Gothic One","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif; --font-num:"Space Grotesk","Hiragino Sans",sans-serif;
+  --head-weight:400; --head-track:0;
+  --pad-y:52px; --pad-x:64px;
+}
+.slide>.bg{background-image:radial-gradient(#111 1.3px,transparent 1.4px);background-size:26px 26px;opacity:.13}
+.slide::after{content:attr(data-no);position:absolute;right:40px;top:34px;font:700 18px var(--font-num);border:3px solid #111;background:#fff;padding:2px 10px;border-radius:8px;box-shadow:3px 3px 0 #111}
+.slide.cover::after{display:none}
+h1,h2{font-family:var(--font-head);font-weight:400}
+h2{font-size:48px;line-height:1.3;margin-bottom:26px}
+h2 mark{background:var(--yel);padding:0 8px;border:3px solid #111;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.kicker{display:inline-block;align-self:flex-start;font:700 17px var(--font);letter-spacing:.08em;color:#111;background:var(--mint);border:3px solid #111;border-radius:999px;padding:4px 16px;box-shadow:3px 3px 0 #111;margin-bottom:18px}
+.box{background:#fff;border:4px solid #111;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 26px;position:relative}
+.box.pink{background:var(--accent)}.box.yel{background:var(--yel)}.box.mint{background:var(--mint)}.box.blue{background:var(--blue)}.box.org{background:var(--org)}
+.box p{font-size:19px;line-height:1.65;color:#111;margin:0}
+.box h3{font:400 28px/1.35 var(--font-head);margin:0 0 10px}
+.num{font:700 120px/0.9 var(--font-num);letter-spacing:-.05em;white-space:nowrap}
+.num small{font:400 34px var(--font-head);letter-spacing:0;margin-left:6px}
+.sticker{position:absolute;font:700 22px var(--font);border:4px solid #111;border-radius:12px;padding:8px 18px;box-shadow:5px 5px 0 #111;background:var(--yel);white-space:nowrap}
+
+/* 表紙 */
+.cv{display:grid;grid-template-columns:1fr 390px;gap:40px;flex:1;min-height:0;align-items:center}
+.cv h1{font-size:86px;line-height:1.22;margin:0}
+.cv h1 .hl{background:var(--accent);border:4px solid #111;border-radius:14px;padding:0 12px;box-shadow:6px 6px 0 #111;display:inline-block;margin:6px 0}
+.cv .lead{color:#111;font-size:24px;margin-top:26px}
+.deco{position:absolute;inset:0;pointer-events:none}
+.burst{position:absolute;width:300px;height:300px;background:var(--yel);border:0;
+  clip-path:polygon(50% 0,61% 18%,80% 8%,79% 29%,100% 32%,86% 49%,100% 66%,79% 70%,80% 92%,61% 82%,50% 100%,39% 82%,20% 92%,21% 70%,0 66%,14% 49%,0 32%,21% 29%,20% 8%,39% 18%);
+  filter:drop-shadow(0 0 0 #111)}
+.burst-wrap{position:absolute;right:78px;top:108px;width:340px;height:340px;display:grid;place-items:center;background:#111;
+  clip-path:polygon(50% 0,61% 18%,80% 8%,79% 29%,100% 32%,86% 49%,100% 66%,79% 70%,80% 92%,61% 82%,50% 100%,39% 82%,20% 92%,21% 70%,0 66%,14% 49%,0 32%,21% 29%,20% 8%,39% 18%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.burst-wrap{animation:spin 40s linear infinite}
+.cv-card{position:relative;z-index:1;text-align:center;padding:30px 22px}
+.cv-card .num{font-size:96px}
+.cv-card p{font-size:20px;font-weight:700}
+
+/* 課題 */
+.prob{display:grid;grid-template-columns:1.05fr 1fr;gap:34px;flex:1;min-height:0;margin-bottom:30px}
+.prob .left{display:flex;flex-direction:column;justify-content:space-between}
+.prob .left .num{font-size:220px}
+.pains{display:grid;gap:18px;grid-auto-rows:1fr}
+.pains .box{display:grid;grid-template-columns:62px 1fr;gap:16px;align-items:center;padding:16px 22px}
+.pains .ic{width:62px;height:62px;border:4px solid #111;border-radius:50%;display:grid;place-items:center;font:700 26px var(--font-num);background:#fff}
+
+/* タブ */
+.tabs{background:none;padding:0;gap:14px;border-radius:0}
+.tabs>[data-tab]{border:4px solid #111;border-radius:12px;background:#fff;color:#111;font:700 20px var(--font);padding:10px 22px;box-shadow:4px 4px 0 #111;transition:transform .12s,box-shadow .12s}
+.tabs>[data-tab]:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #111}
+.tabs>[data-tab][aria-selected=true]{background:var(--accent);box-shadow:1px 1px 0 #111;transform:translate(3px,3px)}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:stretch}
+.feat .box.hero{padding:30px 34px}
+.feat .box.hero h3{font-size:40px;line-height:1.3}
+.feat .box.hero p{font-size:21px}
+.phone{background:#fff;border:4px solid #111;border-radius:22px;box-shadow:var(--shadow);padding:20px;display:grid;gap:12px;align-content:start}
+.row-i{display:grid;grid-template-columns:1fr auto;align-items:center;border:3px solid #111;border-radius:10px;padding:10px 14px;font-size:19px;font-weight:700}
+.row-i b{font:700 24px var(--font-num)}
+.row-i.hot{background:var(--yel)}
+.chip{display:inline-block;border:3px solid #111;border-radius:999px;padding:2px 12px;font:700 15px var(--font);background:var(--mint)}
+
+/* グラフ */
+.chart{border-bottom:4px solid #111;height:330px;gap:22px;padding-top:40px;margin-bottom:40px}
+.chart>.col>i{border:4px solid #111;border-bottom:0;border-radius:10px 10px 0 0;background:var(--blue);box-shadow:5px 0 0 #111}
+.chart>.col:last-child>i{background:var(--accent)}
+.chart>.col::before{font:700 22px var(--font-num);color:#111}
+.chart>.col::after{font:700 17px var(--font);color:#111}
+.trac{display:grid;grid-template-columns:1fr 340px;gap:40px;flex:1;min-height:0}
+.trac .side{display:grid;gap:18px;align-content:start}
+.trac .side .num{font-size:66px}
+
+/* 市場規模 */
+.mkt{display:grid;grid-template-columns:400px 1fr;gap:40px;flex:1;min-height:0}
+.field{margin-bottom:16px}
+.field>label{font:700 18px var(--font);color:#111}
+.field>label b{font:700 26px var(--font-num);color:#111;background:var(--yel);border:3px solid #111;border-radius:8px;padding:0 8px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:34px}
+input[type=range]::-webkit-slider-runnable-track{height:14px;border:3px solid #111;border-radius:999px;background:#fff}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border:4px solid #111;border-radius:8px;background:var(--accent);margin-top:-11px;box-shadow:3px 3px 0 #111}
+input[type=range]::-moz-range-track{height:10px;border:3px solid #111;border-radius:999px;background:#fff}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border:4px solid #111;border-radius:8px;background:var(--accent)}
+.tss{display:grid;gap:16px}
+.tss .box{display:grid;grid-template-columns:110px 1fr 290px;align-items:center;gap:20px;padding:16px 24px}
+.tss .lbl{font:400 40px var(--font-head)}
+.tss .lbl small{display:block;font:700 15px var(--font);letter-spacing:.02em}
+.tss .meter{height:30px;border:3px solid #111;border-radius:8px;background:#fff}
+.tss .meter>i{border-radius:0;background:#111}
+.tss .v{font:700 50px var(--font-num);letter-spacing:-.03em;text-align:right;white-space:nowrap}
+details.why{border:4px solid #111;border-radius:12px;background:#fff;box-shadow:4px 4px 0 #111;margin-top:10px}
+details.why>summary{color:#111;font-size:18px}
+details.why>summary::before{background:var(--yel);border:2px solid #111;color:#111;border-radius:6px}
+details.why>.body{color:#111;font-size:17px}
+details.why.float[open]>.body{border:4px solid #111;box-shadow:4px 4px 0 #111;border-radius:12px;left:-4px;right:-4px}
+
+/* 調達 */
+.ask{display:grid;grid-template-columns:1fr 1.15fr;gap:40px;flex:1;min-height:0}
+.use{display:grid;gap:14px}
+.use .box{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;padding:14px 22px}
+.use .box b{font:700 34px var(--font-num)}
+.use .box span{font-size:20px;font-weight:700}
+.use .bar{grid-column:1/-1;height:16px;border:3px solid #111;border-radius:6px;background:#fff;overflow:hidden}
+.use .bar i{display:block;height:100%;background:#111}
+
+.end{flex:1;display:flex;flex-direction:column;justify-content:center}
+.end h1{font-size:96px;line-height:1.2}
+.foot{font:700 15px var(--font);color:#111}
+@media (prefers-reduced-motion:reduce){.burst-wrap{animation:none}}
+</style>
+
+<main class="deck" data-transition="slide">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"></div>
+    <div class="cv">
+      <div>
+        <span class="kicker">SEED ROUND 2026 · サンプルキッチン株式会社</span>
+        <h1>食品ロスを、<br><span class="hl">仕込みの前</span>に<br>止める。</h1>
+        <p class="lead">飲食店の「明日なにを何人前つくるか」を、AIが朝7時に教える。</p>
+      </div>
+      <div></div>
+    </div>
+    <div class="deco">
+      <div class="burst-wrap"></div>
+      <div class="box yel cv-card" style="position:absolute;right:120px;top:190px;width:260px"><div class="num">−31<small>%</small></div><p>導入店の廃棄が減った</p></div>
+      <span class="sticker" style="right:60px;bottom:78px;background:var(--mint);transform:rotate(-6deg)">1.5億円を調達中</span>
+      <span class="sticker" style="right:330px;bottom:120px;background:#fff;transform:rotate(5deg)">390店が利用中</span>
+    </div>
+    <aside class="notes">最初の一言は「毎晩、仕込みすぎた料理を捨てていませんか？」。答えを待たずに次へ。</aside>
+  </section>
+
+  <section class="slide" data-no="02" data-title="課題">
+    <div class="bg"></div>
+    <span class="kicker">PROBLEM</span>
+    <h2>飲食店は、仕入れの<mark>8分の1</mark>を捨てている。</h2>
+    <div class="prob">
+      <div class="box pink left">
+        <p style="font-size:22px;font-weight:700">仕入れた食材のうち、捨てている割合（中小の飲食店・平均）</p>
+        <div class="num">12<small style="font-size:64px">%</small></div>
+      </div>
+      <div class="pains">
+        <div class="box step"><span class="ic">01</span><div><h3 style="font-size:24px;margin:0 0 4px">勘と経験で仕込む</h3><p>天気・曜日・近くのイベントを、店長が頭で足し算している。</p></div></div>
+        <div class="box step"><span class="ic">02</span><div><h3 style="font-size:24px;margin:0 0 4px">足りないのが怖い</h3><p>売り切れの怖さから、毎日すこしずつ多めにつくる。</p></div></div>
+        <div class="box step"><span class="ic">03</span><div><h3 style="font-size:24px;margin:0 0 4px">捨てた量を誰も知らない</h3><p>廃棄は記録されず、次の日の判断に生かされない。</p></div></div>
+      </div>
+    </div>
+    <p class="foot">数字・社名はすべて架空のサンプルです。</p>
+    <aside class="notes">→キーで3つの理由を出す。3つ目の「誰も知らない」が、私たちが最初に解いた問題。</aside>
+  </section>
+
+  <section class="slide" data-no="03" data-title="解決">
+    <div class="bg"></div>
+    <span class="kicker">SOLUTION</span>
+    <h2>朝7時に、今日の仕込み表が届く。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="a">① 予測する</button><button data-tab="b">② 発注する</button><button data-tab="c">③ ふり返る</button></div>
+      <div data-panel="a" class="feat">
+        <div class="box yel hero"><h3>明日の客数と、<br>料理ごとの数を出す。</h3><p>レジの記録・天気・曜日・近くのイベントから、料理ごとに何人前つくるかを予測。店長は数字を見て、直すだけ。</p></div>
+        <div class="phone"><span class="chip">今日の仕込み表 · 7:00</span>
+          <div class="row-i hot">唐揚げ定食<b>42 人前</b></div><div class="row-i">日替わりカレー<b>35 人前</b></div><div class="row-i">豚汁<b>60 杯</b></div><div class="row-i">サラダ<b>28 皿</b></div></div>
+      </div>
+      <div data-panel="b" class="feat">
+        <div class="box mint hero"><h3>足りない食材だけ、<br>ボタン1つで発注。</h3><p>予測と在庫の差から、必要な分だけを取引先ごとにまとめる。電話とファクスの時間が、1日20分減る。</p></div>
+        <div class="phone"><span class="chip">発注の下書き · 3社</span>
+          <div class="row-i">鶏もも肉<b>6.5 kg</b></div><div class="row-i hot">玉ねぎ<b>10 kg</b></div><div class="row-i">豆腐<b>24 丁</b></div><div class="row-i">キャベツ<b>8 玉</b></div></div>
+      </div>
+      <div data-panel="c" class="feat">
+        <div class="box blue hero"><h3>閉店後、捨てた量を<br>写真1枚で記録。</h3><p>廃棄の写真から量を読み取り、次の日の予測に反映。使うほど、その店の予測が当たるようになる。</p></div>
+        <div class="phone"><span class="chip">今週のふり返り</span>
+          <div class="row-i">廃棄の量<b>−31%</b></div><div class="row-i">売り切れ<b>−12%</b></div><div class="row-i hot">浮いた原価<b>¥48,200</b></div><div class="row-i">予測の当たり<b>91%</b></div></div>
+      </div>
+    </div>
+    <aside class="notes">タブを①→③の順に押す。③の「浮いた原価」で、店長の顔が変わるという話をする。</aside>
+  </section>
+
+  <section class="slide" data-no="04" data-title="伸び">
+    <div class="bg"></div>
+    <span class="kicker">TRACTION</span>
+    <h2>広告ゼロで、1年で<mark>390店</mark>に。</h2>
+    <div class="trac">
+      <div class="chart">
+        <div class="col" style="--v:6" data-label="25年10月" data-val="24"><i></i></div>
+        <div class="col" style="--v:14" data-label="12月" data-val="55"><i></i></div>
+        <div class="col" style="--v:25" data-label="26年2月" data-val="98"><i></i></div>
+        <div class="col" style="--v:41" data-label="4月" data-val="160"><i></i></div>
+        <div class="col" style="--v:62" data-label="6月" data-val="242"><i></i></div>
+        <div class="col" style="--v:100" data-label="9月" data-val="390"><i></i></div>
+      </div>
+      <div class="side">
+        <div class="box yel"><p style="font-weight:700">月の解約率</p><div class="num">1.2<small>%</small></div></div>
+        <div class="box mint"><p style="font-weight:700">紹介で来た店</p><div class="num">68<small>%</small></div></div>
+        <details class="why"><summary>なぜ紹介が多い？</summary><div class="body">店長どうしのつながりが強い業界。浮いた原価の画面をそのまま見せて紹介してくれる。</div></details>
+      </div>
+    </div>
+    <aside class="notes">グラフより、右の「紹介 68%」を強調する。広告費をかけずに伸びていることが、この会社の強み。</aside>
+  </section>
+
+  <section class="slide" data-no="05" data-title="市場規模">
+    <div class="bg"></div>
+    <span class="kicker">MARKET · 動かせます</span>
+    <h2>国内だけで、<mark>1,000億円</mark>を超える市場。</h2>
+    <div class="mkt" data-calc data-let="tam = stores*1e4*fee*12; sam = tam*reach/100; som = sam*share/100">
+      <div>
+        <div class="field"><label>国内の飲食店の数 <b data-show="stores" data-unit="万店"></b></label><input type="range" name="stores" min="20" max="70" value="50"></div>
+        <div class="field"><label>1店あたりの月額 <b data-show="fee" data-format="yen"></b></label><input type="range" name="fee" min="5000" max="40000" step="1000" value="18000"></div>
+        <div class="field"><label>仕込みがある店の割合 <b data-show="reach" data-unit="%"></b></label><input type="range" name="reach" min="10" max="80" value="40"></div>
+        <div class="field"><label>5年後にとれるシェア <b data-show="share" data-unit="%"></b></label><input type="range" name="share" min="1" max="20" value="5"></div>
+      </div>
+      <div class="tss">
+        <div class="box pink"><div class="lbl">TAM<small>すべての飲食店</small></div><div class="meter" data-bar="tam" data-max="tam"><i></i></div><div class="v" data-out="tam" data-format="man"></div></div>
+        <div class="box yel"><div class="lbl">SAM<small>仕込みがある店</small></div><div class="meter" data-bar="sam" data-max="tam"><i></i></div><div class="v" data-out="sam" data-format="man"></div></div>
+        <div class="box mint"><div class="lbl">SOM<small>5年後の目標</small></div><div class="meter" data-bar="som" data-max="tam"><i></i></div><div class="v" data-out="som" data-format="man"></div></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">TAM ＝ 店の数 × 月額 × 12か月。SAM ＝ TAM × 仕込みがある店の割合。SOM ＝ SAM × 5年後のシェア。</div></details>
+      </div>
+    </div>
+    <aside class="notes">投資家に数字を言ってもらい、その場で動かす。シェアを 1% まで下げても、SOM が十分大きいことを見せる。</aside>
+  </section>
+
+  <section class="slide" data-no="06" data-title="調達">
+    <div class="bg"></div>
+    <span class="kicker">THE ASK</span>
+    <h2>1.5億円で、18か月後に1,000店へ。</h2>
+    <div class="ask">
+      <div class="box org" style="display:flex;flex-direction:column;justify-content:space-between">
+        <p style="font-size:22px;font-weight:700">シードラウンドで調達したい額</p>
+        <div class="num" style="font-size:190px">1.5<small style="font-size:60px">億円</small></div>
+        <p style="font-size:20px">2027年3月までに着金 → 2028年9月に 1,000店・月の売上 1,800万円。</p>
+      </div>
+      <div class="use">
+        <div class="box step"><span>開発（予測の精度・発注の自動化）</span><b>45%</b><div class="bar"><i style="width:45%"></i></div></div>
+        <div class="box step"><span>導入支援（店に行く人を5人に）</span><b>30%</b><div class="bar"><i style="width:30%"></i></div></div>
+        <div class="box step"><span>紹介の仕組みづくり</span><b>15%</b><div class="bar"><i style="width:15%"></i></div></div>
+        <div class="box step"><span>予備</span><b>10%</b><div class="bar"><i style="width:10%"></i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="締め">
+    <div class="bg"></div>
+    <div class="end">
+      <span class="kicker">LET'S TALK</span>
+      <h1>一緒に、<br><span style="background:var(--mint);border:4px solid #111;border-radius:14px;padding:0 14px;box-shadow:6px 6px 0 #111">捨てない厨房</span>を<br>ふつうにしよう。</h1>
+      <div class="row" style="margin-top:40px;gap:20px">
+        <span class="box" style="padding:12px 22px;font:700 22px var(--font)">代表　サンプル 太郎</span>
+        <span class="box yel" style="padding:12px 22px;font:700 22px var(--font)">taro@sample-kitchen.example</span>
+      </div>
+    </div>
+    <div class="deco">
+      <div class="burst-wrap" style="right:90px;top:170px;width:380px;height:380px;background:var(--yel);border:0"></div>
+      <div style="position:absolute;right:150px;top:300px;width:260px;text-align:center;font:400 64px/1.1 var(--font-head)">Q&amp;A</div>
+      <span class="sticker" style="right:70px;top:110px;background:var(--accent);font-size:28px;transform:rotate(8deg)">THANK YOU!</span>
+    </div>
+  </section>
+
+</main>

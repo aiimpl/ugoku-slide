@@ -1,0 +1,197 @@
+<!--meta
+{"title":"デザイン基礎 第1回 かたち・いろ・比率","style":"バウハウス","use":"デザイン基礎の講座","group":"ミニマル・タイポ",
+ "aim":"デザイン学校の講師が、1年生の最初の授業で、形・色・比率の基礎をクイズと計算で体験させるため。",
+ "desc":"赤・青・黄の円と三角と四角だけで組む、幾何学の講義スライド。長方形の選択クイズと、紙の幅と余白を動かすと黄金比の高さと版面率が出る計算つき。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800&family=Murecho:wght@400;600;800;900&display=swap"}
+-->
+<style>
+:root{
+  --red:#d52b1e; --blue:#1c4ea0; --yellow:#f2c12e;
+  --bg:#efe9dc; --surface:#f8f4ea; --ink:#141414; --muted:#3b3b3b; --line:#141414; --accent:#d52b1e; --accent-ink:#fff;
+  --frame:#cfc8b8; --radius:0px; --shadow:none; --good:#1c4ea0; --bad:#d52b1e;
+  --font:"Jost","Murecho","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Jost",sans-serif; --head-weight:800; --head-track:-.01em;
+}
+.slide{isolation:isolate;padding:64px 80px}
+.slide>.bg{overflow:hidden}
+.sh{position:absolute}
+.c{border-radius:50%}
+.tri{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.r{background:var(--red)}.b{background:var(--blue)}.y{background:var(--yellow)}.k{background:var(--ink)}
+.kicker{font:500 18px var(--font);letter-spacing:.12em;text-transform:lowercase;color:var(--ink);display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.kicker b{font-weight:800;color:var(--red)}
+.kicker::after{content:"";width:120px;height:3px;background:var(--ink)}
+h2{font-size:50px;line-height:1.28;font-weight:900;letter-spacing:-.02em}
+.lead{color:var(--ink);font-size:24px;line-height:1.7}
+.foot{font-size:16px;color:var(--muted)}
+.rule{height:10px;background:var(--ink)}
+/* 3つの形の柱 */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:10px solid var(--ink);flex:1}
+.trio>div{padding:30px 32px 0;border-right:3px solid var(--ink);display:flex;flex-direction:column}
+.trio>div:last-child{border-right:0}
+.trio .g{width:200px;height:200px;margin-bottom:30px}
+.trio h3{font:900 44px/1.1 var(--font);margin-bottom:12px}
+.trio p{font-size:22px;line-height:1.7;color:var(--muted);margin:0}
+.trio .en{font:500 18px var(--font);letter-spacing:.14em;text-transform:lowercase;color:var(--muted);margin-bottom:8px}
+/* クイズ */
+.quiz .choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.quiz .choices>button{border:3px solid var(--ink);border-radius:0;background:var(--surface);padding:24px;display:flex;flex-direction:column;align-items:center;gap:18px;font:800 26px var(--font);height:380px;justify-content:flex-end;padding-bottom:30px}
+.quiz .choices>button i{margin:auto 0}
+.quiz .choices>button:hover{transform:translateY(-4px);background:#fff}
+.quiz .choices>button i{display:block;background:var(--blue)}
+.quiz.answered .choices>button[data-correct]{border-color:var(--ink);background:var(--yellow)}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--red);background:var(--surface);box-shadow:inset 0 0 0 3px var(--red)}
+.quiz .explain{font-size:21px;color:var(--ink);border-left:10px solid var(--red);padding-left:20px;margin-top:24px}
+/* 黄金長方形 */
+.gold{position:relative;width:618px;height:382px;border:4px solid var(--ink)}
+.gold>div{position:absolute;border:4px solid var(--ink);margin:-4px 0 0 -4px}
+details.why{border:3px solid var(--ink);border-radius:0;background:var(--surface)}
+details.why>summary{color:var(--ink);font-size:19px}
+details.why>summary::before{border-radius:50%;background:var(--red);color:#fff}
+details.why>.body{color:var(--ink);font-size:19px}
+.field>label{color:var(--ink);font-size:20px;font-weight:600}
+.field>label b{font:800 28px var(--font-num)}
+input[type=range]{accent-color:var(--red)}
+.page{background:#fff;border:3px solid var(--ink);aspect-ratio:1/1.618;height:420px;display:flex;align-items:center;justify-content:center;position:relative}
+.page>i{display:block;background:repeating-linear-gradient(transparent 0 16px,rgb(20 20 20 / .55) 16px 18px),var(--surface);aspect-ratio:1/1.618;transition:width .5s var(--ease);outline:3px solid var(--blue)}
+.sizes{display:grid;grid-template-columns:repeat(4,1fr);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);margin:10px 0 18px}
+.sizes span{padding:12px 0;font:500 18px var(--font);letter-spacing:.08em;text-align:center;border-right:2px solid var(--ink)}
+.sizes span:last-child{border:0}
+.sizes b{display:block;font:800 34px var(--font-num);letter-spacing:0}
+.out{border-top:3px solid var(--ink);padding:14px 0 18px}
+.out .label{font-size:19px;font-weight:600}
+.out .v{font:800 58px/1.1 var(--font-num);letter-spacing:-.02em}
+ol.list{gap:22px;font-size:26px}
+ol.list>li{padding-left:70px}
+ol.list>li::before{border-radius:0;width:46px;height:46px;background:var(--ink);color:#fff;font:800 24px var(--font-num)}
+ol.list>li:nth-child(1)::before{border-radius:50%;background:var(--blue)}
+ol.list>li:nth-child(2)::before{background:var(--red)}
+ol.list>li:nth-child(3)::before{clip-path:polygon(50% 0,100% 100%,0 100%);background:var(--yellow);color:var(--ink);padding-top:12px;border-radius:0}
+.comp{border:3px solid var(--ink);background:var(--surface);position:relative;height:330px;overflow:hidden}
+.cap h3{font:900 34px var(--font);margin:20px 0 6px}
+.cap p{font-size:21px;color:var(--muted);margin:0;line-height:1.6}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .spin{animation:bh-spin 40s linear infinite}
+  @keyframes bh-spin{to{transform:rotate(360deg)}}
+}
+</style>
+
+<main class="deck" data-transition="flip">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="sh y c" style="width:560px;height:560px;right:120px;top:80px"></div>
+      <div class="sh r" style="width:300px;height:300px;right:60px;top:40px;mix-blend-mode:multiply"></div>
+      <div class="sh b tri" style="width:360px;height:320px;right:330px;bottom:0"></div>
+      <div class="sh k" style="width:14px;height:720px;right:520px;top:0"></div>
+      <div class="sh k" style="width:620px;height:14px;right:0;top:500px"></div>
+    </div>
+    <div class="kicker"><b>01</b> foundation course</div>
+    <h1 style="font:900 104px/1.08 var(--font);letter-spacing:-.03em">かたち<br>いろ<br><span style="color:var(--red)">比率</span></h1>
+    <p class="lead" style="margin-top:34px;max-width:520px">デザイン基礎 第1回<br>円・三角・四角と、赤・青・黄だけで考える。</p>
+    <p style="position:absolute;left:80px;bottom:54px;font:500 18px var(--font);letter-spacing:.14em">sample school of design ／ 1年 前期</p>
+    <aside class="notes">最初の10秒は何も言わずに表紙を見せる。「この絵に使った道具は、形3つと色3つだけ」と言ってから始める。</aside>
+  </section>
+
+  <section class="slide" data-title="形の性格">
+    <div class="kicker"><b>02</b> form</div>
+    <h2>形には、それぞれ性格がある。</h2>
+    <div class="trio">
+      <div class="step"><div class="g c b"></div><div class="en">circle</div><h3>円 ＝ 動き</h3><p>角がないので、転がりそうに見える。視線が中心に集まる。</p></div>
+      <div class="step"><div class="g r"></div><div class="en">square</div><h3>四角 ＝ 安定</h3><p>辺が水平と垂直。置いたら動かない。面を区切る基本。</p></div>
+      <div class="step"><div class="g y tri"></div><div class="en">triangle</div><h3>三角 ＝ 緊張</h3><p>頂点が一方を指す。向きを変えるだけで、画面に方向が生まれる。</p></div>
+    </div>
+    <aside class="notes">→ で1つずつ出す。出すたびに「これはどう見える？」と学生に一言聞く。</aside>
+  </section>
+
+  <section class="slide" data-title="クイズ">
+    <div class="bg"><div class="sh r c" style="width:180px;height:180px;right:-60px;top:-60px"></div></div>
+    <div class="kicker"><b>03</b> quiz</div>
+    <h2>いちばん「落ち着いて」見える長方形は？</h2>
+    <div class="quiz">
+      <div class="choices">
+        <button><i style="width:200px;height:180px"></i>A　ほぼ正方形</button>
+        <button data-correct><i style="width:254px;height:157px"></i>B　少し横長</button>
+        <button><i style="width:290px;height:108px"></i>C　細長い</button>
+      </div>
+      <div class="explain">正解は B。縦と横が <b>1 : 1.618</b>（黄金比）。正方形は動きがなく、細長いと不安定に見える。その間でいちばん収まりがよいと感じる人が多い比率です。</div>
+    </div>
+    <aside class="notes">全員に手を挙げてもらってから、ボタンを押す。A・B・C の人数を黒板に書いておくと次の話がしやすい。</aside>
+  </section>
+
+  <section class="slide" data-title="黄金比">
+    <div class="kicker"><b>04</b> ratio</div>
+    <h2>正方形を切り取っても、<br>同じ形が残る。それが 1 : 1.618。</h2>
+    <div class="grid" style="grid-template-columns:618px 1fr;gap:56px;flex:1;align-items:start">
+      <div class="gold">
+        <div class="step r" style="left:0;top:0;width:382px;height:382px"></div>
+        <div class="step y" style="left:382px;top:0;width:236px;height:236px"></div>
+        <div class="step b" style="left:472px;top:236px;width:146px;height:146px"></div>
+        <div class="step" style="left:382px;top:292px;width:90px;height:90px;background:var(--surface)"></div>
+        <div class="step k" style="left:382px;top:236px;width:56px;height:56px"></div>
+      </div>
+      <div>
+        <p style="font:800 120px/1 var(--font-num);letter-spacing:-.04em;margin-bottom:14px">1.618</p>
+        <p class="lead" style="font-size:23px">→ を押すたびに正方形を1つ切り取る。残った長方形は、いつも元と同じ比率。</p>
+        <details class="why"><summary>なぜ 1.618 になるのか</summary><div class="body">横 x・縦 1 の長方形から 1×1 の正方形を取ると、残りは 1 × (x−1)。これが元と同じ比率なら x = 1 ÷ (x−1)。解くと x = (1+√5) ÷ 2 ≒ 1.618。</div></details>
+      </div>
+    </div>
+    <aside class="notes">正方形は5つ。黒い一番小さい四角まで出したら「無限に続く」と言って止める。</aside>
+  </section>
+
+  <section class="slide" data-title="余白の計算">
+    <div class="kicker"><b>05</b> margin</div>
+    <h2>余白を1割とると、紙の3割は使えない。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 260px 1fr;gap:48px" data-calc data-let="h = w*1.618; m = w*mg/100; inner = w-2*m; ratio = (inner*(h-2*m))/(w*h)*100">
+      <div>
+        <div class="field"><label>紙の幅 <b data-show="w" data-unit=" mm"></b></label><input type="range" name="w" min="100" max="420" step="2" value="210"></div>
+        <div class="field"><label>余白（幅に対する割合） <b data-show="mg" data-unit=" %"></b></label><input type="range" name="mg" min="3" max="20" value="10"></div>
+        <div class="sizes"><span>A5<b>148</b></span><span>A4<b>210</b></span><span>A3<b>297</b></span><span>B3<b>364</b></span></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">紙は黄金比の縦長（縦 ＝ 幅 × 1.618）。余白は上下左右とも同じ幅。<br>版面率 ＝ 文字を置ける面積 ÷ 紙の面積。</div></details>
+      </div>
+      <div class="page" data-bar="1-2*mg/100" data-max="1"><i></i></div>
+      <div>
+        <div class="out"><div class="label">黄金比の高さ</div><div class="v" data-out="h" data-unit=" mm"></div></div>
+        <div class="out"><div class="label">余白の幅</div><div class="v" data-out="m" data-format="dec1" data-unit=" mm"></div></div>
+        <div class="out" style="border-top-width:10px;border-top-color:var(--red)"><div class="label">版面率（使える面積）</div><div class="v" data-out="ratio" data-format="pct"></div></div>
+      </div>
+    </div>
+    <aside class="notes">余白を 3% と 20% で行き来させる。数字より、真ん中の紙の見た目の変化を見てもらう。</aside>
+  </section>
+
+  <section class="slide" data-title="構成の3つの型">
+    <div class="kicker"><b>06</b> composition</div>
+    <h2>同じ3つの形でも、置き方で意味が変わる。</h2>
+    <div class="grid cols-3" style="gap:32px">
+      <div class="step">
+        <div class="comp"><div class="sh c b" style="width:120px;height:120px;left:calc(50% - 70px);top:44px"></div><div class="sh r" style="width:140px;height:100px;left:calc(50% - 70px);top:196px"></div><div class="sh k" style="width:3px;height:100%;left:50%;top:0"></div></div>
+        <div class="cap"><h3>対称</h3><p>中心に揃える。式典・公式の告知に。</p></div>
+      </div>
+      <div class="step">
+        <div class="comp"><div class="sh y c" style="width:250px;height:250px;left:-50px;top:-40px"></div><div class="sh b tri" style="width:110px;height:98px;right:34px;bottom:34px"></div><div class="sh r" style="width:26px;height:26px;right:150px;bottom:40px"></div></div>
+        <div class="cap"><h3>非対称</h3><p>大小の差で動きを出す。イベント・展覧会に。</p></div>
+      </div>
+      <div class="step">
+        <div class="comp"><div class="sh r" style="width:48px;height:48px;left:30px;top:100px"></div><div class="sh r" style="width:48px;height:48px;left:108px;top:100px"></div><div class="sh r" style="width:48px;height:48px;left:186px;top:100px"></div><div class="sh b c" style="width:48px;height:48px;left:264px;top:100px"></div><div class="sh r" style="width:48px;height:48px;left:342px;top:100px"></div></div>
+        <div class="cap"><h3>反復と破調</h3><p>並べて、1つだけ変える。目を引きたい1点に。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="課題">
+    <div class="bg">
+      <div class="sh b c spin" style="width:420px;height:420px;right:-80px;bottom:-120px;background:conic-gradient(var(--blue) 0 75%,var(--yellow) 0)"></div>
+      <div class="sh r" style="width:200px;height:200px;right:300px;top:0"></div>
+    </div>
+    <div class="kicker"><b>07</b> assignment</div>
+    <h2 style="font-size:66px;line-height:1.2">来週までに、<br>ポスターを1枚。</h2>
+    <ol class="list" style="margin-top:14px;max-width:760px">
+      <li class="step">使える形は <b>円・三角・四角</b> だけ</li>
+      <li class="step">使える色は <b>赤・青・黄</b> と黒</li>
+      <li class="step">紙は <b>A4 縦</b>、余白は幅の 10% 以上</li>
+    </ol>
+    <p class="foot">作例と数字は説明用の架空のサンプルです。</p>
+    <aside class="notes">条件は3つだけ。「文字は入れてもいいか」と聞かれたら、タイトル1行だけ可と答える。</aside>
+  </section>
+
+</main>

@@ -1,0 +1,234 @@
+<!--meta
+{"title":"おこづかい、どうする？｜おかねのじゅぎょう","style":"クレイモーフィズム","use":"小学生向けお金の授業","group":"学び・研修",
+ "aim":"小学校の先生が、3・4年生の45分の授業で、おこづかいを「つかう・ためる」に分けて考えるきっかけをつくるため。",
+ "desc":"ぷっくりした粘土のような形と、ひらがな多めのやさしい言葉。クイズで「ほしい」と「ひつよう」を考え、おこづかいとためる割合を動かすと、ほしいものが何か月で買えるかが出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#d7ecff; --surface:#ffffff; --ink:#2a2350; --muted:#4f4876; --line:#c4d9f0; --accent:#ff7d6b; --accent-ink:#2a2350;
+  --sun:#ffd45e; --mint:#7fe0b9; --grape:#bca4ff; --sky:#8fd0ff; --pink:#ffa9c0;
+  --frame:#bcdcff; --radius:40px; --good:#1c7d57; --bad:#c43d2c;
+  --clay:inset -10px -12px 22px rgb(0 0 0 / .13),inset 10px 12px 22px rgb(255 255 255 / .6),14px 22px 34px rgb(52 70 140 / .24);
+  --clay-s:inset -5px -6px 12px rgb(0 0 0 / .12),inset 5px 6px 12px rgb(255 255 255 / .6),8px 12px 20px rgb(52 70 140 / .22);
+  --shadow:var(--clay);
+  --font:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+  --font-num:"Fredoka","M PLUS Rounded 1c",sans-serif; --head-weight:800; --head-track:.02em;
+  --pad-y:54px; --pad-x:70px;
+}
+.deck .slide.active{transform:none;filter:none} /* エンジンの rise/zoom/blur で表示中のスライドがずれたままになるのを補正 */
+.slide>.bg{background:radial-gradient(circle at 12% 18%,#eaf5ff 0 16%,transparent 16.2%),radial-gradient(circle at 88% 86%,#c4e2ff 0 20%,transparent 20.2%),radial-gradient(circle at 92% 8%,#fff2c4 0 9%,transparent 9.2%),var(--bg)}
+h1{font-size:88px;line-height:1.2;letter-spacing:.04em}
+h2{font-size:48px;line-height:1.35;margin-bottom:28px}
+p{font-size:22px;line-height:1.8}
+.lead{color:var(--muted)}
+.tag{display:inline-block;align-self:flex-start;font:800 20px var(--font);padding:10px 24px;border-radius:999px;background:var(--sun);box-shadow:var(--clay-s);margin-bottom:18px}
+.clay{border-radius:var(--radius);box-shadow:var(--clay);padding:28px 32px;background:#fff;position:relative}
+.clay.coral{background:var(--accent)}.clay.sun{background:var(--sun)}.clay.mint{background:var(--mint)}.clay.grape{background:var(--grape)}.clay.sky{background:var(--sky)}.clay.pink{background:var(--pink)}
+.clay p{margin:0;color:var(--ink)}
+.num{font:700 96px/1 var(--font-num);letter-spacing:-.01em;white-space:nowrap}
+.num small{font:800 30px var(--font);margin-left:4px}
+
+/* ぶたのちょきんばこ（CSS で描く） */
+.pig{position:relative;width:360px;height:300px;transform:scale(1.18);transform-origin:left top}
+.pig .body{position:absolute;left:20px;top:40px;width:320px;height:230px;border-radius:50% 50% 46% 46%;background:var(--pink);box-shadow:var(--clay)}
+.pig .ear{position:absolute;top:22px;width:80px;height:80px;background:#ff93b0;border-radius:18px 60px 18px 60px;box-shadow:var(--clay-s)}
+.pig .ear.l{left:70px;transform:rotate(-20deg)}.pig .ear.r{left:200px;transform:rotate(70deg)}
+.pig .slot{position:absolute;left:140px;top:60px;width:84px;height:16px;border-radius:8px;background:#b9536f;box-shadow:inset 3px 4px 6px rgb(0 0 0 / .3)}
+.pig .snout{position:absolute;left:250px;top:130px;width:100px;height:80px;border-radius:50%;background:#ff93b0;box-shadow:var(--clay-s)}
+.pig .snout::before,.pig .snout::after{content:"";position:absolute;top:28px;width:16px;height:24px;border-radius:50%;background:#b9536f}
+.pig .snout::before{left:28px}.pig .snout::after{left:58px}
+.pig .eye{position:absolute;left:236px;top:108px;width:18px;height:22px;border-radius:50%;background:var(--ink)}
+.pig .leg{position:absolute;top:240px;width:56px;height:56px;border-radius:0 0 22px 22px;background:#ff93b0;box-shadow:var(--clay-s)}
+.pig .leg.a{left:70px}.pig .leg.b{left:220px}
+.coin{position:absolute;width:86px;height:86px;border-radius:50%;background:var(--sun);box-shadow:var(--clay-s);display:grid;place-items:center;font:700 34px var(--font-num);color:#8a5a00}
+@keyframes drop{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.bob{animation:drop 3.2s ease-in-out infinite}
+.bob.d2{animation-delay:-1.1s}.bob.d3{animation-delay:-2.2s}
+
+/* 表紙 */
+.cv{display:grid;grid-template-columns:1fr 440px;gap:30px;flex:1;min-height:0;align-items:center}
+.cv h1 em{font-style:normal;color:#e0503c}
+.stage{position:relative;height:460px}
+
+/* 3つのつかいみち */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;flex:1;min-height:0;padding-bottom:18px}
+.three .clay{display:flex;flex-direction:column;align-items:center;text-align:center;padding:34px 28px}
+.blob{width:140px;height:140px;border-radius:44% 56% 52% 48%/50% 44% 56% 50%;background:rgb(255 255 255 / .75);box-shadow:var(--clay-s);display:grid;place-items:center;margin-bottom:22px}
+.three h3{font-size:44px;margin:0 0 10px}
+.three p{font-size:22px}
+
+/* クイズ */
+.qz{display:grid;grid-template-columns:1fr 1.15fr;gap:40px;flex:1;min-height:0;align-items:center}
+.quiz .choices{gap:22px}
+.quiz .choices>button{border:0;border-radius:32px;background:#fff;box-shadow:var(--clay-s);font:800 28px var(--font);padding:22px 30px;display:flex;align-items:center;gap:20px;color:var(--ink)}
+.quiz .choices>button i{font-style:normal;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--sky);box-shadow:var(--clay-s);font:700 26px var(--font-num);flex:none}
+.quiz .choices>button:hover{transform:translateY(-3px)}
+.quiz.answered .choices>button[data-correct]{background:var(--mint);border:0}
+.quiz.answered .choices>button.picked:not([data-correct]){background:#ffd2c9;border:0}
+.quiz.answered .choices>button[data-correct]::after{content:"せいかい！";margin-left:auto;font-size:20px;white-space:nowrap;background:#fff;border-radius:999px;padding:6px 14px}
+.quiz .explain{font-size:22px;color:var(--ink);background:#fff;border-radius:28px;padding:16px 24px;box-shadow:var(--clay-s);margin-top:22px}
+
+/* ほしい・ひつよう */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:36px;flex:1;min-height:0}
+.vs .clay{display:flex;flex-direction:column}
+.vs h3{font-size:46px;margin:0 0 6px}
+.vs ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
+.vs li{background:rgb(255 255 255 / .7);border-radius:22px;padding:12px 20px;font-size:23px;font-weight:700;box-shadow:inset 2px 3px 6px rgb(255 255 255 / .8),inset -2px -3px 6px rgb(0 0 0 / .06)}
+details.why{border:0;border-radius:28px;background:#fff;box-shadow:var(--clay-s);margin-top:24px}
+details.why>summary{color:var(--ink);font:800 21px var(--font);padding:14px 22px}
+details.why>summary::before{background:var(--sun);color:var(--ink);width:28px;height:28px;font-size:22px}
+details.why>.body{color:var(--ink);font-size:20px;padding:0 24px 18px}
+details.why.float[open]>.body{background:#fff;border:0;box-shadow:var(--clay);border-radius:28px}
+
+/* 計算 */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:36px;flex:1;min-height:0;margin-bottom:6px}
+.field{margin-bottom:22px}
+.field>label{font:800 22px var(--font);color:var(--ink)}
+.field>label b{font:700 32px var(--font-num);color:var(--ink)}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:44px}
+input[type=range]::-webkit-slider-runnable-track{height:22px;border-radius:11px;background:#e7f2ff;box-shadow:inset 3px 4px 8px rgb(52 70 140 / .2),inset -2px -2px 6px #fff}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:44px;height:44px;border-radius:50%;background:var(--accent);margin-top:-11px;box-shadow:var(--clay-s)}
+input[type=range]::-moz-range-track{height:22px;border-radius:11px;background:#e7f2ff}
+input[type=range]::-moz-range-thumb{width:40px;height:40px;border-radius:50%;background:var(--accent);border:0}
+.outs{display:grid;grid-template-rows:1.3fr 1fr;gap:26px}
+.outs .clay{display:flex;flex-direction:column;justify-content:center;padding:24px 30px}
+.outs span.l{font:800 22px var(--font)}
+.outs .row2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.outs .row2 .num{font-size:60px}
+.jar{height:34px;border-radius:17px;background:#fff;box-shadow:inset 3px 4px 8px rgb(52 70 140 / .2);margin-top:14px;overflow:hidden}
+.jar>i{display:block;height:100%;width:0;transition:width .5s var(--ease);border-radius:17px;background:linear-gradient(90deg,#ffe07f,#ffb830);box-shadow:inset -3px -3px 6px rgb(0 0 0 / .12),inset 3px 3px 6px rgb(255 255 255 / .6)}
+
+/* コツ */
+.tips{display:grid;gap:22px;flex:1;min-height:0;grid-auto-rows:1fr}
+.tips .clay{display:grid;grid-template-columns:96px 1fr;gap:26px;align-items:center;padding:20px 30px}
+.tips .no{width:96px;height:96px;border-radius:32px;display:grid;place-items:center;font:700 52px var(--font-num);box-shadow:var(--clay-s)}
+.tips h3{font-size:32px;margin:0 0 4px}
+.tips p{font-size:21px;color:var(--muted)}
+
+.foot{font-size:16px;color:var(--muted);bottom:14px}
+@media (prefers-reduced-motion:reduce){.bob{animation:none}}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <div class="cv">
+      <div>
+        <span class="tag">3・4ねんせい　おかねの じゅぎょう</span>
+        <h1>おこづかい、<br><em>どうする？</em></h1>
+        <p class="lead" style="margin-top:20px;font-size:26px">つかう？　ためる？<br>きょうは いっしょに かんがえよう。</p>
+      </div>
+      <div class="stage">
+        <div class="bob" style="position:absolute;left:50px;top:110px"><div class="pig"><div class="ear l"></div><div class="ear r"></div><div class="body"></div><div class="slot"></div><div class="snout"></div><div class="eye"></div><div class="leg a"></div><div class="leg b"></div></div></div>
+        <div class="coin bob d2" style="left:170px;top:0">¥</div>
+        <div class="coin bob d3" style="left:320px;top:40px;width:70px;height:70px;font-size:28px">¥</div>
+        <div class="coin bob" style="left:20px;top:40px;width:60px;height:60px;font-size:24px">¥</div>
+      </div>
+    </div>
+    <aside class="notes">最初に「おこづかいをもらっている人？」と手を挙げてもらう。もらっていない子もいるので、「もしもらったら」で考えてよいと伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="3つのつかいみち">
+    <div class="bg"></div>
+    <span class="tag" style="background:var(--mint)">おかねの つかいみち</span>
+    <h2>おかねの つかいみちは、おおきく 3つ。</h2>
+    <div class="three">
+      <div class="clay coral step"><div class="blob"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#2a2350" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 11h-11z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></div><h3>つかう</h3><p>いま ほしいものや、ひつようなものを かう。</p></div>
+      <div class="clay sun step"><div class="blob"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#2a2350" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="7"/><path d="M9 6.5h6M12 10v6M9.5 13h5"/></svg></div><h3>ためる</h3><p>もっと たかいものの ために、すこしずつ とっておく。</p></div>
+      <div class="clay grape step"><div class="blob"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#2a2350" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></div><h3>ゆずる</h3><p>こまっている ひとの ために つかう。ぼきん など。</p></div>
+    </div>
+    <aside class="notes">→ で1つずつ出す。3つ目の「ゆずる」は知らない子が多いので、学校の募金の例を出す。</aside>
+  </section>
+
+  <section class="slide" data-title="クイズ">
+    <div class="bg"></div>
+    <span class="tag" style="background:var(--sky)">クイズ</span>
+    <div class="qz">
+      <div>
+        <h2 style="font-size:58px;line-height:1.35;margin:0">どれが<br>「<span style="color:#e0503c">ひつよう</span>な<br>もの」かな？</h2>
+        <p class="lead" style="margin-top:22px">ひとつ えらんで、おしてみよう。</p>
+      </div>
+      <div class="quiz">
+        <div class="choices">
+          <button><i>A</i>あたらしい ゲーム</button>
+          <button data-correct><i>B</i>がっこうの えんぴつ</button>
+          <button><i>C</i>3こめの キーホルダー</button>
+        </div>
+        <p class="explain">えんぴつが ないと、べんきょうが できないね。<br>ゲームや キーホルダーは「ほしいもの」。<br>ほしいものも、わるくは ないよ！</p>
+      </div>
+    </div>
+    <aside class="notes">答えを押す前に、クラスで手を挙げてもらう。「ほしいもの」は悪いものではない、と必ず添える。</aside>
+  </section>
+
+  <section class="slide" data-title="ほしいとひつよう">
+    <div class="bg"></div>
+    <span class="tag" style="background:var(--pink)">くらべてみよう</span>
+    <h2>「ほしい」と「ひつよう」は、ちがう。</h2>
+    <div class="vs">
+      <div class="clay mint"><h3>ひつよう</h3><p>ないと こまるもの</p>
+        <ul><li>えんぴつ・けしごむ</li><li>くつ（ちいさくなったら）</li><li>ともだちの たんじょうびの カード</li></ul></div>
+      <div class="clay coral"><h3>ほしい</h3><p>あると うれしいもの</p>
+        <ul><li>あたらしい ゲーム</li><li>にんきの シール</li><li>おかし（まいにち）</li></ul>
+        <details class="why float"><summary>ほしいものは、すぐ かっちゃ だめ？</summary><div class="body">だめ じゃないよ。1しゅうかん まってみて、それでも ほしかったら、ほんとうに ほしいもの。まつと、ためる じかんも できるね。</div></details>
+      </div>
+    </div>
+    <aside class="notes">子どもたちに例を出してもらって、左右どちらに入るか一緒に決める。意見が分かれるものがあってよい。</aside>
+  </section>
+
+  <section class="slide" data-title="ためたら かえる？">
+    <div class="bg"></div>
+    <span class="tag">うごかしてみよう</span>
+    <h2>まいつき すこし ためると、なんかげつで かえる？</h2>
+    <div class="calc" data-calc data-let="save = round(money*rate/100); months = ceil(price/max(1,save)); year = save*12">
+      <div class="clay">
+        <div class="field"><label>1かげつの おこづかい <b data-show="money" data-unit="えん"></b></label><input type="range" name="money" min="300" max="2000" step="100" value="800"></div>
+        <div class="field"><label>ためる わりあい <b data-show="rate" data-unit="%"></b></label><input type="range" name="rate" min="10" max="100" step="10" value="50"></div>
+        <div class="field" style="margin-bottom:6px"><label>ほしいものの ねだん <b data-show="price" data-unit="えん"></b></label><input type="range" name="price" min="1000" max="8000" step="500" value="4000"></div>
+        <details class="why"><summary>どうやって けいさんするの？</summary><div class="body">ためる おかね ＝ おこづかい × わりあい。<br>かえるまで ＝ ねだん ÷ ためる おかね（はんぱは 1かげつ たす）。</div></details>
+      </div>
+      <div class="outs">
+        <div class="clay sun"><span class="l">かえるまで あと</span><div class="num" style="font-size:130px"><span data-out="months"></span><small style="font-size:40px">かげつ</small></div></div>
+        <div class="row2">
+          <div class="clay mint"><span class="l">まいつき ためる</span><div class="num"><span data-out="save"></span><small>えん</small></div></div>
+          <div class="clay grape"><span class="l">1ねんで たまる</span><div class="num" style="font-size:52px"><span data-out="year"></span><small>えん</small></div>
+            <div class="jar" data-bar="year" data-max="price"><i></i></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">「ためる割合」を 10% から 50% に上げてみせると、かかる月数が大きく変わる。子どもに前に出て動かしてもらう。</aside>
+  </section>
+
+  <section class="slide" data-title="ためるコツ">
+    <div class="bg"></div>
+    <span class="tag" style="background:var(--mint)">ためる コツ</span>
+    <h2>じょうずに ためる 3つの コツ。</h2>
+    <div class="tips">
+      <div class="clay step"><div class="no" style="background:var(--accent)">1</div><div><h3>もらったら、さきに わける</h3><p>つかう まえに、ためる ぶんを ちょきんばこへ。</p></div></div>
+      <div class="clay step"><div class="no" style="background:var(--sun)">2</div><div><h3>ほしいものの えを はる</h3><p>ちょきんばこに はると、がんばる きもちが つづく。</p></div></div>
+      <div class="clay step"><div class="no" style="background:var(--grape)">3</div><div><h3>1かげつに 1かい、かぞえる</h3><p>どれだけ たまったか、おうちの ひとと いっしょに。</p></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="しゅくだい">
+    <div class="bg"></div>
+    <div class="cv" style="grid-template-columns:1fr 400px">
+      <div>
+        <span class="tag" style="background:var(--pink)">きょうの しゅくだい</span>
+        <h1 style="font-size:78px">「ほしいもの<br>リスト」を<br>かいてみよう。</h1>
+        <p class="lead" style="margin-top:18px">ほしいものと ねだんを 3つ。<br>「ひつよう」か「ほしい」かも かいてね。</p>
+      </div>
+      <div class="clay" style="padding:30px 34px;transform:rotate(3deg)">
+        <p style="font:800 26px var(--font);margin-bottom:14px">ほしいもの リスト</p>
+        <div style="display:grid;gap:14px">
+          <div class="clay sky" style="padding:14px 20px;border-radius:24px"><p style="font-size:21px;font-weight:700">1. ＿＿＿＿＿＿　　えん</p></div>
+          <div class="clay mint" style="padding:14px 20px;border-radius:24px"><p style="font-size:21px;font-weight:700">2. ＿＿＿＿＿＿　　えん</p></div>
+          <div class="clay sun" style="padding:14px 20px;border-radius:24px"><p style="font-size:21px;font-weight:700">3. ＿＿＿＿＿＿　　えん</p></div>
+        </div>
+      </div>
+    </div>
+    <p class="foot">※ このスライドの ねだんや きんがくは れいです（数字は架空のサンプルです）。</p>
+  </section>
+
+</main>

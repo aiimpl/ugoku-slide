@@ -1,0 +1,325 @@
+<!--meta
+{"title":"サンプル通信 第128号（2026年10月）","style":"新聞紙面","use":"社内報（月刊ニュース）","group":"データ・図解",
+ "aim":"広報の担当者が、月初の全社朝会で今月の社内報を画面に映し、見出しを読み上げながら数字とお知らせを伝えるための紙面。",
+ "desc":"題字・縦書きの見出し・段組・罫線で組んだ一面の新聞。在宅日数と通勤時間を動かすと、月に戻る時間が計算される。部署だよりは面ごとに切り替え。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700;900&family=UnifrakturMaguntia&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f1ece0; --surface:#f7f3ea; --ink:#1c1a16; --muted:#4d483f; --line:#1c1a16; --accent:#9b1c1c; --accent-ink:#fff;
+  --good:#1f5d3a; --bad:#9b1c1c; --frame:#c9c2b2; --radius:0px; --shadow:none;
+  --font:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif; --font-num:"Noto Serif JP","Hiragino Mincho ProN",serif;
+  --head-weight:900; --head-track:0; --pad-y:34px; --pad-x:52px;
+}
+/* 紙：うっすらした繊維とむら */
+.slide>.bg{background:
+  radial-gradient(ellipse at 20% 10%,rgb(255 255 255 / .5),transparent 60%),
+  radial-gradient(ellipse at 90% 100%,rgb(120 100 60 / .10),transparent 55%),
+  repeating-linear-gradient(97deg,rgb(80 60 30 / .025) 0 1px,transparent 1px 7px),var(--bg)}
+.slide{font-size:18px;line-height:1.75}
+.hl,.shiro{flex:none}
+.pn{flex:1;min-height:0;display:grid;grid-template-columns:1fr 320px auto;gap:28px}
+.pn .dan{font-size:22px;line-height:1.85}
+.pbox{display:flex;flex-direction:column}
+.pq{font-size:32px;font-weight:900;line-height:1.45;margin:4px 0 6px}
+.chart{height:auto;flex:1;min-height:0;padding-top:30px;gap:14px;border-bottom:2px solid var(--ink);margin:6px 0 30px}
+.chart>.col>i{border-radius:0;background:repeating-linear-gradient(135deg,var(--ink) 0 2px,transparent 2px 5px);border:1.5px solid var(--ink)}
+.chart>.col.hot>i{background:var(--ink)}
+.chart>.col::before{font-size:17px;font-weight:900}
+.chart>.col::after{font-size:15px;color:var(--ink)}
+ol.list>li::before{border-radius:0;background:var(--ink);color:var(--bg);font-weight:900}
+.portrait{position:relative;border:1px solid var(--ink);overflow:hidden;background:#cfc7b6}
+.portrait::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgb(28 26 22 / .4) 1px,transparent 1.5px) 0 0/4px 4px;mix-blend-mode:multiply}
+/* 題字まわり */
+.mast{display:grid;grid-template-columns:220px 1fr 220px;align-items:end;gap:28px;border-bottom:7px double var(--ink);padding-bottom:10px}
+.mast .ttl{text-align:center;line-height:1}
+.mast .en{font:400 30px/1 "UnifrakturMaguntia",serif;letter-spacing:.02em;display:block;margin-bottom:8px}
+.mast .ja{font-weight:900;font-size:92px;letter-spacing:.14em;display:block;margin-right:-.14em}
+.mast .side{font-size:15px;line-height:1.6;border:1.5px solid var(--ink);padding:8px 12px}
+.mast .side b{font-size:17px}
+.mast .idx{font-size:15px;line-height:1.7}
+.mast .idx b{display:inline-block;background:var(--ink);color:var(--bg);padding:0 8px;margin-right:8px;font-size:14px}
+.dateline{display:flex;justify-content:space-between;font-size:15px;border-bottom:1.5px solid var(--ink);padding:5px 2px;margin-bottom:18px;letter-spacing:.06em}
+/* 小さい題字（2枚目以降） */
+.run{display:flex;align-items:baseline;gap:18px;border-bottom:4px double var(--ink);padding-bottom:6px;margin-bottom:16px;font-size:15px;letter-spacing:.08em}
+.run .en{font:400 24px/1 "UnifrakturMaguntia",serif}
+.run .men{margin-left:auto;background:var(--ink);color:var(--bg);padding:2px 12px;font-weight:700}
+/* 縦書き */
+.tate{writing-mode:vertical-rl;text-orientation:mixed}
+.tcy{text-combine-upright:all}
+.hl{writing-mode:vertical-rl;font-weight:900;line-height:1.12;letter-spacing:.04em;margin:0}
+.hl.xl{font-size:74px}.hl.l{font-size:58px}.hl.m{font-size:44px}
+.shiro{writing-mode:vertical-rl;background:var(--ink);color:var(--bg);font-weight:900;padding:14px 8px;letter-spacing:.08em;line-height:1.2}
+.shiro.red{background:var(--accent);color:#fff}
+.honbun{writing-mode:vertical-rl;font-size:22px;line-height:1.8;text-align:justify;font-weight:500}
+.honbun p{margin:0;text-indent:1em}
+/* 横組みの段組 */
+.dan{column-gap:26px;column-rule:1px solid var(--ink);text-align:justify;font-weight:500;font-size:18px;line-height:1.8}
+.dan p{margin:0 0 .4em;text-indent:1em}
+.rule-v{border-left:1.5px solid var(--ink)}
+.box{border:2px solid var(--ink);padding:16px 20px;background:rgb(255 255 255 / .28)}
+.box-t{display:inline-block;background:var(--ink);color:var(--bg);font-weight:700;font-size:16px;padding:2px 12px;letter-spacing:.1em;margin-bottom:10px}
+/* 網点の写真 */
+.photo{position:relative;border:1px solid var(--ink);overflow:hidden;background:#d9d2c3}
+.photo svg{display:block;width:100%;height:100%}
+.photo::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgb(28 26 22 / .38) 1px,transparent 1.5px) 0 0/4px 4px;mix-blend-mode:multiply}
+.cap{font-size:15px;line-height:1.5;margin-top:6px;color:var(--muted)}
+/* 数字 */
+.fig{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:4px 16px;border-bottom:1px solid var(--ink);padding:10px 0}
+.fig .k{font-size:17px;font-weight:700;grid-column:1/-1}
+.fig .v{font-weight:900;font-size:78px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.fig .u{font-size:24px;font-weight:700}
+.fig .d{grid-column:1/-1;font-size:16px;color:var(--muted)}
+/* 部品の見た目を紙面の作法に */
+.tabs{background:none;padding:0;border-radius:0;gap:0;border-bottom:2px solid var(--ink);width:100%;margin-bottom:16px}
+.tabs>[data-tab]{border-radius:0;font-weight:700;font-size:17px;padding:8px 22px;color:var(--ink);border:1.5px solid var(--ink);border-bottom:0;margin-right:6px;background:transparent}
+.tabs>[data-tab][aria-selected=true]{background:var(--ink);color:var(--bg);box-shadow:none}
+details.why{border:1.5px solid var(--ink);border-radius:0;background:transparent}
+details.why>summary{color:var(--ink);font-size:17px}
+details.why>summary::before{border-radius:0;background:var(--ink);color:var(--bg)}
+details.why>.body{color:var(--ink);font-size:17px}
+.field>label{color:var(--ink);font-size:18px;font-weight:700}
+.field>label b{font-size:26px;font-weight:900}
+input[type=range]{accent-color:var(--ink)}
+.meter{height:22px;border-radius:0;background:transparent;border:1.5px solid var(--ink)}
+.meter>i{border-radius:0;background:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 6px)}
+.meter.red>i{background:var(--accent)}
+.quiz .choices{grid-template-columns:1fr;gap:12px}
+.quiz .choices>button{border-radius:0;border:2px solid var(--ink);background:transparent;font-size:24px;font-weight:700;padding:14px 20px;display:flex;gap:16px;align-items:center;font-size:28px}
+.quiz .choices>button b{display:grid;place-items:center;width:40px;height:40px;border:2px solid var(--ink);border-radius:50%;font-size:20px;flex:none}
+.quiz.answered .choices>button[data-correct]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.quiz.answered .choices>button[data-correct] b{border-color:var(--bg)}
+.quiz.answered .choices>button.picked:not([data-correct]){text-decoration:line-through;background:transparent;border-color:var(--accent);color:var(--accent)}
+.quiz .explain{color:var(--ink);font-size:19px;border-left:5px solid var(--accent);padding-left:14px}
+.foot{font-size:14px;color:var(--muted);left:52px;bottom:14px}
+.senryu{writing-mode:vertical-rl;font-size:26px;font-weight:700;letter-spacing:.12em;line-height:1.4}
+.senryu small{display:block;font-size:15px;font-weight:500;letter-spacing:.05em;margin-top:14px;color:var(--muted)}
+.q{font-weight:900}
+.q::before{content:"――";margin-right:.2em}
+.ad{border:6px double var(--ink);padding:26px 30px;text-align:center}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <!-- 1 一面 -->
+  <section class="slide" data-title="一面">
+    <div class="bg"></div>
+    <header class="mast">
+      <div class="idx"><div><b>2面</b>部署だより</div><div><b>3面</b>在宅で戻る時間</div><div><b>4面</b>社内クイズ・川柳</div><div><b>5面</b>社長に聞く</div></div>
+      <div class="ttl"><span class="en">The Sample Times</span><span class="ja">サンプル通信</span></div>
+      <div class="side"><b>第128号</b>　月刊<br>2026年（令和8年）<br>10月1日　木曜日<br>発行　サンプル工業 広報室</div>
+    </header>
+    <div class="dateline"><span>社員とその家族のための社内報</span><span>本日の紙面は5面まで</span><span>社外秘ではありません</span></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 640px;gap:30px">
+      <div style="display:flex;flex-direction:column;min-height:0">
+        <div class="photo" style="flex:1">
+          <svg viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs><linearGradient id="sky41" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bdb5a4"/><stop offset="1" stop-color="#e8e2d4"/></linearGradient></defs>
+            <rect width="600" height="300" fill="url(#sky41)"/>
+            <circle cx="470" cy="80" r="34" fill="#f4efe3"/>
+            <path d="M0 210 Q150 180 300 205 T600 195 V300 H0Z" fill="#9b937f"/>
+            <rect x="70" y="120" width="260" height="110" fill="#4a453b"/><rect x="330" y="150" width="170" height="80" fill="#6b6454"/>
+            <path d="M70 120 l40 -24 l40 24 l40 -24 l40 24 l40 -24 l40 24Z" fill="#2e2b25"/>
+            <rect x="120" y="60" width="18" height="62" fill="#2e2b25"/><rect x="360" y="110" width="110" height="40" fill="#8a8371"/>
+            <g fill="#e8e2d4"><rect x="95" y="160" width="30" height="18"/><rect x="140" y="160" width="30" height="18"/><rect x="185" y="160" width="30" height="18"/><rect x="230" y="160" width="30" height="18"/><rect x="275" y="160" width="30" height="18"/><rect x="350" y="175" width="40" height="16"/><rect x="405" y="175" width="40" height="16"/><rect x="455" y="175" width="30" height="16"/></g>
+            <path d="M0 250 H600 V300 H0Z" fill="#3c382f"/><path d="M0 262 H600" stroke="#e8e2d4" stroke-width="3" stroke-dasharray="26 18"/>
+            <g fill="#2e2b25"><circle cx="540" cy="215" r="26"/><circle cx="572" cy="225" r="20"/><circle cx="30" cy="222" r="22"/></g>
+          </svg>
+        </div>
+        <p class="cap">▲ 来春に稼働する第二工場（サンプル市みなと町）の完成予想図＝イメージ</p>
+      </div>
+      <div style="display:flex;flex-direction:row-reverse;gap:18px;min-height:0">
+        <h1 class="hl xl">第二工場、来春稼働へ</h1>
+        <div class="shiro red" style="font-size:30px;align-self:flex-start">生産能力は一・六倍に</div>
+        <div class="honbun" style="height:100%;flex:none">
+          <p>サンプル工業は九月の取締役会で、みなと町に建設中の第二工場を来年四月に動かすと決めた。組み立てと検査を一本の流れにまとめ、生産能力は今の一・六倍になる。</p>
+          <p>夜間は無人で検査し、残業を月平均十二時間減らす見込み。採用は地元を中心に三十人。</p>
+          <p>二月に見学会を開く。家族の参加も歓迎する。（広報室）</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">朝会の冒頭はこの一面だけ。見出しを読み上げて「詳しくは中の面で」と言う。写真はイメージなので、実際の写真に差し替えるときは .photo の中の svg を画像に替える。</aside>
+  </section>
+
+  <!-- 2 数字の面 -->
+  <section class="slide" data-title="上期の受注">
+    <div class="bg"></div>
+    <div class="run"><span class="en">The Sample Times</span><b>サンプル通信</b><span>2026年10月1日</span><span class="men">1面つづき・経済</span></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:430px 1fr auto;gap:30px">
+      <div class="box" style="display:flex;flex-direction:column">
+        <span class="box-t" style="align-self:flex-start">数字で見る上期</span>
+        <div class="fig"><span class="k">受注額</span><span class="v" data-count="128">128</span><span class="u">億円</span><span class="d">前年同期比 ＋18%。過去最高</span></div>
+        <div class="fig"><span class="k">新しい取引先</span><span class="v" data-count="46">46</span><span class="u">社</span><span class="d">うち海外 9 社</span></div>
+        <div class="fig" style="border:0"><span class="k">納期を守れた割合</span><span class="v" data-count="98.6" data-format="dec1">98.6</span><span class="u">％</span><span class="d">目標 98.0％を上回った</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;min-height:0">
+        <p style="font-size:30px;font-weight:900;line-height:1.45;border-bottom:1.5px solid var(--ink);padding-bottom:12px;margin-bottom:14px">医療機器向けの部品が伸び、<br>六か月のうち五か月で計画を超えた。</p>
+        <div class="dan" style="column-count:2">
+          <p>四〜九月の受注額は百二十八億円となり、半期として過去最高を記録した。けん引したのは医療機器向けの精密部品で、全体の三割を占めた。</p>
+          <p>一方、八月は原材料の値上がりで利益が圧迫された。営業部は十月から、値上げ分の一部を見積もりに反映する。</p>
+          <p>下期は第二工場の立ち上げ準備で一時的に費用が増える。経理部は「通期の利益は計画どおり」としている。</p>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-top:4px">月別の受注額（億円）</div>
+        <div class="chart">
+          <div class="col" style="--v:62" data-label="4月" data-val="18.6"><i></i></div>
+          <div class="col" style="--v:68" data-label="5月" data-val="20.4"><i></i></div>
+          <div class="col" style="--v:66" data-label="6月" data-val="19.8"><i></i></div>
+          <div class="col" style="--v:74" data-label="7月" data-val="22.2"><i></i></div>
+          <div class="col" style="--v:70" data-label="8月" data-val="21.0"><i></i></div>
+          <div class="col hot" style="--v:87" data-label="9月" data-val="26.0"><i></i></div>
+        </div>
+        <details class="why"><summary>集計のしかた</summary><div class="body">受注額は注文書を受け取った日で数え、取り消し分を引いた額。新しい取引先は、過去3年に取引のない会社。数字はすべて架空のサンプルです。</div></details>
+      </div>
+      <h2 class="hl l" style="margin:0">上期の受注、<br>過去最高<span class="tcy">128</span>億円</h2>
+    </div>
+    <aside class="notes">数字は開くたびに数え上がる。「過去最高」だけ強く言い、八月の利益の話は短く。質問が出たら「集計のしかた」を開く。</aside>
+  </section>
+
+  <!-- 3 部署だより（tabs） -->
+  <section class="slide" data-title="部署だより">
+    <div class="bg"></div>
+    <div class="run"><span class="en">The Sample Times</span><b>サンプル通信</b><span>2026年10月1日</span><span class="men">2面・部署だより</span></div>
+    <div data-tabs style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">営業部</button><button data-tab="b">開発部</button><button data-tab="c">総務部</button></div>
+      <div data-panel="a" class="pn">
+        <div class="dan" style="column-count:2">
+          <p>大阪営業所が九月、開所以来初めて月間受注十億円を超えた。所長の西山さん（仮名）は「見積もりを二十四時間以内に返す、を半年続けただけ」と話す。</p>
+          <p>秘けつは、よく出る部品の価格表を共有フォルダーにまとめたこと。若手でもその場で概算を出せるようになり、商談の数は一・四倍に増えた。</p>
+          <p>取引先からは「返事が早いので、まず大阪に相談する」との声も届いている。</p>
+          <p>十月からは名古屋営業所にも同じ仕組みを広げる。価格表の作り方は、社内ポータルの営業部のページで誰でも見られる。</p>
+        </div>
+        <div class="box pbox"><span class="box-t">今月の一言</span><p class="pq">「速さは、<br>値引きより効く」</p><p class="cap">大阪営業所 所長（仮名）</p><div class="fig" style="border:0;margin-top:auto;padding-bottom:0"><span class="k">9月の受注</span><span class="v">10.2</span><span class="u">億円</span></div></div>
+        <h3 class="hl l" style="margin:0">大阪、初の<br>月<span class="tcy">10</span>億円</h3>
+      </div>
+      <div data-panel="b" class="pn">
+        <div class="dan" style="column-count:2">
+          <p>開発部は新しい検査装置の試作を終えた。部品の傷をカメラで見分ける仕組みで、これまで人の目で一個八秒かかっていた検査が二秒になる。</p>
+          <p>見分けの精度は九九・二％。残りの〇・八％は人が確かめる。第二工場の検査ラインに十台を入れる予定だ。</p>
+          <p>担当の技術者は「検査の人が、改善を考える時間を持てるようにしたかった」と話す。</p>
+          <p>開発部では、この装置に愛称を付けてくれる人を募集している。採用された人には、開発部から記念品を贈る。</p>
+        </div>
+        <div class="box pbox"><span class="box-t">愛称を募集</span><p class="pq">10月20日まで<br>1人3案まで</p><p class="cap">社内ポータルの投稿箱から</p><div class="fig" style="border:0;margin-top:auto;padding-bottom:0"><span class="k">1個あたりの検査</span><span class="v">2</span><span class="u">秒</span></div></div>
+        <h3 class="hl l" style="margin:0">検査は<br><span class="tcy">8</span>秒から<span class="tcy">2</span>秒へ</h3>
+      </div>
+      <div data-panel="c" class="pn">
+        <div class="dan" style="column-count:2">
+          <p>十一月から経費精算の締め日が毎月二十日に変わる。二十日までに出した分は、その月の給与と一緒に振り込まれる。</p>
+          <p>あわせて、紙の領収書は写真を撮って出せばよくなる。原本は七年間、各部署でまとめて保管する。</p>
+          <p>これまでは月末に申請が集中し、振り込みが翌々月になることもあった。総務部は「待たせない精算にしたい」としている。</p>
+          <p>分からないことは総務部の窓口（内線 1020）へ。説明会は十月八日の昼休みに開く。</p>
+        </div>
+        <div class="box pbox"><span class="box-t">変わること</span><p class="pq">締め日<br>月末 → <span style="color:var(--accent)">20日</span></p><p class="cap">領収書は写真で出せる</p><div class="fig" style="border:0;margin-top:auto;padding-bottom:0"><span class="k">始まる月</span><span class="v">11</span><span class="u">月から</span></div></div>
+        <h3 class="hl l" style="margin:0">経費精算、<br>締め日が変わる</h3>
+      </div>
+    </div>
+    <aside class="notes">部署名を押すと記事が入れ替わる。朝会では各部の人に一言もらう想定。部署を増やすときは、ボタンと data-panel を1組ずつ足す。</aside>
+  </section>
+
+  <!-- 4 計算（calc） -->
+  <section class="slide" data-title="在宅で戻る時間">
+    <div class="bg"></div>
+    <div class="run"><span class="en">The Sample Times</span><b>サンプル通信</b><span>2026年10月1日</span><span class="men">3面・くらし</span></div>
+    <div data-calc data-let="m = commute*2*days*4.3/60; y = m*12; full = commute*2*5*4.3/60" style="flex:1;min-height:0;display:grid;grid-template-columns:auto 1fr 1fr;gap:34px">
+      <h2 class="hl l" style="margin:0;order:3">在宅週<span class="tcy">2</span>日で、<br>月に<span class="tcy">14</span>時間が戻る</h2>
+      <div style="order:2;display:flex;flex-direction:column">
+        <span class="box-t" style="align-self:flex-start">あなたの場合を計算</span>
+        <div class="field" style="margin-top:14px"><label>片道の通勤時間 <b data-show="commute" data-unit="分"></b></label><input type="range" name="commute" min="10" max="120" step="5" value="50"></div>
+        <div class="field"><label>週の在宅日数 <b data-show="days" data-unit="日"></b></label><input type="range" name="days" min="0" max="5" step="1" value="2"></div>
+        <div style="margin-top:8px;font-size:17px;font-weight:700">ひと月の通勤時間（全日出社のとき）</div>
+        <div class="meter" data-bar="full" data-max="86" style="margin:6px 0 12px"><i></i></div>
+        <div style="font-size:17px;font-weight:700">そのうち在宅で戻る時間</div>
+        <div class="meter red" data-bar="m" data-max="86" style="margin-top:6px"><i></i></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">戻る時間 ＝ 片道 × 2（往復）× 在宅日数 × 4.3週 ÷ 60。<br>営業日に直すときは 8時間 ＝ 1日で割った。</div></details>
+      </div>
+      <div class="box" style="order:1;display:flex;flex-direction:column;justify-content:space-between">
+        <div class="fig"><span class="k">ひと月に戻る時間</span><span class="v" data-out="m" data-format="dec1"></span><span class="u">時間</span></div>
+        <div class="fig"><span class="k">一年では</span><span class="v" data-out="y"></span><span class="u">時間</span></div>
+        <div class="fig" style="border:0"><span class="k">営業日に直すと</span><span class="v" data-out="y/8" data-format="dec1"></span><span class="u">日分</span><span class="d">本を読む、眠る、家族と話す。使い道の投稿も募集中。</span></div>
+      </div>
+    </div>
+    <aside class="notes">ここで片道の時間を会場の人に聞いて動かす。「片道1時間・週2日なら、年に約206時間」。在宅の制度は10月から全部署で選べる。</aside>
+  </section>
+
+  <!-- 5 クイズと川柳（quiz） -->
+  <section class="slide" data-title="社内クイズ">
+    <div class="bg"></div>
+    <div class="run"><span class="en">The Sample Times</span><b>サンプル通信</b><span>2026年10月1日</span><span class="men">4面・娯楽</span></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.5px 360px;gap:30px">
+      <div class="quiz">
+        <span class="box-t">今月の社内クイズ</span>
+        <p style="font-size:44px;font-weight:900;line-height:1.4;margin:10px 0 26px">十一月から、経費精算の<br>締め日は毎月何日になる？</p>
+        <div class="choices">
+          <button><b>イ</b>毎月10日</button>
+          <button data-correct><b>ロ</b>毎月20日</button>
+          <button><b>ハ</b>毎月25日</button>
+          <button><b>ニ</b>月末のまま</button>
+        </div>
+        <p class="explain" style="font-size:21px">答えは「ロ」。20日までに出した分は、その月の給与と一緒に振り込まれます。くわしくは2面の総務部だよりで。</p>
+      </div>
+      <div class="rule-v"></div>
+      <div style="display:flex;flex-direction:column">
+        <span class="box-t" style="align-self:flex-end">社員川柳・今月の三句</span>
+        <div style="flex:1;display:flex;flex-direction:row-reverse;justify-content:space-between;padding-top:12px">
+          <p class="senryu">在宅で　猫が先輩　顔をする<small>開発部　ねこ係</small></p>
+          <p class="senryu">二十日前　領収書だけ　厚くなる<small>営業部　月末族</small></p>
+          <p class="senryu">新工場　見学会に　母が来る<small>総務部　孝行者</small></p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">会場に手を挙げてもらってから選ぶ。答えると正解が黒く反転する。川柳は投稿の中から毎月三句。</aside>
+  </section>
+
+  <!-- 6 インタビュー（縦書き・step） -->
+  <section class="slide" data-title="社長に聞く">
+    <div class="bg"></div>
+    <div class="run"><span class="en">The Sample Times</span><b>サンプル通信</b><span>2026年10月1日</span><span class="men">5面・インタビュー</span></div>
+    <div style="flex:1;min-height:0;display:flex;flex-direction:row-reverse;gap:26px">
+      <h2 class="hl l" style="margin:0">社長に聞く<br>人が先、工場は後</h2>
+      <div class="shiro" style="font-size:22px;align-self:flex-start">聞き手・広報室</div>
+      <div class="honbun step" style="height:100%;border-right:1px solid var(--ink);padding-right:22px"><p class="q">第二工場の狙いは。</p><p>注文を断らないことです。上期は忙しさを理由に、三件の相談をお断りしました。あれは本当に悔しかった。</p></div>
+      <div class="honbun step" style="height:100%;border-right:1px solid var(--ink);padding-right:22px"><p class="q">人が足りるのでしょうか。</p><p>だから採用を半年早めました。工場が動く四月には、三十人が研修を終えている計画です。</p></div>
+      <div class="honbun step" style="height:100%;border-right:1px solid var(--ink);padding-right:22px"><p class="q">社員へ一言。</p><p>無人検査で浮いた時間は、改善と休みに使ってください。残業を減らした部署を、この紙面で毎月紹介します。</p></div>
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+        <div class="portrait" style="flex:1">
+          <svg viewBox="0 0 300 360" preserveAspectRatio="xMidYMid slice" style="display:block;width:100%;height:100%" aria-hidden="true">
+            <rect width="300" height="360" fill="#bfb7a6"/><rect y="250" width="300" height="110" fill="#8f8775"/>
+            <path d="M40 360 Q50 250 150 238 Q250 250 260 360Z" fill="#2e2b25"/>
+            <path d="M128 232 L150 290 L172 232Z" fill="#e8e2d4"/><path d="M146 240 L154 240 L158 300 L150 312 L142 300Z" fill="#6b1515"/>
+            <rect x="132" y="196" width="36" height="44" fill="#8a7f6b"/>
+            <ellipse cx="150" cy="150" rx="58" ry="70" fill="#a39880"/>
+            <path d="M92 140 Q95 72 150 74 Q206 72 208 140 Q200 104 150 102 Q102 104 92 140Z" fill="#2e2b25"/>
+          </svg>
+        </div>
+        <p class="cap">▲ 社長 サンプル一郎（仮名）＝本社で</p>
+      </div>
+    </div>
+    <aside class="notes">→キーで問いと答えが1つずつ出る。縦書きは右から左へ読むので、右端の見出しから指でたどると伝わりやすい。</aside>
+  </section>
+
+  <!-- 7 締め -->
+  <section class="slide" data-title="投稿募集">
+    <div class="bg"></div>
+    <div class="run"><span class="en">The Sample Times</span><b>サンプル通信</b><span>2026年10月1日</span><span class="men">最終面</span></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:34px">
+      <div class="ad" style="display:flex;flex-direction:column;justify-content:center">
+        <p style="font-size:22px;font-weight:700;letter-spacing:.3em;margin:0">― 次号に載せる ―</p>
+        <p style="font-size:104px;font-weight:900;line-height:1.1;letter-spacing:.08em;margin:14px 0">投稿募集</p>
+        <p style="font-size:26px;font-weight:700;margin:0">川柳・部署の自慢・在宅の過ごし方</p>
+        <p style="font-size:22px;margin:18px 0 0;border-top:1.5px solid var(--ink);padding-top:14px">締め切り <b style="font-size:34px">10月15日</b>　社内ポータルの投稿箱へ</p>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <span class="box-t" style="align-self:flex-start">次号予告　第129号（11月1日）</span>
+        <ol class="list" style="font-size:26px;margin-top:10px">
+          <li class="step">第二工場の中を、初めて写真で紹介</li>
+          <li class="step">新しい経費精算、やってみた人の感想</li>
+          <li class="step">検査装置の愛称、決定</li>
+        </ol>
+        <div class="box" style="margin-top:auto">
+          <p style="margin:0;font-size:19px"><b>編集・発行</b>　サンプル工業 広報室<br>内線 1105　／　記事の間違いのお知らせもこちらへ</p>
+        </div>
+        <p class="cap" style="margin-top:8px">社名・人名・数字はすべて架空のサンプルです。</p>
+      </div>
+    </div>
+  </section>
+
+</main>

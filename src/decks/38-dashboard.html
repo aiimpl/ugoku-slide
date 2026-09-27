@@ -1,0 +1,283 @@
+<!--meta
+{"title":"営業KPI 週次レポート 第18週","style":"ダッシュボード","use":"営業 KPI の週次報告","group":"データ・図解",
+ "aim":"営業部長が毎週月曜の営業会議で、先週のKPIと今月の着地見込みを確かめ、どの商談に手を打つかをその場で決めるための資料。",
+ "desc":"暗い管理画面に、小さなグラフのタイルが並ぶ。数字は開くたびにカウントアップし、受注率と提案中の金額を動かすと、今月の着地見込みと目標との差が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;600;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0d1016; --surface:#151a23; --ink:#e7eaf0; --muted:#8e97a8; --line:#262d3a;
+  --accent:#4cc9f0; --accent-ink:#06121a; --good:#3ddc97; --bad:#ff6b6b; --warn:#ffb547; --frame:#07090d;
+  --radius:10px; --shadow:none;
+  --font:"Manrope","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Manrope","Hiragino Sans",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --head-weight:700; --head-track:-.01em; --pad-y:84px; --pad-x:40px;
+}
+/* 管理画面の枠：上のバー */
+.slide{padding:84px 40px 30px 40px}
+.topbar{position:absolute;left:0;right:0;top:0;height:60px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 40px;background:#10141c}
+.topbar .logo{width:26px;height:26px;border-radius:7px;background:conic-gradient(from 200deg,var(--accent),var(--good),var(--accent))}
+.topbar .t{font:700 17px var(--font);color:var(--ink)}
+.topbar .chip{font:600 14px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:5px 10px}
+.topbar .chip.on{color:var(--accent);border-color:rgb(76 201 240 / .5);background:rgb(76 201 240 / .08)}
+.topbar .sp{flex:1}
+.topbar .live{font:600 14px var(--mono);color:var(--good);display:flex;align-items:center;gap:8px}
+.topbar .live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgb(61 220 151 / .6);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 8px rgb(61 220 151 / 0)}100%{box-shadow:0 0 0 0 rgb(61 220 151 / 0)}}
+.slide>.bg{background:radial-gradient(900px 400px at 85% -10%,rgb(76 201 240 / .07),transparent 70%)}
+h1{font-size:44px;line-height:1.25;letter-spacing:-.02em}
+h2{font-size:32px;line-height:1.35;margin-bottom:20px;letter-spacing:-.01em}
+.kicker{font:600 14px var(--mono);letter-spacing:.12em;color:var(--accent);margin-bottom:8px}
+/* タイル */
+.tiles{display:grid;gap:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden;min-width:0}
+.tile .tl{font:600 14px var(--mono);color:var(--muted);letter-spacing:.04em;display:flex;justify-content:space-between;align-items:center}
+.tile .tv{font:800 46px/1.1 var(--font-num);letter-spacing:-.03em;margin-top:8px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tile .tv small{font-size:18px;font-weight:600;color:var(--muted);margin-left:4px;letter-spacing:0}
+.tile .dl{font:600 14px var(--mono);margin-top:6px}
+.team .tile{min-height:180px;display:flex;flex-direction:column;padding:20px 22px}
+.team .tile .tv{font-size:60px;margin-top:auto}
+.team .tile .meter{margin-top:18px!important;height:12px}
+.cmp{display:grid;gap:10px;margin-top:12px;position:relative}
+.cmp>div{display:grid;grid-template-columns:110px 1fr 60px;gap:14px;align-items:center;font-size:17px}
+.cmp b{font:700 18px var(--font-num);text-align:right}
+.cmp .meter{background:linear-gradient(90deg,transparent calc(62.5% - 1px),#e7eaf0 calc(62.5% - 1px) calc(62.5% + 1px),transparent calc(62.5% + 1px)),#232a37}
+.acts .tile{min-height:250px;display:flex;flex-direction:column}
+.acts .tile .dl{margin-top:auto!important}
+.up{color:var(--good)}.dn{color:var(--bad)}.wn{color:var(--warn)}
+.tile .spark{position:absolute;left:0;right:0;bottom:0;height:52px;width:100%}
+.tile .spark path{fill:none;stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke}
+.tile .spark path.area{fill:url(#fillc);stroke:none}
+.donut{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p) * 1%),#232a37 0);display:grid;place-items:center;margin:12px auto 0}
+.donut::after{content:"";grid-area:1/1;width:112px;height:112px;border-radius:50%;background:var(--surface)}
+.donut b{grid-area:1/1;z-index:1;font:800 34px var(--font-num)}
+/* 縦棒（小さなグラフ） */
+.chart{height:210px;gap:10px;border-bottom:1px solid var(--line);padding-top:26px;margin-bottom:28px}
+.chart>.col>i{border-radius:4px 4px 0 0;background:linear-gradient(var(--accent),rgb(76 201 240 / .35))}
+.chart>.col.dim>i{background:#2c3444}
+.chart>.col::before{font:600 13px var(--mono);color:var(--muted)}
+.chart>.col::after{font:600 13px var(--mono);color:var(--muted)}
+/* 横棒 */
+.meter{height:10px;background:#232a37;border-radius:999px}
+.meter>i{background:var(--accent)}
+.meter.g>i{background:var(--good)}.meter.w>i{background:var(--warn)}.meter.r>i{background:var(--bad)}
+.funnel{display:grid;gap:20px}
+.fr{display:grid;grid-template-columns:130px 1fr 120px 110px;gap:16px;align-items:center;font-size:20px}
+.fr .bar{height:58px;border-radius:6px;background:linear-gradient(90deg,var(--accent),rgb(76 201 240 / .45));width:var(--w)}
+.fr.bad .bar{background:linear-gradient(90deg,var(--bad),rgb(255 107 107 / .4))}
+.fr b{font:700 22px var(--font-num);text-align:right}
+.fr .rt{font:600 16px var(--mono);color:var(--muted);text-align:right}
+.fr.bad .rt{color:var(--bad)}
+.field>label{font-size:18px;color:var(--ink)}
+.field>label b{font:600 22px var(--mono);color:var(--accent)}
+input[type=range]{accent-color:var(--accent)}
+details.why{border:1px solid var(--line);background:var(--surface);border-radius:8px}
+details.why>summary{color:var(--accent);font-size:17px}
+details.why>summary::before{background:rgb(76 201 240 / .15)}
+details.why>.body{font-size:17px;color:var(--muted)}
+details.why.float[open]>.body{background:#1b212c;border-color:var(--line)}
+.tabs{background:#10141c;border:1px solid var(--line);border-radius:8px;padding:4px}
+.tabs>[data-tab]{border-radius:6px;font-size:16px;padding:7px 18px;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:#232a37;color:var(--ink);box-shadow:none}
+table.t{font-size:20px}
+table.t th{font:600 13px var(--mono);letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line)}
+table.t td{border-bottom:1px solid var(--line);padding:22px 14px}
+table.t tr:last-child td{border-bottom:0}
+table.t td.n{font:700 24px var(--font-num)}
+.st{font:600 14px var(--mono);padding:4px 10px;border-radius:5px;background:#232a37;color:var(--muted)}
+.st.g{background:rgb(61 220 151 / .12);color:var(--good)}.st.w{background:rgb(255 181 71 / .12);color:var(--warn)}.st.r{background:rgb(255 107 107 / .12);color:var(--bad)}
+.foot{font:600 13px var(--mono);color:var(--muted);left:40px;bottom:12px}
+ol.list{font-size:24px}
+ol.list>li::before{background:rgb(76 201 240 / .15);color:var(--accent);font-family:var(--mono)}
+@media (prefers-reduced-motion:reduce){.topbar .live::before{animation:none}}
+</style>
+
+<main class="deck" data-transition="fade">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="fillc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4cc9f0" stop-opacity=".28"/><stop offset="1" stop-color="#4cc9f0" stop-opacity="0"/></linearGradient></defs></svg>
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">全社</span><span class="chip">2027年5月</span><span class="chip">第18週 5/3–5/9</span><span class="sp"></span><span class="live">更新 5/10 07:00</span></div>
+    <div class="kicker">WEEKLY REPORT · W18</div>
+    <h1>営業KPI 週次レポート　<span style="color:var(--accent)">第18週</span></h1>
+    <div class="tiles" style="grid-template-columns:repeat(4,1fr) 1.1fr;grid-template-rows:auto auto;margin-top:22px">
+      <div class="tile"><div class="tl">今月の受注額</div><div class="tv"><span data-count="7800" data-unit=""></span><small>万円</small></div><div class="dl up">▲ 12% 前月同期比</div>
+        <svg class="spark" viewBox="0 0 200 52" preserveAspectRatio="none"><path class="area" d="M0 44L25 40 50 42 75 32 100 34 125 24 150 26 175 14 200 10V52H0Z"/><path d="M0 44L25 40 50 42 75 32 100 34 125 24 150 26 175 14 200 10"/></svg><div style="height:40px"></div></div>
+      <div class="tile"><div class="tl">商談の数</div><div class="tv"><span data-count="146"></span><small>件</small></div><div class="dl up">▲ 9 件 前週比</div>
+        <svg class="spark" viewBox="0 0 200 52" preserveAspectRatio="none"><path class="area" d="M0 30L25 34 50 28 75 30 100 22 125 26 150 20 175 22 200 16V52H0Z"/><path d="M0 30L25 34 50 28 75 30 100 22 125 26 150 20 175 22 200 16"/></svg><div style="height:40px"></div></div>
+      <div class="tile"><div class="tl">受注率</div><div class="tv"><span data-count="22" data-unit=""></span><small>%</small></div><div class="dl dn">▼ 3 pt 前月比</div>
+        <svg class="spark" viewBox="0 0 200 52" preserveAspectRatio="none"><path class="area" d="M0 14L25 16 50 12 75 20 100 22 125 26 150 30 175 32 200 36V52H0Z" style="fill:rgb(255 107 107 / .15)"/><path d="M0 14L25 16 50 12 75 20 100 22 125 26 150 30 175 32 200 36" style="stroke:var(--bad)"/></svg><div style="height:40px"></div></div>
+      <div class="tile"><div class="tl">平均単価</div><div class="tv"><span data-count="412"></span><small>万円</small></div><div class="dl up">▲ 4% 前月比</div>
+        <svg class="spark" viewBox="0 0 200 52" preserveAspectRatio="none"><path class="area" d="M0 34L25 30 50 32 75 28 100 30 125 24 150 26 175 22 200 20V52H0Z"/><path d="M0 34L25 30 50 32 75 28 100 30 125 24 150 26 175 22 200 20"/></svg><div style="height:40px"></div></div>
+      <div class="tile" style="grid-row:span 2;text-align:center"><div class="tl">目標達成の見込み</div><div class="donut" style="--p:94"><b>94%</b></div><div class="dl wn" style="margin-top:14px">目標 1.2億円 まで<br>あと 680 万円</div></div>
+      <div class="tile" style="grid-column:span 4">
+        <div class="tl">週ごとの受注額（万円）<span>2027年</span></div>
+        <div class="chart" style="height:150px;margin-bottom:22px;padding-top:22px">
+          <div class="col dim" style="--v:42" data-label="W11" data-val="1,260"><i></i></div>
+          <div class="col dim" style="--v:55" data-label="W12" data-val="1,650"><i></i></div>
+          <div class="col dim" style="--v:38" data-label="W13" data-val="1,140"><i></i></div>
+          <div class="col dim" style="--v:61" data-label="W14" data-val="1,830"><i></i></div>
+          <div class="col dim" style="--v:50" data-label="W15" data-val="1,500"><i></i></div>
+          <div class="col" style="--v:66" data-label="W16" data-val="1,980"><i></i></div>
+          <div class="col" style="--v:72" data-label="W17" data-val="2,160"><i></i></div>
+          <div class="col" style="--v:88" data-label="W18" data-val="2,640"><i></i></div>
+        </div>
+      </div>
+    </div>
+    <p class="foot">※ 社名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">最初の画面で全体を10秒だけ見せる。赤いのは受注率だけ、ということを伝えて次へ。</aside>
+  </section>
+
+  <section class="slide" data-title="今月の着地">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">着地見込み</span><span class="chip">2027年5月</span><span class="sp"></span><span class="live">更新 5/10 07:00</span></div>
+    <div class="kicker">FORECAST</div>
+    <h2>受注額は伸びている。着地は目標の 94%、足りないのは 680 万円。</h2>
+    <div class="tiles" style="grid-template-columns:1.25fr 1fr">
+      <div class="tile" style="padding:22px 24px">
+        <div class="tl">今月の着地見込み</div>
+        <div class="tv" style="font-size:96px;margin-top:10px"><span data-count="11320"></span><small style="font-size:28px">万円</small></div>
+        <div style="position:relative;margin-top:26px">
+          <div class="meter" style="height:18px"><i style="width:65%;background:var(--good)"></i></div>
+          <div class="meter" style="height:18px;position:absolute;inset:0;background:transparent"><i style="width:94.3%;background:rgb(76 201 240 / .45)"></i></div>
+          <div style="position:absolute;left:100%;top:-10px;bottom:-10px;border-left:2px dashed var(--ink)"></div>
+        </div>
+        <div class="row" style="justify-content:space-between;margin-top:14px;font:600 15px var(--mono);color:var(--muted)"><span><span class="up">■</span> 確定 7,800</span><span><span style="color:var(--accent)">■</span> 見込み +3,520</span><span>目標 12,000</span></div>
+        <details class="why" style="margin-top:22px"><summary>見込みの出し方</summary><div class="body">提案中の商談 1億6,000万円 × 直近3か月の受注率 22%。確度の高い商談だけを積み上げる方式ではない。</div></details>
+      </div>
+      <div class="tiles" style="grid-template-rows:1fr 1fr">
+        <div class="tile"><div class="tl">確定（受注済み）</div><div class="tv"><span data-count="7800"></span><small>万円</small></div><div class="dl up">目標の 65%</div></div>
+        <div class="tile"><div class="tl">提案中の商談</div><div class="tv"><span data-count="16000"></span><small>万円</small></div><div class="dl">38 件・平均 421 万円</div></div>
+      </div>
+    </div>
+    <div class="tiles" style="grid-template-columns:repeat(4,1fr);margin-top:14px">
+      <div class="tile"><div class="tl">今週の新規商談</div><div class="tv"><span data-count="18"></span><small>件</small></div><div class="dl up">▲ 4 件</div></div>
+      <div class="tile"><div class="tl">今週の失注</div><div class="tv"><span data-count="7"></span><small>件</small></div><div class="dl dn">▲ 3 件</div></div>
+      <div class="tile"><div class="tl">受注までの日数</div><div class="tv"><span data-count="34"></span><small>日</small></div><div class="dl wn">▲ 5 日</div></div>
+      <div class="tile"><div class="tl">営業日の残り</div><div class="tv"><span data-count="14"></span><small>日</small></div><div class="dl">5月は 20 営業日</div></div>
+    </div>
+    <aside class="notes">「足りないのは680万円」だけ覚えてもらう。次のページで、どこで落ちているかを見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="どこで落ちているか">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">ファネル</span><span class="chip">直近90日</span><span class="sp"></span><span class="live">更新 5/10 07:00</span></div>
+    <div class="kicker">FUNNEL</div>
+    <h2>落ちているのは「提案 → 受注」。見積もりの後で止まっている。</h2>
+    <div class="tile" style="padding:26px 28px">
+      <div class="funnel">
+        <div class="fr step"><span>問い合わせ</span><div class="bar" style="--w:100%"></div><b>1,240</b><span class="rt">—</span></div>
+        <div class="fr step"><span>商談</span><div class="bar" style="--w:48%"></div><b>596</b><span class="rt">48%</span></div>
+        <div class="fr step"><span>提案・見積</span><div class="bar" style="--w:31%"></div><b>384</b><span class="rt">64%</span></div>
+        <div class="fr step bad"><span>受注</span><div class="bar" style="--w:7%"></div><b>84</b><span class="rt">22% ▼</span></div>
+      </div>
+      <div class="row" style="margin-top:22px;gap:14px">
+        <span class="st r">前年同期の受注率 31%</span><span class="st">業界の目安 25〜30%</span>
+      </div>
+    </div>
+    <details class="why" style="max-width:760px;margin-top:16px"><summary>なぜ見積もりの後で止まるのか</summary><div class="body">失注した 41 件の理由（営業の記録から）：「他社より高い」15件、「社内の稟議が通らない」14件、「返事が来ないまま」12件。稟議の資料を先に渡している商談は、受注率が 34%。</div></details>
+    <aside class="notes">→で段を1つずつ。最後の赤い段で止めて、理由のトグルを開く。</aside>
+  </section>
+
+  <section class="slide" data-title="着地シミュレーター">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">シミュレーター</span><span class="chip">2027年5月</span><span class="sp"></span><span class="live">動かせます</span></div>
+    <div class="kicker">WHAT IF</div>
+    <h2>受注率を 22% から 27% に戻せば、目標に届く。</h2>
+    <div class="tiles" style="grid-template-columns:.9fr 1.1fr" data-calc
+      data-let="land = 7800 + pipe*rate/100; gap = land - 12000; pct = land/12000*100">
+      <div class="tile" style="padding:22px 24px">
+        <div class="field"><label>受注率 <b data-show="rate" data-unit="%"></b></label><input type="range" name="rate" min="10" max="40" value="22"></div>
+        <div class="field"><label>提案中の商談の金額 <b data-show="pipe" data-unit=" 万円"></b></label><input type="range" name="pipe" min="8000" max="24000" step="500" value="16000"></div>
+        <div class="field" style="margin-bottom:0"><label>確定済み <b>7,800 万円</b></label></div>
+        <details class="why" style="margin-top:12px"><summary>計算のしかた</summary><div class="body">着地 ＝ 確定 7,800万円 ＋ 提案中の金額 × 受注率。目標は 1億2,000万円。</div></details>
+      </div>
+      <div class="tiles" style="grid-template-columns:1fr 1fr">
+        <div class="tile" style="grid-column:span 2;padding:20px 24px"><div class="tl">着地見込み</div><div class="tv" style="font-size:84px"><span data-out="land"></span><small style="font-size:26px">万円</small></div>
+          <div class="meter g" style="margin-top:16px;height:14px" data-bar="land" data-max="max(land,12000)"><i></i></div></div>
+        <div class="tile"><div class="tl">目標との差</div><div class="tv"><span data-out="gap" data-sign></span><small>万円</small></div></div>
+        <div class="tile"><div class="tl">達成率</div><div class="tv"><span data-out="pct" data-format="pct"></span></div></div>
+        <div class="tile" style="grid-column:span 2"><div class="tl">受注率を 1pt 上げると</div><div class="tv up">+<span data-out="pipe/100"></span><small>万円</small></div><div class="dl">提案中の金額を 1,000万円 増やすと　+<span data-out="10*rate"></span> 万円</div></div>
+      </div>
+    </div>
+    <aside class="notes">受注率を 27 に動かして差がプラスになるのを見せる。提案中の金額を増やす（商談を増やす）より、受注率を戻すほうが早い、という話につなげる。</aside>
+  </section>
+
+  <section class="slide" data-title="チーム別">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">チーム別</span><span class="chip">2027年5月</span><span class="sp"></span><span class="live">更新 5/10 07:00</span></div>
+    <div class="kicker">BY TEAM</div>
+    <h2>受注率が下がったのは、東日本チームだけ。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="e">東日本</button><button data-tab="w">西日本</button><button data-tab="p">パートナー経由</button></div>
+      <div data-panel="e" class="tiles team" style="grid-template-columns:repeat(4,1fr)">
+        <div class="tile"><div class="tl">受注率</div><div class="tv dn">16<small>%</small></div><div class="dl dn">▼ 9 pt</div><div class="meter r" style="margin-top:14px"><i style="width:40%"></i></div></div>
+        <div class="tile"><div class="tl">受注額</div><div class="tv">2,900<small>万円</small></div><div class="dl">目標の 58%</div><div class="meter w" style="margin-top:14px"><i style="width:58%"></i></div></div>
+        <div class="tile"><div class="tl">提案中</div><div class="tv">7,400<small>万円</small></div><div class="dl">19 件</div><div class="meter" style="margin-top:14px"><i style="width:74%"></i></div></div>
+        <div class="tile"><div class="tl">見積の平均日数</div><div class="tv wn">9.2<small>日</small></div><div class="dl wn">▲ 3.1 日</div><div class="meter w" style="margin-top:14px"><i style="width:80%"></i></div></div>
+      </div>
+      <div data-panel="w" class="tiles team" style="grid-template-columns:repeat(4,1fr)">
+        <div class="tile"><div class="tl">受注率</div><div class="tv up">29<small>%</small></div><div class="dl up">▲ 2 pt</div><div class="meter g" style="margin-top:14px"><i style="width:72%"></i></div></div>
+        <div class="tile"><div class="tl">受注額</div><div class="tv">3,600<small>万円</small></div><div class="dl up">目標の 86%</div><div class="meter g" style="margin-top:14px"><i style="width:86%"></i></div></div>
+        <div class="tile"><div class="tl">提案中</div><div class="tv">5,100<small>万円</small></div><div class="dl">12 件</div><div class="meter" style="margin-top:14px"><i style="width:51%"></i></div></div>
+        <div class="tile"><div class="tl">見積の平均日数</div><div class="tv">4.8<small>日</small></div><div class="dl up">▼ 0.4 日</div><div class="meter g" style="margin-top:14px"><i style="width:40%"></i></div></div>
+      </div>
+      <div data-panel="p" class="tiles team" style="grid-template-columns:repeat(4,1fr)">
+        <div class="tile"><div class="tl">受注率</div><div class="tv">24<small>%</small></div><div class="dl">± 0 pt</div><div class="meter" style="margin-top:14px"><i style="width:60%"></i></div></div>
+        <div class="tile"><div class="tl">受注額</div><div class="tv">1,300<small>万円</small></div><div class="dl">目標の 65%</div><div class="meter" style="margin-top:14px"><i style="width:65%"></i></div></div>
+        <div class="tile"><div class="tl">提案中</div><div class="tv">3,500<small>万円</small></div><div class="dl">7 件</div><div class="meter" style="margin-top:14px"><i style="width:35%"></i></div></div>
+        <div class="tile"><div class="tl">見積の平均日数</div><div class="tv">6.0<small>日</small></div><div class="dl">± 0 日</div><div class="meter" style="margin-top:14px"><i style="width:50%"></i></div></div>
+      </div>
+    </div>
+    <div class="tile" style="margin-top:14px;display:flex;gap:18px;align-items:center;font-size:19px"><span class="st w">気づき</span>東日本は見積を出すまでの日数が 3 日延びた。担当が 1 名、4月から休職している。</div>
+    <div class="tile" style="margin-top:14px;padding:16px 22px">
+      <div class="tl">3チームの受注率（直近4週）<span>目安 25%</span></div>
+      <div class="cmp">
+        <div><span>東日本</span><div class="meter r"><i style="width:40%"></i></div><b class="dn">16%</b></div>
+        <div><span>西日本</span><div class="meter g"><i style="width:72.5%"></i></div><b class="up">29%</b></div>
+        <div><span>パートナー</span><div class="meter"><i style="width:60%"></i></div><b>24%</b></div>
+      </div>
+    </div>
+    <aside class="notes">東日本のタブで止める。休職の件は個人名を出さない。</aside>
+  </section>
+
+  <section class="slide" data-title="手を打つ商談">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">重点商談</span><span class="chip">提案中 · 金額順</span><span class="sp"></span><span class="live">更新 5/10 07:00</span></div>
+    <div class="kicker">DEALS TO PUSH</div>
+    <h2>この4件が決まれば、差の 680 万円は埋まる。</h2>
+    <div class="tile" style="padding:6px 16px 10px">
+      <table class="t">
+        <tr><th>商談</th><th>チーム</th><th>段階</th><th>止まっている理由</th><th style="text-align:right">金額</th></tr>
+        <tr class="step"><td>サンプル物流 基幹更新</td><td>東日本</td><td><span class="st w">見積提出済</span></td><td>稟議資料が未提出</td><td class="n">1,800万</td></tr>
+        <tr class="step"><td>架空食品 工場3拠点</td><td>東日本</td><td><span class="st w">見積提出済</span></td><td>返事待ち 12日</td><td class="n">1,200万</td></tr>
+        <tr class="step"><td>見本製作所 追加導入</td><td>西日本</td><td><span class="st g">最終調整</span></td><td>納期の確認のみ</td><td class="n">640万</td></tr>
+        <tr class="step"><td>テスト薬品 試験導入</td><td>パートナー</td><td><span class="st r">価格で難航</span></td><td>他社より 8% 高い</td><td class="n">520万</td></tr>
+      </table>
+    </div>
+    <div class="tiles" style="grid-template-columns:1fr 1fr 1fr;margin-top:14px">
+      <div class="tile"><div class="tl">4件の合計</div><div class="tv"><span data-count="4160"></span><small>万円</small></div></div>
+      <div class="tile"><div class="tl">目標との差</div><div class="tv dn">−680<small>万円</small></div></div>
+      <div class="tile"><div class="tl">上の2件だけで</div><div class="tv up">+3,000<small>万円</small></div></div>
+    </div>
+    <aside class="notes">→で1件ずつ。1行ごとに「誰が・いつまでに」をこの場で決める。</aside>
+  </section>
+
+  <section class="slide" data-title="今週のアクション">
+    <div class="bg"></div>
+    <div class="topbar"><span class="logo"></span><span class="t">Sales KPI</span><span class="chip on">アクション</span><span class="chip">第19週</span><span class="sp"></span><span class="live">次回 5/17 09:00</span></div>
+    <div class="kicker">THIS WEEK</div>
+    <h2>今週やることは3つ。来週の月曜に、この画面で確かめる。</h2>
+    <div class="tiles acts" style="grid-template-columns:repeat(3,1fr);margin-top:6px">
+      <div class="tile step" style="padding:22px 24px"><div class="tl"><span>01</span><span class="st">部長</span></div><div style="font:700 30px/1.45 var(--font);margin-top:18px">東日本の見積を、西日本が2件引き受ける</div><div class="dl muted" style="margin-top:14px">期限 5/12</div></div>
+      <div class="tile step" style="padding:22px 24px"><div class="tl"><span>02</span><span class="st">東日本</span></div><div style="font:700 30px/1.45 var(--font);margin-top:18px">見積と同時に、稟議用の1枚資料を渡す</div><div class="dl muted" style="margin-top:14px">期限 5/14</div></div>
+      <div class="tile step" style="padding:22px 24px"><div class="tl"><span>03</span><span class="st">全員</span></div><div style="font:700 30px/1.45 var(--font);margin-top:18px">返事待ち7日以上の商談に、今週中に電話する</div><div class="dl muted" style="margin-top:14px">期限 5/16</div></div>
+    </div>
+    <div class="tile" style="margin-top:14px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;padding:18px 24px">
+      <div class="tl" style="display:block">来週見る数字</div>
+      <div class="meter" style="height:14px;background:linear-gradient(90deg,transparent calc(62.5% - 1px),#e7eaf0 calc(62.5% - 1px) calc(62.5% + 1px),transparent calc(62.5% + 1px)),#232a37"><i style="width:55%;background:var(--warn)"></i></div>
+      <div style="font:700 22px var(--font-num)">受注率 22% → <span class="up">25%</span></div>
+    </div>
+  </section>
+
+</main>

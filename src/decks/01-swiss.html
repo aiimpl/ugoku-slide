@@ -1,0 +1,170 @@
+<!--meta
+{"title":"3か年計画 2027–2029","style":"スイス・グリッド","use":"事業計画・中期経営計画","group":"ミニマル・タイポ",
+ "aim":"経営企画が役員会で中期計画を通すとき、前提の数字をその場で動かして質問に答えるための資料。",
+ "desc":"白地に黒と赤一点。12分割のグリッドと特大の数字で、計画を読ませずに見せる。成長率を動かすと3年後の売上と必要人数が変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f4f3ef; --surface:#ffffff; --ink:#0d0d0d; --muted:#5f5f5f; --line:#d6d4cd; --accent:#e30613; --accent-ink:#fff;
+  --frame:#cfcdc6; --radius:0px; --shadow:none;
+  --font:"Inter","Noto Sans JP","Hiragino Sans",sans-serif; --font-num:"Inter",sans-serif; --head-weight:900; --head-track:-.03em;
+}
+/* 12分割のグリッド線 */
+.slide>.bg{background:repeating-linear-gradient(90deg,transparent 0 calc(1280px/12 - 1px),rgb(0 0 0 / .045) calc(1280px/12 - 1px) calc(1280px/12))}
+.slide{padding:56px 80px 56px 106px}
+.slide::before{content:"";position:absolute;left:0;top:0;width:26px;height:100%;background:var(--ink)}
+.slide::after{content:attr(data-no);position:absolute;right:48px;top:40px;font:600 15px var(--font-num);letter-spacing:.2em;color:var(--muted)}
+.kicker{color:var(--ink);letter-spacing:.24em;font-weight:800;display:flex;align-items:center;gap:12px}
+.kicker::before{content:"";width:14px;height:14px;background:var(--accent)}
+h2{font-size:48px;border-top:4px solid var(--ink);padding-top:18px}
+.mega{font:900 150px/0.92 var(--font);letter-spacing:-.05em;margin:0}
+.mega em{font-style:normal;color:var(--accent)}
+.card{border:0;border-top:2px solid var(--ink);padding:18px 0 0;background:none}
+.kpi .value{font-size:84px;letter-spacing:-.05em;font-weight:800}
+.tabs{background:none;border-bottom:2px solid var(--ink);border-radius:0;padding:0;gap:0}
+.tabs>[data-tab]{border-radius:0;padding:10px 26px;font-size:18px}
+.tabs>[data-tab][aria-selected=true]{background:var(--ink);color:#fff;box-shadow:none}
+.meter{border-radius:0;height:34px;background:rgb(0 0 0 / .06)}
+.meter>i{border-radius:0;background:var(--ink)}
+.meter.red>i{background:var(--accent)}
+.yr{display:grid;grid-template-columns:90px 1fr 170px;align-items:center;gap:18px;margin-bottom:14px;font-size:18px}
+.yr b{font:800 26px var(--font-num);text-align:right}
+details.why{border-radius:0;border:0;border-left:4px solid var(--accent);background:var(--surface)}
+details.why>summary::before{border-radius:0}
+table.t{font-size:27px}table.t td,table.t th{border-bottom:1px solid var(--ink);padding:16px 14px}
+[data-panel] .big{font-size:60px!important;line-height:1.2}
+[data-panel] ul.list{font-size:30px;gap:26px;padding-top:12px}
+.pillars .card{display:flex;flex-direction:column}
+.pillars .label,.reasons .label{font:800 16px var(--font);letter-spacing:.16em;color:var(--muted)}
+.pillars .value{font-size:140px;font-weight:800;letter-spacing:-.06em;line-height:1;margin:18px 0 auto}
+.pillars .value small{font-size:34px;letter-spacing:0;margin-left:6px}
+.pillars .card p{font-size:21px;color:var(--ink);margin-top:20px}
+.pillars .card:first-child .value{color:var(--accent)}
+.reasons{padding-bottom:40px}
+.stack{display:flex;height:64px;margin-top:12px}
+.stack i{flex:var(--w);display:flex;align-items:center;padding:0 16px;color:#fff;overflow:hidden;white-space:nowrap}
+.stack b{font-size:18px;font-style:normal}
+.goal{grid-column:1/-1;margin-top:34px;border-top:4px solid var(--accent);padding-top:16px;display:flex;gap:56px;font-size:18px;color:var(--muted)}
+.goal b{display:block;font:800 44px/1.1 var(--font);color:var(--ink);letter-spacing:-.02em;margin-top:4px}
+.yr{margin-bottom:28px!important}.yr .meter{height:52px}.yr b{font-size:32px!important}
+.field{margin-bottom:30px}.field>label{font-size:20px}
+.after{margin-top:auto;padding-bottom:30px;font:900 52px/1.2 var(--font);letter-spacing:-.03em}
+.lvl{display:inline-block;width:12px;height:12px;margin-right:3px;background:var(--line)}
+.lvl.on{background:var(--accent)}
+</style>
+
+<main class="deck" data-transition="wipe">
+
+  <section class="slide" data-no="01" data-title="表紙">
+    <div class="bg"></div>
+    <div class="kicker">Mid-term plan / サンプル株式会社</div>
+    <p class="mega">3か年計画<br><em>2027</em>—2029</p>
+    <p class="lead" style="margin-top:36px;max-width:760px">売上 2.4倍、営業利益率 12%。<br>そのために、何を・いつ・どれだけやるか。</p>
+    <div style="position:absolute;right:80px;bottom:56px;font:800 260px/0.8 var(--font-num);letter-spacing:-.06em;color:var(--ink)"><span style="color:var(--accent)">×</span>2.4</div>
+    <aside class="notes">最初に数字だけ見せる。「2.4倍」の根拠は4枚目で動かして見せるので、ここでは言い切るだけ。</aside>
+  </section>
+
+  <section class="slide" data-no="02" data-title="結論">
+    <div class="bg"></div>
+    <div class="kicker">Summary</div>
+    <h2>3つの柱で、3年後に売上 36億円。</h2>
+    <div class="grid cols-3 fill pillars" style="margin-top:12px">
+      <div class="card step"><div class="label">01 — 新規</div><div class="value num">180<small>社/年</small></div><p>従業員100〜500人の会社向けに新プランを出し、年180社を獲得する。</p></div>
+      <div class="card step"><div class="label">02 — 既存</div><div class="value num">0.9<small>%</small></div><p>月の解約率を1.8%から半分に。導入後30日の支援を厚くする。</p></div>
+      <div class="card step"><div class="label">03 — 海外</div><div class="value num">15<small>%</small></div><p>台湾・タイに代理店を置き、2029年に売上の15%を海外で。</p></div>
+    </div>
+    <aside class="notes">→キーで柱が1本ずつ出る。「3つだけ」を強調。</aside>
+  </section>
+
+  <section class="slide" data-no="03" data-title="現在地">
+    <div class="bg"></div>
+    <div class="kicker">Where we are · 2026</div>
+    <h2>伸びてはいる。ただし、既存顧客が抜けている。</h2>
+    <div class="grid cols-3">
+      <div class="card"><div class="kpi"><div class="label">売上（2026年度見込み）</div><div class="value"><span data-count="15" data-format="dec1"></span><small style="font-size:32px">億円</small></div><div class="delta up">前年比 +21%</div></div></div>
+      <div class="card"><div class="kpi"><div class="label">取引社数</div><div class="value" data-count="1240" data-unit=""></div><div class="delta up">+310 社</div></div></div>
+      <div class="card"><div class="kpi"><div class="label">月の解約率</div><div class="value"><span data-count="1.8" data-format="dec1"></span><small style="font-size:32px">%</small></div><div class="delta down">業界平均の 1.5 倍</div></div>
+        <details class="why"><summary>根拠：解約の理由</summary><div class="body">2026年4〜9月に解約した 131 社への聞き取り（サンプル）。「使い方が分からない」41%、「価格」27%、「機能不足」19%。<br>→ 最大の理由はサポート。値下げより先に、導入後30日の支援を厚くする。</div></details>
+      </div>
+    </div>
+    <div class="reasons" style="margin-top:auto">
+      <div class="label">解約した131社の理由</div>
+      <div class="stack"><i style="--w:41;background:var(--accent)"><b>使い方が分からない 41%</b></i><i style="--w:27;background:var(--ink)"><b>価格 27%</b></i><i style="--w:19;background:#6d6d6d"><b>機能不足 19%</b></i><i style="--w:13;background:#b3b1aa"><b>その他</b></i></div>
+    </div>
+    <p class="foot">数字はすべて架空のサンプルです。</p>
+  </section>
+
+  <section class="slide" data-no="04" data-title="売上計画シミュレーター">
+    <div class="bg"></div>
+    <div class="kicker">Plan · 動かせます</div>
+    <h2>成長率を動かすと、3年後の姿が変わる。</h2>
+    <div class="split fill" data-calc data-let="g = growth/100; y1 = 15e8*(1+g); y2 = y1*(1+g); y3 = y2*(1+g); cap = 15e8*pow(1.6,3)">
+      <div>
+        <div class="field"><label>年の成長率 <b data-show="growth" data-unit="%"></b></label><input type="range" name="growth" min="5" max="60" value="34"></div>
+        <div class="field"><label>1人あたりの売上 <b data-show="per" data-unit="万円"></b></label><input type="range" name="per" min="1500" max="6000" step="100" value="3000"></div>
+        <div class="field"><label>3年目の営業利益率 <b data-show="margin" data-unit="%"></b></label><input type="range" name="margin" min="2" max="25" value="12"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">2026年度の 15億円 を起点に、成長率を3回かける。<br>必要人数 ＝ 3年目の売上 ÷ 1人あたりの売上。<br>営業利益 ＝ 3年目の売上 × 利益率。</div></details>
+      </div>
+      <div>
+        <div class="yr"><span>2027</span><div class="meter" data-bar="y1" data-max="cap"><i></i></div><b data-out="y1" data-format="man"></b></div>
+        <div class="yr"><span>2028</span><div class="meter" data-bar="y2" data-max="cap"><i></i></div><b data-out="y2" data-format="man"></b></div>
+        <div class="yr"><span>2029</span><div class="meter red" data-bar="y3" data-max="cap"><i></i></div><b data-out="y3" data-format="man"></b></div>
+        <div class="grid cols-3" style="margin-top:34px">
+          <div class="card"><div class="kpi"><div class="label">今の何倍</div><div class="value" style="font-size:40px;white-space:nowrap" data-out="y3/15e8" data-format="x"></div></div></div>
+          <div class="card"><div class="kpi"><div class="label">必要な人数</div><div class="value" style="font-size:40px;white-space:nowrap" data-out="y3/(per*1e4)" data-unit="人"></div></div></div>
+          <div class="card"><div class="kpi"><div class="label">営業利益</div><div class="value" style="font-size:40px;white-space:nowrap" data-out="y3*margin/100" data-format="man"></div></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">会議ではここで成長率を 20% に下げて見せる。「20%だと人員計画はこう変わる」と、その場で答えられるのがこのページの役目。</aside>
+  </section>
+
+  <section class="slide" data-no="05" data-title="打ち手">
+    <div class="bg"></div>
+    <div class="kicker">Actions</div>
+    <h2>柱ごとの打ち手</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="a">01 新規</button><button data-tab="b">02 既存</button><button data-tab="c">03 海外</button></div>
+      <div data-panel="a" class="grid cols-2">
+        <div><p class="big">中堅企業向け<br>新プラン<br>「スタンダード」</p></div>
+        <ul class="list"><li>従業員 100〜500 人の会社に絞る</li><li>導入を 2 週間で終える型を用意</li><li>2027年 4月に販売開始</li></ul>
+        <div class="goal"><div>目標<b>年 180 社</b></div><div>売上への効果<b>+5.4億円</b></div><div>開始<b>2027.04</b></div></div>
+      </div>
+      <div data-panel="b" class="grid cols-2">
+        <div><p class="big">導入後<br>30日の<br>伴走サポート</p></div>
+        <ul class="list"><li>専任の担当が週1で進み具合を見る</li><li>使われていない機能を月次で知らせる</li><li>解約率 0.9% を目標にする</li></ul>
+        <div class="goal"><div>目標<b>解約率 0.9%</b></div><div>売上への効果<b>+3.1億円</b></div><div>開始<b>2027.01</b></div></div>
+      </div>
+      <div data-panel="c" class="grid cols-2">
+        <div><p class="big">台湾・タイに<br>販売代理店</p></div>
+        <ul class="list"><li>2027年に代理店を2社選ぶ</li><li>画面の多言語化（繁体字・タイ語）</li><li>2029年に海外売上 5.4億円</li></ul>
+        <div class="goal"><div>目標<b>海外比率 15%</b></div><div>売上への効果<b>+5.4億円</b></div><div>開始<b>2027.10</b></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-no="06" data-title="リスク">
+    <div class="bg"></div>
+    <div class="kicker">Risks</div>
+    <h2>起きうることと、先に打つ手</h2>
+    <table class="t">
+      <tr><th>リスク</th><th>影響</th><th>先に打つ手</th></tr>
+      <tr class="step"><td>採用が計画に届かない</td><td><span class="lvl on"></span><span class="lvl on"></span><span class="lvl on"></span></td><td>2027年上期に採用担当を2名増やす</td></tr>
+      <tr class="step"><td>大手の値下げ</td><td><span class="lvl on"></span><span class="lvl on"></span><span class="lvl"></span></td><td>価格ではなく導入の速さで勝つ</td></tr>
+      <tr class="step"><td>代理店が育たない</td><td><span class="lvl on"></span><span class="lvl"></span><span class="lvl"></span></td><td>1年目は自社の営業が同行する</td></tr>
+    </table>
+    <p class="after step">最大のリスクは<span class="accent">採用</span>。だから今日決める。</p>
+  </section>
+
+  <section class="slide cover" data-no="07" data-title="決めてほしいこと">
+    <div class="bg"></div>
+    <div class="kicker">Decision</div>
+    <p class="mega" style="font-size:110px">今日、決めて<br>ほしいのは<em>2つ</em>。</p>
+    <ol class="list" style="margin-top:40px">
+      <li class="step">2027年度の採用枠 <b>+28人</b></li>
+      <li class="step">海外代理店の選定に <b>3,000万円</b></li>
+    </ol>
+  </section>
+
+</main>

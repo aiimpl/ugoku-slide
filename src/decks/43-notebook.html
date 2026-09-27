@@ -1,0 +1,202 @@
+<!--meta
+{"title":"統計のきほん 第1回 平均と中央値","style":"方眼ノート","use":"勉強会（統計のきほん）","group":"学び・研修",
+ "aim":"社内のデータ勉強会で講師役の社員が、数字に苦手意識のある同僚に「平均と中央値はどう違い、どちらを見ればいいか」を30分で腹落ちさせるための資料。",
+ "desc":"方眼ノートに蛍光ペンと付箋でまとめた勉強会のノート。5人の貯金額を動かすと、平均だけが大きく動き、中央値はほとんど動かないことが確かめられる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap"}
+-->
+<style>
+:root{
+  --bg:#fcfcf7; --surface:#fffef8; --ink:#23262d; --muted:#4f5560; --line:#c9d9e8; --accent:#d8453b; --accent-ink:#fff;
+  --blue:#2457c5; --good:#2457c5; --bad:#d8453b; --frame:#d8d4c8; --radius:4px; --shadow:0 1px 1px rgb(0 0 0 / .08),0 6px 14px rgb(0 0 0 / .10);
+  --font:"Klee One","Hiragino Mincho ProN","Hiragino Sans","Yu Gothic",sans-serif; --head-weight:600; --head-track:0;
+  --pad-y:52px; --pad-x:80px;
+}
+/* エンジンの rise は表示中のスライドにも translateY が残るため、ここで打ち消す */
+.deck[data-transition=rise] .slide.active{transform:none}
+/* 方眼（5mm＝20px、1cm＝100pxごとに少し濃く）と、左のリング */
+.slide>.bg{background-color:var(--bg);
+  background-image:linear-gradient(#b9cfe3 1px,transparent 1px),linear-gradient(90deg,#b9cfe3 1px,transparent 1px),
+    linear-gradient(#dce7f1 1px,transparent 1px),linear-gradient(90deg,#dce7f1 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;background-position:-1px -1px}
+.slide>.bg::before{content:"";position:absolute;left:0;top:0;bottom:0;width:70px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='40'%3E%3Ccircle cx='46' cy='20' r='6' fill='%23555b63'/%3E%3Crect x='4' y='14' width='48' height='11' rx='5.5' fill='none' stroke='%23a3a9b0' stroke-width='3.5'/%3E%3Crect x='4' y='14' width='48' height='11' rx='5.5' fill='none' stroke='%23e6e9ec' stroke-width='1.2'/%3E%3C/svg%3E") 0 0/70px 40px repeat-y,
+  linear-gradient(90deg,rgb(0 0 0 / .06),transparent)}
+.slide>.bg::after{content:"";position:absolute;left:120px;top:0;bottom:0;width:2px;background:#eaa4a0}
+.slide{padding-left:150px;color:var(--ink)}
+/* ノートのヘッダー */
+.nhead{display:flex;gap:40px;font-size:18px;color:var(--muted);border-bottom:1.5px solid #9fb8cf;padding-bottom:4px;margin-bottom:26px;align-self:flex-end}
+.nhead b{font-weight:600;color:var(--ink);display:inline-block;min-width:120px;border-bottom:1px dotted var(--muted);text-align:center}
+h1{font-size:112px;font-weight:600;line-height:1.15;letter-spacing:0}
+h2{font-size:48px;font-weight:600;line-height:1.4;margin-bottom:24px;letter-spacing:-.01em}
+.kicker{color:var(--blue);font-size:20px;letter-spacing:.08em;text-transform:none;font-weight:600}
+.kicker::before{content:"■ "}
+/* 蛍光ペン・赤ペン */
+.hy{background:linear-gradient(100deg,transparent 2%,rgb(255 226 70 / .78) 3% 97%,transparent 98%) 0 62%/100% 42% no-repeat;padding:0 .08em}
+.hp{background:linear-gradient(100deg,transparent 2%,rgb(255 150 190 / .6) 3% 97%,transparent 98%) 0 62%/100% 42% no-repeat;padding:0 .08em}
+.hb{background:linear-gradient(100deg,transparent 2%,rgb(120 200 255 / .55) 3% 97%,transparent 98%) 0 62%/100% 42% no-repeat;padding:0 .08em}
+.red{color:var(--accent)}.blu{color:var(--blue)}
+.maru{border:2.5px solid var(--accent);border-radius:52% 48% 55% 45%/60% 50% 50% 40%;padding:2px 14px;rotate:-2deg;display:inline-block}
+/* 付箋とマスキングテープ */
+.fusen{background:#ffe680;padding:22px 26px 24px;box-shadow:0 2px 2px rgb(0 0 0 / .06),0 10px 18px rgb(0 0 0 / .12);position:relative;rotate:-2deg;font-size:26px;line-height:1.6}
+.fusen.pk{background:#ffc9d6;rotate:1.5deg}.fusen.bl{background:#c8e6ff;rotate:-1deg}.fusen.gr{background:#d4f0c4;rotate:2deg}
+.fusen b{font-weight:600}
+.tape{position:absolute;top:-14px;left:50%;width:110px;height:28px;margin-left:-55px;rotate:-4deg;
+  background:repeating-linear-gradient(45deg,rgb(120 190 210 / .55) 0 8px,rgb(150 210 225 / .45) 8px 16px);box-shadow:0 1px 2px rgb(0 0 0 / .08)}
+.note-s{font-size:26px;line-height:1.7}
+/* 部品 */
+.field{margin-bottom:26px;grid-template-columns:120px 1fr 110px;align-items:center;gap:14px}
+.field>label{font-size:24px;color:var(--ink);font-weight:600}
+.field b.v{font-size:24px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{accent-color:var(--ink)}
+.meter{height:26px;border-radius:3px;background:rgb(0 0 0 / .04);border:1.5px solid var(--ink)}
+.meter>i{border-radius:0;background:repeating-linear-gradient(-45deg,var(--accent) 0 3px,transparent 3px 7px)}
+.meter.b>i{background:repeating-linear-gradient(-45deg,var(--blue) 0 3px,transparent 3px 7px)}
+details.why{background:var(--surface);border:1.5px dashed var(--muted);border-radius:4px}
+details.why>summary{color:var(--blue);font-size:20px}
+details.why>summary::before{background:transparent;border:1.5px solid var(--blue)}
+details.why>.body{color:var(--ink);font-size:20px}
+.quiz .choices{gap:12px}
+.quiz .choices>button{background:rgb(255 255 255 / .75);border:1.5px solid var(--ink);border-radius:4px;font-size:26px;padding:18px 22px}
+.quiz.answered .choices>button[data-correct]{background:rgb(255 226 70 / .55);border-color:var(--ink)}
+.quiz.answered .choices>button.picked:not([data-correct]){background:rgb(255 255 255 / .75);border-color:var(--accent);color:var(--accent)}
+.quiz.answered .choices>button[data-correct]::after{content:"◎";color:var(--accent);font-size:30px;float:right;line-height:1}
+.quiz .explain{color:var(--ink);font-size:22px}
+ol.list{font-size:28px;gap:18px}
+ol.list>li::before{background:transparent;color:var(--accent);border:2px solid var(--accent);font-weight:600}
+.foot{left:150px;color:var(--muted);font-size:15px;bottom:34px}
+.dots text{font:20px var(--font);fill:var(--ink)}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <p class="kicker">データ勉強会　全4回</p>
+    <h1>統計の<span class="hy">きほん</span></h1>
+    <p style="font-size:54px;font-weight:600;margin:8px 0 0">第1回　<span class="hp">平均</span> と <span class="hb">中央値</span></p>
+    <p style="font-size:32px;line-height:1.7;margin-top:34px">「平均」と聞いたら、まず<span class="red" style="font-weight:600">疑う</span>。<br>そのための30分です。</p>
+    <p style="margin-top:auto;font-size:24px;align-self:flex-start;border:2px solid var(--accent);padding:8px 18px;border-radius:3px;rotate:-1deg"><b class="red">ゴール</b>　平均と中央値を、場面で使い分けられる</p>
+    <div class="fusen" style="position:absolute;right:80px;top:300px;width:350px;rotate:3deg">
+      <span class="tape"></span>
+      <b style="font-size:26px">今日の持ち物</b><br>・電卓（スマホで OK）<br>・このノート<br>・「平均」を疑う心
+    </div>
+    <div class="fusen pk" style="position:absolute;right:120px;top:538px;width:330px;font-size:23px;rotate:-2deg"><b>9/30（水）18:30〜19:00</b><br>会議室B ／ 講師：データ推進室</div>
+    <aside class="notes">はじめに「平均年収って、自分の感覚と合ってる？」と聞いて手を挙げてもらう。合っていない人が多いはず。それが今日のテーマ。</aside>
+  </section>
+
+  <section class="slide" data-title="今日の問い">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <p class="kicker">今日の問い</p>
+    <h2 style="font-size:56px;line-height:1.55">ある部署の「平均貯金 <span class="maru red">590万円</span>」。<br>これって、<span class="hy">ふつうの人</span>の貯金？</h2>
+    <div class="grid cols-3" style="margin-top:26px;gap:40px">
+      <div class="fusen step" style="min-height:270px"><b>① 並べる</b><br>5人の貯金を、少ない順に並べてみる。</div>
+      <div class="fusen bl step" style="min-height:270px"><b>② 2つの代表値</b><br>平均と中央値を、それぞれ出す。</div>
+      <div class="fusen gr step" style="min-height:270px"><b>③ 使い分け</b><br>どちらを見るべきか、自分で決める。</div>
+    </div>
+    <aside class="notes">→キーで付箋が1枚ずつ出る。答えはまだ言わない。</aside>
+  </section>
+
+  <section class="slide" data-title="平均と中央値">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <p class="kicker">2つの代表値</p>
+    <h2>平均は「ならす」、中央値は「真ん中を取る」。</h2>
+    <svg class="dots" viewBox="0 0 1000 150" style="width:100%;height:190px" aria-label="5人の貯金を数直線に並べた図">
+      <path d="M20 90 H980" stroke="#23262d" stroke-width="2"/>
+      <g stroke="#23262d" stroke-width="2"><path d="M20 84 v12 M216 84 v12 M412 84 v12 M608 84 v12 M804 84 v12"/></g>
+      <text x="8" y="124">0</text><text x="190" y="124">500</text><text x="382" y="124">1000</text><text x="578" y="124">1500</text><text x="770" y="124">2000万円</text>
+      <g fill="#23262d"><circle cx="79" cy="74" r="11"/><circle cx="130" cy="74" r="11"/><circle cx="145" cy="52" r="11"/><circle cx="177" cy="74" r="11"/><circle cx="726" cy="74" r="11"/></g>
+      <path d="M145 30 V70" stroke="#2457c5" stroke-width="3"/><text x="104" y="22" style="fill:#2457c5;font-weight:600">中央値 320</text>
+      <path d="M251 30 V96" stroke="#d8453b" stroke-width="3" stroke-dasharray="6 5"/><text x="232" y="22" style="fill:#d8453b;font-weight:600">平均 590</text>
+    </svg>
+    <div class="grid cols-2" style="gap:44px;margin-top:10px">
+      <div class="step">
+        <p style="font-size:38px;font-weight:600;margin:0 0 8px"><span class="hp">平均</span>　＝ 合計 ÷ 人数</p>
+        <p class="note-s">(150＋280＋320＋400＋1800) ÷ 5<br>＝ <b class="red" style="font-size:30px">590</b><br>1人の 1800 に<span class="red">引っぱられる</span>。</p>
+      </div>
+      <div class="step">
+        <p style="font-size:38px;font-weight:600;margin:0 0 8px"><span class="hb">中央値</span>　＝ 並べて真ん中</p>
+        <p class="note-s">150, 280, <b class="blu" style="font-size:30px">320</b>, 400, 1800<br>端の数がいくら大きくても、<span class="blu">動かない</span>。</p>
+      </div>
+    </div>
+    <aside class="notes">数直線の黒丸が5人。赤い点線（平均）が、4人のいる場所から離れていることを指でさす。</aside>
+  </section>
+
+  <section class="slide" data-title="動かしてみる">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <p class="kicker">動かしてみる</p>
+    <h2 style="margin-bottom:16px">1人がお金持ちになると、<span class="hp">平均</span>だけが動く。</h2>
+    <div data-calc class="fill" data-let="med = [p1,p2,p3,p4,p5].sort((x,y)=>x-y)[2]; avg = (p1+p2+p3+p4+p5)/5" style="display:grid;grid-template-columns:1fr 420px;gap:48px">
+      <div>
+        <div class="field"><label>Aさん</label><input type="range" name="p1" min="0" max="3000" step="10" value="150"><b class="v" data-show="p1" data-unit="万"></b></div>
+        <div class="field"><label>Bさん</label><input type="range" name="p2" min="0" max="3000" step="10" value="280"><b class="v" data-show="p2" data-unit="万"></b></div>
+        <div class="field"><label>Cさん</label><input type="range" name="p3" min="0" max="3000" step="10" value="320"><b class="v" data-show="p3" data-unit="万"></b></div>
+        <div class="field"><label>Dさん</label><input type="range" name="p4" min="0" max="3000" step="10" value="400"><b class="v" data-show="p4" data-unit="万"></b></div>
+        <div class="field"><label>Eさん</label><input type="range" name="p5" min="0" max="3000" step="10" value="1800"><b class="v" data-show="p5" data-unit="万"></b></div>
+        <details class="why"><summary>中央値の出し方（人数が偶数のとき）</summary><div class="body">少ない順に並べて、真ん中の2人の平均を取る。6人なら3番目と4番目を足して2で割る。</div></details>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div><p style="font-size:22px;margin:0">平均</p><p style="margin:0;font-size:66px;font-weight:600;line-height:1.1" class="red"><span data-out="avg"></span><small style="font-size:26px">万円</small></p><div class="meter" data-bar="avg" data-max="3000"><i></i></div></div>
+        <div><p style="font-size:22px;margin:0">中央値</p><p style="margin:0;font-size:66px;font-weight:600;line-height:1.1" class="blu"><span data-out="med"></span><small style="font-size:26px">万円</small></p><div class="meter b" data-bar="med" data-max="3000"><i></i></div></div>
+        <div class="fusen" style="margin-top:6px;font-size:21px;rotate:1deg">平均と中央値の差　<b style="font-size:30px" data-out="avg-med" data-unit="万円"></b><br>Eさんを 3000 にしてみよう。</div>
+      </div>
+    </div>
+    <aside class="notes">まず Eさんを 3000 まで上げる。平均は 830、中央値は 320 のまま。次に Cさんを動かすと、今度は中央値が動く。「真ん中の人」が変わったときだけ動く。</aside>
+  </section>
+
+  <section class="slide" data-title="どっちを使う">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <div style="display:grid;grid-template-columns:1fr 330px;gap:48px;flex:1">
+      <div class="quiz">
+        <p class="kicker">確かめ</p>
+        <p style="font-size:44px;font-weight:600;line-height:1.45;margin:0 0 8px">家賃の「<span class="hy">ふつう</span>」を伝えるなら？</p>
+        <p style="font-size:24px;margin:0 0 22px;color:var(--muted)">この地域の物件は、ほとんどが6〜8万円。数件だけ30万円をこえる。</p>
+        <div class="choices">
+          <button>平均。全部の物件を使っているから正確</button>
+          <button data-correct>中央値。数件の高い物件に引っぱられない</button>
+          <button>最大値。一番高いのを知っておけば安心</button>
+        </div>
+        <p class="explain">答えは中央値。高い物件が数件あるだけで平均は上がり、「ふつう」より高く見えてしまう。</p>
+      </div>
+      <div style="padding-top:70px">
+        <div class="fusen bl" style="rotate:2deg;font-size:28px;line-height:1.7"><b>見分けるコツ</b><br>とびぬけた数が<br>ありそう？<br>→ ある：<b class="blu">中央値</b><br>→ ない：<b class="red">平均</b>でも OK</div>
+      </div>
+    </div>
+    <aside class="notes">ペアで30秒話してから選ぶ。「平均」を選んだ人にも理由を聞くと、議論が深まる。</aside>
+  </section>
+
+  <section class="slide" data-title="まとめ">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <p class="kicker">まとめ</p>
+    <h2>数字を見たら、まず<span class="hy">中央値もある？</span>と聞く。</h2>
+    <div class="grid cols-3" style="gap:34px;margin-top:10px">
+      <div class="fusen step" style="min-height:270px"><b style="font-size:26px">1　平均</b><br>全員の合計を人数でならす。とびぬけた数に弱い。</div>
+      <div class="fusen bl step" style="min-height:270px"><b style="font-size:26px">2　中央値</b><br>並べて真ん中。端の数に強い。年収・家賃・待ち時間に。</div>
+      <div class="fusen gr step" style="min-height:270px"><b style="font-size:26px">3　両方出す</b><br>差が大きいほど、とびぬけた数がある合図。</div>
+    </div>
+    <details class="why" style="margin-top:30px;max-width:880px"><summary>年収の話でよく中央値が使われるわけ</summary><div class="body">年収は、ごく一部のとても高い人が平均を押し上げやすい。多くの人の実感に近いのは、真ん中の人の年収（中央値）のほう。</div></details>
+    <p class="foot">人名・金額は架空のサンプルです。</p>
+  </section>
+
+  <section class="slide" data-title="次回">
+    <div class="bg"></div>
+    <div class="nhead"><span>No. <b>1</b></span><span>Date <b>2026. 9. 30</b></span></div>
+    <p class="kicker">次回までに</p>
+    <h2 style="font-size:50px">身のまわりの「平均」を1つ探してくる。</h2>
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:50px;margin-top:20px">
+      <ol class="list" style="font-size:32px;gap:40px">
+        <li class="step">ニュースや社内資料から「平均」を1つ見つける</li>
+        <li class="step">とびぬけた数がありそうか考える</li>
+        <li class="step">付箋に書いて、次回はじめに貼る</li>
+      </ol>
+      <div class="fusen pk" style="rotate:-3deg;align-self:start"><span class="tape"></span><b style="font-size:26px">第2回　10/7（水）</b><br>ばらつきを見る<br>（分散と標準偏差）<br><span style="font-size:18px;color:var(--muted)">質問はデータ推進室まで　内線 3300</span></div>
+    </div>
+    <p style="margin-top:auto;font-size:24px;border:1.5px dashed var(--muted);padding:12px 20px;background:rgb(255 255 255 / .6)"><b class="red">例</b>　「平均残業 22時間」→ 忙しい1部署だけが、平均を押し上げていない？</p>
+  </section>
+
+</main>

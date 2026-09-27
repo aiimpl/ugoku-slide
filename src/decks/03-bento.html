@@ -1,0 +1,289 @@
+<!--meta
+{"title":"AIまとめ 公開のお知らせ｜サンプルノート","style":"ベント・グリッド","use":"新機能リリースのお知らせ","group":"テック・未来",
+ "aim":"アプリのプロダクト担当が、既存ユーザー向けのオンライン発表会で、新機能「AIまとめ」で何が楽になるかを5分で伝えるため。",
+ "desc":"大小の角丸タイルを弁当箱のように詰めた新機能の発表。数字はタイルの中でカウントアップし、1日の作業時間と人数を動かすと月の削減時間が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=M+PLUS+2:wght@400;500;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#e8e7e1; --surface:#ffffff; --ink:#111214; --muted:#55585f; --line:#dcdad3; --accent:#5a3cf0; --accent-ink:#fff;
+  --lime:#d6f36a; --frame:#d2d0c8; --radius:26px; --shadow:none; --good:#1f7a4d;
+  --font:"M PLUS 2","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Outfit","M PLUS 2","Hiragino Sans",sans-serif; --head-weight:800; --head-track:-.02em;
+  --pad-y:26px; --pad-x:26px;
+}
+.deck .slide.active{transform:none;filter:none} /* エンジンの rise/zoom/blur で表示中のスライドがずれたままになるのを補正 */
+.slide{gap:0}
+.bento{display:grid;gap:12px;flex:1;min-height:0;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:minmax(0,1fr)}
+.t{background:var(--surface);border-radius:var(--radius);padding:26px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.t.ink{background:var(--ink);color:#f4f4f2}.t.ink .muted,.t.ink p{color:#b9bcc4}
+.t.vio{background:var(--accent);color:#fff}.t.vio p,.t.vio .muted{color:#e4defe}
+.t.lime{background:var(--lime);color:var(--ink)}.t.lime p{color:#2e3312}
+.t.clear{background:transparent;padding:10px 14px}
+.t p{font-size:19px;line-height:1.65;color:var(--muted);margin:0}
+.tag{align-self:flex-start;font:700 15px var(--font-num);letter-spacing:.06em;padding:6px 12px;border-radius:999px;background:rgb(0 0 0 / .06);margin-bottom:auto}
+.t.ink .tag,.t.vio .tag{background:rgb(255 255 255 / .14)}
+.t h1{font-size:74px;line-height:1.12;letter-spacing:-.03em}
+.t h2{font-size:44px;line-height:1.22;margin:0}
+.t h3{font-size:32px;line-height:1.35;margin:14px 0 10px}
+.t p{font-size:20px}
+.n{font:800 110px/0.9 var(--font-num);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.n small{font:700 30px var(--font);letter-spacing:0;margin-left:4px}
+.ico{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--bg);margin-bottom:auto}
+.ico svg{width:28px;height:28px}
+.t.vio .ico{background:rgb(255 255 255 / .16)}.t.ink .ico{background:rgb(255 255 255 / .1)}
+.t.lime .ico{background:rgb(0 0 0 / .08)}
+
+/* 画面の見本（CSSで描いたアプリ） */
+.mock{background:#f5f4f0;border-radius:18px;padding:18px 20px;display:grid;gap:10px;margin-top:auto}
+.mock .hd{display:flex;align-items:center;gap:10px;font:700 16px var(--font);color:var(--ink)}
+.mock .hd i{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.mock .hd i::after{content:"";width:10px;height:10px;border-radius:3px;background:var(--lime)}
+.mock .lb{font:700 14px var(--font);color:var(--muted);margin-top:4px}
+.mock .ln{height:10px;border-radius:5px;background:#d9d7d0}
+.mock .ln.a{background:var(--accent);opacity:.8}
+.mock .ck{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:center}
+.mock .ck b{width:18px;height:18px;border-radius:6px;border:2px solid var(--accent)}
+.mock .ck b.on{background:var(--accent)}
+.wave{display:flex;align-items:center;gap:5px;height:60px;margin-top:auto}
+.wave i{flex:1;border-radius:4px;background:currentColor;opacity:.9;height:calc(var(--h) * 1%)}
+@keyframes pulse{0%,100%{transform:scaleY(.55)}50%{transform:scaleY(1)}}
+.slide.active .wave i{animation:pulse 1.6s ease-in-out infinite;animation-delay:calc(var(--h) * -20ms)}
+
+/* 表紙の日付 */
+.date{font:800 128px/0.85 var(--font-num);letter-spacing:-.05em}
+.date span{color:var(--accent)}
+
+/* 数字の見出し帯 */
+.headrow{display:flex;justify-content:space-between;align-items:flex-end;padding:14px 8px 18px}
+.headrow h2{font-size:46px;margin:0;line-height:1.2}
+.headrow .kick{font:700 17px var(--font-num);letter-spacing:.14em;color:var(--accent);margin-bottom:8px;text-transform:uppercase}
+.headrow .pg{font:700 18px var(--font-num);color:var(--muted)}
+
+/* 流れ */
+.flow-n{font:800 20px var(--font-num);width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;margin-bottom:auto}
+.t.vio .flow-n{background:#fff;color:var(--accent)}
+
+/* スライダー */
+.field{margin-bottom:22px}
+.field>label{font-size:19px;color:var(--ink);font-weight:500}
+.field>label b{font:800 30px var(--font-num)}
+input[type=range]{-webkit-appearance:none;appearance:none;height:36px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:14px;border-radius:999px;background:var(--bg)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--ink);margin-top:-8px;border:5px solid var(--lime)}
+input[type=range]::-moz-range-track{height:14px;border-radius:999px;background:var(--bg)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--ink);border:5px solid var(--lime)}
+.res{font:800 150px/0.85 var(--font-num);letter-spacing:-.05em;white-space:nowrap}
+.res small{font:700 34px var(--font);letter-spacing:0;margin-left:6px}
+.sm{font:800 58px/1 var(--font-num);letter-spacing:-.03em;white-space:nowrap}
+details.why{border:0;background:var(--bg);border-radius:16px;margin-top:auto}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:var(--lime);color:var(--ink)}
+details.why>.body{color:var(--muted);font-size:17px}
+details.why.float[open]>.body{border:0;background:var(--ink);color:#e9e9e6;border-radius:16px}
+.t.ink details.why{background:rgb(255 255 255 / .1)}
+.t.ink details.why>summary{color:#fff}
+
+.plan{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgb(0 0 0 / .1);padding:12px 0;font-size:20px}
+.plan b{font:800 26px var(--font-num)}
+.t.ink .plan{border-color:rgb(255 255 255 / .16)}
+.foot{left:34px;bottom:10px;font-size:14px}
+.step{transition-duration:.5s}
+
+@media (prefers-reduced-motion:reduce){.slide.active .wave i{animation:none}}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide" data-title="表紙">
+    <div class="bento" style="grid-template-rows:repeat(6,minmax(0,1fr))">
+      <div class="t" style="grid-column:1/8;grid-row:1/5">
+        <span class="tag">NEW · サンプルノート 3.0</span>
+        <h1>会議のメモは、<br>もう書かない。</h1>
+        <p style="font-size:22px;margin-top:16px">録音するだけで、要点と宿題が1分でまとまる「AIまとめ」を公開します。</p>
+      </div>
+      <div class="t vio" style="grid-column:8/13;grid-row:1/4">
+        <span class="tag">公開日</span>
+        <div class="date">10.15<span style="color:var(--lime)">.</span></div>
+        <p style="font-size:20px;margin-top:10px">すべてのプランで、順番に使えるようになります。</p>
+      </div>
+      <div class="t" style="grid-column:8/13;grid-row:4/7">
+        <div class="mock" style="margin-top:0;flex:1;align-content:start;gap:12px">
+          <div class="hd"><i></i>定例ミーティング・AIまとめ<span style="margin-left:auto;font:500 14px var(--font-num);color:var(--muted)">1分前</span></div>
+          <div class="lb">要点</div>
+          <div class="ln a" style="width:62%"></div><div class="ln" style="width:92%"></div><div class="ln" style="width:78%"></div>
+          <div class="lb">宿題</div>
+          <div class="ck"><b class="on"></b><div class="ln" style="width:70%"></div></div>
+          <div class="ck"><b></b><div class="ln" style="width:52%"></div></div>
+        </div>
+      </div>
+      <div class="t lime" style="grid-column:1/4;grid-row:5/7">
+        <div class="n" style="font-size:78px">−38<small>分/日</small></div>
+        <p style="margin-top:auto">ベータ版で減った、1人あたりのメモの時間</p>
+      </div>
+      <div class="t ink" style="grid-column:4/8;grid-row:5/7">
+        <div class="wave" style="color:var(--lime);margin-top:0">
+          <i style="--h:30"></i><i style="--h:65"></i><i style="--h:45"></i><i style="--h:90"></i><i style="--h:55"></i><i style="--h:75"></i><i style="--h:35"></i><i style="--h:85"></i><i style="--h:50"></i><i style="--h:70"></i><i style="--h:40"></i><i style="--h:95"></i><i style="--h:60"></i><i style="--h:30"></i><i style="--h:80"></i><i style="--h:45"></i>
+        </div>
+        <p style="margin-top:auto">録音ボタンを押すだけ。話し終えたら、まとめが届く。</p>
+      </div>
+    </div>
+    <aside class="notes">表紙は5秒で終える。「メモはもう書かない」とだけ言って、すぐ次へ。</aside>
+  </section>
+
+  <section class="slide" data-title="できること">
+    <div class="headrow"><div><div class="kick">What's new</div><h2>1回の録音から、3つが自動でできる。</h2></div><span class="pg">02</span></div>
+    <div class="bento" style="grid-template-rows:minmax(0,1fr)">
+      <div class="t step" style="grid-column:1/5">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111214" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg></div>
+        <h3>要点を3行に</h3>
+        <p>1時間の会議でも、決まったことを3行で。長さは「短く・ふつう・くわしく」から選べる。</p>
+        <div class="mock"><div class="ln a" style="width:80%"></div><div class="ln" style="width:94%"></div><div class="ln" style="width:66%"></div></div>
+      </div>
+      <div class="t vio step" style="grid-column:5/9">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg></div>
+        <h3>宿題を、人ごとに</h3>
+        <p>「〇〇さんが金曜までに」を聞き取り、担当と期限つきの宿題リストにする。</p>
+        <div class="mock"><div class="ck"><b class="on"></b><div class="ln" style="width:72%"></div></div><div class="ck"><b></b><div class="ln" style="width:58%"></div></div><div class="ck"><b></b><div class="ln" style="width:84%"></div></div></div>
+      </div>
+      <div class="t lime step" style="grid-column:9/13">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#111214" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7h16v-7M12 3v12M7 8l5-5 5 5"/></svg></div>
+        <h3>そのまま共有</h3>
+        <p>チャットやメールに、ボタン1つで送れる。出席しなかった人にも、同じまとめが届く。</p>
+        <div class="mock" style="background:rgb(255 255 255 / .6)"><div class="hd"><i></i>#営業チーム に送信済み</div><div class="ln" style="width:64%"></div></div>
+      </div>
+    </div>
+    <aside class="notes">→キーで1枚ずつタイルが出る。3つ目の「出席しなかった人にも」が、ベータ版でいちばん喜ばれた点。</aside>
+  </section>
+
+  <section class="slide" data-title="ベータ版の結果">
+    <div class="headrow"><div><div class="kick">Beta results · 8 weeks</div><h2>ベータ版で、メモの時間は1日38分減った。</h2></div><span class="pg">数字は架空のサンプルです　03</span></div>
+    <div class="bento" style="grid-template-rows:repeat(2,minmax(0,1fr))">
+      <div class="t ink" style="grid-column:1/6;grid-row:1/3">
+        <span class="tag">1人1日あたり</span>
+        <div class="n" style="font-size:220px;color:var(--lime)"><span data-count="38"></span><small style="font-size:44px;color:#fff">分</small></div>
+        <p style="font-size:21px;margin-top:14px">議事録を書く・まとめる・送る時間の合計が、平均 52分 から 14分 に。</p>
+      </div>
+      <div class="t" style="grid-column:6/10;grid-row:1/2">
+        <span class="tag">参加した会社</span>
+        <div class="n"><span data-count="1240"></span><small>社</small></div>
+      </div>
+      <div class="t vio" style="grid-column:10/13;grid-row:1/2">
+        <span class="tag">続けて使った人</span>
+        <div class="n" style="font-size:92px"><span data-count="87"></span><small>%</small></div>
+      </div>
+      <div class="t lime" style="grid-column:6/9;grid-row:2/3">
+        <span class="tag">満足度（5点満点）</span>
+        <div class="n" style="font-size:96px"><span data-count="4.6" data-format="dec1"></span></div>
+      </div>
+      <div class="t" style="grid-column:9/13;grid-row:2/3">
+        <span class="tag">要約の正確さ</span>
+        <div class="n" style="font-size:96px"><span data-count="94"></span><small>%</small></div>
+        <details class="why float"><summary>どう測った？</summary><div class="body">ランダムに選んだ 300 件の会議について、出席者が「要点が合っている」と答えた割合。宿題の担当・期限の抜けは 3% だった。</div></details>
+      </div>
+    </div>
+    <aside class="notes">ページを開くと数字がカウントアップする。「94%」の測り方は聞かれたら「どう測った？」を開く。</aside>
+  </section>
+
+  <section class="slide" data-title="使い方">
+    <div class="headrow"><div><div class="kick">How it works</div><h2>やることは、録音ボタンを押すだけ。</h2></div><span class="pg">04</span></div>
+    <div class="bento" style="grid-template-rows:repeat(5,minmax(0,1fr))">
+      <div class="t step" style="grid-column:1/5;grid-row:1/6">
+        <span class="flow-n">1</span>
+        <div class="wave" style="color:var(--accent);height:110px;margin:20px 0">
+          <i style="--h:40"></i><i style="--h:70"></i><i style="--h:50"></i><i style="--h:95"></i><i style="--h:60"></i><i style="--h:80"></i><i style="--h:35"></i><i style="--h:90"></i><i style="--h:55"></i><i style="--h:75"></i><i style="--h:45"></i><i style="--h:65"></i>
+        </div>
+        <h3>録音する</h3><p>アプリの赤いボタンを押す。オンライン会議なら、会議のリンクを貼るだけでもいい。</p>
+      </div>
+      <div class="t vio step" style="grid-column:5/9;grid-row:1/6">
+        <span class="flow-n">2</span>
+        <div class="n" style="font-size:150px;margin:20px 0 0">60<small style="font-size:40px">秒</small></div>
+        <h3>待つ</h3><p>会議が終わってから、まとめが届くまで約1分。1時間の会議でも同じ。</p>
+      </div>
+      <div class="t lime step" style="grid-column:9/13;grid-row:1/4">
+        <span class="flow-n">3</span>
+        <h3 style="margin-top:14px">直して送る</h3><p>気になる行だけ直して、送信。直した内容は次の要約から反映される。</p>
+      </div>
+      <div class="t ink" style="grid-column:9/13;grid-row:4/6">
+        <p style="color:#fff;font-size:20px;font-weight:700">録音データは30日で自動で消える。</p>
+        <p style="font-size:18px;margin-top:6px">保存期間は管理画面で 0〜90日 に変えられる。</p>
+      </div>
+    </div>
+    <aside class="notes">「録音が残るのが心配」という質問が必ず出るので、右下のタイルで先に答えておく。</aside>
+  </section>
+
+  <section class="slide" data-title="削減時間の試算">
+    <div class="headrow"><div><div class="kick">Your team · 動かせます</div><h2>あなたのチームなら、月に何時間浮くか。</h2></div><span class="pg">05</span></div>
+    <div class="bento" style="grid-template-rows:repeat(2,minmax(0,1fr))" data-calc data-let="saved = min*cut/100; monthH = saved*people*20/60; money = monthH*wage">
+      <div class="t" style="grid-column:1/6;grid-row:1/3;justify-content:center">
+        <div class="field"><label>1日にメモ・議事録にかける時間 <b data-show="min" data-unit="分"></b></label><input type="range" name="min" min="10" max="120" step="5" value="50"></div>
+        <div class="field"><label>使う人数 <b data-show="people" data-unit="人"></b></label><input type="range" name="people" min="1" max="200" value="30"></div>
+        <div class="field"><label>減らせる割合 <b data-show="cut" data-unit="%"></b></label><input type="range" name="cut" min="20" max="90" step="5" value="70"></div>
+        <div class="field" style="margin-bottom:0"><label>1時間あたりの人件費 <b data-show="wage" data-format="yen"></b></label><input type="range" name="wage" min="1500" max="8000" step="100" value="3500"></div>
+      </div>
+      <div class="t vio" style="grid-column:6/13;grid-row:1/2">
+        <span class="tag">チーム全体で、1か月に浮く時間</span>
+        <div class="res"><span data-out="monthH"></span><small>時間</small></div>
+      </div>
+      <div class="t lime" style="grid-column:6/9;grid-row:2/3">
+        <span class="tag">1人1日あたり</span>
+        <div class="sm" data-out="saved" data-unit="分"></div>
+      </div>
+      <div class="t ink" style="grid-column:9/13;grid-row:2/3">
+        <span class="tag">人件費に直すと（月）</span>
+        <div class="sm" style="font-size:50px" data-out="money" data-format="man"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">1人1日の削減 ＝ 時間 × 割合。<br>月の削減 ＝ 1人1日 × 人数 × 20日。<br>人件費 ＝ 月の削減時間 × 時給。</div></details>
+      </div>
+    </div>
+    <aside class="notes">発表会では、チャット欄で聞いた人数をその場で入れる。ベータ版の平均は「減らせる割合 70%」。</aside>
+  </section>
+
+  <section class="slide" data-title="プランと公開日">
+    <div class="headrow"><div><div class="kick">Availability</div><h2>10月15日から、全プランで順番に。</h2></div><span class="pg">06</span></div>
+    <div class="bento" style="grid-template-rows:minmax(0,1fr)">
+      <div class="t ink step" style="grid-column:1/5">
+        <span class="tag">ビジネスプラン</span>
+        <div class="n" style="font-size:96px;margin-bottom:18px">10.15<small>〜</small></div>
+        <div class="plan"><span>月の録音時間</span><b>無制限</b></div>
+        <div class="plan"><span>保存期間の設定</span><b>0〜90日</b></div>
+        <div class="plan"><span>追加料金</span><b style="color:var(--lime)">なし</b></div>
+      </div>
+      <div class="t vio step" style="grid-column:5/9">
+        <span class="tag">チームプラン</span>
+        <div class="n" style="font-size:96px;margin-bottom:18px">11.01<small>〜</small></div>
+        <div class="plan" style="border-color:rgb(255 255 255 / .2)"><span>月の録音時間</span><b>30時間</b></div>
+        <div class="plan" style="border-color:rgb(255 255 255 / .2)"><span>保存期間の設定</span><b>30日</b></div>
+        <div class="plan" style="border-color:rgb(255 255 255 / .2)"><span>追加料金</span><b>なし</b></div>
+      </div>
+      <div class="t step" style="grid-column:9/13">
+        <span class="tag">無料プラン</span>
+        <div class="n" style="font-size:96px;margin-bottom:18px">12.01<small>〜</small></div>
+        <div class="plan"><span>月の録音時間</span><b>3時間</b></div>
+        <div class="plan"><span>保存期間の設定</span><b>7日</b></div>
+        <div class="plan"><span>追加料金</span><b>なし</b></div>
+      </div>
+    </div>
+    <aside class="notes">「無料プランにも来る」を最後に言うと反応が大きい。価格の質問は営業窓口へ。</aside>
+  </section>
+
+  <section class="slide" data-title="はじめかた">
+    <div class="bento" style="grid-template-rows:repeat(3,minmax(0,1fr))">
+      <div class="t lime" style="grid-column:1/9;grid-row:1/3">
+        <span class="tag">Get started</span>
+        <h1 style="font-size:84px">設定画面で、<br>オンにするだけ。</h1>
+      </div>
+      <div class="t ink" style="grid-column:9/13;grid-row:1/3">
+        <span class="tag">3つの手順</span>
+        <ol class="list" style="font-size:21px;gap:18px;margin-top:22px">
+          <li class="step">設定 → 「AI機能」を開く</li>
+          <li class="step">「AIまとめ」をオン</li>
+          <li class="step">次の会議で録音ボタンを押す</li>
+        </ol>
+      </div>
+      <div class="t vio" style="grid-column:1/5;grid-row:3/4"><span class="tag">質問はこちら</span><p style="font:700 23px var(--font-num);color:#fff;white-space:nowrap">support@sample-note.example</p></div>
+      <div class="t" style="grid-column:5/9;grid-row:3/4"><span class="tag">次回の発表会</span><p style="font-size:22px;color:var(--ink);font-weight:700">11月20日（金）16:00〜</p></div>
+      <div class="t" style="grid-column:9/13;grid-row:3/4"><span class="tag">使えるアプリ</span><p style="font-size:22px;color:var(--ink);font-weight:700">スマホ・パソコン・ブラウザ</p></div>
+    </div>
+  </section>
+
+</main>

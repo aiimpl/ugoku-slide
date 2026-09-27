@@ -1,0 +1,244 @@
+<!--meta
+{"title":"秋の手帳キャンペーン たたき台 v0.3","style":"ブルータリズム（白黒）","use":"企画会議のたたき台","group":"ミニマル・タイポ",
+ "aim":"販促担当が、社内の企画会議で、秋のキャンペーン3案のたたき台を見せ、その場で1案と予算を決めてもらうため。",
+ "desc":"白と黒と等幅の文字だけ。罫線むき出しのグリッドで、飾らずに議論の材料を並べる。過去の数字をクイズで当て、予算の配分を動かすと見込みの新規客数が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=M+PLUS+1+Code:wght@400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#ffffff; --surface:#ffffff; --ink:#000000; --muted:#3a3a3a; --line:#000; --accent:#000000; --accent-ink:#fff;
+  --frame:#000; --radius:0px; --shadow:none; --good:#000; --bad:#000;
+  --font:"Space Mono","M PLUS 1 Code","Osaka-Mono","MS Gothic",monospace;
+  --font-num:"Space Mono","M PLUS 1 Code",monospace; --head-weight:700; --head-track:-.02em;
+  --pad-y:24px; --pad-x:24px; --b:2px solid #000;
+}
+.slide{gap:0}
+.slide[data-enter]{}
+.hdr{display:grid;grid-template-columns:1fr auto auto auto;border:var(--b);font:400 15px var(--font);letter-spacing:.02em}
+.hdr>span{padding:8px 14px;border-left:var(--b);white-space:nowrap}
+.hdr>span:first-child{border-left:0}
+.hdr .inv{background:#000;color:#fff}
+.body{flex:1;min-height:0;overflow:hidden;border:var(--b);border-top:0;display:grid;position:relative}
+.cell{padding:22px 26px;border-top:var(--b);border-left:var(--b);min-width:0;position:relative}
+.nt{border-top:0}.nl{border-left:0}
+.inv{background:#000;color:#fff}
+.lab{font:400 15px var(--font);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;display:block}
+.lab::before{content:"// "}
+h1{font:700 88px/1.12 var(--font);letter-spacing:-.04em;margin:0}
+h2{font:700 46px/1.25 var(--font);letter-spacing:-.03em;margin:0}
+p{font-size:19px;line-height:1.7}
+.mono-n{font:700 120px/0.9 var(--font-num);letter-spacing:-.06em;white-space:nowrap}
+.mono-n small{font:700 30px var(--font);letter-spacing:0;margin-left:4px}
+.cursor::after{content:"_";animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.strike{text-decoration:line-through;text-decoration-thickness:3px}
+.tag{display:inline-block;border:var(--b);padding:2px 10px;font:700 15px var(--font);margin-right:6px}
+.tag.inv{border-color:#000}
+.hatch{background:repeating-linear-gradient(-45deg,#000 0 2px,transparent 2px 10px)}
+
+/* 表 */
+table.t{font-size:19px;border-collapse:collapse;height:100%}
+table.t th,table.t td{border:0;border-top:var(--b);border-left:var(--b);padding:14px 18px;vertical-align:top;text-align:left}
+table.t tr>*:first-child{border-left:0}
+table.t thead tr>*{border-top:0}
+table.t th{font:700 18px var(--font);color:#000;letter-spacing:.04em}
+table.t thead th{font-size:28px;letter-spacing:-.02em;padding:14px 18px}
+table.t thead th small{display:block;font-size:15px;font-weight:400;letter-spacing:0}
+table.t td b{font:700 30px var(--font-num);letter-spacing:-.03em}
+.bars{font:400 19px var(--font);letter-spacing:-.08em}
+
+/* クイズ */
+.quiz .choices{gap:0;border:var(--b)}
+.quiz .choices>button{border:0;border-top:var(--b);border-radius:0;background:#fff;font:700 26px var(--font);padding:20px 24px;display:grid;grid-template-columns:48px 1fr auto;align-items:center}
+.quiz .choices>button:first-child{border-top:0}
+.quiz .choices>button:hover{transform:none;background:#000;color:#fff}
+.quiz .choices>button::after{font-size:18px;white-space:nowrap}
+.quiz.answered .choices>button{background:#fff;color:#000}
+.quiz.answered .choices>button[data-correct]{background:#000;color:#fff;border-color:#000}
+.quiz.answered .choices>button[data-correct]::after{content:"← 正解"}
+.quiz.answered .choices>button.picked:not([data-correct]){background:#fff}
+.quiz.answered .choices>button.picked:not([data-correct]) em{text-decoration:line-through;text-decoration-thickness:3px}
+.quiz.answered .choices>button.picked:not([data-correct])::after{content:"× はずれ"}
+.quiz .explain{color:#000;font-size:19px;border:var(--b);border-top:0;padding:14px 22px;margin:0}
+.quiz em{font-style:normal}
+
+/* 計算 */
+.field{margin-bottom:20px}
+.field>label{font:400 18px var(--font);color:#000}
+.field>label b{font:700 24px var(--font-num);color:#000}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:32px}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:#000}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:30px;background:#000;margin-top:-14px;border:0}
+input[type=range]::-moz-range-track{height:2px;background:#000}
+input[type=range]::-moz-range-thumb{width:22px;height:30px;background:#000;border:0;border-radius:0}
+.meter{height:30px;border-radius:0;background:#fff;border:var(--b)}
+.meter>i{border-radius:0;background:#000}
+.meter.alt>i{background:repeating-linear-gradient(-45deg,#000 0 3px,#fff 3px 8px)}
+.alloc{display:grid;grid-template-columns:120px 1fr 150px;gap:14px;align-items:center;font:400 20px var(--font);margin-bottom:24px}
+.alloc .meter{height:42px}
+.alloc b{font:700 22px var(--font-num);text-align:right}
+[data-sign].neg{color:#fff;background:#000;padding:0 6px}
+[data-sign].pos{color:#000}
+details.why{border:var(--b);border-radius:0;background:#fff;margin-top:14px}
+details.why>summary{color:#000;font:700 17px var(--font)}
+details.why>summary::before{content:"[+]";background:none;width:auto;height:auto;border-radius:0;font-size:17px}
+details.why[open]>summary::before{content:"[-]";transform:none}
+details.why>.body{color:#000;font-size:17px}
+details.why.float[open]>.body{border:var(--b);border-radius:0;box-shadow:8px 8px 0 #000;left:-2px;right:-2px;margin-top:0}
+
+/* 工程表 */
+.gantt{display:grid;grid-template-columns:260px repeat(10,1fr);grid-template-rows:auto;grid-auto-rows:1fr;font:400 17px var(--font);height:100%}
+.gantt>.r{display:grid;grid-column:1/-1;grid-template-columns:subgrid}
+.gantt>.r>div{border-top:var(--b);border-left:var(--b);padding:10px 12px;display:flex;align-items:center}
+.gantt>.r>div:first-child{border-left:0}
+.gantt>.r.hd>div{font-weight:700;border-top:0;justify-content:center;padding:10px 4px}
+.gantt>.r.hd>div:first-child{justify-content:flex-start;padding-left:12px}
+.gantt .on{background:#000}
+.gantt .mk{background:repeating-linear-gradient(-45deg,#000 0 2px,transparent 2px 8px)}
+.gantt .nm{font-weight:700;font-size:19px}
+.list{font-size:24px}
+ol.list>li::before{border-radius:0;background:#000;color:#fff;font-family:var(--font-num)}
+.foot{position:static;font:400 15px var(--font);color:#000;padding:8px 14px;border:var(--b);border-top:0}
+@media (prefers-reduced-motion:reduce){.cursor::after{animation:none}}
+</style>
+
+<main class="deck" data-transition="none">
+
+  <section class="slide" data-title="表紙">
+    <div class="hdr"><span>autumn-campaign / tatakidai.md</span><span>2026-09-27</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-columns:1fr 1fr 1fr 1fr;grid-template-rows:auto 1fr auto">
+      <div class="cell nt nl" style="grid-column:1/5;padding:34px 30px 30px">
+        <span class="lab">企画会議 / 販促チーム / サンプル文具</span>
+        <h1>秋の手帳キャンペーン、<br>3案から<span style="background:#000;color:#fff;padding:0 14px">1つ</span>選ぶ。<span class="cursor"></span></h1>
+      </div>
+      <div class="cell nl hatch" style="grid-column:1/3"></div>
+      <div class="cell inv" style="grid-column:3/5;display:flex;flex-direction:column;justify-content:flex-end">
+        <span class="lab">この会議のゴール</span>
+        <p style="font-size:26px;line-height:1.5;margin:0">案を1つと、予算の上限を決める。<br>決まらなければ、決める日を決める。</p>
+      </div>
+      <div class="cell nl"><span class="lab">owner</span><p style="margin:0;font-weight:700">販促 サンプル</p></div>
+      <div class="cell"><span class="lab">time</span><p style="margin:0;font-weight:700">30分</p></div>
+      <div class="cell"><span class="lab">status</span><p style="margin:0;font-weight:700">議論用・未確定</p></div>
+      <div class="cell"><span class="lab">next</span><p style="margin:0;font-weight:700">10/03 決定</p></div>
+    </div>
+    <aside class="notes">「今日はきれいな資料ではなく、たたき台です」と最初に言う。直すのが前提なので、遠慮なく線を引いてもらう。</aside>
+  </section>
+
+  <section class="slide" data-title="前提">
+    <div class="hdr"><span>01 / 前提</span><span>p.02</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-columns:1.25fr 1fr;grid-template-rows:auto 1fr">
+      <div class="cell nt nl" style="grid-column:1/3"><span class="lab">goal</span><h2>目的は1つ：11月末までに、新しいお客様を2,000人。</h2></div>
+      <div class="cell nl inv" style="display:flex;flex-direction:column;justify-content:space-between">
+        <span class="lab">目標 / new customers</span>
+        <div class="mono-n" style="font-size:160px">2,000<small>人</small></div>
+        <p style="margin:0">去年の同じ時期は 1,240人。<span class="strike">売上</span> ではなく「初めて買う人」で数える。</p>
+      </div>
+      <div class="cell" style="display:grid;grid-template-rows:repeat(3,auto) 1fr;gap:0;padding:0">
+        <div style="padding:18px 24px;border-bottom:var(--b)"><span class="lab">budget</span><b style="font:700 36px var(--font-num)">上限 600万円</b></div>
+        <div style="padding:18px 24px;border-bottom:var(--b)"><span class="lab">period</span><b style="font:700 36px var(--font-num)">10/15 — 11/30</b></div>
+        <div style="padding:18px 24px;border-bottom:var(--b)"><span class="lab">product</span><b style="font:700 28px var(--font)">2027年版の手帳 全12種</b></div>
+        <div style="padding:18px 24px">
+          <details class="why float"><summary>なぜ「新規客」で数える？</summary><div class="body">手帳を買った人の 62% が、翌年も同じ店で買う（去年の会員データ・サンプル）。今年つかまえた1人が、来年以降の売上になる。</div></details>
+        </div>
+      </div>
+    </div>
+    <p class="foot">※ 社名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">ここで目標の数字に異論があれば、先に決め直す。案の比較はそのあと。</aside>
+  </section>
+
+  <section class="slide" data-title="3案の比較">
+    <div class="hdr"><span>02 / 3つの案</span><span>p.03</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-rows:1fr">
+      <table class="t">
+        <thead><tr><th style="width:200px;font-size:16px">案 →</th><th>A 店頭イベント<small>名入れ・書き初め体験</small></th><th>B SNS広告<small>動画広告・2週間</small></th><th style="background:#000;color:#fff">C 紹介割<small>紹介した人も、された人も 20%引き</small></th></tr></thead>
+        <tr class="step"><th>費用</th><td><b>420万</b></td><td><b>550万</b></td><td style="background:#000;color:#fff"><b>300万</b></td></tr>
+        <tr class="step"><th>新規客（見込み）</th><td><b>900</b> 人</td><td><b>2,100</b> 人</td><td style="background:#000;color:#fff"><b>1,500</b> 人</td></tr>
+        <tr class="step"><th>1人あたり</th><td><b>4,667</b> 円</td><td><b>2,619</b> 円</td><td style="background:#000;color:#fff"><b>2,000</b> 円</td></tr>
+        <tr class="step"><th>よい点</th><td>記事にしてもらいやすい</td><td>数だけなら届く</td><td style="background:#000;color:#fff">来年も残る客が多い</td></tr>
+        <tr class="step"><th>こわい点</th><td>雨と人手に弱い</td><td>広告費が上がっている</td><td style="background:#000;color:#fff">始まりが遅い</td></tr>
+      </table>
+    </div>
+    <aside class="notes">→ で1行ずつ出す。C を黒くしているのは「たたき台としての推し」。最終判断ではないと言っておく。</aside>
+  </section>
+
+  <section class="slide" data-title="クイズ">
+    <div class="hdr"><span>03 / 去年の答え合わせ</span><span>p.04</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-columns:1fr 1.25fr">
+      <div class="cell nt nl inv" style="display:flex;flex-direction:column;justify-content:space-between">
+        <span class="lab">question</span>
+        <h2 style="font-size:50px">去年、<br>1人あたりの<br>獲得費が<br>いちばん安かった<br>のは？</h2>
+        <p style="margin:0">手を挙げてから、クリックで答え合わせ。</p>
+      </div>
+      <div class="quiz cell nt" style="display:flex;flex-direction:column;justify-content:center">
+        <div class="choices">
+          <button><em>A.</em><em>店頭イベント</em></button>
+          <button><em>B.</em><em>SNS広告</em></button>
+          <button data-correct><em>C.</em><em>紹介割（去年は試験的に）</em></button>
+          <button><em>D.</em><em>チラシ</em></button>
+        </div>
+        <p class="explain">紹介割：1人 1,850円（去年は 3店舗だけで試した）。SNS広告は 2,400円、店頭イベントは 4,100円、チラシは 6,300円。<br>→ ただし店舗数が少ないので、全店でも同じとは限らない。</p>
+      </div>
+    </div>
+    <aside class="notes">正解を出したあと、「3店舗だけの数字」という注意を必ず読む。推しを押しつけないため。</aside>
+  </section>
+
+  <section class="slide" data-title="予算の配分">
+    <div class="hdr"><span>04 / 予算の配分（動かせる）</span><span>p.05</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-columns:1fr 1fr" data-calc data-let="ad = total*adp/100; ev = total*evp/100; rest = 100-adp-evp; ref = total*max(0,rest)/100; people = ad*1e4/2600 + ev*1e4/4600 + ref*1e4/2000">
+      <div class="cell nt nl" style="display:flex;flex-direction:column">
+        <span class="lab">input</span>
+        <div class="field"><label>予算の合計 <b data-show="total" data-unit="万円"></b></label><input type="range" name="total" min="100" max="800" step="10" value="600"></div>
+        <div class="field"><label>B SNS広告 に <b data-show="adp" data-unit="%"></b></label><input type="range" name="adp" min="0" max="100" step="5" value="40"></div>
+        <div class="field"><label>A 店頭イベント に <b data-show="evp" data-unit="%"></b></label><input type="range" name="evp" min="0" max="100" step="5" value="20"></div>
+        <p style="margin:0">残りは <b>C 紹介割</b> に回す。</p>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">新規客 ＝ 広告 ÷ 2,600円 ＋ イベント ÷ 4,600円 ＋ 紹介割 ÷ 2,000円（3案の見込みから）。</div></details>
+        <div class="hatch" style="margin-top:auto;height:110px;border:var(--b);display:grid;place-items:center"><span style="background:#fff;padding:4px 12px;font-size:17px;border:var(--b)">目標に届く組み合わせを、ここで探す</span></div>
+      </div>
+      <div class="cell nt" style="display:flex;flex-direction:column">
+        <span class="lab">output</span>
+        <div class="alloc"><span>B 広告</span><div class="meter" data-bar="ad" data-max="total"><i></i></div><b data-out="ad" data-unit="万"></b></div>
+        <div class="alloc"><span>A 店頭</span><div class="meter alt" data-bar="ev" data-max="total"><i></i></div><b data-out="ev" data-unit="万"></b></div>
+        <div class="alloc"><span>C 紹介</span><div class="meter" data-bar="ref" data-max="total"><i></i></div><b data-out="ref" data-unit="万"></b></div>
+        <div class="alloc"><span>残り</span><span style="font-size:17px">0% 未満は配りすぎ</span><b data-out="rest" data-unit="%" data-sign></b></div>
+        <div style="margin-top:auto;border-top:var(--b);padding-top:16px">
+          <span class="lab">見込みの新規客 / 目標 2,000</span>
+          <div class="mono-n" style="font-size:130px"><span data-out="people"></span><small>人</small></div>
+          <div class="meter" style="margin-top:12px" data-bar="people" data-max="2000"><i></i></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">会議の中で、決裁者に割合を動かしてもらう。目標の 2,000人 に届く組み合わせを、その場で探すのがこのページの使い方。</aside>
+  </section>
+
+  <section class="slide" data-title="工程">
+    <div class="hdr"><span>05 / 工程（C 案の場合）</span><span>p.06</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-rows:1fr">
+      <div class="gantt">
+        <div class="r hd"><div>週 →</div><div>9/28</div><div>10/5</div><div>10/12</div><div>10/19</div><div>10/26</div><div>11/2</div><div>11/9</div><div>11/16</div><div>11/23</div><div>11/30</div></div>
+        <div class="r step"><div class="nm">決定</div><div class="on"></div><div class="mk"></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="r step"><div class="nm">紹介コードの準備</div><div></div><div class="on"></div><div class="on"></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="r step"><div class="nm">店頭の案内</div><div></div><div></div><div class="on"></div><div class="mk"></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="r step"><div class="nm">キャンペーン期間</div><div></div><div></div><div class="mk"></div><div class="on"></div><div class="on"></div><div class="on"></div><div class="on"></div><div class="on"></div><div class="on"></div><div class="on"></div></div>
+        <div class="r step"><div class="nm">数字の確認</div><div></div><div></div><div></div><div></div><div class="mk"></div><div></div><div class="mk"></div><div></div><div class="mk"></div><div class="on"></div></div>
+      </div>
+    </div>
+    <p class="foot">■ 作業　▨ 余裕・確認　／　10/03 までに決まらないと、期間が1週間短くなる。</p>
+    <aside class="notes">「決定が1週遅れると、期間が1週減る」だけ伝えれば十分。</aside>
+  </section>
+
+  <section class="slide" data-title="今日決めること">
+    <div class="hdr"><span>06 / 今日決めること</span><span>p.07</span><span>v0.3</span><span class="inv">DRAFT</span></div>
+    <div class="body" style="grid-template-columns:1.1fr 1fr">
+      <div class="cell nt nl inv" style="display:flex;flex-direction:column;justify-content:space-between">
+        <span class="lab">decide</span>
+        <h1 style="font-size:96px">今日、<br>決めるのは<br>3つ。<span class="cursor"></span></h1>
+      </div>
+      <div class="cell nt" style="padding:0;display:grid;grid-template-rows:repeat(3,1fr)">
+        <div class="step" style="padding:22px 26px;border-bottom:var(--b)"><span class="lab">01</span><b style="font-size:30px">A / B / C のどれにするか</b><p style="margin:6px 0 0">組み合わせでもよい</p></div>
+        <div class="step" style="padding:22px 26px;border-bottom:var(--b)"><span class="lab">02</span><b style="font-size:30px">予算の上限</b><p style="margin:6px 0 0">たたき台は 600万円</p></div>
+        <div class="step" style="padding:22px 26px"><span class="lab">03</span><b style="font-size:30px">担当と、次に集まる日</b><p style="margin:6px 0 0">案：10/03（金）15:00</p></div>
+      </div>
+    </div>
+  </section>
+
+</main>

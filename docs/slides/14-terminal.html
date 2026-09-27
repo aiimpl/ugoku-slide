@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CI を 14分 → 4分 にした話</title>
+<meta name="description" content="黒い画面に等幅の文字、プロンプトと点滅カーソル。設定ファイルは → で1段ずつ強調し、テスト数と並列数を動かすと何秒速くなるかが出る。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&amp;family=M+PLUS+1+Code:wght@400;700&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-show="x" で入力値そのものを表示
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：ターミナル（黒画面） / 技術LT
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted)}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+details.why.float{position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#0c0c0c; --surface:#141414; --ink:#d7d7d7; --muted:#8a8a8a; --line:#2a2a2a;
+  --accent:#5fd75f; --accent-ink:#0c0c0c; --amb:#ffaf00; --blu:#5fafff; --red:#ff5f5f; --frame:#000;
+  --good:#5fd75f; --bad:#ff5f5f; --radius:0px; --shadow:none;
+  --font:"JetBrains Mono","M PLUS 1 Code","Hiragino Sans",ui-monospace,monospace;
+  --font-head:var(--font); --font-num:var(--font); --head-weight:800; --head-track:0;
+  --pad-y:52px; --pad-x:72px;
+}
+.slide{isolation:isolate;padding-bottom:84px}
+.slide>.bg{background:radial-gradient(ellipse at 50% 40%,#141414 0%,#0c0c0c 70%)}
+.slide>.bg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgb(0 0 0 / .22) 0 1px,transparent 1px 3px)}
+/* tmux 風の状態表示 */
+.tmux{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;gap:0;background:var(--accent);color:#0c0c0c;font:700 15px var(--font);white-space:pre}
+.tmux>span{padding:0 14px;height:100%;display:flex;align-items:center}
+.tmux .s{background:#0c0c0c;color:var(--accent)}
+.tmux .w{font-weight:400}
+.tmux .w.on{font-weight:800;background:#87ff87}
+.tmux .sp{flex:1}
+
+/* ---- 文字 ---- */
+.cmd{font-size:20px;color:var(--muted);margin-bottom:16px;white-space:pre}
+.cmd .p{color:var(--accent);font-weight:700}
+.cmd .d{color:var(--blu)}
+.cmd b{color:var(--ink);font-weight:400}
+h1{font-size:96px;line-height:1.18;color:#fff;letter-spacing:-.02em}
+h2{font-size:40px;line-height:1.4;margin-bottom:30px;color:#fff}
+h2::before{content:"# ";color:var(--accent)}
+.g{color:var(--accent)}.a{color:var(--amb)}.b{color:var(--blu)}.rd{color:var(--red)}
+.cur{display:inline-block;width:.6em;height:1.05em;vertical-align:-.12em;background:var(--accent);animation:blink 1.1s steps(1) infinite;margin-left:.08em}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.cur{animation:none}}
+.lead{font-size:22px;line-height:1.8;color:var(--ink)}
+.foot{bottom:48px;color:var(--muted);font-size:15px}
+.foot::before{content:"// "}
+.box{border:1px solid var(--line);padding:20px 24px;position:relative}
+.box>.lbl{position:absolute;top:-12px;left:16px;padding:0 8px;background:var(--bg);color:var(--muted);font-size:15px}
+
+/* ---- 部品 ---- */
+details.why{background:transparent;border:1px dashed #3a3a3a;border-radius:0}
+details.why>summary{color:var(--amb);font-weight:700}
+details.why>summary::before{content:"[+]";background:none;width:auto;height:auto;border-radius:0;font-size:17px;transform:none!important}
+details.why[open]>summary::before{content:"[-]"}
+details.why>.body{color:var(--ink);font-size:18px}
+details.why.float[open]>.body{background:#111;border:1px dashed #3a3a3a;border-radius:0}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:28px}
+input[type=range]::-webkit-slider-runnable-track{height:18px;background:repeating-linear-gradient(90deg,#333 0 9px,transparent 9px 12px)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:22px;margin-top:-2px;background:var(--accent)}
+input[type=range]::-moz-range-track{height:18px;background:#333}
+input[type=range]::-moz-range-thumb{width:12px;height:22px;border:0;border-radius:0;background:var(--accent)}
+.field{margin-bottom:30px}
+.field>label{font-size:18px;color:var(--muted)}
+.field>label::before{content:"--";color:var(--blu);margin-right:.4em}
+.field>label{justify-content:flex-start;gap:.6em}
+.field>label b{font-size:20px;color:var(--amb);font-weight:700;margin-left:auto}
+.meter{height:22px;border-radius:0;background:repeating-linear-gradient(90deg,#262626 0 10px,transparent 10px 13px)}
+.meter>i{border-radius:0;background:repeating-linear-gradient(90deg,var(--accent) 0 10px,transparent 10px 13px)}
+.meter.alt>i{background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 13px)}
+pre.code{background:#101010;border:1px solid var(--line);border-radius:0;font:19px/1.62 "JetBrains Mono","M PLUS 1 Code",monospace;padding:18px 20px;color:var(--ink)}
+pre.code .ln::before{color:#555}
+pre.code.hl-on .ln{opacity:.28}
+pre.code.hl-on .ln.hl{background:rgb(95 215 95 / .1);box-shadow:inset 3px 0 0 var(--accent)}
+pre.code .k{color:var(--blu)}pre.code .s{color:var(--amb)}pre.code .c{color:#6a6a6a}pre.code .d{color:#d787ff}
+
+/* ---- 表紙 ---- */
+.boot{font-size:18px;line-height:1.75;color:var(--muted);white-space:pre;margin-bottom:28px}
+.boot .ok{color:var(--accent)}
+.title-arrow{display:inline-block;color:var(--amb)}
+.who{display:flex;gap:56px;margin-top:48px;font-size:19px;color:var(--muted);border-top:1px dashed #333;padding-top:22px}
+.who b{display:block;color:var(--ink);font-weight:400;font-size:22px;margin-top:2px}
+
+/* ---- 待ち時間 ---- */
+.stages{display:grid;gap:22px}
+.st{display:grid;grid-template-columns:120px 1fr 90px;gap:18px;align-items:center;font-size:24px}
+.st b{font-weight:400;text-align:right;color:var(--ink)}
+.st .meter{height:36px}
+.st.hot .meter>i{background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 13px)}
+.st.hot span,.st.hot b{color:var(--red)}
+.st .meter>i{animation:grow 1s var(--ease) both}
+@keyframes grow{from{width:0}}
+.waste{font:800 200px/1 var(--font);letter-spacing:-.04em;color:#fff}
+.waste small{font-size:34px;color:var(--muted);font-weight:400;margin-left:8px;letter-spacing:0}
+
+.calcline{margin-top:auto;margin-bottom:10px;border-top:1px dashed #333;padding-top:20px;font-size:26px;display:flex;gap:18px;align-items:baseline;white-space:pre}
+.calcline .out{margin-left:auto;color:#fff;font-weight:700}
+/* ---- 設定 ---- */
+.cfg{display:grid;grid-template-columns:1fr 390px;gap:34px;align-items:start}
+.chg{display:grid;gap:18px}
+.chg>div{border-left:3px solid #333;padding:4px 0 4px 18px}
+.chg b{display:block;font-size:22px;color:#fff;margin-bottom:4px}
+.chg span{font-size:18px;color:var(--muted);line-height:1.65;display:block}
+.chg i{font-style:normal;color:var(--accent)}
+
+/* ---- 計算 ---- */
+.sim{display:grid;grid-template-columns:470px 1fr;gap:48px}
+.res{font-size:22px}
+.res .row{display:grid;grid-template-columns:110px 1fr 110px;gap:16px;align-items:center;margin-bottom:20px}
+.res .meter{height:30px}
+.res .row b{text-align:right;font-weight:700;color:#fff}
+.saved{margin-top:30px;border:1px solid var(--accent);padding:22px 28px}
+.saved small{color:var(--muted);font-size:18px}
+.saved .v{font:800 120px/1.05 var(--font);color:var(--accent);letter-spacing:-.03em}
+.saved .v2{font-size:22px;color:var(--ink);margin-top:6px}
+
+/* ---- グラフ ---- */
+.chart{border-bottom:1px solid #444;height:360px;gap:26px;margin-bottom:44px}
+.chart>.col>i{border-radius:0;background:repeating-linear-gradient(0deg,var(--accent) 0 8px,transparent 8px 11px)}
+.chart>.col.dim>i{background:repeating-linear-gradient(0deg,var(--red) 0 8px,transparent 8px 11px);opacity:.85}
+.chart>.col::before{font:700 18px var(--font);color:#fff}
+.chart>.col::after{font:400 16px var(--font);color:var(--muted)}
+
+/* ---- ハマりどころ ---- */
+.warn{display:grid;gap:30px}
+.warn>div{display:grid;grid-template-columns:130px 1fr;gap:20px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:28px}
+.warn .tag{font-weight:800;font-size:20px;color:#0c0c0c;background:var(--amb);padding:2px 10px;text-align:center}
+.warn b{font-size:30px;color:#fff;display:block;margin-bottom:6px}
+.warn span{font-size:21px;color:var(--muted);line-height:1.7}
+
+/* ---- 締め ---- */
+.next{display:grid;gap:18px;font-size:28px;line-height:1.6;margin-top:10px}
+.next>div::before{content:"> ";color:var(--accent)}
+.next code{color:var(--amb);font-family:inherit}
+.bye{margin-top:auto;font-size:22px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w on"> 0:title* </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="boot">[<span class="ok">  OK  </span>] 発表者を検出しました：サンプル開発部 基盤チーム
+[<span class="ok">  OK  </span>] 持ち時間：5分</div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>./talk --title</b></div>
+    <h1>CI を <span class="rd">14分</span> <span class="title-arrow">→</span> <span class="g">4分</span><br>にした話<span class="cur"></span></h1>
+    <div class="who"><div>whoami<b>基盤チーム 見本 太郎</b></div><div>date<b>2026-10-09</b></div><div>repo<b>sample-shop/web</b></div></div>
+    <aside class="notes">5分のLT。最初の一言は「CI、遅くないですか」。手を挙げてもらうと場が温まる。</aside>
+  </section>
+
+  <section class="slide" data-title="待ち時間">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w on"> 1:wait* </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>ci-stats --last 30d</b></div>
+    <h2>1人あたり1日 <span class="rd">40分</span>、CI を待っていた。</h2>
+    <div class="split" style="grid-template-columns:1.1fr .9fr;gap:56px;align-items:start">
+      <div class="box"><span class="lbl">1回の内訳（平均 13分50秒）</span>
+        <div class="stages" style="margin-top:6px">
+          <div class="st"><span>install</span><div class="meter"><i style="width:23%"></i></div><b>3:10</b></div>
+          <div class="st"><span>lint</span><div class="meter"><i style="width:8%"></i></div><b>1:05</b></div>
+          <div class="st hot"><span>test</span><div class="meter"><i style="width:63%"></i></div><b>8:40</b></div>
+          <div class="st"><span>build</span><div class="meter"><i style="width:10%"></i></div><b>0:55</b></div>
+        </div>
+        <details class="why" style="margin-top:22px"><summary>どう測ったか</summary><div class="body">直近30日の実行記録 2,140回から平均をとった。1人1日の待ち時間 ＝ 1回 13.8分 × 1人あたり 2.9回。</div></details>
+      </div>
+      <div>
+        <div class="waste"><span data-count="40"></span><small>分/日</small></div>
+        <p class="lead" style="margin-top:18px">チーム12人で、1日<span class="a"> 8時間</span>。<br>ほぼ1人分の1日が、待ち時間に消えていた。<br><span class="rd">test が全体の6割。</span></p>
+      </div>
+    </div>
+    <div class="calcline"><span class="g">$</span> echo "$((12 * 40)) 分/日"<span class="out">480 分/日 ＝ <span class="a">8 時間</span> ＝ ほぼ1人分</span></div>
+    <p class="foot">数字は架空のサンプルです</p>
+    <aside class="notes">「1人分の1日が消えている」がこのページの言いたいこと。内訳は赤い test だけ見てもらえばいい。</aside>
+  </section>
+
+  <section class="slide" data-title="設定">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w on"> 2:config* </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>git diff <span class="d">ci/test.yml</span></b></div>
+    <h2>変えたのは、設定の3か所だけ。</h2>
+    <div class="cfg">
+      <pre class="code" data-lang="yaml" data-highlight="3-5|7-9|11-13">
+test:
+  # 1. 依存物をキャッシュする
+  cache:
+    key: deps-${{ hash("package-lock.json") }}
+    paths: [node_modules]
+  # 2. テストを 6 台に分ける
+  parallel: 6
+  split_by: timings
+  timings_file: .ci/timings.json
+  # 3. 遅いテストの記録を残す
+  after:
+    - save-timings .ci/timings.json
+    - report --slowest 20
+</pre>
+      <div class="chg">
+        <div><b><i>1.</i> キャッシュ</b><span>install の 3分10秒が 20秒に。lock が変わった時だけ入れ直す。</span></div>
+        <div><b><i>2.</i> 6台に分ける</b><span>かかった時間の記録を見て、均等になるよう振り分ける。</span></div>
+        <div><b><i>3.</i> 記録を残す</b><span>毎回の時間を保存して、次の振り分けに使う。</span></div>
+      </div>
+    </div>
+    <aside class="notes">→ を押すたびに、3か所が順に光る。ここは読ませずに「ここ、ここ、ここ」と指すだけ。</aside>
+  </section>
+
+  <section class="slide" data-title="並列の見積もり">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w on"> 3:sim* </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>./estimate --interactive</b></div>
+    <h2>あなたのリポジトリなら、何秒速くなるか。</h2>
+    <div class="sim fill" data-calc data-let="before = n*avg + 90 + 190; after = 90 + 20 + n*avg/p; saved = before - after; bill = p*(110) + n*avg">
+      <div>
+        <div class="field"><label>tests <b data-show="n" data-unit=" 本"></b></label><input type="range" name="n" min="100" max="3000" step="50" value="1200"></div>
+        <div class="field"><label>avg <b data-show="avg" data-format="dec1" data-unit=" 秒/本"></b></label><input type="range" name="avg" min="0.1" max="2" step="0.1" value="0.5"></div>
+        <div class="field"><label>parallel <b data-show="p" data-unit=" 台"></b></label><input type="range" name="p" min="1" max="16" value="6"></div>
+        <details class="why float"><summary>見積もりの式</summary><div class="body">前 ＝ テスト × 平均 ＋ 準備 90秒 ＋ install 190秒<br>後 ＝ 準備 90秒 ＋ 起動 20秒 ＋ テスト × 平均 ÷ 台数（キャッシュで install はほぼ0）<br>台数を増やすほど、使うマシン時間は少し増える。</div></details>
+      </div>
+      <div class="res">
+        <div class="row"><span>before</span><div class="meter alt" data-bar="before" data-max="max(before,1)"><i></i></div><b data-out="before/60" data-format="dec1" data-unit="分"></b></div>
+        <div class="row"><span>after</span><div class="meter" data-bar="after" data-max="max(before,1)"><i></i></div><b data-out="after/60" data-format="dec1" data-unit="分"></b></div>
+        <div class="saved"><small>1回あたり、速くなる時間</small>
+          <div class="v"><span data-out="saved" data-unit="秒"></span></div>
+          <div class="v2">マシン時間は 1回 <span class="a" data-out="bill/60" data-format="dec1" data-unit="分"></span></div></div>
+      </div>
+    </div>
+    <aside class="notes">聞いている人に自分のテスト本数を聞いて、その場で入れる。台数を16にしても伸びが鈍る、というのも見せておく。</aside>
+  </section>
+
+  <section class="slide" data-title="結果">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w on"> 4:result* </span><span class="w"> 5:warn </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>ci-stats --weekly --metric=p50</b></div>
+    <h2>入れた週から、待ち時間は <span class="g">3分の1</span> に。</h2>
+    <div class="split fill" style="grid-template-columns:1.3fr .7fr;gap:50px">
+      <div class="chart">
+        <div class="col dim" style="--v:92" data-label="W35" data-val="13.8"><i></i></div>
+        <div class="col dim" style="--v:90" data-label="W36" data-val="13.5"><i></i></div>
+        <div class="col dim" style="--v:94" data-label="W37" data-val="14.1"><i></i></div>
+        <div class="col" style="--v:41" data-label="W38" data-val="6.2"><i></i></div>
+        <div class="col" style="--v:27" data-label="W39" data-val="4.1"><i></i></div>
+        <div class="col" style="--v:26" data-label="W40" data-val="3.9"><i></i></div>
+        <div class="col" style="--v:25" data-label="W41" data-val="3.8"><i></i></div>
+      </div>
+      <div>
+        <div class="box"><span class="lbl">単位：分（中央値）</span>
+          <p class="lead" style="margin:0"><span class="rd">■</span> 導入前<br><span class="g">■</span> 導入後<br><br>W38 は途中から切り替えたので、まだ長い。</p></div>
+        <p class="lead step" style="margin-top:26px">マシン代は <span class="a">+12%</span>。<br>待ち時間の人件費に比べれば誤差。</p>
+      </div>
+    </div>
+    <p class="foot">数字は架空のサンプルです</p>
+  </section>
+
+  <section class="slide" data-title="ハマりどころ">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w on"> 5:warn* </span><span class="w"> 6:exit </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>grep -n WARN postmortem.log</b></div>
+    <h2>入れる前に、この3つだけ気をつけて。</h2>
+    <div class="warn">
+      <div class="step"><span class="tag">WARN 1</span><div><b>テスト同士が DB を取り合う</b><span>台ごとに DB 名を変える（末尾に台の番号を付ける）。これで半日溶けた。</span></div></div>
+      <div class="step"><span class="tag">WARN 2</span><div><b>初回は振り分けが偏る</b><span>時間の記録がまだないので、1回目だけはファイル数で分ける。</span></div></div>
+      <div class="step"><span class="tag">WARN 3</span><div><b>キャッシュが古いまま残る</b><span>lock ファイルの中身で鍵を作る。日付で作ると、入れ直しが起きない。</span></div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="次の一歩">
+    <div class="bg"><div class="tmux"><span class="s">[lt]</span><span class="w"> 0:title </span><span class="w"> 1:wait </span><span class="w"> 2:config </span><span class="w"> 3:sim </span><span class="w"> 4:result </span><span class="w"> 5:warn </span><span class="w on"> 6:exit* </span><span class="sp"></span><span>社内LT #42 </span></div></div>
+    <div class="cmd"><span class="p">~/ci-talk $</span> <b>cat NEXT.md</b></div>
+    <h2>あなたのチームにも、30分で入ります。</h2>
+    <div class="next">
+      <div class="step">設定の見本：<code>platform/ci-templates/test.yml</code></div>
+      <div class="step">相談会：毎週木曜 16:00 ／ 会議室 B</div>
+      <div class="step">質問はチャットの <code>#ci-help</code> へ</div>
+    </div>
+    <div class="box" style="margin-top:34px"><span class="lbl">入れ方（3行）</span>
+      <div class="boot" style="margin:0;font-size:21px;color:var(--ink)"><span class="g">$</span> cp platform/ci-templates/test.yml ci/test.yml
+<span class="g">$</span> ci timings init        <span style="color:#6a6a6a"># 初回の記録を作る</span>
+<span class="g">$</span> git push                <span style="color:#6a6a6a"># 次の実行から6台に分かれる</span></div></div>
+    <div class="bye"><span class="p g">~/ci-talk $</span> exit<span class="cur"></span></div>
+    <aside class="notes">最後は「今週の相談会に来てくれたら、その場で一緒に入れます」で締める。質問は1つだけ受ける。</aside>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      el.classList.toggle("neg", to < 0);
+      el.classList.toggle("pos", to > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => tween(el, run(f)));
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
+    el._v = 0; tween(el, Number(el.dataset.count));
+  });
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    render();
+    if (prev !== -1) countUp(slides[i]);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

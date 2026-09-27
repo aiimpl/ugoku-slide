@@ -1,0 +1,195 @@
+<!--meta
+{"title":"Sample Ledger シリーズA 資金調達のご説明","style":"グラデーション・メッシュ","use":"資金調達（シリーズA）","group":"テック・未来",
+ "aim":"SaaS の創業者が、シリーズAの投資家面談（30分）で伸びと単位経済性を示し、前提を問われたらその場で数字を動かして答えるためのピッチ資料。",
+ "desc":"柔らかく混ざる多色のメッシュに、すりガラスのカード。顧客獲得費・月額・解約率を動かすと LTV/CAC と回収月数が出る。売上や顧客数は開くたびにカウントアップ。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Noto+Sans+JP:wght@400;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f4eff8; --surface:rgb(255 255 255 / .55); --ink:#17132e; --muted:#453f63; --line:rgb(23 19 46 / .12); --accent:#5b3df5; --accent-ink:#fff;
+  --good:#0f7a5c; --bad:#c43d5a; --frame:#e7e0f0; --radius:26px; --shadow:0 1px 0 rgb(255 255 255 / .7) inset,0 20px 50px -20px rgb(60 30 120 / .35);
+  --font:"Plus Jakarta Sans","Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif; --font-num:"Plus Jakarta Sans",sans-serif;
+  --head-weight:900; --head-track:-.02em; --pad-y:58px; --pad-x:80px;
+}
+.deck[data-transition=blur] .slide.active{transform:none;filter:none}
+/* メッシュ：5つの色のにじみを重ね、ゆっくり動かす */
+.slide>.bg{overflow:hidden;background:#f4eff8}
+.slide>.bg::before{content:"";position:absolute;inset:-20%;
+  background:
+   radial-gradient(38% 42% at 18% 22%,#ffb8d9 0,transparent 70%),
+   radial-gradient(40% 46% at 82% 18%,#9fd8ff 0,transparent 70%),
+   radial-gradient(42% 48% at 70% 86%,#c8b6ff 0,transparent 70%),
+   radial-gradient(36% 40% at 22% 88%,#ffe3a8 0,transparent 70%),
+   radial-gradient(30% 34% at 50% 50%,#b9f3e0 0,transparent 70%);
+  filter:blur(30px) saturate(1.1);animation:mesh 22s ease-in-out infinite alternate}
+.slide>.bg::after{content:"";position:absolute;inset:0;opacity:.35;mix-blend-mode:soft-light;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+@keyframes mesh{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(-4%,3%) rotate(6deg)}100%{transform:translate(3%,-2%) rotate(-5deg)}}
+@media (prefers-reduced-motion:reduce){.slide>.bg::before{animation:none}}
+.slide.dark>.bg{background:#120d2a}
+.slide.dark>.bg::before{background:
+   radial-gradient(38% 44% at 16% 20%,#ff5fa2 0,transparent 70%),radial-gradient(40% 46% at 86% 16%,#3aa0ff 0,transparent 70%),
+   radial-gradient(44% 50% at 72% 90%,#7b4dff 0,transparent 70%),radial-gradient(34% 40% at 20% 92%,#ffb347 0,transparent 70%);opacity:.9}
+.slide.dark{color:#fff}
+.slide.dark .muted,.slide.dark .lead{color:rgb(255 255 255 / .86)}
+.slide{color:var(--ink)}
+.kicker{font-family:var(--font-num);font-weight:800;color:var(--ink);letter-spacing:.18em;font-size:15px;display:inline-flex;gap:10px;align-items:center}
+.kicker::before{content:"";width:22px;height:22px;border-radius:50%;background:conic-gradient(#ff7ab8,#7aa8ff,#9b7bff,#ffc46b,#ff7ab8)}
+.slide.dark .kicker{color:#fff}
+h1{font-size:92px;line-height:1.08;letter-spacing:-.035em;font-weight:900}
+h2{font-size:48px;line-height:1.25;font-weight:900;letter-spacing:-.025em}
+.glass .grad,.grad{background:linear-gradient(95deg,#5b3df5,#d6337f 55%,#e8762d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.glass{background:rgb(255 255 255 / .5);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);border:1px solid rgb(255 255 255 / .75);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px 30px}
+.slide.dark .glass{background:rgb(255 255 255 / .1);border-color:rgb(255 255 255 / .28)}
+.glass p{color:var(--muted);font-size:20px;line-height:1.65;margin:0}
+.glass p.lbl{font-size:16px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.glass .big-n{color:var(--ink);margin:0}
+.glass .big-n.grad{color:transparent}
+.kpis .glass{padding:18px 26px}.kpis .big-n{font-size:60px}
+.glass .big-n,.big-n{font-family:var(--font-num);font-weight:800;font-size:76px;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.lbl{font-size:16px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:8px}
+.kpi .value{font-family:var(--font-num)}
+/* 部品 */
+.chart{height:230px;gap:16px;border-bottom:1px solid var(--line);margin-bottom:34px}
+.chart>.col>i{border-radius:14px 14px 4px 4px;background:linear-gradient(180deg,#8a6bff,#ff7ab8)}
+.chart>.col.dim>i{background:rgb(91 61 245 / .22)}
+.chart>.col::before{font-family:var(--font-num);font-size:17px;font-weight:800}
+.chart>.col::after{color:var(--muted);font-size:15px;font-weight:700}
+.field{margin-bottom:16px}
+.field>label{color:var(--ink);font-size:18px;font-weight:700}
+.field>label b{font-family:var(--font-num);font-size:24px}
+input[type=range]{accent-color:#6a4bff}
+details.why{background:rgb(255 255 255 / .55);border:1px solid rgb(255 255 255 / .8);border-radius:18px}
+details.why>summary{color:var(--accent);font-size:18px}
+details.why>.body{color:var(--muted);font-size:18px}
+.meter{height:14px;background:rgb(23 19 46 / .08)}
+.meter>i{background:linear-gradient(90deg,#8a6bff,#ff7ab8)}
+.alloc{display:grid;grid-template-columns:150px 1fr 76px;align-items:center;gap:18px;font-size:21px;font-weight:700;margin-bottom:26px}
+.alloc b{font-family:var(--font-num);font-size:24px;text-align:right}
+.foot{color:var(--muted)}
+.slide.dark .foot{color:rgb(255 255 255 / .8)}
+</style>
+
+<main class="deck" data-transition="blur">
+
+  <section class="slide dark" data-title="表紙">
+    <div class="bg"></div>
+    <p class="kicker">SERIES A · 2026.10</p>
+    <h1 style="margin-top:26px">経理の「締め」を、<br>3日から<span style="background:linear-gradient(95deg,#ffd1e6,#b9d8ff);-webkit-background-clip:text;background-clip:text;color:transparent">3時間</span>に。</h1>
+    <p class="lead" style="font-size:26px;margin-top:30px;max-width:720px">請求書の読み取りから仕訳・照合までを自動にする、中堅企業向けの経理 SaaS。</p>
+    <div class="row" style="margin-top:auto;gap:18px">
+      <div class="glass" style="padding:16px 24px;font-family:var(--font-num);font-weight:800;font-size:22px">Sample Ledger</div>
+      <div class="glass" style="padding:16px 24px;font-size:19px">サンプルAI株式会社　代表取締役 サンプル花子</div>
+    </div>
+    <aside class="notes">最初の30秒で「何を・誰に」だけ言い切る。数字は次のページから。</aside>
+  </section>
+
+  <section class="slide" data-title="課題">
+    <div class="bg"></div>
+    <p class="kicker">PROBLEM</p>
+    <h2 style="margin:18px 0 30px">経理は毎月、<span class="grad">42時間</span>を<br>請求書の手入力に使っている。</h2>
+    <div class="grid cols-3" style="gap:24px">
+      <div class="glass step" style="min-height:310px;padding:32px"><p class="lbl">1社あたり 月の請求書</p><p class="big-n" style="color:var(--ink);font-size:96px;margin:10px 0 6px"><span data-count="1300">1,300</span><small style="font-size:28px">枚</small></p><p style="margin-top:12px;font-size:21px">従業員 300〜1,000人の会社の中央値（自社調べ・n=64）。</p></div>
+      <div class="glass step" style="min-height:310px;padding:32px"><p class="lbl">手入力・照合の時間</p><p class="big-n" style="color:var(--ink);font-size:96px;margin:10px 0 6px"><span data-count="42">42</span><small style="font-size:28px">時間</small></p><p style="margin-top:12px;font-size:21px">月末の3日間に集中し、残業の原因の1位。</p></div>
+      <div class="glass step" style="min-height:310px;padding:32px"><p class="lbl">入力ミスによる差し戻し</p><p class="big-n" style="color:var(--ink);font-size:96px;margin:10px 0 6px"><span data-count="3.8" data-format="dec1">3.8</span><small style="font-size:28px">%</small></p><p style="margin-top:12px;font-size:21px">100枚に4枚。取引先への確認で、さらに時間が消える。</p></div>
+    </div>
+    <details class="why" style="margin-top:26px;max-width:820px"><summary>調査の方法</summary><div class="body">2026年5〜7月、見込み顧客64社の経理責任者に聞き取り。時間は各社の作業記録から。数字はすべて架空のサンプルです。</div></details>
+    <aside class="notes">→キーで3枚が出る。「42時間」は人を1人雇うかどうかの境目、と言い添える。</aside>
+  </section>
+
+  <section class="slide" data-title="伸び">
+    <div class="bg"></div>
+    <p class="kicker">TRACTION</p>
+    <h2 style="margin:18px 0 24px">6四半期で、ARR は 4.6倍になった。</h2>
+    <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:30px;flex:1">
+      <div class="glass" style="display:flex;flex-direction:column">
+        <p class="lbl">ARR（年間の継続売上・億円）</p>
+        <div class="chart" style="flex:1;height:auto">
+          <div class="col dim" style="--v:22" data-label="25 Q2" data-val="0.7"><i></i></div>
+          <div class="col dim" style="--v:31" data-label="Q3" data-val="1.0"><i></i></div>
+          <div class="col dim" style="--v:44" data-label="Q4" data-val="1.4"><i></i></div>
+          <div class="col dim" style="--v:59" data-label="26 Q1" data-val="1.9"><i></i></div>
+          <div class="col dim" style="--v:78" data-label="Q2" data-val="2.5"><i></i></div>
+          <div class="col" style="--v:100" data-label="Q3" data-val="3.2"><i></i></div>
+        </div>
+      </div>
+      <div class="kpis" style="display:grid;gap:16px">
+        <div class="glass"><p class="lbl">ARR</p><p class="big-n"><span data-count="3.2" data-format="dec1">3.2</span><small style="font-size:30px">億円</small></p></div>
+        <div class="glass"><p class="lbl">導入企業</p><p class="big-n"><span data-count="186">186</span><small style="font-size:30px">社</small></p></div>
+        <div class="glass"><p class="lbl">売上継続率（NRR）</p><p class="big-n"><span data-count="128">128</span><small style="font-size:30px">%</small></p></div>
+      </div>
+    </div>
+    <aside class="notes">NRR 128% は「既存顧客だけで毎年 28% 伸びる」という意味。ここは質問が出やすいので、定義を口で言う。</aside>
+  </section>
+
+  <section class="slide" data-title="単位経済性">
+    <div class="bg"></div>
+    <p class="kicker">UNIT ECONOMICS · 動かせます</p>
+    <h2 style="margin:18px 0 22px">1社の獲得費は、11か月で取り戻せる。</h2>
+    <div data-calc class="fill" data-let="gm = gross/100; mg = price*gm; ltv = mg/(churn/100); ratio = ltv/cac; pay = cac/mg" style="display:grid;grid-template-columns:1fr 1fr;gap:30px">
+      <div class="glass">
+        <div class="field"><label>顧客獲得費（CAC） <b data-show="cac" data-unit="万円"></b></label><input type="range" name="cac" min="30" max="400" step="10" value="120"></div>
+        <div class="field"><label>1社の月額 <b data-show="price" data-unit="万円"></b></label><input type="range" name="price" min="3" max="40" step="1" value="14"></div>
+        <div class="field"><label>粗利率 <b data-show="gross" data-unit="%"></b></label><input type="range" name="gross" min="40" max="90" step="1" value="78"></div>
+        <div class="field" style="margin-bottom:6px"><label>月の解約率 <b data-show="churn" data-format="dec1" data-unit="%"></b></label><input type="range" name="churn" min="0.3" max="5" step="0.1" value="0.9"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">LTV ＝ 月額 × 粗利率 ÷ 月の解約率。<br>回収月数 ＝ CAC ÷（月額 × 粗利率）。目安は LTV/CAC 3倍以上、回収 18か月以内。</div></details>
+      </div>
+      <div style="display:grid;gap:20px;grid-template-rows:1.3fr 1fr">
+        <div class="glass" style="display:flex;flex-direction:column;justify-content:center"><p class="lbl">LTV / CAC</p><p class="big-n grad" style="font-size:104px" data-out="ratio" data-format="x"></p><div class="meter" data-bar="ratio" data-max="15" style="margin-top:12px"><i></i></div></div>
+        <div class="grid cols-2" style="gap:20px">
+          <div class="glass" style="padding:22px 24px"><p class="lbl">回収月数</p><p class="big-n" style="font-size:46px;white-space:nowrap" data-out="pay" data-format="dec1" data-unit="か月"></p></div>
+          <div class="glass" style="padding:22px 24px"><p class="lbl">1社の LTV</p><p class="big-n" style="font-size:38px;white-space:nowrap" data-out="ltv*1e4" data-format="man"></p></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">「解約率が倍になったら？」と聞かれたら、0.9 → 1.8 に動かす。LTV/CAC は 5倍を切るが、まだ目安の3倍は超える。</aside>
+  </section>
+
+  <section class="slide" data-title="なぜ勝てるか">
+    <div class="bg"></div>
+    <p class="kicker">WHY US</p>
+    <h2 style="margin:18px 0 26px">読み取りより、<span class="grad">照合</span>で勝っている。</h2>
+    <div class="grid cols-3" style="gap:24px">
+      <div class="glass step" style="min-height:330px;padding:32px"><p class="big-n" style="font-size:64px;color:var(--accent)">01</p><h3 style="font-size:28px;margin:14px 0 10px">照合の正解率 99.1%</h3><p>請求書・発注書・入金の3つを自動で突き合わせる。競合の多くは読み取りまで。</p></div>
+      <div class="glass step" style="min-height:330px;padding:32px"><p class="big-n" style="font-size:64px;color:#c42c78">02</p><h3 style="font-size:28px;margin:14px 0 10px">会計ソフト 12種に連携</h3><p>乗り換え不要。導入は平均 9日で、情報システム部門の手間がほぼない。</p></div>
+      <div class="glass step" style="min-height:330px;padding:32px"><p class="big-n" style="font-size:64px;color:#b35514">03</p><h3 style="font-size:28px;margin:14px 0 10px">使うほど賢くなる</h3><p>取引先ごとの癖を学習。導入3か月で、人の確認が必要な請求書は 1/5 に。</p></div>
+    </div>
+    <aside class="notes">競合名は出さない。「読み取りは当たり前になった。差がつくのは照合」とだけ言う。</aside>
+  </section>
+
+  <section class="slide" data-title="使い道">
+    <div class="bg"></div>
+    <p class="kicker">USE OF FUNDS</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-items:center">
+      <div>
+        <h2 style="margin:0 0 18px;font-size:58px">12億円で、<br>2028年に<br><span class="grad">ARR 15億円</span>へ。</h2>
+        <p style="font-size:21px;line-height:1.7;color:var(--muted)">24か月分の資金。営業の採用を先に進め、開発は照合の対象を「経費」と「給与」に広げる。</p>
+      </div>
+      <div class="glass">
+        <div class="alloc"><span>開発</span><div class="meter"><i style="width:45%"></i></div><b>45%</b></div>
+        <div class="alloc"><span>営業・マーケ</span><div class="meter"><i style="width:35%"></i></div><b>35%</b></div>
+        <div class="alloc"><span>導入支援</span><div class="meter"><i style="width:12%"></i></div><b>12%</b></div>
+        <div class="alloc" style="margin-bottom:0"><span>その他</span><div class="meter"><i style="width:8%"></i></div><b>8%</b></div>
+      </div>
+    </div>
+    <div class="grid cols-3" style="gap:20px;margin-bottom:26px">
+      <div class="glass" style="padding:18px 24px"><p class="lbl">2027年3月</p><p style="font-size:26px;font-weight:800;color:var(--ink)">ARR 5億円・営業 12人</p></div>
+      <div class="glass" style="padding:18px 24px"><p class="lbl">2027年12月</p><p style="font-size:26px;font-weight:800;color:var(--ink)">経費の照合を提供開始</p></div>
+      <div class="glass" style="padding:18px 24px"><p class="lbl">2028年12月</p><p style="font-size:26px;font-weight:800;color:var(--ink)">ARR 15億円・800社</p></div>
+    </div>
+    <p class="foot">社名・製品名・数字はすべて架空のサンプルです。</p>
+  </section>
+
+  <section class="slide dark cover" data-title="次の一歩">
+    <div class="bg"></div>
+    <p class="kicker">NEXT STEP</p>
+    <h1 style="font-size:78px;margin-top:22px">シリーズA 12億円。<br>リード投資家を探しています。</h1>
+    <div class="grid cols-3" style="gap:20px;margin-top:40px">
+      <div class="glass step"><p style="color:#fff;font-size:22px;font-weight:700">① 10月中</p><p style="color:rgb(255 255 255 / .86)">データルームを共有</p></div>
+      <div class="glass step"><p style="color:#fff;font-size:22px;font-weight:700">② 11月上旬</p><p style="color:rgb(255 255 255 / .86)">顧客3社へのヒアリング</p></div>
+      <div class="glass step"><p style="color:#fff;font-size:22px;font-weight:700">③ 12月</p><p style="color:rgb(255 255 255 / .86)">条件の合意・クロージング</p></div>
+    </div>
+    <p class="foot" style="font-size:16px">ir@sample-ledger.example　／　サンプルAI株式会社</p>
+  </section>
+
+</main>

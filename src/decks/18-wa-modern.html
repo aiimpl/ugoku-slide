@@ -1,0 +1,245 @@
+<!--meta
+{"title":"湯宿みほん リブランディング方針","style":"和モダン（余白と明朝）","use":"温泉旅館のリブランディング","group":"和・ナチュラル",
+ "aim":"温泉旅館の跡取りが、女将・番頭との家族会議で、改装とリブランディングの方針と新しい宿泊料金を決めてもらうための資料。",
+ "desc":"生成りの地に墨と朱、縦書きの見出しと大きな余白。改装の中身はタブで切り替え、客単価・稼働率・客室数を動かすと年の売上が変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f2ede3; --surface:#f7f3eb; --ink:#22201c; --muted:#6d665c; --line:#cfc6b6;
+  --accent:#b33a2b; --accent-ink:#fff; --frame:#e3dccf; --good:#3f6b4f; --bad:#b33a2b;
+  --radius:0px; --shadow:none;
+  --font:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-head:var(--font); --font-num:"Cormorant Garamond","Shippori Mincho",serif;
+  --head-weight:600; --head-track:.08em; --pad-y:72px; --pad-x:96px;
+}
+.slide{isolation:isolate;padding-right:300px}
+.slide>.bg{background:
+  radial-gradient(ellipse at 20% 0%,rgb(255 255 255 / .5),transparent 60%),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .35 0 0 0 0 .28 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),var(--bg)}
+/* 縦書きの見出し（右端） */
+.vh{position:absolute;right:84px;top:72px;writing-mode:vertical-rl;font:600 42px/1.6 var(--font);letter-spacing:.16em;max-height:560px;margin:0}
+.vh em{font-style:normal;color:var(--accent)}
+.vno{position:absolute;left:96px;top:40px;font:500 16px var(--font);letter-spacing:.4em;color:var(--muted);margin:0}
+.vno::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:12px;vertical-align:2px}
+.slide::after{content:"";position:absolute;right:256px;top:72px;bottom:72px;border-left:1px solid var(--line)}
+.slide.cover::after,.slide.end::after{display:none}
+.kicker{font:500 16px var(--font);letter-spacing:.4em;color:var(--muted);margin-bottom:26px}
+.lead{font-size:22px;line-height:2;color:var(--ink)}
+.muted{color:var(--muted)}
+.foot{left:96px;bottom:36px;font-size:14px;letter-spacing:.1em}
+.seal{display:inline-grid;place-items:center;background:var(--accent);color:#fff;font:800 20px/1.1 var(--font);writing-mode:vertical-rl;letter-spacing:.1em;padding:10px 8px;border-radius:3px}
+.num{font-family:var(--font-num);font-variant-numeric:lining-nums}
+
+/* ---- 部品 ---- */
+details.why{border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;margin-top:22px}
+details.why>summary{color:var(--ink);font-weight:600;font-size:18px;letter-spacing:.1em;padding:12px 0}
+details.why>summary::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent);transform:none!important}
+details.why>.body{padding:0 0 12px 20px;color:var(--muted);font-size:18px;line-height:1.95}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--line);border-radius:0;padding:16px 20px}
+.tabs{background:none;border-radius:0;padding:0;gap:34px;margin-bottom:34px}
+.tabs>[data-tab]{border-radius:0;background:none;padding:0 0 8px;font:600 21px var(--font);letter-spacing:.24em;color:var(--muted);border-bottom:1px solid transparent}
+.tabs>[data-tab][aria-selected=true]{background:none;box-shadow:none;color:var(--ink);border-color:var(--accent)}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--accent);border:0}
+input[type=range]::-moz-range-track{height:1px;background:var(--ink)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border:0;border-radius:50%;background:var(--accent)}
+.field{margin-bottom:36px}
+.field>label{font-size:19px;color:var(--muted);letter-spacing:.08em}
+.field>label b{font:600 30px var(--font-num);color:var(--ink);letter-spacing:.02em}
+.meter{height:2px;border-radius:0;background:var(--line);overflow:visible}
+.meter>i{border-radius:0;background:var(--ink);position:relative}
+.meter>i::after{content:"";position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+
+/* ---- 表紙 ---- */
+.slide.cover{padding:72px 96px}
+.cv-title{position:absolute;right:150px;top:84px;writing-mode:vertical-rl;font:600 88px/1.45 var(--font);letter-spacing:.14em;margin:0}
+.cv-title em{font-style:normal;color:var(--accent)}
+.cv-sun{position:absolute;right:250px;top:170px;width:340px;height:340px;border-radius:50%;border:1px solid var(--accent);opacity:.8}
+.cv-sun::after{content:"";position:absolute;inset:36px;border-radius:50%;background:radial-gradient(circle,rgb(179 58 43 / .1),transparent 70%)}
+.cv-left{position:absolute;left:96px;bottom:84px}
+.cv-left .nm{font:600 30px var(--font);letter-spacing:.3em;margin:18px 0 8px}
+.cv-left p{font-size:18px;letter-spacing:.2em;color:var(--muted);margin:0}
+.cv-line{position:absolute;left:96px;top:72px;height:250px;border-left:1px solid var(--ink)}
+.cv-top{position:absolute;left:120px;top:72px;writing-mode:vertical-rl;font:500 17px var(--font);letter-spacing:.5em;color:var(--muted)}
+
+/* ---- 現状 ---- */
+.now{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:20px;border-top:1px solid var(--ink)}
+.now>div{padding:26px 26px 0 0}
+.now>div+div{padding-left:26px;border-left:1px solid var(--line)}
+.now small{font-size:17px;letter-spacing:.14em;color:var(--muted)}
+.now .v{font:500 96px/1.05 var(--font-num);letter-spacing:-.01em;margin:10px 0 6px}
+.now .v .u{font:600 26px var(--font);margin-left:4px;letter-spacing:.06em}
+.now .v.r{color:var(--accent)}
+.now p{font-size:18px;line-height:1.9;color:var(--muted);margin:0}
+.quote{margin-top:48px;font-size:26px;line-height:1.9;letter-spacing:.08em;padding-left:28px;border-left:2px solid var(--accent)}
+.quote small{display:block;font-size:16px;color:var(--muted);letter-spacing:.2em;margin-top:6px}
+
+/* ---- 3つの約束（縦書きの札） ---- */
+.fuda{direction:rtl;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;height:470px;margin-top:4px}
+.fuda>div{position:relative;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:row-reverse;gap:22px;padding:30px 28px;justify-content:flex-start;direction:ltr}
+.fuda .t{writing-mode:vertical-rl;font:600 44px/1.3 var(--font);letter-spacing:.18em}
+.fuda .t em{font-style:normal;color:var(--accent)}
+.fuda .d{writing-mode:vertical-rl;font-size:19px;line-height:2;letter-spacing:.12em;color:var(--muted);max-height:390px}
+.fuda .n{position:absolute;left:24px;direction:ltr;bottom:18px;font:italic 500 56px/1 var(--font-num);color:var(--line)}
+
+/* ---- 改装の中身 ---- */
+.plan{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--ink)}
+.plan>div{padding:30px 30px 0 0}
+.plan>div+div{padding-left:30px;border-left:1px solid var(--line)}
+.plan small{font-size:16px;letter-spacing:.3em;color:var(--muted)}
+.plan b{display:block;font-size:38px;font-weight:600;letter-spacing:.08em;line-height:1.55;margin:10px 0 14px}
+.plan p{font-size:22px;line-height:2.05;color:var(--muted);margin:0}
+.plan .af b{color:var(--accent)}
+.plan .af small{color:var(--accent)}
+.cost{margin-top:48px;align-items:baseline;display:flex;gap:40px;font-size:18px;letter-spacing:.1em;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.cost b{font:600 40px var(--font-num);color:var(--ink);margin-left:10px;letter-spacing:.02em}
+
+/* ---- 計算 ---- */
+.sim{display:grid;grid-template-columns:400px 1fr;gap:60px}
+.yr small{font-size:18px;letter-spacing:.2em;color:var(--muted)}
+.yr .v{font:500 170px/1 var(--font-num);letter-spacing:-.02em;margin:6px 0 4px}
+.yr .v .u{font:600 34px var(--font);margin-left:6px}
+.cmp{display:grid;grid-template-columns:120px 1fr 150px;gap:18px;align-items:center;font-size:18px;color:var(--muted);margin-top:22px;letter-spacing:.08em}
+.cmp b{font:600 28px var(--font-num);color:var(--ink);text-align:right;letter-spacing:.02em}
+.cmp .meter.alt>i{background:var(--muted)}
+.cmp .meter.alt>i::after{background:var(--muted)}
+.ratio{margin-top:28px;font-size:22px;letter-spacing:.1em}
+.ratio b{font:600 44px var(--font-num);color:var(--accent);margin:0 6px}
+
+/* ---- 季節の道のり ---- */
+.season{direction:rtl;display:grid;grid-template-columns:repeat(4,1fr);gap:0;height:500px;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
+.season>div{direction:ltr;display:flex;flex-direction:row-reverse;gap:18px;padding:26px 22px;border-left:1px solid var(--line)}
+.season>div:last-child{border-left:0}
+.season .s{writing-mode:vertical-rl;font:600 56px/1 var(--font);letter-spacing:.3em}
+.season .s small{display:inline;font:500 18px var(--font);letter-spacing:.2em;color:var(--muted);margin-top:0;padding-top:0;margin-block-start:0;padding-inline-start:16px}
+.season .d{writing-mode:vertical-rl;font-size:23px;line-height:2;letter-spacing:.12em;color:var(--ink);max-height:380px}
+.season .d em{font-style:normal;color:var(--accent)}
+
+/* ---- 締め ---- */
+.slide.end{padding-right:96px}
+.end-title{position:absolute;right:120px;top:80px;writing-mode:vertical-rl;font:600 60px/1.5 var(--font);letter-spacing:.16em;margin:0}
+.asks{position:absolute;left:96px;top:92px;width:640px;display:grid;gap:0;border-top:1px solid var(--ink)}
+.asks>div{display:grid;grid-template-columns:80px 1fr;gap:18px;padding:24px 0;border-bottom:1px solid var(--line)}
+.asks .n{font:italic 500 56px/1 var(--font-num);color:var(--accent)}
+.asks b{display:block;font-size:30px;font-weight:600;letter-spacing:.08em;line-height:1.5}
+.asks p{margin:6px 0 0;font-size:19px;color:var(--muted);letter-spacing:.06em;line-height:1.8}
+.end .seal{position:absolute;right:130px;bottom:80px}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"></div>
+    <div class="cv-line"></div>
+    <div class="cv-top">リブランディング方針</div>
+    <div class="cv-sun"></div>
+    <h1 class="cv-title">湯と、<br><em>静けさ</em>を<br>売る。</h1>
+    <div class="cv-left">
+      <span class="seal">湯宿<br>みほん</span>
+      <p class="nm">湯宿 みほん</p>
+      <p>客室十八　源泉かけ流し　二〇二六年 秋</p>
+    </div>
+    <aside class="notes">題は読み上げるだけ。「安さではなく、静けさで選ばれる宿に戻したい」とひと言添える。</aside>
+  </section>
+
+  <section class="slide" data-title="いまの姿">
+    <div class="bg"></div>
+    <p class="vno">一　いまの姿</p>
+    <h2 class="vh">安さで選ばれる<br>宿になっていた。</h2>
+    <div class="kicker">この五年で変わったこと</div>
+    <div class="now">
+      <div><small>客単価（一泊二食）</small><div class="v num"><span data-count="18400"></span><span class="u">円</span></div><p>五年で十二パーセント下がった。値引きの予約が増えた。</p></div>
+      <div><small>稼働率</small><div class="v num"><span data-count="71"></span><span class="u">％</span></div><p>埋まってはいる。ただ、平日は団体と値引きで埋めている。</p></div>
+      <div><small>口コミで「安い」</small><div class="v num r"><span data-count="3.2" data-format="dec1"></span><span class="u">倍</span></div><p>「湯が良い」「静か」は、半分に減った。</p></div>
+    </div>
+    <p class="quote">「お湯は好きなのに、夜が騒がしかった。」<small>— 常連のお客さまの声（二〇二六年 夏）</small></p>
+    <p class="foot">数字は架空のサンプルです。</p>
+    <aside class="notes">責める話にしない。どれも「満室にしたい」と頑張った結果。そのうえで、選ばれる理由が変わってしまった、という事実だけを置く。</aside>
+  </section>
+
+  <section class="slide" data-title="三つの約束">
+    <div class="bg"></div>
+    <p class="vno">二　新しい約束</p>
+    <h2 class="vh">お客さまに、<br><em>三つ</em>を約束する。</h2>
+    <div class="fuda">
+      <div class="step"><p class="t"><em>音</em>を減らす</p><p class="d">団体の受け入れをやめ、<br>館内の放送と<br>テレビを外す。</p><span class="n">i</span></div>
+      <div class="step"><p class="t"><em>湯</em>を主役に</p><p class="d">大浴場を二つに分け、<br>貸切の露天を<br>三つ新しくつくる。</p><span class="n">ii</span></div>
+      <div class="step"><p class="t"><em>夕餉</em>は地のもの</p><p class="d">品数を十一から七へ。<br>山と川のものだけで、<br>一皿ずつ出す。</p><span class="n">iii</span></div>
+    </div>
+    <aside class="notes">→ で一枚ずつ札が出る。三つ以上は約束しない。約束は少ないほど守れる。</aside>
+  </section>
+
+  <section class="slide" data-title="改装の中身">
+    <div class="bg"></div>
+    <p class="vno">三　改装の中身</p>
+    <h2 class="vh">部屋を減らして、<br>一部屋を広くする。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="a">客室</button><button data-tab="b">湯</button><button data-tab="c">夕餉</button></div>
+      <div data-panel="a">
+        <div class="plan"><div><small>いま</small><b>和室 二十二室<br>八畳と広縁</b><p>団体向けの四人部屋が中心。窓の外は駐車場の部屋もある。</p></div>
+          <div class="af"><small>これから</small><b>十八室<br>十二畳と縁側の湯</b><p>四部屋分をつぶして広げる。全室から川が見える配置にする。</p></div></div>
+        <div class="cost">工事<b class="num">1.8億円</b>期間<b class="num">3か月</b></div>
+      </div>
+      <div data-panel="b">
+        <div class="plan"><div><small>いま</small><b>大浴場 二つ<br>露天 一つ</b><p>夕方は混み合い、洗い場の順番待ちが出る。</p></div>
+          <div class="af"><small>これから</small><b>大浴場 二つ<br>貸切露天 三つ</b><p>空いている時間が部屋から分かるようにし、四十五分ずつ使う。</p></div></div>
+        <div class="cost">工事<b class="num">0.6億円</b>期間<b class="num">2か月</b></div>
+      </div>
+      <div data-panel="c">
+        <div class="plan"><div><small>いま</small><b>会席 十一品<br>一度に並べる</b><p>品数は多いが、冷めた料理が多いと言われる。</p></div>
+          <div class="af"><small>これから</small><b>七品<br>一皿ずつ出す</b><p>地元の三軒の農家と川漁師から仕入れる。個室の食事処を新設。</p></div></div>
+        <div class="cost">工事<b class="num">0.4億円</b>期間<b class="num">1か月</b></div>
+      </div>
+    </div>
+    <details class="why"><summary>なぜ部屋を減らすのか</summary><div class="body">客単価を上げても、部屋が狭いままでは値段に見合わない。二十二室で埋めるより、十八室を高い単価で埋めるほうが、人手も少なく済む（仲居 十四人 → 十一人）。</div></details>
+  </section>
+
+  <section class="slide" data-title="売上の見込み">
+    <div class="bg"></div>
+    <p class="vno">四　売上の見込み</p>
+    <h2 class="vh">部屋を減らしても、<br>売上は<em>二割</em>増える。</h2>
+    <div class="sim" data-calc data-let="now = 18400*0.71*22*365; y = price*occ/100*rooms*365">
+      <div>
+        <div class="field"><label>客単価 <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="15000" max="50000" step="500" value="32000"></div>
+        <div class="field"><label>稼働率 <b data-show="occ" data-unit="％"></b></label><input type="range" name="occ" min="30" max="90" value="62"></div>
+        <div class="field"><label>客室数 <b data-show="rooms" data-unit="室"></b></label><input type="range" name="rooms" min="12" max="22" value="18"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">年の売上 ＝ 客単価 × 稼働率 × 客室数 × 三六五日。<br>いまは 18,400円 × 71％ × 22室。</div></details>
+      </div>
+      <div>
+        <div class="yr"><small>これからの年の売上</small><div class="v num"><span data-out="y/1e8" data-format="dec1"></span><span class="u">億円</span></div></div>
+        <div class="cmp"><span>これから</span><div class="meter" data-bar="y" data-max="2.2e8"><i></i></div><b data-out="y" data-format="man"></b></div>
+        <div class="cmp"><span>いま</span><div class="meter alt" data-bar="now" data-max="2.2e8"><i></i></div><b data-out="now" data-format="man"></b></div>
+        <p class="ratio">いまの <b class="num" data-out="y/now" data-format="x"></b></p>
+      </div>
+    </div>
+    <p class="foot">数字は架空のサンプルです。</p>
+    <aside class="notes">女将は稼働率を心配するはず。稼働率を五十に下げても、いまと同じくらいの売上になる、と動かして見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="進め方">
+    <div class="bg"></div>
+    <p class="vno">五　進め方</p>
+    <h2 class="vh">冬に閉じ、<br><em>春</em>にあらためて開く。</h2>
+    <div class="season">
+      <div class="step"><p class="s">冬<small>一月〜三月</small></p><p class="d">三か月休館し、<br>客室と湯を改装する。</p></div>
+      <div class="step"><p class="s">春<small>四月</small></p><p class="d">常連の方だけを<br>先に招く<em>「試しの宿」</em>。</p></div>
+      <div class="step"><p class="s">夏<small>七月</small></p><p class="d">新しい料金で<br>一般の予約を開く。</p></div>
+      <div class="step"><p class="s">秋<small>十月</small></p><p class="d">一年の振り返り。<br>料金を見直す。</p></div>
+    </div>
+  </section>
+
+  <section class="slide end" data-title="決めていただきたいこと">
+    <div class="bg"></div>
+    <h2 class="end-title">今日、<br>決めたいこと。</h2>
+    <div class="asks">
+      <div class="step"><span class="n">i</span><div><b>客単価 三万二千円への値上げ</b><p>常連の方には、初年度だけ一割引きの案内を出す。</p></div></div>
+      <div class="step"><span class="n">ii</span><div><b>一月から三か月の休館</b><p>その間の仲居は、他の宿での研修に出す。</p></div></div>
+      <div class="step"><span class="n">iii</span><div><b>改装費 二・八億円の借り入れ</b><p>銀行との相談は、決まり次第すぐに始める。</p></div></div>
+    </div>
+    <span class="seal">湯宿<br>みほん</span>
+    <aside class="notes">三つとも一度に決めなくていい。ただ、休館の時期だけは今日決めないと、冬の予約を止められない。</aside>
+  </section>
+
+</main>

@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026年 第3四半期 ご利用状況レポート</title>
+<meta name="description" content="夜の色に光の玉が漂い、すりガラスのカードが浮かぶ利用状況レポート。グラフはタブで見る角度を変え、席数と稼働率を動かすと使われていない席の金額が出る。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&amp;family=IBM+Plex+Sans+JP:wght@400;500;700&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-show="x" で入力値そのものを表示
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：グラスモーフィズム / SaaS の利用状況レポート
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted)}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+details.why.float{position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#0a0f1f; --surface:rgb(255 255 255 / .08); --ink:#f3f6ff; --muted:#b9c2dc; --line:rgb(255 255 255 / .16); --accent:#6fe3ff; --accent-ink:#06121c;
+  --vio:#a58bff; --pink:#ff7ab8; --frame:#05070f; --radius:24px; --good:#6ff0b0; --bad:#ff8a9a;
+  --shadow:0 20px 50px rgb(0 0 0 / .35),inset 0 1px 0 rgb(255 255 255 / .22);
+  --font:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Sora","IBM Plex Sans JP",sans-serif; --font-head:"Sora","IBM Plex Sans JP","Hiragino Sans",sans-serif; --head-weight:600; --head-track:-.02em;
+  --pad-y:54px; --pad-x:70px;
+}
+.deck .slide.active{transform:none;filter:none} /* エンジンの rise/zoom/blur で表示中のスライドがずれたままになるのを補正 */
+/* 光の玉 */
+.slide>.bg{background:radial-gradient(ellipse at 50% 120%,#1a2250 0,transparent 60%),var(--bg);overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.75;animation:drift 18s ease-in-out infinite alternate}
+.orb.c{background:#1fb6ff}.orb.v{background:#7b4dff}.orb.p{background:#ff4f9a;opacity:.5}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,-30px) scale(1.08)}}
+.glass{background:linear-gradient(135deg,rgb(255 255 255 / .14),rgb(255 255 255 / .05));border:1px solid rgb(255 255 255 / .2);border-radius:var(--radius);
+  -webkit-backdrop-filter:blur(26px) saturate(150%);backdrop-filter:blur(26px) saturate(150%);box-shadow:var(--shadow);padding:26px 30px;position:relative}
+.kicker{font:600 16px var(--font-num);letter-spacing:.18em;color:var(--accent)}
+h1{font:600 64px/1.2 var(--font-head);letter-spacing:-.02em}
+h2{font:600 44px/1.3 var(--font-head);margin-bottom:24px}
+p{font-size:19px;line-height:1.7}
+.lead{color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgb(255 255 255 / .1);border:1px solid rgb(255 255 255 / .18);font-size:17px;color:var(--ink)}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 10px var(--good)}
+.kpi .label{color:var(--muted);font-size:18px}
+.kpi .value{font:600 76px/1.05 var(--font-num);letter-spacing:-.04em}
+.kpi .value small{font:500 26px var(--font);margin-left:4px;letter-spacing:0;color:var(--muted)}
+.delta.up{color:var(--good)}.delta{font-size:17px}
+.grid .kpi .value{font-size:132px;letter-spacing:-.05em;margin:10px 0 8px}
+.grid .kpi .value small{font-size:36px}
+.grad{background:linear-gradient(90deg,#8ff0ff,#b9a4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* 表紙 */
+.cv{display:grid;grid-template-columns:1.4fr 1fr;gap:28px;flex:1;min-height:0;align-items:center}
+.cv .glass.main{padding:46px 48px}
+.cv .stack{display:grid;gap:18px}
+.cv .stack .glass{display:flex;justify-content:space-between;align-items:center;padding:20px 26px}
+.cv .stack b{font:600 44px var(--font-num);letter-spacing:-.03em}
+.cv .stack span{font-size:18px;color:var(--muted)}
+
+/* タブ */
+.tabs{background:rgb(255 255 255 / .08);border:1px solid rgb(255 255 255 / .16);padding:5px;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.tabs>[data-tab]{color:var(--muted);font-size:18px;padding:9px 22px}
+.tabs>[data-tab][aria-selected=true]{background:rgb(255 255 255 / .9);color:#0a0f1f;box-shadow:0 4px 18px rgb(111 227 255 / .35)}
+.report{display:grid;grid-template-columns:1fr 330px;gap:26px;flex:1;min-height:0}
+.chart{height:290px;border-bottom:1px solid rgb(255 255 255 / .25);gap:20px;margin-bottom:38px}
+.chart>.col>i{border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,rgb(143 240 255 / .95),rgb(123 77 255 / .55));box-shadow:0 0 24px rgb(111 227 255 / .25),inset 0 1px 0 rgb(255 255 255 / .6)}
+.chart>.col.dim>i{background:rgb(255 255 255 / .16);box-shadow:inset 0 1px 0 rgb(255 255 255 / .3)}
+.chart>.col::before{color:var(--ink);font:600 18px var(--font-num)}
+.chart>.col::after{color:var(--muted);font-size:16px}
+.side{display:grid;gap:18px;align-content:start}
+.side .glass p{margin:0;font-size:18px;color:var(--muted)}
+.side .glass b{display:block;font:600 40px var(--font-num);letter-spacing:-.03em;color:var(--ink);margin-bottom:4px}
+
+/* 機能の利用率 */
+.feat{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;flex:1;min-height:0}
+.frow{display:grid;grid-template-columns:210px 1fr 76px;gap:18px;align-items:center;padding:20px 0;border-bottom:1px solid var(--line);font-size:20px}
+.frow:last-child{border-bottom:0}
+.frow b{font:600 22px var(--font-num);text-align:right}
+.meter{height:12px;background:rgb(255 255 255 / .1)}
+.meter>i{background:linear-gradient(90deg,#6fe3ff,#a58bff);box-shadow:0 0 14px rgb(111 227 255 / .5)}
+.meter.low>i{background:linear-gradient(90deg,#ff7ab8,#ffb38a);box-shadow:0 0 14px rgb(255 122 184 / .5)}
+details.why{background:rgb(255 255 255 / .07);border:1px solid rgb(255 255 255 / .16);border-radius:16px}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:rgb(111 227 255 / .2);color:var(--accent)}
+details.why>.body{color:var(--muted);font-size:17px}
+details.why.float[open]>.body{background:rgb(20 26 50 / .96);border:1px solid rgb(255 255 255 / .2)}
+
+/* 計算 */
+.calc{display:grid;grid-template-columns:1fr 1.1fr;gap:26px;flex:1;min-height:0}
+.field>label{font-size:19px;color:var(--ink)}
+.field>label b{font:600 26px var(--font-num);color:var(--ink)}
+.field{margin-bottom:24px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:rgb(255 255 255 / .16)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;margin-top:-9px;box-shadow:0 0 0 6px rgb(111 227 255 / .25),0 0 20px rgb(111 227 255 / .6)}
+input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:rgb(255 255 255 / .16)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:0}
+.outs{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.3fr 1fr;gap:18px}
+.outs .glass{display:flex;flex-direction:column;justify-content:space-between}
+.outs .glass span{font-size:18px;color:var(--muted)}
+.outs .v{font:600 54px/1.05 var(--font-num);letter-spacing:-.03em;white-space:nowrap}
+.outs .hero{grid-column:1/-1;background:linear-gradient(135deg,rgb(255 122 184 / .3),rgb(123 77 255 / .18));border-color:rgb(255 170 210 / .4)}
+.outs .hero .v{font-size:88px}
+
+/* 次の打ち手 */
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;flex:1;min-height:0}
+.acts .glass{display:flex;flex-direction:column}
+.acts .no{font:300 76px/1 var(--font-num);color:transparent;-webkit-text-stroke:1px rgb(255 255 255 / .6);margin-bottom:auto}
+.acts h3{font-size:25px;white-space:nowrap;margin:18px 0 10px}
+.acts p{color:var(--muted);margin:0}
+.acts .eff{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:18px;color:var(--ink)}
+.acts .eff b{font:600 26px var(--font-num);color:var(--accent)}
+.foot{color:#9aa4c2}
+@media (prefers-reduced-motion:reduce){.orb{animation:none}}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="blur">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"><div class="orb c" style="width:520px;height:520px;left:-120px;top:-140px"></div><div class="orb v" style="width:600px;height:600px;right:-160px;bottom:-220px"></div><div class="orb p" style="width:320px;height:320px;left:540px;top:380px"></div></div>
+    <div class="cv">
+      <div class="glass main">
+        <div class="kicker">QUARTERLY REVIEW · 2026 Q3</div>
+        <h1 style="margin:18px 0 20px;font-size:78px">ご利用状況<br>レポート</h1>
+        <p class="lead" style="margin:0 0 26px">サンプル物産株式会社さま　／　サンプルワークス カスタマーサクセス</p>
+        <span class="chip"><i></i>7月1日〜9月30日のデータ</span>
+      </div>
+      <div class="stack">
+        <div class="glass"><span>毎週使う人</span><b class="grad">412人</b></div>
+        <div class="glass"><span>席の稼働率</span><b class="grad">78%</b></div>
+        <div class="glass"><span>完了したタスク</span><b class="grad">18,420</b></div>
+      </div>
+    </div>
+    <aside class="notes">表紙の右の3つの数字だけ先に読み上げる。詳しくは次のページから。</aside>
+  </section>
+
+  <section class="slide" data-title="まとめ">
+    <div class="bg"><div class="orb v" style="width:560px;height:560px;left:-160px;bottom:-240px"></div><div class="orb c" style="width:420px;height:420px;right:-60px;top:-160px"></div></div>
+    <div class="kicker">SUMMARY</div>
+    <h2>使う人は増えた。次は「使いこなし」。</h2>
+    <div class="grid cols-3" style="flex:1;min-height:0;margin-bottom:24px">
+      <div class="glass kpi step" style="display:flex;flex-direction:column"><div class="label">毎週使う人</div><div class="value"><span data-count="412"></span><small>人</small></div><div class="delta up">前の四半期から +118人</div><p class="lead" style="margin-top:auto;font-size:18px">営業部の全員が使い始めた7月から、ぐっと伸びた。</p></div>
+      <div class="glass kpi step" style="display:flex;flex-direction:column"><div class="label">席の稼働率</div><div class="value"><span data-count="78"></span><small>%</small></div><div class="delta up">+14ポイント</div><p class="lead" style="margin-top:auto;font-size:18px">契約 530席のうち、412席が毎週使われている。</p></div>
+      <div class="glass kpi step" style="display:flex;flex-direction:column"><div class="label">自動化の設定</div><div class="value"><span data-count="9"></span><small>%</small></div><div class="delta" style="color:var(--pink)">まだ少ない</div><p class="lead" style="margin-top:auto;font-size:18px">くり返しの作業を自動にしている人は、1割に届いていない。</p></div>
+    </div>
+    <p class="foot">社名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">1つ目と2つ目は「よかった話」。3つ目の 9% が、今日いちばん話したいこと。</aside>
+  </section>
+
+  <section class="slide" data-title="利用の推移">
+    <div class="bg"><div class="orb c" style="width:480px;height:480px;left:280px;top:-260px"></div><div class="orb p" style="width:360px;height:360px;right:-120px;bottom:-120px"></div></div>
+    <div class="kicker">USAGE</div>
+    <h2>7月から、毎週使う人は1.4倍に。</h2>
+    <div data-tabs class="report">
+      <div class="glass" style="padding:22px 28px 10px">
+        <div class="tabs"><button data-tab="a">毎週使う人</button><button data-tab="b">部署別</button><button data-tab="c">機能別</button></div>
+        <div data-panel="a"><div class="chart">
+          <div class="col dim" style="--v:56" data-label="4月" data-val="262"><i></i></div><div class="col dim" style="--v:60" data-label="5月" data-val="281"><i></i></div><div class="col dim" style="--v:63" data-label="6月" data-val="294"><i></i></div>
+          <div class="col" style="--v:77" data-label="7月" data-val="358"><i></i></div><div class="col" style="--v:84" data-label="8月" data-val="391"><i></i></div><div class="col" style="--v:89" data-label="9月" data-val="412"><i></i></div>
+        </div></div>
+        <div data-panel="b"><div class="chart">
+          <div class="col" style="--v:96" data-label="営業" data-val="96%"><i></i></div><div class="col" style="--v:88" data-label="企画" data-val="88%"><i></i></div><div class="col" style="--v:74" data-label="開発" data-val="74%"><i></i></div>
+          <div class="col dim" style="--v:52" data-label="総務" data-val="52%"><i></i></div><div class="col dim" style="--v:41" data-label="経理" data-val="41%"><i></i></div>
+        </div></div>
+        <div data-panel="c"><div class="chart">
+          <div class="col" style="--v:98" data-label="タスク" data-val="98%"><i></i></div><div class="col" style="--v:81" data-label="コメント" data-val="81%"><i></i></div><div class="col" style="--v:46" data-label="カレンダー" data-val="46%"><i></i></div>
+          <div class="col dim" style="--v:12" data-label="ガント" data-val="12%"><i></i></div><div class="col dim" style="--v:9" data-label="自動化" data-val="9%"><i></i></div>
+        </div></div>
+      </div>
+      <div class="side">
+        <div class="glass"><b class="grad">1.4倍</b><p>6月 294人 → 9月 412人</p></div>
+        <div class="glass"><b>総務・経理</b><p>稼働率が半分前後。月末の申請にだけ使っている。</p></div>
+        <div class="glass"><b>自動化 9%</b><p>一番時間が減る機能が、一番使われていない。</p></div>
+      </div>
+    </div>
+    <aside class="notes">タブで「部署別」「機能別」を切り替えながら、右の3つの気づきを順に話す。</aside>
+  </section>
+
+  <section class="slide" data-title="使われていない機能">
+    <div class="bg"><div class="orb p" style="width:460px;height:460px;left:-140px;top:-120px"></div><div class="orb v" style="width:520px;height:520px;right:-180px;bottom:-200px"></div></div>
+    <div class="kicker">INSIGHT</div>
+    <h2>時間が減る機能ほど、まだ使われていない。</h2>
+    <div class="feat">
+      <div class="glass">
+        <div class="frow"><span>タスク管理</span><div class="meter"><i style="width:98%"></i></div><b>98%</b></div>
+        <div class="frow"><span>コメント</span><div class="meter"><i style="width:81%"></i></div><b>81%</b></div>
+        <div class="frow"><span>カレンダー連携</span><div class="meter"><i style="width:46%"></i></div><b>46%</b></div>
+        <div class="frow"><span>ガントチャート</span><div class="meter low"><i style="width:12%"></i></div><b>12%</b></div>
+        <div class="frow"><span>くり返しの自動化</span><div class="meter low"><i style="width:9%"></i></div><b>9%</b></div>
+        <div class="frow"><span>テンプレート</span><div class="meter low"><i style="width:7%"></i></div><b>7%</b></div>
+      </div>
+      <div class="glass" style="display:flex;flex-direction:column;background:linear-gradient(135deg,rgb(255 122 184 / .22),rgb(255 255 255 / .05))">
+        <p style="color:var(--muted);margin:0">自動化を使っている人は、そうでない人より</p>
+        <p style="font:600 110px/1 var(--font-num);letter-spacing:-.05em;margin:14px 0 6px" class="grad">−3.2<span style="font-size:36px">時間</span></p>
+        <p style="margin:0">1人あたり、1週間の作業時間が短い。</p>
+        <details class="why" style="margin-top:auto"><summary>どう比べた？</summary><div class="body">9月に自動化を1つ以上設定していた 38人 と、同じ部署の設定していない人の、作業ログの合計時間を比べた（サンプル）。</div></details>
+      </div>
+    </div>
+    <aside class="notes">右の −3.2時間 は相関で、因果ではないと一言添える。そのうえで「試す価値はある」と言う。</aside>
+  </section>
+
+  <section class="slide" data-title="席のむだの試算">
+    <div class="bg"><div class="orb c" style="width:480px;height:480px;right:120px;top:-260px"></div><div class="orb p" style="width:420px;height:420px;left:-140px;bottom:-200px"></div></div>
+    <div class="kicker">SIMULATION · 動かせます</div>
+    <h2>使われていない席に、毎月いくら払っているか。</h2>
+    <div class="calc" data-calc data-let="active = round(seats*rate/100); idle = seats-active; waste = idle*price; per = seats*price/max(1,active)">
+      <div class="glass">
+        <div class="field"><label>契約している席の数 <b data-show="seats" data-unit="席"></b></label><input type="range" name="seats" min="100" max="1000" step="10" value="530"></div>
+        <div class="field"><label>1席あたりの月額 <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="500" max="3000" step="100" value="1200"></div>
+        <div class="field"><label>席の稼働率 <b data-show="rate" data-unit="%"></b></label><input type="range" name="rate" min="30" max="100" value="78"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">使われていない席 ＝ 席数 ×（1 − 稼働率）。<br>むだな金額 ＝ 使われていない席 × 月額。<br>実質の1人あたり ＝ 支払い総額 ÷ 使っている人数。</div></details>
+      </div>
+      <div class="outs">
+        <div class="glass hero"><span>使われていない席の金額（1か月）</span><div class="v" data-out="waste" data-format="yen"></div></div>
+        <div class="glass"><span>使われていない席</span><div class="v" data-out="idle" data-unit="席"></div></div>
+        <div class="glass"><span>実質の1人あたり月額</span><div class="v" data-out="per" data-format="yen"></div></div>
+      </div>
+    </div>
+    <aside class="notes">稼働率を 90% まで上げると、むだが半分以下になる。席を減らす提案ではなく、使う人を増やす提案として話す。</aside>
+  </section>
+
+  <section class="slide" data-title="次の打ち手">
+    <div class="bg"><div class="orb v" style="width:520px;height:520px;left:360px;bottom:-320px"></div><div class="orb c" style="width:380px;height:380px;left:-120px;top:-140px"></div></div>
+    <div class="kicker">NEXT QUARTER</div>
+    <h2>次の3か月で、稼働率を90%へ。</h2>
+    <div class="acts">
+      <div class="glass step"><div class="no">01</div><h3>総務・経理の30分講座</h3><p>月末の申請を、テンプレートで半分の手順に。10月中に2回。</p><div class="eff">見込み <b>+40人</b></div></div>
+      <div class="glass step"><div class="no">02</div><h3>自動化の「型」を5つ配る</h3><p>定例の準備、週報、請求の確認など、よくある作業をそのまま使える形に。</p><div class="eff">見込み <b>自動化 25%</b></div></div>
+      <div class="glass step"><div class="no">03</div><h3>眠っている席を回す</h3><p>60日ログインがない 41席 を、希望する部署に回す。</p><div class="eff">見込み <b>稼働率 +8pt</b></div></div>
+    </div>
+  </section>
+
+  <section class="slide center" data-title="次回">
+    <div class="bg"><div class="orb c" style="width:560px;height:560px;left:120px;top:-200px"></div><div class="orb v" style="width:560px;height:560px;right:80px;bottom:-260px"></div><div class="orb p" style="width:300px;height:300px;left:760px;top:120px"></div></div>
+    <div class="glass" style="padding:56px 80px;max-width:900px">
+      <div class="kicker">NEXT REVIEW</div>
+      <h1 style="margin:18px 0 16px">次回の定例は<br><span class="grad">12月10日（木）</span></h1>
+      <p class="lead" style="margin:0">それまでに、講座の日程と自動化の型をお送りします。<br>担当：サンプルワークス カスタマーサクセス<br><span style="font-family:var(--font-num);white-space:nowrap">cs@sample-works.example</span></p>
+    </div>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      el.classList.toggle("neg", to < 0);
+      el.classList.toggle("pos", to > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => tween(el, run(f)));
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
+    el._v = 0; tween(el, Number(el.dataset.count));
+  });
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    render();
+    if (prev !== -1) countUp(slides[i]);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

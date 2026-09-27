@@ -1,0 +1,178 @@
+<!--meta
+{"title":"サンプル湯 再生プラン 銭湯×喫茶","style":"70年代レトロ","use":"銭湯・喫茶の再生プラン","group":"レトロ・ポップ",
+ "aim":"銭湯を継いだ三代目が、信用金庫と商店会への説明会で、銭湯に喫茶を足す再生プランと月の売上見込みを示し、改装への協力を取りつけるための資料。",
+ "desc":"茶・橙・からし色の虹の帯と、太い丸文字。入浴料と1日の人数、喫茶に寄る人の割合を動かすと、月の売上と黒字ラインまでの距離が出る。3つの柱はタブで切り替え。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Shrikhand&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f5e6c4; --surface:#fff5dc; --ink:#40200e; --muted:#6a4126; --line:#40200e; --accent:#c9531d; --accent-ink:#fff5dc;
+  --mustard:#e2a42b; --olive:#6e7a2a; --good:#5c6a1c; --bad:#b3401a; --frame:#3a1d0c; --radius:22px; --shadow:6px 6px 0 var(--ink);
+  --font:"Mochiy Pop One","Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif; --font-num:"Mochiy Pop One",sans-serif;
+  --head-weight:400; --head-track:.01em; --pad-y:56px; --pad-x:80px;
+}
+/* 紙のざらつき */
+.slide>.bg{background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .12 0 0 0 0 .05 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),var(--bg)}
+/* 右下の虹の帯（全ページ共通） */
+.slide>.bg::after{content:"";position:absolute;right:-170px;bottom:-170px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,transparent 0 92px,var(--ink) 92px 116px,var(--accent) 116px 140px,var(--mustard) 140px 164px,transparent 164px)}
+.slide.no-rb>.bg::after{display:none}
+.slide{color:var(--ink);font-weight:400}
+.slide *{font-weight:400}
+.sh{font-family:"Shrikhand",cursive;color:var(--accent);font-weight:400;letter-spacing:.01em}
+h1,h2,h3,.big{font-weight:400}
+h2{font-size:48px;line-height:1.35}
+.kicker{font-family:"Shrikhand",cursive;color:var(--accent);font-size:26px;letter-spacing:.02em;text-transform:none;font-weight:400;margin-bottom:6px}
+.stripe{display:flex;flex-direction:column;gap:5px;width:180px;margin:4px 0 18px}
+.stripe i{height:9px;border-radius:9px}
+.stripe i:nth-child(1){background:var(--ink)}.stripe i:nth-child(2){background:var(--accent)}.stripe i:nth-child(3){background:var(--mustard)}
+.card{background:var(--surface);border:3px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card p{color:var(--muted);font-size:20px;line-height:1.7}
+.card.or{background:var(--accent);color:var(--surface)}.card.or p{color:var(--surface)}
+.card.mu{background:var(--mustard)}
+.card.br{background:var(--ink);color:var(--surface)}.card.br p{color:#f3dcb4}
+.card .bignum,.bignum{font-size:84px;color:inherit;line-height:1;letter-spacing:-.02em}
+.star{position:absolute;display:grid;place-items:center;text-align:center;color:var(--ink);font-size:22px;line-height:1.3;
+  background:var(--mustard);clip-path:polygon(50% 0,61% 13%,77% 6%,80% 23%,96% 26%,90% 42%,100% 55%,86% 64%,89% 81%,72% 81%,63% 96%,50% 87%,37% 96%,28% 81%,11% 81%,14% 64%,0 55%,10% 42%,4% 26%,20% 23%,23% 6%,39% 13%)}
+@keyframes spin{to{rotate:360deg}}
+.spin{animation:spin 40s linear infinite}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+/* 部品 */
+.tabs{background:none;padding:0;gap:14px}
+.tabs>[data-tab]{border:3px solid var(--ink);background:var(--surface);color:var(--ink);font-size:24px;padding:10px 28px;font-weight:400}
+.tabs>[data-tab][aria-selected=true]{background:var(--accent);color:var(--surface);box-shadow:4px 4px 0 var(--ink)}
+.field{margin-bottom:18px}
+.field>label{color:var(--ink);font-size:21px}
+.field>label b{font-size:30px;font-weight:400;color:var(--accent)}
+input[type=range]{accent-color:var(--accent);height:30px}
+.meter{height:30px;border:3px solid var(--ink);background:var(--surface)}
+.meter>i{background:repeating-linear-gradient(90deg,var(--accent) 0 14px,var(--mustard) 14px 28px)}
+details.why{background:var(--surface);border:3px solid var(--ink);border-radius:16px}
+details.why>summary{color:var(--accent);font-size:20px;font-weight:400}
+details.why>summary::before{background:var(--mustard);color:var(--ink)}
+details.why>.body{color:var(--ink);font-size:19px}
+ul.list{font-size:29px;gap:24px}
+ul.list>li::before{background:var(--accent);width:16px;height:16px;border-radius:50%;box-shadow:3px 3px 0 var(--ink)}
+ol.list>li::before{background:var(--mustard);color:var(--ink);border:3px solid var(--ink);font-weight:400}
+.foot{color:var(--muted);font-size:15px}
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.tl .card{padding:26px 26px;min-height:300px}
+.tl .card p{font-size:21px}
+.tl .when{margin:0}
+.tl .when{font-family:"Shrikhand",cursive;font-size:48px!important;color:var(--accent)}
+.tl .card.or .when,.tl .card.br .when{color:var(--mustard)}
+</style>
+
+<main class="deck" data-transition="slide">
+
+  <section class="slide no-rb" data-title="表紙">
+    <div class="bg"></div>
+    <svg viewBox="0 0 700 700" style="position:absolute;right:-40px;bottom:-400px;width:800px;height:800px" aria-hidden="true">
+      <g fill="none" stroke-width="54"><circle cx="350" cy="350" r="320" stroke="#40200e"/><circle cx="350" cy="350" r="262" stroke="#c9531d"/><circle cx="350" cy="350" r="204" stroke="#e2a42b"/><circle cx="350" cy="350" r="146" stroke="#6e7a2a"/></g>
+    </svg>
+    <p class="sh" style="font-size:54px;margin:0">Sento &amp; Kissa</p>
+    <h1 style="font-size:104px;line-height:1.18;margin:10px 0 24px">サンプル湯、<br>よみがえる。</h1>
+    <div class="stripe"><i></i><i></i><i></i></div>
+    <p style="font-size:28px;line-height:1.6;margin:0">銭湯 × 喫茶　再生プラン 2027<br><span style="font-size:22px;color:var(--muted)">三代目店主　湯本 サンプル</span></p>
+    <div class="star spin" style="right:90px;top:60px;width:200px;height:200px"><span style="rotate:0deg">創業<br><span class="sh" style="font-size:40px;color:var(--ink)">1958</span></span></div>
+    <aside class="notes">のれんの写真があれば、右の虹の帯の下に入れてもよい。まず「おかげさまで68年」と一礼してから始める。</aside>
+  </section>
+
+  <section class="slide" data-title="いま">
+    <div class="bg"></div>
+    <p class="kicker">Now</p>
+    <h2>お客さんは10年で半分。<br>でも、<span style="color:var(--accent)">20代</span>が来はじめた。</h2>
+    <div class="grid cols-3" style="gap:28px;margin-top:14px;max-width:1000px">
+      <div class="card" style="padding:30px 30px;min-height:290px"><p style="margin:0">1日のお客さん</p><p class="bignum" style="margin:18px 0 14px;font-size:120px"><span data-count="92">92</span><span style="font-size:32px">人</span></p><p style="margin:0">10年前は 190人</p></div>
+      <div class="card mu" style="padding:30px 30px;min-height:290px"><p style="margin:0;color:var(--ink)">20代のお客さん</p><p class="bignum" style="margin:18px 0 14px;font-size:120px"><span data-count="23">23</span><span style="font-size:32px">%</span></p><p style="margin:0;color:var(--ink)">3年前は 6%</p></div>
+      <div class="card or" style="padding:30px 30px;min-height:290px"><p style="margin:0">「サウナ目当て」</p><p class="bignum" style="margin:18px 0 14px;font-size:120px"><span data-count="41">41</span><span style="font-size:32px">%</span></p><p style="margin:0">20代に聞いた来た理由</p></div>
+    </div>
+    <details class="why" style="margin-top:26px;max-width:760px"><summary>数えかた</summary><div class="body">番台で数えた2026年4〜9月の平均。年代と理由は、9月に120人へ聞いたアンケートから。数字は架空のサンプルです。</div></details>
+    <aside class="notes">暗い話は1枚だけ。「でも」から声を明るくする。数字は開くたびに数え上がる。</aside>
+  </section>
+
+  <section class="slide" data-title="3つの柱">
+    <div class="bg"></div>
+    <p class="kicker">Plan</p>
+    <h2 style="margin-bottom:20px">お風呂のあとに、もう1時間いてもらう。</h2>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">銭湯</button><button data-tab="b">喫茶</button><button data-tab="c">催し</button></div>
+      <div data-panel="a" class="grid" style="grid-template-columns:1fr 340px;gap:40px;margin-top:6px">
+        <div class="card" style="padding:32px 38px;min-height:340px"><p class="sh" style="font-size:40px;margin:0 0 10px">Morning Bath</p><ul class="list"><li>土日の朝 6時から「朝風呂」</li><li>薪で温める小さなサウナを新設（8人）</li><li>ペンキ絵の富士山を、地元の美大生と描き直す</li></ul></div>
+        <div class="card or" style="padding:28px;display:flex;flex-direction:column;justify-content:center;text-align:center"><p style="margin:0;font-size:22px">大人の入浴料</p><p class="bignum" style="font-size:96px;margin:6px 0">520<span style="font-size:36px">円</span></p><p style="margin:0">サウナは ＋300円</p></div>
+      </div>
+      <div data-panel="b" class="grid" style="grid-template-columns:1fr 340px;gap:40px;margin-top:6px">
+        <div class="card" style="padding:32px 38px;min-height:340px"><p class="sh" style="font-size:40px;margin:0 0 10px">Kissa Yuagari</p><ul class="list"><li>脱衣所の奥の物置を、12席の喫茶に</li><li>湯上がりのクリームソーダと、コーヒー牛乳</li><li>入浴しない人も、喫茶だけで入れる</li></ul></div>
+        <div class="card mu" style="padding:28px;display:flex;flex-direction:column;justify-content:center;text-align:center"><p style="margin:0;font-size:22px">クリームソーダ</p><p class="bignum" style="font-size:96px;margin:6px 0">480<span style="font-size:36px">円</span></p><p style="margin:0;color:var(--ink)">客単価の見込み 650円</p></div>
+      </div>
+      <div data-panel="c" class="grid" style="grid-template-columns:1fr 340px;gap:40px;margin-top:6px">
+        <div class="card" style="padding:32px 38px;min-height:340px"><p class="sh" style="font-size:40px;margin:0 0 10px">Event Night</p><ul class="list"><li>月1回、閉店後の湯船の前で弾き語り</li><li>第2日曜は、商店会と「湯あがり市」</li><li>こども銭湯教室（夏休み）</li></ul></div>
+        <div class="card br" style="padding:28px;display:flex;flex-direction:column;justify-content:center;text-align:center"><p style="margin:0;font-size:22px">催しの日の来場</p><p class="bignum" style="font-size:96px;margin:6px 0;color:var(--mustard)">200<span style="font-size:36px">人</span></p><p style="margin:0">試しに開いた8月の実績</p></div>
+      </div>
+    </div>
+    <aside class="notes">信用金庫の方には「喫茶」を、商店会の方には「催し」を先に開くと話が早い。</aside>
+  </section>
+
+  <section class="slide" data-title="月の売上">
+    <div class="bg"></div>
+    <p class="kicker">Money</p>
+    <h2 style="margin-bottom:18px">1日140人と喫茶で、黒字ラインをこえる。</h2>
+    <div data-calc class="fill" data-let="bath = fee*n*26; cafe = n*rate/100*spend*26; tot = bath+cafe; line = 2600000" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1080px">
+      <div class="card" style="padding:26px 30px">
+        <div class="field"><label>入浴料 <b data-show="fee" data-unit="円"></b></label><input type="range" name="fee" min="450" max="700" step="10" value="520"></div>
+        <div class="field"><label>1日のお客さん <b data-show="n" data-unit="人"></b></label><input type="range" name="n" min="60" max="260" step="5" value="140"></div>
+        <div class="field"><label>喫茶に寄る人 <b data-show="rate" data-unit="%"></b></label><input type="range" name="rate" min="0" max="60" step="1" value="30"></div>
+        <div class="field" style="margin-bottom:0"><label>喫茶の客単価 <b data-show="spend" data-unit="円"></b></label><input type="range" name="spend" min="300" max="1200" step="10" value="650"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="card or" style="padding:22px 28px"><p style="margin:0">月の売上（26日営業）</p><p class="bignum" style="margin:6px 0 0;font-size:76px;white-space:nowrap" data-out="tot" data-format="man"></p></div>
+        <div class="grid cols-2" style="gap:18px">
+          <div class="card" style="padding:18px 22px"><p style="margin:0;font-size:18px">お風呂</p><p style="margin:0;font-size:34px;color:var(--ink)" data-out="bath" data-format="man"></p></div>
+          <div class="card" style="padding:18px 22px"><p style="margin:0;font-size:18px">喫茶</p><p style="margin:0;font-size:34px;color:var(--ink)" data-out="cafe" data-format="man"></p></div>
+        </div>
+        <div><p style="margin:0 0 6px;font-size:19px">黒字ライン（月260万円）までの距離　<b data-out="tot-line" data-format="man" data-sign></b></p><div class="meter" data-bar="tot" data-max="line*1.4"><i></i></div></div>
+      </div>
+    </div>
+    <aside class="notes">今は1日92人・喫茶なしで月125万円ほど。人数を 92 に戻して見せると、何もしない場合との差がはっきりする。</aside>
+  </section>
+
+  <section class="slide" data-title="段取り">
+    <div class="bg"></div>
+    <p class="kicker">Schedule</p>
+    <h2 style="margin-bottom:26px">休むのは1か月だけ。春にのれんを掛け直す。</h2>
+    <div class="tl">
+      <div class="card step"><p class="when">Jan.</p><p style="color:var(--ink);font-size:28px;margin:10px 0">設計と見積もり</p><p style="margin:0">常連さんに要望を聞く会を2回</p></div>
+      <div class="card mu step"><p class="when" style="color:var(--ink)">Feb.</p><p style="color:var(--ink);font-size:28px;margin:10px 0">休業・改装</p><p style="margin:0;color:var(--ink)">サウナ新設・物置を喫茶に</p></div>
+      <div class="card or step"><p class="when">Mar.</p><p style="font-size:28px;margin:10px 0;color:inherit">プレ営業</p><p style="margin:0">商店会・近所の方を招待</p></div>
+      <div class="card br step"><p class="when">Apr.</p><p style="font-size:28px;margin:10px 0;color:inherit">リニューアル</p><p style="margin:0">4月1日（木）朝6時から</p></div>
+    </div>
+    <p style="margin-top:34px;font-size:24px;max-width:860px;line-height:1.6">改装中は、となり町の「サンプル温泉」の割引券を常連さんに配ります。</p>
+    <aside class="notes">→キーで月ごとに出る。2月の休業に不安の声が出たら、割引券の話を。</aside>
+  </section>
+
+  <section class="slide" data-title="お願い">
+    <div class="bg"></div>
+    <p class="kicker">Please</p>
+    <h2 style="margin-bottom:26px">力を貸してほしいことは、3つです。</h2>
+    <ol class="list" style="font-size:34px;gap:34px;max-width:900px">
+      <li class="step">改装費 <span style="color:var(--accent)">1,800万円</span>のうち、1,200万円の融資</li>
+      <li class="step">「湯あがり市」への出店（毎月 第2日曜）</li>
+      <li class="step">回数券の予約販売を、商店会の店頭で</li>
+    </ol>
+    <div class="star spin" style="right:120px;top:250px;width:230px;height:230px;font-size:24px"><span>自己資金<br><span style="font-size:44px">600</span><br>万円</span></div>
+    <details class="why" style="margin-top:40px;max-width:760px"><summary>改装費 1,800万円の内わけ</summary><div class="body">サウナ 650万円 ／ 喫茶への改装 520万円 ／ ボイラーの交換 480万円 ／ ペンキ絵・看板 150万円。自己資金 600万円。</div></details>
+  </section>
+
+  <section class="slide cover no-rb" data-title="見学会">
+    <div class="bg"></div>
+    <svg viewBox="0 0 1280 300" preserveAspectRatio="none" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:230px" aria-hidden="true">
+      <path d="M0 300 V120 C300 40 700 200 1280 80 V300Z" fill="#e2a42b"/><path d="M0 300 V180 C340 100 760 250 1280 150 V300Z" fill="#c9531d"/><path d="M0 300 V240 C360 170 800 300 1280 220 V300Z" fill="#40200e"/>
+    </svg>
+    <p class="sh" style="font-size:60px;margin:0">See you at the Sento!</p>
+    <h2 style="font-size:64px;margin:14px 0 18px">のれんをくぐって、<br>見に来てください。</h2>
+    <p style="font-size:26px;line-height:1.6;margin:0">見学会　10月25日（日）10時〜12時　／　湯船にお湯を張ってお待ちしています</p>
+    <p style="font-size:20px;color:var(--muted);margin-top:10px">サンプル湯　電話 00-0000-0000　／　店名・人名・数字はすべて架空のサンプルです。</p>
+  </section>
+
+</main>

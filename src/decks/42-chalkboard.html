@@ -1,0 +1,252 @@
+<!--meta
+{"title":"中2数学 一次関数 y = ax + b","style":"黒板","use":"中学数学の授業（一次関数）","group":"学び・研修",
+ "aim":"中学2年の数学の先生が、一次関数の最初の授業で電子黒板に映し、傾きと切片をその場で動かしながら生徒と確かめるための板書。",
+ "desc":"深緑の黒板に手書きのチョーク文字。傾き a と切片 b のスライダーを動かすと、表の数とグラフの線がその場で書き変わる。最後に確かめのクイズ。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Yomogi&display=swap"}
+-->
+<style>
+:root{
+  --bg:#213f31; --surface:transparent; --ink:#f3f0e6; --muted:#cfd8cf; --line:rgb(243 240 230 / .35);
+  --accent:#f6dd6a; --accent-ink:#213f31; --pink:#f7a8bb; --blue:#9fd6f2; --good:#f6dd6a; --bad:#f7a8bb;
+  --frame:#3b2a1c; --radius:0; --shadow:none;
+  --font:"Yomogi","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif; --head-weight:400; --head-track:.02em;
+  --pad-y:60px; --pad-x:84px;
+}
+/* 木の枠・黒板・チョーク受け */
+.slide>.bg{background:linear-gradient(90deg,#5a3d26,#7a5436 30%,#6a4a30 60%,#5a3d26)}
+.slide>.bg::before{content:"";position:absolute;inset:18px 18px 46px;border-radius:3px;
+  background:
+   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+   radial-gradient(ellipse 420px 120px at 30% 30%,rgb(255 255 255 / .05),transparent 70%),
+   radial-gradient(ellipse 520px 160px at 70% 72%,rgb(255 255 255 / .045),transparent 70%),
+   radial-gradient(ellipse at 50% 40%,#28503d,#1d3a2c 75%);
+  box-shadow:inset 0 0 70px rgb(0 0 0 / .55),0 0 0 3px #3f2b1b}
+.slide>.bg::after{content:"";position:absolute;left:10px;right:10px;bottom:14px;height:26px;border-radius:4px;
+  background:
+   linear-gradient(90deg,transparent 150px,#f3f0e6 150px 206px,transparent 206px 222px,#f6dd6a 222px 272px,transparent 272px 290px,#f7a8bb 290px 330px,transparent 330px),
+   linear-gradient(#8a6040,#5b3c24);
+  background-size:100% 9px,100% 100%;background-position:0 3px,0 0;background-repeat:no-repeat;box-shadow:0 -2px 0 #3f2b1b}
+.slide{color:var(--ink);text-shadow:0 0 1.5px rgb(255 255 255 / .35)}
+.slide h1,.slide h2,.slide .big{font-weight:400}
+/* 右端の日付と日直（黒板の決まりごと） */
+.nicchoku{position:absolute;right:40px;top:44px;writing-mode:vertical-rl;font-size:22px;line-height:1.5;color:var(--ink);letter-spacing:.1em}
+.nicchoku b{font-weight:400;color:var(--accent)}
+.y{color:var(--accent)}.p{color:var(--pink)}.b{color:var(--blue)}
+.kicker{color:var(--pink);font-size:22px;letter-spacing:.2em;text-transform:none;font-weight:400}
+h2{font-size:48px;line-height:1.35;margin-bottom:22px}
+/* 手で引いた線 */
+.uline{background:linear-gradient(transparent 86%,currentColor 86% 92%,transparent 92%)}
+.hand{border:2.5px solid var(--ink);border-radius:255px 18px 225px 18px/18px 225px 18px 255px;padding:18px 26px}
+.hand.y{border-color:var(--accent)}.hand.p{border-color:var(--pink)}
+.eq{font-size:46px;letter-spacing:.06em;white-space:nowrap}
+/* 表 */
+table.t{font-size:32px;border-collapse:collapse;width:auto}
+table.t th,table.t td{border:0;border-right:2px solid var(--line);padding:6px 20px;text-align:center;min-width:88px;color:var(--ink)}
+table.t tr:first-child td,table.t tr:first-child th{border-bottom:2.5px solid var(--ink)}
+table.t th{font-size:30px;font-weight:400;color:var(--accent)}
+table.t .zero{color:var(--pink)}
+.big3{font-size:40px!important}.big3 td{min-width:120px!important}
+.diffrow td,.diffrow th{border:0!important;color:var(--pink)!important;font-size:30px;padding-top:0!important}
+.diffrow span{display:inline-block;transform:translateX(-62px)}
+.diffrow span::before{content:"";display:block;width:70px;height:18px;margin:0 auto -4px;border:2.5px solid var(--pink);border-top:0;border-radius:0 0 40px 40px}
+/* 部品をチョークに */
+.field>label{color:var(--ink);font-size:24px}
+.field>label b{font-family:var(--font);font-size:34px;color:var(--accent);font-weight:400}
+input[type=range]{accent-color:var(--accent);height:34px}
+details.why{border:2px dashed var(--line);border-radius:14px;background:rgb(0 0 0 / .12)}
+details.why>summary{color:var(--accent);font-size:22px;font-weight:400}
+details.why>summary::before{background:transparent;border:2px solid var(--accent);color:var(--accent)}
+details.why>.body{color:var(--ink);font-size:21px}
+.quiz .choices{grid-template-columns:1fr;gap:14px}
+.quiz .choices>button{background:transparent;color:var(--ink);font-size:32px;border:2.5px solid var(--line);
+  border-radius:225px 14px 205px 14px/14px 205px 14px 225px;padding:12px 28px;position:relative;text-shadow:inherit}
+.quiz.answered .choices>button[data-correct]{background:rgb(246 221 106 / .12);border-color:var(--accent)}
+.quiz.answered .choices>button[data-correct]::after{content:"";position:absolute;right:14px;top:50%;width:62px;height:62px;margin-top:-31px;border:4px solid var(--pink);border-radius:50%;transform:rotate(-8deg)}
+.quiz.answered .choices>button.picked:not([data-correct]){background:transparent;border-color:var(--pink);color:var(--muted);text-decoration:line-through}
+.quiz .explain{color:var(--ink);font-size:28px;margin-top:26px}
+ol.list{font-size:30px;gap:20px}
+ol.list>li{padding-left:70px}
+ol.list>li::before{background:transparent;border:2.5px solid var(--accent);color:var(--accent);font-weight:400;font-size:28px;width:50px;height:50px;top:0}
+ul.list{font-size:30px}
+ul.list>li::before{background:var(--pink);border-radius:50% 40% 55% 45%}
+.foot{color:var(--muted);bottom:60px;font-size:16px}
+/* グラフ */
+.plot{width:400px;height:400px;display:block;overflow:hidden}
+.plot .grid line{stroke:rgb(243 240 230 / .16);stroke-width:1.5}
+.plot .ax{stroke:var(--ink);stroke-width:3;stroke-linecap:round;fill:none}
+.plot text{fill:var(--ink);font:22px var(--font)}
+.plot .ln{stroke:var(--accent);stroke-width:6;stroke-linecap:round;transition:all .45s var(--ease)}
+.plot .pt{fill:var(--pink);transition:all .45s var(--ease)}
+.plot .cut{fill:none;stroke:var(--pink);stroke-width:3;transition:all .45s var(--ease)}
+.chalk{filter:url(#chalk42)}
+@media (prefers-reduced-motion:reduce){.plot .ln,.plot .pt,.plot .cut{transition:none}}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"></div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="chalk42"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="3"/></filter></svg>
+    <p class="nicchoku">9月28日（月）<br>日直　<b>佐藤</b>・<b>田中</b></p>
+    <p class="kicker">中2 数学　第3章　一次関数 ①</p>
+    <h1 style="font-size:150px;line-height:1.05;font-weight:400;letter-spacing:.04em">一次関数</h1>
+    <p class="eq y" style="font-size:88px;margin:16px 0 26px">y ＝ <span class="p">a</span>x ＋ <span class="b">b</span></p>
+    <p style="font-size:30px;line-height:1.6;max-width:640px">2つの数 <span class="p">a</span> と <span class="b">b</span> だけで、<br>まっすぐな線が1本決まる。</p>
+    <svg class="chalk" viewBox="0 0 360 300" style="position:absolute;right:120px;bottom:110px;width:380px;height:320px" aria-hidden="true">
+      <path d="M30 260 H340 M60 290 V20" stroke="#f3f0e6" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M335 262 l-14 -8 M335 262 l-14 8 M60 22 l-8 14 M60 22 l8 14" stroke="#f3f0e6" stroke-width="4" stroke-linecap="round"/>
+      <path d="M40 250 L320 60" stroke="#f6dd6a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M150 176 H200 V142" stroke="#9fd6f2" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+      <text x="206" y="168" fill="#9fd6f2" font-size="26" font-family="Yomogi">a</text>
+      <circle cx="60" cy="236" r="10" fill="none" stroke="#f7a8bb" stroke-width="3"/>
+      <text x="74" y="228" fill="#f7a8bb" font-size="26" font-family="Yomogi">b</text>
+    </svg>
+    <aside class="notes">始業のあいさつのあと、表紙を見せて「今日は2つの文字だけで線を決める」とだけ言う。日付と日直は右端の縦書きを書き換える。</aside>
+  </section>
+
+  <section class="slide" data-title="めあて">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">今日のめあて</p>
+    <div class="hand y" style="font-size:46px;line-height:1.5;margin:6px 0 40px;padding:22px 34px;align-self:flex-start">
+      <span class="p">a</span> と <span class="b">b</span> が、グラフの「何を」決めるのか<br>自分のことばで説明できる。
+    </div>
+    <ol class="list" style="font-size:36px;gap:26px">
+      <li class="step">式を読む　　<span class="y">y ＝ 3x ＋ 5</span></li>
+      <li class="step">表をつくる　　x が 1 ふえると、y は？</li>
+      <li class="step">グラフをかく　　<span class="p">かたむき</span>と<span class="b">出発点</span>を見る</li>
+    </ol>
+    <p class="p" style="margin-top:auto;font-size:28px;align-self:flex-end;border-bottom:2.5px solid var(--pink);padding:0 8px 4px">めあてをノートに写そう（2分）</p>
+    <aside class="notes">めあてはノートに写させる（2分）。→キーで3つの手順が1つずつ出る。</aside>
+  </section>
+
+  <section class="slide" data-title="例題">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">例題　水そうに水を入れる</p>
+    <h2>はじめ <span class="b">5 cm</span>、1分ごとに <span class="p">3 cm</span> ずつ高くなる。</h2>
+    <table class="t big3" style="margin-top:4px">
+      <tr><th>x（分）</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+      <tr><th>y（cm）</th><td class="b">5</td><td>8</td><td>11</td><td>14</td><td>17</td><td>20</td></tr>
+      <tr class="step diffrow"><th></th><td></td><td><span>＋3</span></td><td><span>＋3</span></td><td><span>＋3</span></td><td><span>＋3</span></td><td><span>＋3</span></td></tr>
+    </table>
+    <div class="row" style="margin-top:30px;gap:48px;align-items:center">
+      <p class="eq step y hand" style="font-size:80px;margin:0;padding:14px 34px">y ＝ <span class="p">3</span>x ＋ <span class="b">5</span></p>
+      <p class="step" style="font-size:34px;line-height:1.6;margin:0"><span class="p">3</span> は「1分でふえる高さ」<br><span class="b">5</span> は「はじめの高さ」</p>
+    </div>
+    <aside class="notes">表は生徒に言わせながら埋める。「＋3」が並んだところで「この 3 が式のどこにいる？」と聞いてから式を出す。</aside>
+  </section>
+
+  <section class="slide" data-title="動かしてみよう" style="padding-right:70px">
+    <div class="bg"></div>
+    <p class="kicker">動かしてみよう</p>
+    <h2 style="margin-bottom:14px"><span class="p">a</span> はかたむき、<span class="b">b</span> は出発点を動かす。</h2>
+    <div data-calc class="fill" style="display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:start">
+      <div>
+        <p class="eq y" data-formula style="font-size:56px;margin:0 0 14px">y ＝ 2x ＋ 1</p>
+        <div class="field"><label><span>かたむき <span class="p">a</span></span><b data-show="a"></b></label><input type="range" name="a" min="-3" max="3" step="1" value="2"></div>
+        <div class="field"><label><span>切片 <span class="b">b</span></span><b data-show="b"></b></label><input type="range" name="b" min="-4" max="4" step="1" value="1"></div>
+        <table class="t" style="font-size:28px;margin-top:6px">
+          <tr><th style="font-size:26px">x</th><td>−2</td><td>−1</td><td class="zero">0</td><td>1</td><td>2</td></tr>
+          <tr><th style="font-size:26px">y</th><td data-out="a*-2+b"></td><td data-out="a*-1+b"></td><td class="zero" data-out="b"></td><td data-out="a+b"></td><td data-out="a*2+b"></td></tr>
+        </table>
+      </div>
+      <svg class="plot" viewBox="-200 -200 400 400" data-graph aria-label="y = ax + b のグラフ">
+        <g class="grid">
+          <line x1="-160" y1="-200" x2="-160" y2="200"/><line x1="-120" y1="-200" x2="-120" y2="200"/><line x1="-80" y1="-200" x2="-80" y2="200"/><line x1="-40" y1="-200" x2="-40" y2="200"/>
+          <line x1="40" y1="-200" x2="40" y2="200"/><line x1="80" y1="-200" x2="80" y2="200"/><line x1="120" y1="-200" x2="120" y2="200"/><line x1="160" y1="-200" x2="160" y2="200"/>
+          <line y1="-160" x1="-200" y2="-160" x2="200"/><line y1="-120" x1="-200" y2="-120" x2="200"/><line y1="-80" x1="-200" y2="-80" x2="200"/><line y1="-40" x1="-200" y2="-40" x2="200"/>
+          <line y1="40" x1="-200" y2="40" x2="200"/><line y1="80" x1="-200" y2="80" x2="200"/><line y1="120" x1="-200" y2="120" x2="200"/><line y1="160" x1="-200" y2="160" x2="200"/>
+        </g>
+        <path class="ax chalk" d="M-196 0 H196 M0 196 V-196 M186 -8 L196 0 L186 8 M-8 -186 L0 -196 L8 -186"/>
+        <text x="176" y="30">x</text><text x="12" y="-176">y</text><text x="-26" y="28">O</text>
+        <line class="ln chalk" x1="-200" y1="0" x2="200" y2="0"/>
+        <circle class="cut" cx="0" cy="-40" r="13"/>
+        <circle class="pt" cx="-80" cy="0" r="7"/><circle class="pt" cx="-40" cy="0" r="7"/><circle class="pt" cx="40" cy="0" r="7"/><circle class="pt" cx="80" cy="0" r="7"/>
+      </svg>
+    </div>
+    <aside class="notes">まず b だけ動かして「線が上下に平行移動する」、次に a だけ動かして「かたむきが変わる」。a をマイナスにしたとき右下がりになることを生徒に予想させてから動かす。</aside>
+  </section>
+
+  <section class="slide" data-title="まとめ">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">まとめ</p>
+    <div class="grid cols-2" style="gap:44px;margin-top:10px">
+      <div class="hand p">
+        <p style="font-size:40px;margin:0 0 6px"><span class="p" style="font-size:84px;line-height:1">a</span>　かたむき</p>
+        <p style="font-size:27px;line-height:1.6;margin:0">x が 1 ふえると、y が a ふえる。<br>a がマイナスなら、右下がり。</p>
+        <svg class="chalk" viewBox="0 0 400 150" style="width:100%;height:150px;margin-top:12px" aria-hidden="true">
+          <path d="M20 130 H380 M200 145 V6" stroke="#f3f0e6" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M140 145 L260 10" stroke="#f7a8bb" stroke-width="5" stroke-linecap="round"/><path d="M90 140 L310 20" stroke="#f7a8bb" stroke-width="4" stroke-linecap="round" opacity=".6"/><path d="M110 20 L290 140" stroke="#f6dd6a" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 9"/>
+          <text x="262" y="30" fill="#f7a8bb" font-size="22" font-family="Yomogi">a=3</text><text x="312" y="46" fill="#f7a8bb" font-size="22" font-family="Yomogi" opacity=".8">a=1</text><text x="36" y="34" fill="#f6dd6a" font-size="22" font-family="Yomogi">a=−1</text>
+        </svg>
+      </div>
+      <div class="hand" style="border-color:var(--blue)">
+        <p style="font-size:40px;margin:0 0 6px"><span class="b" style="font-size:84px;line-height:1">b</span>　切片</p>
+        <p style="font-size:27px;line-height:1.6;margin:0">x が 0 のときの y。<br>線が y 軸とまじわるところ。</p>
+        <svg class="chalk" viewBox="0 0 400 150" style="width:100%;height:150px;margin-top:12px" aria-hidden="true">
+          <path d="M20 130 H380 M200 145 V6" stroke="#f3f0e6" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M60 110 L340 30" stroke="#9fd6f2" stroke-width="5" stroke-linecap="round"/><path d="M60 150 L340 70" stroke="#9fd6f2" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+          <circle cx="200" cy="70" r="10" fill="none" stroke="#f7a8bb" stroke-width="3"/><circle cx="200" cy="110" r="10" fill="none" stroke="#f7a8bb" stroke-width="3" opacity=".7"/>
+          <text x="100" y="60" fill="#f7a8bb" font-size="22" font-family="Yomogi">(0, b)</text>
+        </svg>
+      </div>
+    </div>
+    <details class="why" style="margin-top:26px;max-width:900px"><summary>なぜ b が y 軸とまじわるところ？</summary><div class="body">y 軸の上では x ＝ 0。式に入れると y ＝ a×0 ＋ b ＝ b。だから、どんな a でも線は (0, b) を通る。</div></details>
+    <aside class="notes">「なぜ」は生徒に先に考えさせてから開く。ここまでで25分が目安。</aside>
+  </section>
+
+  <section class="slide" data-title="確かめ">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <div class="quiz">
+      <p class="kicker">確かめ</p>
+      <p style="font-size:66px;margin:0 0 30px"><span class="y">y ＝ −2x ＋ 3</span> のグラフは？</p>
+      <div class="choices">
+        <button>右上がりで、y 軸と −2 でまじわる</button>
+        <button>右上がりで、y 軸と 3 でまじわる</button>
+        <button data-correct>右下がりで、y 軸と 3 でまじわる</button>
+        <button>右下がりで、y 軸と −2 でまじわる</button>
+      </div>
+      <p class="explain">a ＝ −2 はマイナスなので右下がり。b ＝ 3 なので (0, 3) を通る。x が 1 ふえるごとに、y は 2 ずつへる。</p>
+    </div>
+    <aside class="notes">全員に指で番号を出させてから押す。正解に丸がつく。まちがいが多ければ4枚目に戻って a をマイナスにする。</aside>
+  </section>
+
+  <section class="slide" data-title="宿題">
+    <div class="bg"></div>
+    <p class="nicchoku">9月28日（月）</p>
+    <p class="kicker">ふりかえり・宿題</p>
+    <h2 style="font-size:64px">今日わかったことを、<span class="uline y">1行</span>で書こう。</h2>
+    <div class="hand" style="border-style:dashed;height:130px;margin-bottom:36px;font-size:30px;color:var(--muted);display:flex;align-items:center">a は ……………………、b は …………………… を決める。</div>
+    <ul class="list" style="gap:24px;font-size:34px">
+      <li class="step">宿題　教科書 p.62　問1〜問3</li>
+      <li class="step">次の時間　2つの点から式を求める</li>
+      <li class="step">持ち物　定規と方眼ノート</li>
+    </ul>
+    <p class="foot">教科書のページや名前は架空のサンプルです。</p>
+  </section>
+
+</main>
+
+<script>
+/* 4枚目のグラフ：a と b に合わせて線と点を引き直す（1マス＝40px） */
+(() => {
+  const box = document.querySelector("[data-calc]"); const svg = box && box.querySelector("[data-graph]");
+  if (!svg) return;
+  const ln = svg.querySelector(".ln"), cut = svg.querySelector(".cut"), pts = svg.querySelectorAll(".pt"), fx = box.querySelector("[data-formula]");
+  const xs = [-2, -1, 1, 2];
+  const draw = () => {
+    const a = Number(box.querySelector("[name=a]").value), b = Number(box.querySelector("[name=b]").value);
+    const Y = x => -(a * x + b) * 40;
+    ln.setAttribute("x1", -200); ln.setAttribute("y1", Y(-5)); ln.setAttribute("x2", 200); ln.setAttribute("y2", Y(5));
+    cut.setAttribute("cy", Y(0));
+    pts.forEach((p, i) => { p.setAttribute("cx", xs[i] * 40); p.setAttribute("cy", Y(xs[i])); });
+    const ax = a === 0 ? "" : a === 1 ? "x" : a === -1 ? "−x" : (a < 0 ? "−" : "") + Math.abs(a) + "x";
+    const bs = b === 0 ? "" : (ax ? (b < 0 ? " − " : " ＋ ") : (b < 0 ? "−" : "")) + Math.abs(b);
+    fx.textContent = "y ＝ " + ((ax + bs) || "0");
+  };
+  box.addEventListener("input", draw); draw();
+})();
+</script>

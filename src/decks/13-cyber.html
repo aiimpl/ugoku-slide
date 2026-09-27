@@ -1,0 +1,293 @@
+<!--meta
+{"title":"会員サイト セキュリティ診断 報告書","style":"サイバーパンク","use":"セキュリティ診断の報告","group":"テック・未来",
+ "aim":"診断を請け負った担当者が、依頼元の経営層に結果を報告し、対策の予算をその場で承認してもらうための資料。",
+ "desc":"黒地にネオンの黄色と赤、グリッチする見出し。脆弱性ごとにタブで切り替え、会員数と確率を動かすと被害の想定額と対策費の差が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0a0a0f; --surface:#12121a; --ink:#f2f2f5; --muted:#9a9aad; --line:#2a2a38;
+  --accent:#f3e600; --accent-ink:#0a0a0f; --cy:#00f0ff; --red:#ff2e5a; --redbg:#d9002f; --frame:#000;
+  --good:#00f0a0; --bad:#ff2e5a; --radius:0px; --shadow:none;
+  --font:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-head:"Zen Kaku Gothic New","Hiragino Sans",sans-serif; --font-num:"Chakra Petch","Hiragino Sans",sans-serif;
+  --head-weight:900; --head-track:.01em; --pad-y:58px; --pad-x:80px;
+  --cut:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));
+}
+.slide{isolation:isolate}
+.slide>.bg{background:
+  repeating-linear-gradient(0deg,rgb(255 255 255 / .025) 0 1px,transparent 1px 4px),
+  linear-gradient(rgb(0 240 255 / .05) 1px,transparent 1px) 0 0/64px 64px,
+  linear-gradient(90deg,rgb(0 240 255 / .05) 1px,transparent 1px) 0 0/64px 64px,var(--bg)}
+/* 四隅の照準 */
+.slide>.bg::before{content:"";position:absolute;inset:24px;background:
+  linear-gradient(var(--accent),var(--accent)) 0 0/28px 2px,linear-gradient(var(--accent),var(--accent)) 0 0/2px 28px,
+  linear-gradient(var(--accent),var(--accent)) 100% 0/28px 2px,linear-gradient(var(--accent),var(--accent)) 100% 0/2px 28px,
+  linear-gradient(var(--accent),var(--accent)) 0 100%/28px 2px,linear-gradient(var(--accent),var(--accent)) 0 100%/2px 28px,
+  linear-gradient(var(--accent),var(--accent)) 100% 100%/28px 2px,linear-gradient(var(--accent),var(--accent)) 100% 100%/2px 28px;background-repeat:no-repeat}
+/* 走査線 */
+.slide>.bg::after{content:"";position:absolute;left:0;right:0;height:120px;top:-120px;background:linear-gradient(transparent,rgb(0 240 255 / .07),transparent);animation:scan 6s linear infinite}
+@keyframes scan{to{top:100%}}
+.slide::after{content:attr(data-code);position:absolute;right:62px;top:36px;font:500 13px var(--font-num);letter-spacing:.28em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.slide>.bg::after,.glitch::before,.glitch::after{animation:none!important}}
+
+/* ---- 文字 ---- */
+.kicker{font:700 15px var(--font-num);letter-spacing:.3em;color:var(--cy);margin-bottom:10px}
+.kicker::before{content:"// "}
+h2{font-size:44px;line-height:1.3;margin-bottom:30px}
+h2 em,.y{font-style:normal;color:var(--accent)}
+.r{color:var(--red)}
+.lead{color:var(--muted);font-size:22px}
+.foot{color:var(--muted);font:500 14px var(--font-num);letter-spacing:.08em}
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none}
+.glitch::before{color:var(--cy);transform:translate(-3px,0);clip-path:inset(12% 0 64% 0);mix-blend-mode:screen;animation:gl1 3.2s steps(1) infinite}
+.glitch::after{color:var(--red);transform:translate(3px,0);clip-path:inset(58% 0 18% 0);mix-blend-mode:screen;animation:gl2 2.7s steps(1) infinite}
+@keyframes gl1{0%,86%{clip-path:inset(12% 0 64% 0);transform:translate(-3px,0)}88%{clip-path:inset(40% 0 30% 0);transform:translate(-9px,0)}92%{clip-path:inset(70% 0 5% 0);transform:translate(5px,0)}96%{clip-path:inset(5% 0 80% 0);transform:translate(-2px,0)}}
+@keyframes gl2{0%,80%{clip-path:inset(58% 0 18% 0);transform:translate(3px,0)}84%{clip-path:inset(20% 0 60% 0);transform:translate(8px,0)}90%{clip-path:inset(80% 0 2% 0);transform:translate(-6px,0)}}
+
+/* ---- 部品 ---- */
+.card{background:var(--surface);border:0;border-left:3px solid var(--accent);clip-path:var(--cut);padding:22px 26px}
+.card p{color:var(--muted);font-size:19px}
+.sev{display:inline-block;font:700 14px var(--font-num);letter-spacing:.16em;padding:4px 10px 3px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%);padding-right:16px}
+.sev.crit{background:var(--redbg);color:#fff}.sev.high{background:var(--accent);color:#0a0a0f}.sev.mid{background:var(--cy);color:#0a0a0f}.sev.low{background:#3a3a4a;color:#fff}
+details.why{background:#0f0f16;border:1px solid var(--line);border-left:3px solid var(--cy);border-radius:0}
+details.why>summary{color:var(--cy);font-family:var(--font-num);letter-spacing:.06em}
+details.why>summary::before{border-radius:0;background:transparent;border:1px solid var(--cy)}
+details.why.float[open]>.body{background:#0f0f16;border:1px solid var(--cy);border-radius:0}
+.tabs{background:none;padding:0;gap:6px;border-bottom:1px solid var(--line);border-radius:0;width:100%}
+.tabs>[data-tab]{border-radius:0;background:#14141d;color:var(--muted);font:700 17px var(--font);padding:12px 26px 12px 20px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 100%,0 100%)}
+.tabs>[data-tab] b{font-family:var(--font-num);margin-right:10px;color:var(--cy)}
+.tabs>[data-tab][aria-selected=true]{background:var(--accent);color:#0a0a0f;box-shadow:none}
+.tabs>[data-tab][aria-selected=true] b{color:#0a0a0f}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;background:repeating-linear-gradient(90deg,var(--accent) 0 6px,transparent 6px 9px)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:30px;margin-top:-12px;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+input[type=range]::-moz-range-track{height:6px;background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:14px;height:30px;border:0;border-radius:0;background:var(--accent)}
+.field>label{font-size:18px;color:var(--muted)}
+.field>label b{font:700 24px var(--font-num);color:var(--ink)}
+.meter{border-radius:0;height:12px;background:#1d1d28}
+.meter>i{border-radius:0;background:var(--red);box-shadow:0 0 12px var(--red)}
+.meter.alt>i{background:var(--cy);box-shadow:0 0 12px var(--cy)}
+.num{font-family:var(--font-num)}
+
+/* ---- 表紙 ---- */
+.slab{position:absolute;right:0;top:0;bottom:0;width:430px;background:var(--accent);clip-path:polygon(120px 0,100% 0,100% 100%,0 100%)}
+.slab .hz{position:absolute;left:0;right:0;bottom:0;height:46px;background:repeating-linear-gradient(-45deg,#0a0a0f 0 16px,transparent 16px 32px)}
+.slab .big{position:absolute;right:46px;top:110px;text-align:right;color:#0a0a0f;font:700 250px/0.86 var(--font-num);letter-spacing:-.04em}
+.slab .big small{display:block;font:900 30px/1.4 var(--font);letter-spacing:.06em}
+.slab .bar{position:absolute;right:46px;top:470px;width:250px;height:54px;background:repeating-linear-gradient(90deg,#0a0a0f 0 3px,transparent 3px 5px,#0a0a0f 5px 6px,transparent 6px 10px,#0a0a0f 10px 14px,transparent 14px 16px)}
+.slab .id{position:absolute;right:46px;top:534px;font:700 14px var(--font-num);letter-spacing:.24em;color:#0a0a0f}
+.cover h1{font-size:82px;line-height:1.16;max-width:680px}
+.meta-row{display:flex;gap:40px;margin-top:40px;font:500 16px var(--font-num);letter-spacing:.12em;color:var(--muted)}
+.meta-row b{display:block;color:var(--ink);font:700 22px var(--font);letter-spacing:.02em;margin-top:4px}
+
+/* ---- 概要 ---- */
+.sum{display:grid;grid-template-columns:380px 1fr;gap:56px;align-items:start}
+.total{font:700 250px/0.9 var(--font-num);letter-spacing:-.05em;color:var(--ink)}
+.total small{font:900 30px var(--font);margin-left:8px;letter-spacing:0}
+.sevrow{display:grid;grid-template-columns:130px 1fr 80px;align-items:center;gap:20px;padding:22px 0;border-bottom:1px solid var(--line)}
+.sevrow b{font:700 56px/1 var(--font-num);text-align:right}
+.sevrow .meter{height:24px}
+.sevrow .sev{font-size:16px}
+.sevrow .meter>i{animation:grow 1s var(--ease) both}
+.sevrow.h .meter>i{background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.sevrow.m .meter>i{background:var(--cy);box-shadow:0 0 12px var(--cy)}
+.sevrow.l .meter>i{background:#4a4a5c;box-shadow:none}
+@keyframes grow{from{width:0}}
+
+/* ---- 攻撃の道すじ ---- */
+.chain{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:8px;position:relative}
+.node{position:relative;padding:24px 26px 26px;background:var(--surface);clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%,26px 50%);margin-right:-10px;min-height:300px;padding-left:50px;padding-top:30px}
+.node:first-child{clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%);padding-left:26px}
+.node small{font:700 14px var(--font-num);letter-spacing:.24em;color:var(--cy)}
+.node h3{font-size:29px;line-height:1.4;margin:12px 0 14px}
+.node p{font-size:20px;line-height:1.65;color:var(--muted);margin:0;padding-right:18px}
+.node.hot{background:var(--redbg)}.node.hot small,.node.hot p{color:#fff}
+.chain-note{margin-top:40px;display:flex;gap:30px;align-items:center;font-size:24px;line-height:1.6}
+.chain-note .t{font:700 96px/1 var(--font-num);color:var(--red);letter-spacing:-.02em}
+
+/* ---- 脆弱性ごと ---- */
+.vuln{display:grid;grid-template-columns:1fr 370px;gap:40px}
+.vuln h3{font-size:38px;line-height:1.4;margin:18px 0 26px}
+.vuln dl{display:grid;grid-template-columns:120px 1fr;gap:0;margin:0;font-size:23px;line-height:1.6}
+.vuln dt,.vuln dd{padding:14px 0;border-top:1px solid var(--line)}
+.vuln dt{font:700 15px var(--font-num);letter-spacing:.2em;color:var(--cy);padding-top:20px}
+.vuln dd{margin:0}
+.gauge{background:var(--surface);clip-path:var(--cut);padding:24px 28px;border-top:3px solid var(--red)}
+.gauge.h{border-top-color:var(--accent)}
+.gauge small{font:700 14px var(--font-num);letter-spacing:.24em;color:var(--muted)}
+.gauge .v{font:700 130px/1 var(--font-num);letter-spacing:-.03em;color:var(--red);margin:8px 0 4px}
+.gauge.h .v{color:var(--accent)}
+.gauge .v span{font-size:30px;color:var(--muted)}
+.cells{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0 18px}
+.cells i{height:26px;background:#262633}
+.cells i.on{background:var(--red);box-shadow:0 0 8px var(--red)}
+.gauge.h .cells i.on{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.gauge p{font-size:20px;color:var(--muted);margin:0}
+.gauge p b{color:var(--ink);font-family:var(--font-num);font-size:22px}
+
+/* ---- 被害想定 ---- */
+.risk{display:grid;grid-template-columns:420px 1fr;gap:54px}
+.loss{font:700 128px/1 var(--font-num);letter-spacing:-.03em;color:var(--red);text-shadow:0 0 30px rgb(255 46 90 / .35)}
+.cmp{display:grid;gap:18px;margin-top:34px}
+.cmp .meter{height:18px}
+.cmp>div{display:grid;grid-template-columns:130px 1fr 150px;gap:16px;align-items:center;font-size:18px;color:var(--muted)}
+.cmp b{font:700 26px var(--font-num);color:var(--ink);text-align:right}
+.verdict{margin-top:34px;padding:20px 26px;background:var(--surface);border-left:3px solid var(--accent);font-size:21px}
+.verdict b{font:700 32px var(--font-num);color:var(--accent)}
+
+/* ---- 対策 ---- */
+table.t{font-size:22px}
+table.t th{font:700 14px var(--font-num);letter-spacing:.2em;color:var(--cy);border-bottom:1px solid var(--cy)}
+table.t td{border-bottom:1px solid var(--line);padding:26px 14px}
+table.t td.when{font:700 30px var(--font-num);color:var(--accent);white-space:nowrap}
+table.t td.n{font-family:var(--font-num);font-size:24px}
+
+/* ---- 締め ---- */
+.slide.end{background:var(--accent);color:#0a0a0f}
+.slide.end>.bg{background:repeating-linear-gradient(-45deg,rgb(0 0 0 / .06) 0 2px,transparent 2px 14px)}
+.slide.end>.bg::before{background:
+  linear-gradient(#0a0a0f,#0a0a0f) 0 0/28px 2px,linear-gradient(#0a0a0f,#0a0a0f) 0 0/2px 28px,
+  linear-gradient(#0a0a0f,#0a0a0f) 100% 100%/28px 2px,linear-gradient(#0a0a0f,#0a0a0f) 100% 100%/2px 28px;background-repeat:no-repeat}
+.slide.end>.bg::after{display:none}
+.slide.end .kicker{color:#0a0a0f}
+.slide.end::after{color:#0a0a0f}
+.slide.end h1{font-size:96px;line-height:1.12;max-width:none}
+.slide.cover:not(.end)::after{color:#0a0a0f;font-weight:700}
+.asks{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:44px}
+.asks>div{background:#0a0a0f;color:var(--ink);padding:24px 30px;clip-path:var(--cut)}
+.asks small{font:700 14px var(--font-num);letter-spacing:.24em;color:var(--accent)}
+.asks b{display:block;font-size:34px;margin:6px 0 6px}
+.asks p{margin:0;color:var(--muted);font-size:19px}
+</style>
+
+<main class="deck" data-transition="wipe">
+
+  <section class="slide cover" data-title="表紙" data-code="RPT-2026-0931 / 01">
+    <div class="bg"></div>
+    <div class="slab"><div class="big">02<small>CRITICAL<br>重大な脆弱性</small></div><div class="bar"></div><div class="id">SAMPLE-SEC / TLP:AMBER</div><div class="hz"></div></div>
+    <div class="kicker">SECURITY ASSESSMENT REPORT</div>
+    <h1><span class="glitch" data-text="会員サイトに、">会員サイトに、</span><br><span class="glitch y" data-text="重大な穴が2つ。">重大な穴が2つ。</span></h1>
+    <div class="meta-row">
+      <div>TARGET<b>サンプル商事 会員サイト</b></div>
+      <div>PERIOD<b>2026.09.01 – 09.19</b></div>
+      <div>BY<b>サンプルセキュリティ</b></div>
+    </div>
+    <aside class="notes">結論から。重大が2件、どちらも外から会員情報に届く。今日お願いしたいのは、対策費の承認と、1件の緊急対応の許可。</aside>
+  </section>
+
+  <section class="slide" data-title="結果の概要" data-code="SUMMARY / 02">
+    <div class="bg"></div>
+    <div class="kicker">SUMMARY</div>
+    <h2>17件の指摘のうち、<em>7件</em>は今月中に直すべき。</h2>
+    <div class="sum fill">
+      <div>
+        <div class="total"><span data-count="17"></span><small>件</small></div>
+        <p class="lead" style="margin-top:22px">外部からの診断（Web・API）と、管理画面の権限の確認で見つかった数。</p>
+        <details class="why"><summary>危険度の決め方</summary><div class="body">CVSS v3.1 の点数で分けた。重大 9.0以上／高 7.0〜8.9／中 4.0〜6.9／低 4.0未満。攻撃のしやすさと、漏れるものの重さの掛け算。</div></details>
+      </div>
+      <div>
+        <div class="sevrow step"><span class="sev crit">CRITICAL</span><div class="meter"><i style="width:18%"></i></div><b class="r">2</b></div>
+        <div class="sevrow h step"><span class="sev high">HIGH</span><div class="meter"><i style="width:45%"></i></div><b class="y">5</b></div>
+        <div class="sevrow m step"><span class="sev mid">MEDIUM</span><div class="meter"><i style="width:55%"></i></div><b style="color:var(--cy)">6</b></div>
+        <div class="sevrow l step"><span class="sev low">LOW</span><div class="meter"><i style="width:36%"></i></div><b>4</b></div>
+        <p class="foot" style="position:static;margin-top:22px">数字は架空のサンプルです。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="攻撃の道すじ" data-code="KILL CHAIN / 03">
+    <div class="bg"></div>
+    <div class="kicker">ATTACK PATH</div>
+    <h2>ログイン画面から、<span class="r">4手</span>で会員情報に届く。</h2>
+    <div class="chain step">
+      <div class="node"><small>STEP 01</small><h3>検索窓に<br>細工した文字</h3><p>入力がそのまま DB への命令になる。</p></div>
+      <div class="node"><small>STEP 02</small><h3>管理者の<br>一覧を抜く</h3><p>ハッシュは古い方式で、数時間で解ける。</p></div>
+      <div class="node"><small>STEP 03</small><h3>管理画面に<br>入れてしまう</h3><p>2段階認証がなく、どこからでも入れる。</p></div>
+      <div class="node hot"><small>STEP 04</small><h3>会員 38万人分を<br>書き出せる</h3><p>氏名・住所・購入履歴。カード番号は含まない。</p></div>
+    </div>
+    <div class="chain-note step"><span class="t">42<small style="font-size:26px">分</small></span><span>診断では、STEP 01 から 04 までにかかった時間。<br><span class="muted">道具は公開されているものだけを使った。</span></span></div>
+    <aside class="notes">ここで危機感を共有する。→ で4手が出て、最後に「42分」を見せる。技術の細部には入らない。</aside>
+  </section>
+
+  <section class="slide" data-title="脆弱性ごと" data-code="FINDINGS / 04">
+    <div class="bg"></div>
+    <div class="kicker">FINDINGS</div>
+    <h2>急ぐべき4件と、その直し方。</h2>
+    <div data-tabs class="fill">
+      <div class="tabs"><button data-tab="a"><b>01</b>SQLインジェクション</button><button data-tab="b"><b>02</b>管理画面の入口</button><button data-tab="c"><b>03</b>古い部品</button><button data-tab="d"><b>04</b>パスワード保存</button></div>
+      <div data-panel="a" class="vuln">
+        <div><span class="sev crit">CRITICAL</span><h3>検索窓の入力が、DBへの命令になる</h3>
+          <dl><dt>影響</dt><dd>全会員の情報を読める・書き換えられる</dd><dt>場所</dt><dd>商品検索・注文履歴の絞り込み（2画面）</dd><dt>直し方</dt><dd>入力を命令と分けて渡す書き方に直す</dd></dl></div>
+        <div class="gauge"><small>CVSS SCORE</small><div class="v">9.8</div><div class="cells"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><p>直す手間 <b>3人日</b></p></div>
+      </div>
+      <div data-panel="b" class="vuln">
+        <div><span class="sev crit">CRITICAL</span><h3>管理画面に、どこからでも入れる</h3>
+          <dl><dt>影響</dt><dd>パスワードが漏れれば、誰でも管理者になれる</dd><dt>場所</dt><dd>/admin 以下の全画面</dd><dt>直し方</dt><dd>社内の回線だけに絞り、2段階認証を必須にする</dd></dl></div>
+        <div class="gauge"><small>CVSS SCORE</small><div class="v">9.1</div><div class="cells"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div><p>直す手間 <b>2人日</b></p></div>
+      </div>
+      <div data-panel="c" class="vuln">
+        <div><span class="sev high">HIGH</span><h3>3年前の部品を使い続けている</h3>
+          <dl><dt>影響</dt><dd>公開済みの攻撃方法がそのまま通る</dd><dt>場所</dt><dd>画像の変換と、PDF 出力の2か所</dd><dt>直し方</dt><dd>最新版に上げ、月1回の更新を決まりにする</dd></dl></div>
+        <div class="gauge h"><small>CVSS SCORE</small><div class="v">8.1</div><div class="cells"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><p>直す手間 <b>5人日</b></p></div>
+      </div>
+      <div data-panel="d" class="vuln">
+        <div><span class="sev high">HIGH</span><h3>パスワードが古い方式で保存されている</h3>
+          <dl><dt>影響</dt><dd>漏れたとき、数時間で元に戻されてしまう</dd><dt>場所</dt><dd>会員・管理者の両方</dd><dt>直し方</dt><dd>次のログイン時に新しい方式へ順に置き換える</dd></dl></div>
+        <div class="gauge h"><small>CVSS SCORE</small><div class="v">7.5</div><div class="cells"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><p>直す手間 <b>4人日</b></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="被害の想定" data-code="IMPACT / 05">
+    <div class="bg"></div>
+    <div class="kicker">IMPACT ／ 動かせます</div>
+    <h2>1年の想定損失だけで、対策費の<em>3倍</em>を超える。</h2>
+    <div class="risk fill" data-calc data-let="loss = users*1e4*unit + 3000e4; exp = loss*p/100; fix = 1800e4">
+      <div>
+        <div class="field"><label>漏れうる会員数 <b data-show="users" data-unit="万人"></b></label><input type="range" name="users" min="5" max="60" value="38"></div>
+        <div class="field"><label>1人あたりの対応費 <b data-show="unit" data-format="yen"></b></label><input type="range" name="unit" min="200" max="3000" step="100" value="500"></div>
+        <div class="field"><label>1年以内に狙われる確率 <b data-show="p" data-unit="%"></b></label><input type="range" name="p" min="5" max="90" step="5" value="30"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">損失 ＝ 会員数 × 1人あたりの対応費（お詫び・問い合わせ窓口・調査） ＋ 固定の調査費 3,000万円。<br>1年の想定損失 ＝ 損失 × 確率。対策費は4件まとめて 1,800万円。</div></details>
+      </div>
+      <div>
+        <small class="muted" style="font-size:18px">漏れたときの損失</small>
+        <div class="loss" data-out="loss" data-format="man"></div>
+        <div class="cmp">
+          <div><span>1年の想定損失</span><div class="meter" data-bar="exp" data-max="max(exp,fix)*1.05"><i></i></div><b data-out="exp" data-format="man"></b></div>
+          <div><span>対策費</span><div class="meter alt" data-bar="fix" data-max="max(exp,fix)*1.05"><i></i></div><b data-out="fix" data-format="man"></b></div>
+        </div>
+        <div class="verdict">1年の想定損失は、対策費の <b data-out="exp/fix" data-format="x"></b></div>
+      </div>
+    </div>
+    <aside class="notes">確率は議論になりやすい。「5% でも想定損失はいくら」と、あえて一番低い値にして見せると話が早い。</aside>
+  </section>
+
+  <section class="slide" data-title="対策の順番" data-code="REMEDIATION / 06">
+    <div class="bg"></div>
+    <div class="kicker">REMEDIATION PLAN</div>
+    <h2>重大の2件は、今週中に止められる。</h2>
+    <table class="t">
+      <tr><th>WHEN</th><th>やること</th><th>対象</th><th style="text-align:right">費用</th></tr>
+      <tr class="step"><td class="when">今週</td><td>管理画面を社内回線だけに絞る（応急処置）</td><td><span class="sev crit">02</span></td><td class="n">0万円</td></tr>
+      <tr class="step"><td class="when">10月</td><td>検索の書き方を直し、2段階認証を入れる</td><td><span class="sev crit">01</span> <span class="sev crit">02</span></td><td class="n">620万円</td></tr>
+      <tr class="step"><td class="when">11月</td><td>古い部品の更新と、パスワード方式の置き換え</td><td><span class="sev high">03</span> <span class="sev high">04</span></td><td class="n">780万円</td></tr>
+      <tr class="step"><td class="when">12月</td><td>中・低の13件をまとめて直し、再診断する</td><td><span class="sev mid">ETC</span></td><td class="n">400万円</td></tr>
+    </table>
+    <p class="foot">合計 1,800万円（再診断を含む）。数字は架空のサンプルです。</p>
+  </section>
+
+  <section class="slide end cover" data-title="お願い" data-code="DECISION / 07">
+    <div class="bg"></div>
+    <div class="kicker">DECISION REQUIRED</div>
+    <h1>今日、2つだけ<br>決めてください。</h1>
+    <div class="asks">
+      <div class="step"><small>01 ／ NOW</small><b>管理画面の応急処置</b><p>今夜から社外からの接続を止める。影響は外出先の担当3名だけ。</p></div>
+      <div class="step"><small>02 ／ BUDGET</small><b>対策費 1,800万円</b><p>10〜12月の3か月で全件を直し、1月に再診断する。</p></div>
+    </div>
+    <aside class="notes">1は費用ゼロで今夜できる。ここで反対は出にくいので、先に1の了承をとってから2に進む。</aside>
+  </section>
+
+</main>

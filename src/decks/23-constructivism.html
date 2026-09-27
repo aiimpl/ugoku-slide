@@ -1,0 +1,187 @@
+<!--meta
+{"title":"冬の省エネ作戦 2026 ／ サンプル工業","style":"構成主義ポスター","use":"社内の省エネキャンペーン","group":"レトロ・ポップ",
+ "aim":"総務部の省エネ担当が、全社朝礼の5分で、この冬の省エネ作戦への参加を呼びかけるため。",
+ "desc":"赤と黒と生成り、斜めに走る帯と太い書体のポスター調。消灯時間と空調の設定温度を動かすと、年間の電気代とCO2の削減量が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Noto+Sans+JP:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --red:#c4161c; --paper:#ebe1cb;
+  --bg:var(--paper); --surface:#f3ecdc; --ink:#141111; --muted:#3a3330; --line:#141111; --accent:#c4161c; --accent-ink:#fff;
+  --frame:#bfb49c; --radius:0px; --shadow:none; --good:#141111; --bad:#c4161c;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-num:"Oswald","Noto Sans JP","Hiragino Sans",sans-serif; --head-weight:900; --head-track:-.02em;
+}
+.slide{isolation:isolate;padding:60px 80px}
+.slide>.bg{overflow:hidden;background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .1 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),var(--paper)}
+.bar{position:absolute;background:var(--red)}
+.bar.k{background:var(--ink)}
+.ring{position:absolute;border-radius:50%;border:26px solid var(--ink)}
+.disc{position:absolute;border-radius:50%;background:var(--red)}
+.kicker{font:700 20px var(--font-num);letter-spacing:.24em;color:var(--paper);background:var(--ink);display:inline-block;padding:6px 14px 6px 16px;margin-bottom:22px;align-self:flex-start}
+h2{font-size:54px;line-height:1.22;font-weight:900}
+h2 em{font-style:normal;color:var(--red)}
+.lead{color:var(--ink);font-weight:500}
+.foot{color:var(--ink);font-size:16px}
+.num{font-family:var(--font-num)}
+/* 大きな数字 */
+.huge{font:700 240px/.86 var(--font-num);letter-spacing:-.03em;color:var(--red)}
+.slab{background:var(--red);color:#fff;padding:14px 22px;font:900 30px/1.3 var(--font);display:inline-block}
+.slab.k{background:var(--ink)}
+/* グラフ */
+.chart{height:330px;gap:30px;border-bottom:8px solid var(--ink);padding-top:44px}
+.chart>.col>i{border-radius:0;background:var(--ink)}
+.chart>.col:first-child>i{background:var(--red)}
+.chart>.col::before{font:700 34px var(--font-num);color:var(--ink)}
+.chart>.col:first-child::before{color:var(--red)}
+.chart>.col::after{font:700 21px var(--font);color:var(--ink)}
+/* 3つの行動 */
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;flex:1}
+.acts>div{border-left:8px solid var(--ink);padding:0 28px 0 26px;display:flex;flex-direction:column}
+.acts .n{font:700 150px/.9 var(--font-num);color:var(--red);margin-bottom:10px}
+.acts h3{font:900 36px/1.3 var(--font);margin-bottom:12px}
+.acts p{font-size:21px;line-height:1.7;color:var(--muted);margin:0}
+.acts .tag{margin-top:auto;font:700 26px var(--font-num);letter-spacing:.06em;background:var(--ink);color:var(--paper);padding:8px 14px;align-self:flex-start}
+/* 計算 */
+.field>label{color:var(--ink);font-size:20px;font-weight:700}
+.field>label b{font:700 32px var(--font-num);color:var(--red)}
+input[type=range]{accent-color:var(--red)}
+details.why{border:0;border-left:8px solid var(--red);border-radius:0;background:var(--surface)}
+details.why>summary{color:var(--ink);font-size:19px}
+details.why>summary::before{border-radius:0;background:var(--ink);color:var(--paper)}
+details.why>.body{color:var(--ink);font-size:18px}
+.res{position:relative;padding:14px 24px 12px;margin-bottom:12px;background:var(--ink);color:var(--paper)}
+.res.r{background:var(--red);color:#fff}
+.res .label{font-size:19px;font-weight:700;letter-spacing:.06em}
+.res .v{font:700 62px/1.05 var(--font-num);letter-spacing:-.01em;white-space:nowrap}
+.meter{height:22px;border-radius:0;background:rgb(235 225 203 / .25)}
+.meter>i{border-radius:0;background:var(--paper)}
+/* 月の予定 */
+.months{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;flex:1}
+.months>div{background:var(--surface);border-top:14px solid var(--ink);padding:22px 26px;display:flex;flex-direction:column}
+.months>div:nth-child(2){border-top-color:var(--red)}
+.months b{font:700 78px/1 var(--font-num);display:block}
+.months h3{font:900 36px/1.35 var(--font);margin:14px 0 10px}
+.months p{font-size:22px;line-height:1.7;margin:0;color:var(--muted)}
+.band>span{position:absolute;top:50%;transform:translateY(-50%);font:900 36px/1.3 var(--font);color:var(--paper);letter-spacing:.04em;white-space:nowrap}
+.band.big>span{font-size:112px;line-height:1.08;letter-spacing:-.04em;color:#fff}
+.band.big em{font-style:normal;color:var(--ink)}
+.months .goal{margin-top:auto;border-top:4px solid var(--ink);padding-top:12px;display:flex;justify-content:space-between;align-items:baseline;font:700 20px var(--font)}
+.months .goal span{font:700 54px var(--font-num);color:var(--red)}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .bg .sweep{animation:cs-sweep 1s var(--ease) both}
+  @keyframes cs-sweep{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+}
+</style>
+
+<main class="deck" data-transition="wipe">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="disc" style="width:600px;height:600px;right:-70px;top:-90px"></div>
+      <div class="bar k band" style="left:-60px;top:590px;width:1600px;height:118px;transform:rotate(-12deg);transform-origin:left top"><span style="left:140px">冬の省エネ作戦　12月 → 2月</span></div>
+      <div class="bar" style="left:-60px;top:724px;width:1600px;height:26px;transform:rotate(-12deg);transform-origin:left top"></div>
+      <div class="ring" style="width:300px;height:300px;right:-60px;bottom:-150px"></div>
+    </div>
+    <div class="kicker" style="position:absolute;left:80px;top:70px">OPERATION WINTER 2026</div>
+    <h1 style="position:absolute;left:74px;top:128px;font:900 176px/1 var(--font);letter-spacing:-.05em">一灯、<br><span style="color:var(--red)">消せ。</span></h1>
+    <div style="position:absolute;right:96px;top:96px;color:#fff;text-align:right">
+      <div style="font:700 170px/.9 var(--font-num);letter-spacing:-.03em">−15<span style="font-size:96px">%</span></div>
+      <div style="font:900 28px var(--font);margin-top:14px">電気の使用量を、昨冬より</div>
+    </div>
+    <aside class="notes">朝礼の最初に表紙を出したまま「この冬、電気を15%減らします」とだけ言う。細かい話は次から。</aside>
+  </section>
+
+  <section class="slide" data-title="なぜ今">
+    <div class="bg"><div class="bar sweep" style="right:-160px;top:-40px;width:560px;height:900px;transform:rotate(18deg)"></div></div>
+    <div class="kicker">WHY NOW</div>
+    <h2 style="max-width:780px">電気代は2年で <em>1.4倍</em>。<br>冬の3か月だけで、年の4割を使う。</h2>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;max-width:760px">
+      <p style="font:700 22px var(--font);margin-bottom:0">2026年度の電気代（見込み）</p>
+      <div class="huge" style="font-size:210px;white-space:nowrap"><span data-count="4820"></span><span style="font-size:72px;color:var(--ink);margin-left:10px">万円</span></div>
+      <p class="lead" style="font-size:23px;margin:26px 0 30px;border-top:8px solid var(--ink);padding-top:16px">空調と照明で、使う電気の <b>75%</b>。ここは全員の手で減らせる。</p>
+    </div>
+    <div style="position:absolute;right:84px;top:330px;color:#fff;text-align:right">
+      <div style="font:700 170px/.9 var(--font-num)">41<span style="font-size:84px">%</span></div>
+      <div style="font:900 26px/1.5 var(--font);margin-top:10px">12〜2月が<br>1年に占める割合</div>
+    </div>
+    <p class="foot">数字は架空のサンプルです。</p>
+    <aside class="notes">4,820万円は開くとカウントアップする。「1人あたり年に約8万円」と言い換えると伝わりやすい。</aside>
+  </section>
+
+  <section class="slide" data-title="電気の行き先">
+    <div class="bg"><div class="bar" style="right:-80px;top:70px;width:380px;height:40px;transform:rotate(-16deg)"></div></div>
+    <div class="kicker">WHERE IT GOES</div>
+    <h2>いちばん食っているのは、<em>空調</em>。</h2>
+    <div class="grid" style="grid-template-columns:1fr 360px;gap:64px;flex:1">
+      <div class="chart" style="height:400px;margin-bottom:40px">
+        <div class="col" style="--v:100" data-label="空調" data-val="48%"><i></i></div>
+        <div class="col" style="--v:56" data-label="照明" data-val="27%"><i></i></div>
+        <div class="col" style="--v:38" data-label="OA機器" data-val="18%"><i></i></div>
+        <div class="col" style="--v:15" data-label="その他" data-val="7%"><i></i></div>
+      </div>
+      <div style="align-self:center">
+        <div style="margin-bottom:34px"><div class="slab" style="transform:rotate(-6deg);font-size:40px;padding:18px 28px">空調 ＋ 照明<br>＝ 75%</div></div>
+        <p class="lead" style="font-size:22px">どちらも、スイッチと設定温度で変えられる。</p>
+        <details class="why"><summary>根拠：どうやって測った？</summary><div class="body">本社ビルの分電盤ごとの計測（2025年12月〜2026年2月、サンプル）。空調 23.8万kWh、照明 13.4万kWh、OA 8.9万kWh、その他 3.5万kWh。</div></details>
+      </div>
+    </div>
+    <aside class="notes">グラフは開くと下から伸びる。空調の棒を指して「ここが半分」と言う。</aside>
+  </section>
+
+  <section class="slide" data-title="3つの行動">
+    <div class="bg"><div class="disc" style="width:240px;height:240px;right:-70px;top:-70px"></div></div>
+    <div class="kicker">3 ACTIONS</div>
+    <h2>やることは、3つだけ。</h2>
+    <div class="acts">
+      <div class="step"><div class="n">01</div><h3>昼休みは<br>照明を消す</h3><p>12:00〜13:00、窓ぎわの列から。最後に出る人が消す。</p><div class="tag">LIGHTS OFF</div></div>
+      <div class="step"><div class="n">02</div><h3>暖房は<br>20℃ に固定</h3><p>寒い人はひざ掛けを。総務で200枚を用意した。</p><div class="tag">20℃</div></div>
+      <div class="step"><div class="n">03</div><h3>帰るときは<br>電源まで切る</h3><p>パソコンは「シャットダウン」。モニターも主電源から。</p><div class="tag">SHUT DOWN</div></div>
+    </div>
+    <aside class="notes">→ で1つずつ出す。ひざ掛けは総務の窓口で今日から貸し出し、と必ず添える。</aside>
+  </section>
+
+  <section class="slide" data-title="効果の試算">
+    <div class="bg"><div class="bar" style="right:-60px;top:-30px;width:300px;height:44px;transform:rotate(-16deg)"></div></div>
+    <div class="kicker">SIMULATOR</div>
+    <h2>昼に1時間消して、1℃下げる。<br>それで年に <em>約190万円</em>。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:52px" data-calc data-let="light = 48*hrs*240*join/100; air = 520000*0.1*deg; kwh = light+air">
+      <div>
+        <div class="field"><label>1日に照明を消す時間 <b data-show="hrs" data-format="dec1" data-unit=" 時間"></b></label><input type="range" name="hrs" min="0" max="3" step="0.5" value="1"></div>
+        <div class="field"><label>暖房の設定を下げる温度 <b data-show="deg" data-unit=" ℃"></b></label><input type="range" name="deg" min="0" max="3" value="1"></div>
+        <div class="field"><label>協力する人の割合 <b data-show="join" data-unit=" %"></b></label><input type="range" name="join" min="10" max="100" step="5" value="80"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">照明：本社の照明 48kW × 時間 × 営業日 240日 × 協力率。<br>空調：年間 52万kWh の10%が 1℃ あたりの削減。<br>電気代 31円/kWh、CO2 0.45kg/kWh で換算（サンプル）。</div></details>
+      </div>
+      <div>
+        <div class="res r"><div class="label">年間で浮く電気代</div><div class="v" data-out="kwh*31" data-format="man"></div></div>
+        <div class="res"><div class="label">減らせる CO2</div><div class="v"><span data-out="kwh*0.45/1000" data-format="dec1"></span> <span style="font-size:36px">t</span></div><div class="meter" data-bar="kwh" data-max="200000"><i></i></div></div>
+        <div class="res" style="background:var(--surface);color:var(--ink)"><div class="label">電気の削減量</div><div class="v" style="font-size:44px"><span data-out="kwh"></span> <span style="font-size:30px">kWh</span></div></div>
+      </div>
+    </div>
+    <aside class="notes">協力率を 30% に下げて見せる。「照明は人次第、空調は設定次第」を数字で見せるのが狙い。</aside>
+  </section>
+
+  <section class="slide" data-title="3か月の進め方">
+    <div class="bg"><div class="bar k" style="right:-100px;top:40px;width:420px;height:40px;transform:rotate(-16deg)"></div></div>
+    <div class="kicker">SCHEDULE</div>
+    <h2>毎月、フロアごとの結果を貼り出す。</h2>
+    <div class="months">
+      <div class="step"><b>12月</b><h3>作戦開始</h3><p>12/1 から3つの行動をスタート。各フロアに「消灯係」を1人。</p><div class="goal">その月の目標<span>−10%</span></div></div>
+      <div class="step"><b>1月</b><h3>中間発表</h3><p>12月の削減率をフロア別に掲示。1位のフロアに差し入れ。</p><div class="goal">その月の目標<span>−15%</span></div></div>
+      <div class="step"><b>2月</b><h3>最終結果</h3><p>3か月の合計を全社に報告。浮いた電気代の一部は職場の備品に。</p><div class="goal">その月の目標<span>−15%</span></div></div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="呼びかけ">
+    <div class="bg">
+      <div class="bar band big" style="left:-80px;top:250px;width:1600px;height:300px;transform:rotate(-10deg);transform-origin:left top"><span style="left:160px">今日の帰りから、<br><em>一灯。</em></span></div>
+      <div class="ring" style="width:220px;height:220px;right:90px;top:40px"></div>
+    </div>
+    <div class="kicker" style="position:absolute;left:80px;top:70px">TODAY</div>
+    <p style="position:absolute;left:80px;bottom:48px;font:700 22px var(--font);margin:0">問い合わせ：総務部 省エネ作戦係（内線 2026）</p>
+    <p class="foot" style="left:auto;right:80px;text-align:right">社名・数字は架空のサンプルです。</p>
+    <aside class="notes">最後は声に出して「今日の帰りから」と締める。質問は総務の内線へ。</aside>
+  </section>
+
+</main>

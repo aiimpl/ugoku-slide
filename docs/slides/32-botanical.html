@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>二号店 出店計画</title>
+<meta name="description" content="深緑とクリームに、植物図鑑のような枝と葉の線画。1日の客数と客単価を動かすと、月の利益と損益分岐の客数、投資の回収期間がその場で出る。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=Shippori+Mincho:wght@400;600;800&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-show="x" で入力値そのものを表示
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：ボタニカル / カフェ新店舗の出店計画
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted)}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+details.why.float{position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#f2ead8; --surface:#faf5ea; --ink:#1d3a2c; --muted:#4f5f52; --line:#cdc4ad;
+  --accent:#7a4f1f; --accent-ink:#f2ead8; --good:#2f6b43; --bad:#9b3a22; --frame:#18301f;
+  --green:#1d3a2c; --cream:#f2ead8; --sage:#8fa58a; --gold:#c9a45e;
+  --radius:2px; --shadow:none;
+  --font:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-num:"Cormorant Garamond","Shippori Mincho","Hiragino Mincho ProN",serif;
+  --head-weight:600; --head-track:.04em; --pad-y:76px; --pad-x:110px;
+}
+.slide.dark{--bg:#1d3a2c; --surface:#244636; --ink:#f2ead8; --muted:#c7cfbf; --line:rgb(242 234 216 / .28);
+  --accent:#d9b56e; --accent-ink:#1d3a2c; --good:#a9cf97; --bad:#f0a58b; background:var(--bg); color:var(--ink)}
+/* 図鑑の図版のような二重の枠 */
+.slide::before{content:"";position:absolute;inset:26px;border:1px solid var(--line);pointer-events:none}
+.slide::after{content:"";position:absolute;inset:32px;border:1px solid var(--line);opacity:.55;pointer-events:none}
+.plate{position:absolute;top:44px;right:56px;font:italic 500 18px var(--font-num);letter-spacing:.08em;color:var(--muted)}
+.kicker{font:italic 500 22px var(--font-num);letter-spacing:.06em;text-transform:none;color:var(--accent);margin-bottom:10px}
+h1{font-size:72px;font-weight:600;line-height:1.35;letter-spacing:.08em}
+h2{font-size:40px;line-height:1.55;font-weight:600;margin-bottom:34px}
+.lead{font-size:22px;line-height:2;color:var(--muted)}
+.latin{font:italic 500 18px var(--font-num);letter-spacing:.05em;color:var(--muted)}
+.draw{position:absolute;color:var(--ink);opacity:.9}
+.draw svg{display:block;width:100%;height:100%;overflow:visible}
+.slide.dark .draw{color:var(--gold)}
+.slide.active .draw path.stem{stroke-dasharray:1400;animation:grow 3.2s ease-out both}
+@keyframes grow{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+.slide.active .draw .lf{animation:sway 6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+/* 標本ラベル風の数字 */
+.spec{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.spec>div{padding:26px 30px 26px 0;position:relative}
+.spec>div+div{padding-left:30px;border-left:1px solid var(--line)}
+.spec .no{font:600 18px var(--font);color:var(--accent);letter-spacing:.06em}
+.spec .no em{font:italic 500 21px var(--font-num);margin-right:4px}
+.kicker .jp{font:600 16px var(--font);letter-spacing:.12em;margin-left:12px;font-style:normal}
+.spec .v{font:500 96px/1 var(--font-num);letter-spacing:-.01em;margin:10px 0 8px}
+.spec .v small{font:600 24px var(--font);margin-left:6px}
+.spec p{font-size:19px;line-height:1.75;color:var(--muted);margin:0}
+.tabs{background:none;border-radius:0;padding:0;gap:34px;border-bottom:1px solid var(--line);width:100%}
+.tabs>[data-tab]{border-radius:0;padding:10px 0 12px;font:600 22px var(--font);letter-spacing:.1em;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs>[data-tab] em{font:italic 500 18px var(--font-num);margin-right:10px;color:var(--accent)}
+.tabs>[data-tab][aria-selected=true]{background:none;box-shadow:none;color:var(--ink);border-bottom-color:var(--ink)}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:8px}
+.menu h3{font-size:34px;font-weight:600;letter-spacing:.06em;margin-bottom:14px}
+.menu dl{margin:0;display:grid;grid-template-columns:auto 1fr auto;gap:22px 16px;font-size:23px;align-items:baseline;padding-top:10px}
+.share{display:flex;align-items:baseline;gap:4px;margin-top:26px;border-top:1px solid var(--line);padding-top:18px;flex-wrap:wrap}
+.share b{font:500 120px/1 var(--font-num);font-variant-numeric:lining-nums}
+.share span{font:500 44px var(--font-num)}
+.share em{font-style:normal;font-size:19px;color:var(--muted);flex-basis:100%}
+.menu dt{white-space:nowrap}
+.menu dd{margin:0;border-bottom:1px dotted var(--muted);height:.6em}
+.menu dd+dd{border:0;height:auto;font:500 26px var(--font-num)}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:500 32px var(--font-num)}
+input[type=range]{accent-color:var(--gold)}
+.meter{height:6px;background:var(--line);border-radius:0}
+.meter>i{background:var(--gold);border-radius:0}
+.big-out{font:500 128px/1 var(--font-num);letter-spacing:-.01em}
+.sub-outs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:26px}
+.sub-outs>div{padding:20px 0}
+.sub-outs>div+div{border-left:1px solid var(--line);padding-left:30px}
+.sub-outs .lbl{font-size:19px;color:var(--muted)}
+.sub-outs .val{font:500 52px/1.1 var(--font-num);margin-top:6px}
+details.why{border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;margin-top:6px}
+details.why>summary{font-weight:600;font-size:19px;color:var(--accent);padding:14px 0;letter-spacing:.06em}
+details.why>summary::before{content:"❧";background:none;width:auto;font-size:20px;transform:none!important}
+details.why>.body{padding:0 0 14px;font-size:19px;line-height:1.9}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--line);border-radius:2px;padding:16px 22px}
+table.t{font-size:21px}
+table.t th{font-size:18px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--ink)}
+table.t td{padding:15px 14px;border-bottom:1px solid var(--line)}
+table.t td.n{font:500 28px var(--font-num)}
+table.t tr.total td{border-bottom:1px solid var(--ink);font-weight:800}
+ol.list{gap:22px;font-size:26px}
+ol.list>li{padding-left:64px}
+ol.list>li::before{background:none;border:1px solid var(--accent);color:var(--accent);font:italic 500 22px var(--font-num);width:42px;height:42px}
+.foot{bottom:44px;font-size:15px;left:110px}
+/* Cormorant の数字を揃い数字に */
+.deck .slide *{font-variant-numeric:lining-nums!important;font-feature-settings:"lnum" 1,"palt" 1}
+@media (prefers-reduced-motion:reduce){.slide.active .draw path.stem,.slide.active .draw .lf{animation:none}}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover dark" data-title="表紙">
+    <div class="bg"><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <g id="leaf"><path d="M0 0C20-22 26-64 0-100C-26-64-20-22 0 0Z"/><path d="M0-4V-94M0-30l10-10M0-52l12-12M0-30l-10-10M0-52l-12-12M0-72l8-10M0-72l-8-10"/></g>
+      <g id="branch" fill="none" stroke="currentColor" stroke-width="1.3" vector-effect="non-scaling-stroke" stroke-linecap="round">
+        <path class="stem" d="M210 600C196 500 222 410 200 320S168 150 232 20"/>
+        <path class="stem" d="M204 420C250 400 290 360 312 300"/>
+        <path class="stem" d="M196 250C150 230 118 190 104 130"/>
+        <g class="lf" transform="translate(206 520) rotate(-58) scale(.9)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(206 470) rotate(52) scale(.85)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(312 300) rotate(28) scale(.95)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(262 380) rotate(-20) scale(.7)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(104 130) rotate(-24) scale(.95)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(140 212) rotate(-78) scale(.7)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(196 300) rotate(64) scale(.8)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(222 110) rotate(40) scale(.75)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(232 22) rotate(8) scale(.6)"><use href="#leaf"/></g>
+        <circle cx="228" cy="430" r="9"/><circle cx="244" cy="438" r="8"/><circle cx="236" cy="452" r="8"/>
+        <circle cx="166" cy="236" r="8"/><circle cx="180" cy="224" r="7"/>
+      </g>
+      <g id="sprig" fill="none" stroke="currentColor" stroke-width="1.3" vector-effect="non-scaling-stroke" stroke-linecap="round">
+        <path class="stem" d="M20 290C80 230 140 150 260 40"/>
+        <g class="lf" transform="translate(90 214) rotate(-10) scale(.7)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(90 214) rotate(110) scale(.62)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(160 140) rotate(-4) scale(.66)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(160 140) rotate(118) scale(.58)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(260 40) rotate(46) scale(.55)"><use href="#leaf"/></g>
+      </g></defs></svg></div>
+    <div class="draw" style="right:120px;top:60px;width:400px;height:600px"><svg viewBox="0 0 400 600"><use href="#branch"/></svg></div>
+    <div class="latin" style="position:absolute;right:130px;bottom:58px;color:var(--gold)">Fig. 2 — Coffea, the second branch</div>
+    <div class="kicker">Plan for the second shop</div>
+    <h1>緑の路地に、<br>二号店をひらく。</h1>
+    <p class="lead" style="margin-top:30px">喫茶サンプル　二号店 出店計画<br>候補地　サンプル町三丁目　路地裏の元・花屋</p>
+    <aside class="notes">表紙は長く置かない。「今日は出店するかどうかを決めていただきたい」と最初に言う。</aside>
+  </section>
+
+  <section class="slide" data-title="なぜこの場所か">
+    <div class="bg"></div>
+    <p class="foot">数字・店名はすべて架空のサンプルです。</p>
+    <div class="plate">Plate II</div>
+    <div class="draw" style="right:30px;bottom:40px;width:330px;height:330px;opacity:.5"><svg viewBox="0 0 300 300"><use href="#sprig"/></svg></div>
+    <div class="kicker">Why here</div>
+    <h2>駅から4分。朝の人通りが、<br>本店の前の1.6倍ある。</h2>
+    <div class="spec" style="max-width:900px">
+      <div class="step"><div class="no"><em>i.</em> 朝7〜9時の通行量</div><div class="v"><span data-count="1240"></span><small>人</small></div><p>本店前は 780 人。平日5日間の平均。</p></div>
+      <div class="step"><div class="no"><em>ii.</em> 徒歩5分のオフィス</div><div class="v"><span data-count="38"></span><small>棟</small></div><p>働く人はおよそ 6,200 人。</p></div>
+      <div class="step"><div class="no"><em>iii.</em> 同じ路地のカフェ</div><div class="v"><span data-count="0"></span><small>軒</small></div><p>チェーン店は駅前の 2 軒のみ。</p></div>
+    </div>
+    <details class="why" style="max-width:900px;border-top:0"><summary>数え方</summary><div class="body">2026年9月の平日5日、7時〜9時に店舗予定地の前をカウンターで計測（サンプル）。オフィスの棟数は地図から数えた。</div></details>
+    <aside class="notes">3つ目の「0軒」で間を置く。競合がいないのは弱みにもなり得る点は6枚目で触れる。</aside>
+  </section>
+
+  <section class="slide" data-title="店のかたち">
+    <div class="bg"></div>
+    <div class="plate">Plate III</div>
+    <div class="kicker">The shop</div>
+    <h2>朝は持ち帰り、昼は食事、夕方は豆を売る。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="m"><em>i.</em>朝 7:00–10:00</button><button data-tab="d"><em>ii.</em>昼 11:00–15:00</button><button data-tab="e"><em>iii.</em>夕 15:00–19:00</button></div>
+      <div data-panel="m" class="menu">
+        <div><h3>通勤の人に、90秒で一杯。</h3><p class="lead" style="font-size:20px">窓口を路地側に開け、並ばずに受け取れる。</p><div class="share"><b>45</b><span>%</span><em>1日の客数のうち、朝に来る人</em></div></div>
+        <dl><dt>本日のドリップ</dt><dd></dd><dd>¥480</dd><dt>カフェラテ</dt><dd></dd><dd>¥560</dd><dt>全粒粉のスコーン</dt><dd></dd><dd>¥380</dd><dt>朝の客単価</dt><dd></dd><dd>¥620</dd></dl>
+      </div>
+      <div data-panel="d" class="menu">
+        <div><h3>12席で、ゆっくり食べる昼。</h3><p class="lead" style="font-size:20px">元・花屋の天窓を残し、植物に囲まれた席に。</p><div class="share"><b>35</b><span>%</span><em>1日の客数のうち、昼に来る人</em></div></div>
+        <dl><dt>季節野菜のプレート</dt><dd></dd><dd>¥1,280</dd><dt>ドリンクセット</dt><dd></dd><dd>+¥300</dd><dt>焼き菓子</dt><dd></dd><dd>¥420</dd><dt>昼の客単価</dt><dd></dd><dd>¥1,450</dd></dl>
+      </div>
+      <div data-panel="e" class="menu">
+        <div><h3>帰り道に、豆を買って帰る。</h3><p class="lead" style="font-size:20px">本店の焙煎豆を量り売り。飲むより買う人が多い時間帯。</p><div class="share"><b>20</b><span>%</span><em>1日の客数のうち、夕方に来る人</em></div></div>
+        <dl><dt>焙煎豆 200g</dt><dd></dd><dd>¥1,600</dd><dt>ドリップバッグ 5袋</dt><dd></dd><dd>¥900</dd><dt>カフェオレ</dt><dd></dd><dd>¥560</dd><dt>夕の客単価</dt><dd></dd><dd>¥1,100</dd></dl>
+      </div>
+    </div>
+    <aside class="notes">タブを朝→昼→夕の順に押す。時間帯で客が入れ替わるので、1日の客単価は平均で 900 円前後になる。</aside>
+  </section>
+
+  <section class="slide dark" data-title="損益分岐">
+    <div class="bg"></div>
+    <div class="plate">Plate IV</div>
+    <div class="kicker">Break-even <span class="jp">動かせます</span></div>
+    <h2>客単価 900 円なら、1日 124 人で黒字に乗る。</h2>
+    <div class="split fill" style="grid-template-columns:.9fr 1.1fr;gap:80px" data-calc
+      data-let="days = 26; sales = cust*price*days; gross = sales*(1-0.32); fixed = rent*1e4 + 1650000; profit = gross-fixed; be = fixed/(price*(1-0.32)*days)">
+      <div>
+        <div class="field"><label>1日の客数 <b data-show="cust" data-unit=" 人"></b></label><input type="range" name="cust" min="60" max="260" step="2" value="160"></div>
+        <div class="field"><label>客単価 <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="500" max="1600" step="10" value="900"></div>
+        <div class="field"><label>月の家賃 <b data-show="rent" data-unit=" 万円"></b></label><input type="range" name="rent" min="20" max="60" value="32"></div>
+        <details class="why"><summary>前提</summary><div class="body">営業は月26日。原価率 32%。人件費 135万円と水道光熱・その他 30万円を固定費に入れた。初期投資は 1,800万円。</div></details>
+      </div>
+      <div>
+        <div style="font-size:20px;color:var(--muted)">月の営業利益</div>
+        <div class="big-out" data-out="profit" data-format="man" data-sign></div>
+        <p class="lead" style="font-size:19px;margin:8px 0 0">参考　本店の平日の客数は、1日平均 170 人</p>
+                <div class="sub-outs">
+          <div><div class="lbl">損益分岐の客数</div><div class="val"><span data-out="be" data-unit=" 人/日"></span></div></div>
+          <div><div class="lbl">投資の回収</div><div class="val"><span data-out="profit>0 ? 1800e4/profit : 999" data-format="dec1" data-unit=" か月"></span></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">客数を 120 人まで下げて赤字になるところを見せる。「本店の平日平均は 170 人」と添えて、142 人は無理のない線だと伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="初期投資">
+    <div class="bg"></div>
+    <div class="plate">Plate V</div>
+    <div class="draw" style="right:40px;bottom:40px;width:250px;height:250px;opacity:.45;transform:scaleX(-1)"><svg viewBox="0 0 300 300"><use href="#sprig"/></svg></div>
+    <div class="kicker">Investment</div>
+    <h2>初期投資は 1,800 万円。<br>居抜きの内装を活かし、新築より 1,000 万円抑えた。</h2>
+    <table class="t" style="max-width:860px">
+      <tr><th>項目</th><th>内容</th><th style="text-align:right">金額</th></tr>
+      <tr class="step"><td>内装・設備</td><td>天窓と床はそのまま。厨房だけ新設</td><td class="n">980万</td></tr>
+      <tr class="step"><td>焙煎豆の棚・什器</td><td>本店と同じ木工所に依頼</td><td class="n">260万</td></tr>
+      <tr class="step"><td>保証金・開業前の家賃</td><td>家賃 6か月分</td><td class="n">390万</td></tr>
+      <tr class="step"><td>開業前の採用・研修</td><td>4名を本店で1か月研修</td><td class="n">170万</td></tr>
+      <tr class="step total"><td>合計</td><td>新築の見積もりより 1,000万円少ない</td><td class="n">1,800万</td></tr>
+    </table>
+    <aside class="notes">→で1行ずつ。内装費は新築の場合の見積もり 1,900万円と比べて半分であることを口頭で。</aside>
+  </section>
+
+  <section class="slide" data-title="気がかり">
+    <div class="bg"></div>
+    <div class="draw" style="right:40px;bottom:36px;width:230px;height:230px;opacity:.4"><svg viewBox="0 0 300 300"><use href="#sprig"/></svg></div>
+    <div class="plate">Plate VI</div>
+    <div class="kicker">Concerns</div>
+    <h2>心配は2つ。どちらも、開く前に手を打てる。<br>撤退の線も先に決めておく。</h2>
+    <div class="grid cols-3" style="gap:56px;margin-top:6px">
+      <div class="step" style="border-top:1px solid var(--ink);padding-top:24px">
+        <div class="latin" style="color:var(--accent);font-size:24px">i.</div>
+        <h3 style="font-size:28px;margin:6px 0 14px">路地が知られていない</h3>
+        <p class="lead" style="font-size:20px;line-height:1.9">大通りから見えない。開店の1か月前から、本店で地図入りのカードを配る。</p>
+      </div>
+      <div class="step" style="border-top:1px solid var(--ink);padding-top:24px">
+        <div class="latin" style="color:var(--accent);font-size:24px">ii.</div>
+        <h3 style="font-size:28px;margin:6px 0 14px">焙煎が追いつかない</h3>
+        <p class="lead" style="font-size:20px;line-height:1.9">豆の量が 1.4 倍になる。本店の焙煎を週4日から5日に増やせば足りる。</p>
+      </div>
+      <div class="step" style="border-top:1px solid var(--accent);padding-top:24px">
+        <div class="latin" style="color:var(--accent);font-size:24px">iii.</div>
+        <h3 style="font-size:28px;margin:6px 0 14px">それでも届かなければ</h3>
+        <p class="lead" style="font-size:20px;line-height:1.9">開店6か月で1日100人に届かなければ、席を減らして豆の販売店に切り替える。</p>
+      </div>
+    </div>
+    <details class="why" style="max-width:640px;margin-top:40px"><summary>本店が手薄にならないか</summary><div class="body">店長は二号店に移さず、本店の副店長を昇格させる。本店の人員は 6 名のまま。</div></details>
+  </section>
+
+  <section class="slide cover dark" data-title="決めてほしいこと">
+    <div class="bg"></div>
+    <div class="draw" style="right:100px;top:70px;width:380px;height:570px"><svg viewBox="0 0 400 600"><use href="#branch"/></svg></div>
+    <div class="kicker">Decision</div>
+    <h1 style="font-size:58px">今日、決めて<br>いただきたいこと。</h1>
+    <ol class="list" style="margin-top:40px;max-width:620px">
+      <li class="step">三丁目の物件で、10月中に契約する</li>
+      <li class="step">初期投資 1,800 万円を承認する</li>
+      <li class="step">開店は 2027年 3月、桜の前に</li>
+    </ol>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      el.classList.toggle("neg", to < 0);
+      el.classList.toggle("pos", to > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => tween(el, run(f)));
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
+    el._v = 0; tween(el, Number(el.dataset.count));
+  });
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    render();
+    if (prev !== -1) countUp(slides[i]);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

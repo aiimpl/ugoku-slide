@@ -1,0 +1,212 @@
+<!--meta
+{"title":"空き店舗、なにに使う？ さくら通り商店会ブレスト","style":"付箋とホワイトボード","use":"ブレスト・ワークショップ","group":"学び・研修",
+ "aim":"商店会の進行役が、空き店舗の使い道を決めるブレスト会議（90分）で、ルールと時間配分を示し、最後に出た案を重みづけで絞り込むための進行ボード。",
+ "desc":"ホワイトボードに傾いた付箋とマーカーの線。人数とアイデア数から共有にかかる時間を見積もり、最後は「集客」「手軽さ」などの重みを動かすと案の順位が入れ替わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Yusei+Magic&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f3f5f4; --surface:#fff8b8; --ink:#1d2530; --muted:#4a5462; --line:#cfd6d9; --accent:#1f5fbf; --accent-ink:#fff;
+  --red:#cf3434; --green:#1d7d45; --good:#1d7d45; --bad:#cf3434; --frame:#aeb5ba; --radius:2px; --shadow:0 2px 3px rgb(0 0 0 / .08),0 12px 20px -6px rgb(0 0 0 / .22);
+  --font:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif; --font-head:"Yusei Magic","Hiragino Maru Gothic ProN",sans-serif; --font-num:"Yusei Magic",sans-serif;
+  --head-weight:400; --head-track:.01em; --pad-y:56px; --pad-x:86px;
+}
+.deck[data-transition=rise] .slide.active{transform:none}
+/* ボード：アルミの枠・光の映り込み・マーカー受け */
+.slide>.bg{background:linear-gradient(180deg,#d5dadd,#a9b0b5 50%,#c7cdd1)}
+.slide>.bg::before{content:"";position:absolute;inset:14px 14px 40px;border-radius:4px;
+  background:linear-gradient(115deg,transparent 30%,rgb(255 255 255 / .75) 38%,transparent 46%,transparent 62%,rgb(255 255 255 / .5) 66%,transparent 70%),
+    radial-gradient(ellipse at 70% 30%,rgb(40 60 90 / .035),transparent 60%),
+    linear-gradient(#fbfcfc,#eef1f1);box-shadow:inset 0 1px 3px rgb(0 0 0 / .25)}
+.slide>.bg::after{content:"";position:absolute;left:14px;right:14px;bottom:12px;height:24px;border-radius:0 0 6px 6px;
+  background:
+    linear-gradient(90deg,transparent 180px,#1d2530 180px 186px,#34404f 186px 290px,#1d2530 290px 300px,transparent 300px 316px,#cf3434 316px 322px,#e04747 322px 426px,#cf3434 426px 436px,transparent 436px 452px,#1f5fbf 452px 458px,#2f6fd0 458px 562px,#1f5fbf 562px 572px,transparent 572px) 0 5px/100% 11px no-repeat,
+    linear-gradient(#c3c9cd,#8e969c)}
+.slide{color:var(--ink)}
+h1,h2,.big,.mk{font-family:var(--font-head);font-weight:400}
+h2{font-size:50px;line-height:1.3}
+.kicker{font-family:var(--font-head);color:var(--red);font-size:24px;letter-spacing:.06em;text-transform:none;font-weight:400}
+.blue{color:var(--accent)}.redm{color:var(--red)}.grn{color:var(--green)}
+/* マーカーの線 */
+.ul{background:linear-gradient(transparent 80%,var(--red) 80% 90%,transparent 90%);padding:0 .1em}
+.ul.b{background:linear-gradient(transparent 80%,var(--accent) 80% 90%,transparent 90%)}
+.ring{border:3.5px solid var(--red);border-radius:48% 52% 45% 55%/55% 45% 55% 45%;padding:6px 20px;display:inline-block;rotate:-2deg}
+/* 付箋 */
+.st{position:relative;background:#fff27a;padding:20px 22px;font-family:var(--font-head);font-size:28px;line-height:1.35;color:#1d2530;
+  box-shadow:var(--shadow);rotate:-2deg}
+.st::before{content:"";position:absolute;left:0;right:0;top:0;height:18%;background:linear-gradient(rgb(0 0 0 / .06),transparent);pointer-events:none}
+.st.pk{background:#ffb3c7;rotate:2deg}.st.bl{background:#a9dcff;rotate:-1deg}.st.gr{background:#bff0b0;rotate:1.5deg}.st.or{background:#ffd08a;rotate:-2.5deg}
+.st small{display:block;font-family:var(--font);font-size:20px;line-height:1.55;font-weight:500;margin-top:8px;color:#3a4350}
+.mag{position:absolute;top:-10px;left:50%;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a8a,#c62828 70%);box-shadow:0 3px 4px rgb(0 0 0 / .3);z-index:2}
+.mag.b{background:radial-gradient(circle at 35% 30%,#8ab4ff,#1f4fae 70%)}
+/* 部品 */
+.tabs{background:none;padding:0;gap:14px;border-radius:0}
+.tabs>[data-tab]{font-family:var(--font-head);font-weight:400;font-size:24px;border-radius:2px;padding:10px 24px;background:#fff;color:var(--muted);box-shadow:0 2px 6px rgb(0 0 0 / .12)}
+.tabs>[data-tab][aria-selected=true]{background:#fff27a;color:var(--ink);box-shadow:var(--shadow);rotate:-2deg}
+.field>label{color:var(--ink);font-size:22px;font-weight:700}
+.field{margin-bottom:26px}
+.field>label b{font-size:30px}
+input[type=range]{accent-color:var(--accent)}
+details.why{background:#fff;border:2px solid var(--ink);border-radius:3px}
+details.why>summary{color:var(--accent);font-size:19px}
+details.why>.body{color:var(--ink);font-size:18px}
+.rank{grid-template-columns:360px 1fr;gap:56px}
+.rank .opt{border-radius:0;border:0;background:#fff27a;padding:14px 22px;box-shadow:var(--shadow);rotate:-1deg}
+.rank .opt:nth-child(2){background:#ffb3c7;rotate:1deg}.rank .opt:nth-child(3){background:#a9dcff;rotate:-.5deg}.rank .opt:nth-child(4){background:#bff0b0;rotate:1.2deg}
+.rank .opt .name{font-family:var(--font-head);font-weight:400;font-size:26px}
+.rank .opt .score{font-family:var(--font-head);font-weight:400;font-size:34px}
+.rank .opt .meter{background:rgb(0 0 0 / .1);height:8px}
+.rank .opt .meter>i{background:var(--ink)}
+.rank .opt .note{color:#333b47;font-size:16px;font-weight:500}
+.rank .opt.top{box-shadow:0 0 0 4px var(--red),var(--shadow)}
+.rank .opt.top .name::after{content:"いちばん";background:var(--red);color:#fff;font-family:var(--font);font-weight:700;border-radius:2px}
+.rank .field>label{font-size:20px}
+.rank .field>label b{font-size:20px;font-family:var(--font)}
+.big-t{font-family:var(--font-head);font-size:92px;line-height:1;color:var(--accent)}
+.foot{bottom:52px;color:var(--muted)}
+.tl{margin-top:auto;position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-bottom:30px;font-family:var(--font-head);font-size:24px}
+.tl>div{padding:12px 18px;box-shadow:0 2px 6px rgb(0 0 0 / .12)}
+.tl>span{position:absolute;bottom:0;font-size:18px;font-family:var(--font);font-weight:700;color:var(--muted)}
+.lbl{font-family:var(--font-head);font-size:30px;position:absolute}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <p class="kicker">さくら通り商店会　ブレスト会議 vol.1</p>
+    <h1 style="font-size:104px;line-height:1.2;margin-top:10px">空き店舗、<br><span class="ul">なにに使う？</span></h1>
+    <p style="font-size:28px;line-height:1.7;margin-top:34px;max-width:560px;font-weight:500">2丁目の角の元・文具店（12坪）。<br>90分で、試してみる案を1つに決めます。</p>
+    <p class="mk blue" style="margin-top:auto;font-size:30px">10/4（土）14:00–15:30　<span style="font-size:24px">商店会事務所 2階</span></p>
+    <div style="position:absolute;right:86px;top:84px;width:540px;height:560px">
+      <div class="st" style="position:absolute;left:0;top:30px;width:246px;min-height:170px;font-size:34px"><span class="mag"></span>こども<br>食堂<small>週1・夕方</small></div>
+      <div class="st pk" style="position:absolute;left:276px;top:0;width:250px;min-height:170px;font-size:34px">シェア<br>キッチン<small>日替わり店主</small></div>
+      <div class="st bl" style="position:absolute;left:24px;top:236px;width:250px;min-height:170px;font-size:34px">夜の<br>ボードゲーム<small>金・土だけ</small></div>
+      <div class="st gr" style="position:absolute;left:300px;top:214px;width:230px;min-height:170px;font-size:34px"><span class="mag b"></span>無人の<br>古本棚<small>100円</small></div>
+      <div class="st or" style="position:absolute;left:180px;top:440px;width:230px;font-size:30px;padding:18px 22px">＋ あなたの案</div>
+    </div>
+    <aside class="notes">ボードの付箋は前回までに集まった案の一部。「今日はここに、もっと貼ります」と言って始める。</aside>
+  </section>
+
+  <section class="slide" data-title="ルール">
+    <div class="bg"></div>
+    <p class="kicker">はじめる前に</p>
+    <h2>ルールは4つだけ。<span class="ul b">否定しない</span>が一番大事。</h2>
+    <div class="grid cols-4" style="gap:30px;margin-top:22px">
+      <div class="st step" style="min-height:320px;font-size:32px"><span class="big-t redm" style="font-size:64px">1</span><br>否定しない<small>「でも」は禁止。「それなら」で返す。</small></div>
+      <div class="st pk step" style="min-height:320px;font-size:32px"><span class="big-t" style="font-size:64px">2</span><br>量を出す<small>質はあとで選ぶ。1人10枚を目指す。</small></div>
+      <div class="st bl step" style="min-height:320px;font-size:32px"><span class="big-t grn" style="font-size:64px">3</span><br>のっかる<small>人の案に足す・混ぜるのは大歓迎。</small></div>
+      <div class="st gr step" style="min-height:320px;font-size:32px"><span class="big-t redm" style="font-size:64px">4</span><br>1枚に1つ<small>あとで並べ替えられるように。</small></div>
+    </div>
+    <details class="why" style="margin-top:34px;max-width:760px"><summary>なぜ「否定しない」が一番なのか</summary><div class="body">最初の10分で1回でも否定されると、発言が目に見えて減る。変わった案ほど、あとで良い案の材料になる。</div></details>
+    <aside class="notes">→キーで付箋が1枚ずつ出る。4つを読み上げたら、進行役が「でも」と言ったら笑って指摘してね、と伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="進め方">
+    <div class="bg"></div>
+    <p class="kicker">進め方　90分</p>
+    <h2>広げて、まとめて、1つ選ぶ。</h2>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">① 広げる</button><button data-tab="b">② まとめる</button><button data-tab="c">③ 選ぶ</button></div>
+      <div data-panel="a" style="display:grid;grid-template-columns:300px 1fr 330px;gap:44px;align-items:start;margin-top:8px">
+        <div><p class="big-t">30<span style="font-size:40px">分</span></p><p style="font-size:22px;font-weight:700;margin-top:10px">黙って書く 10分<br>読み上げて貼る 20分</p></div>
+        <ul class="list" style="font-size:26px;font-weight:500"><li>1人ずつ、付箋に書く</li><li>書けたら、声に出して貼る</li><li>似た案が聞こえたら、のっかって書く</li></ul>
+        <div class="st" style="font-size:26px">ねらい<small>話が上手な人の案だけが残らないよう、まず全員が書く。</small></div>
+      </div>
+      <div data-panel="b" style="display:grid;grid-template-columns:300px 1fr 330px;gap:44px;align-items:start;margin-top:8px">
+        <div><p class="big-t">30<span style="font-size:40px">分</span></p><p style="font-size:22px;font-weight:700;margin-top:10px">まとめる 20分<br>名前をつける 10分</p></div>
+        <ul class="list" style="font-size:26px;font-weight:500"><li>似た付箋を近くに寄せる</li><li>かたまりをマーカーで囲む</li><li>かたまりに一言の名前をつける</li></ul>
+        <div class="st pk" style="font-size:26px">ねらい<small>案の数ではなく「方向」を見えるようにする。</small></div>
+      </div>
+      <div data-panel="c" style="display:grid;grid-template-columns:300px 1fr 330px;gap:44px;align-items:start;margin-top:8px">
+        <div><p class="big-t">30<span style="font-size:40px">分</span></p><p style="font-size:22px;font-weight:700;margin-top:10px">点をつける 15分<br>重みで決める 15分</p></div>
+        <ul class="list" style="font-size:26px;font-weight:500"><li>候補を4つにしぼる</li><li>集客・手軽さ・費用・続けやすさで5点満点</li><li>何を重く見るかを話して、1つに決める</li></ul>
+        <div class="st bl" style="font-size:26px">ねらい<small>好き嫌いではなく、何を大事にするかで決める。</small></div>
+      </div>
+      <div class="tl">
+        <div style="background:#fff27a">① 広げる</div><div style="background:#ffb3c7">② まとめる</div><div style="background:#a9dcff">③ 選ぶ</div>
+        <span style="left:0">0分</span><span style="left:33.3%">30</span><span style="left:66.6%">60</span><span style="right:0">90分</span>
+      </div>
+    </div>
+    <aside class="notes">いま何番目の段階かを、このタブで示しながら進める。時間が押したら ② を短くする。</aside>
+  </section>
+
+  <section class="slide" data-title="時間の見積もり">
+    <div class="bg"></div>
+    <p class="kicker">時間の見積もり</p>
+    <h2>全員で共有すると、読み上げだけで時間が消える。</h2>
+    <div data-calc class="fill" data-let="cards = n*k; all = cards*sec/60; g = ceil(n/5); grp = min(n,5)*k*sec/60" style="display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:start">
+      <div style="background:#fff;padding:26px 30px;box-shadow:0 2px 8px rgb(0 0 0 / .1)">
+        <div class="field"><label>参加する人 <b data-show="n" data-unit="人"></b></label><input type="range" name="n" min="4" max="30" value="18"></div>
+        <div class="field"><label>1人が書く付箋 <b data-show="k" data-unit="枚"></b></label><input type="range" name="k" min="2" max="12" value="8"></div>
+        <div class="field" style="margin-bottom:6px"><label>1枚を読み上げる時間 <b data-show="sec" data-unit="秒"></b></label><input type="range" name="sec" min="5" max="40" step="5" value="15"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">全員で共有 ＝ 人数 × 枚数 × 秒 ÷ 60。<br>班で共有 ＝ 5人の班の中だけで読み上げる（班は同時に進む）。</div></details>
+      </div>
+      <div>
+        <div class="row" style="gap:28px;align-items:flex-end">
+          <div class="st" style="width:230px;rotate:-2deg"><small style="margin:0 0 4px">付箋の枚数</small><span style="font-size:56px" data-out="cards" data-unit="枚"></span></div>
+          <div class="st pk" style="width:280px;rotate:2deg"><small style="margin:0 0 4px">全員で共有すると</small><span style="font-size:56px" data-out="all" data-unit="分"></span></div>
+        </div>
+        <div class="st gr" style="margin-top:34px;width:540px;rotate:-1deg;font-size:26px"><small style="margin:0 0 4px">5人ずつの班に分けると</small><span data-out="g" data-unit="班"></span>で同時に <span style="font-size:56px" data-out="grp" data-unit="分"></span></div>
+      </div>
+    </div>
+    <aside class="notes">18人・8枚・15秒だと、全員の共有は36分。「広げる」の枠（20分）に収まらないので、班に分ける理由がここで伝わる。</aside>
+  </section>
+
+  <section class="slide" data-title="出た案">
+    <div class="bg"></div>
+    <p class="kicker">② まとめた結果</p>
+    <h2 style="margin-bottom:10px">62枚の付箋は、3つの方向にまとまった。</h2>
+    <div style="position:relative;flex:1">
+      <svg viewBox="0 0 1108 440" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true" fill="none" stroke-width="4" stroke-linecap="round">
+        <path d="M30 70 C20 20 330 0 350 60 C370 150 360 380 330 410 C290 440 40 440 24 400 C8 340 40 150 30 70Z" stroke="#cf3434"/>
+        <path d="M400 60 C400 10 720 10 730 70 C740 170 740 360 710 400 C680 440 420 440 400 400 C380 340 400 150 400 60Z" stroke="#1f5fbf"/>
+        <path d="M780 60 C780 10 1090 14 1094 80 C1100 170 1096 360 1070 400 C1040 440 800 440 784 400 C766 340 780 150 780 60Z" stroke="#1d7d45"/>
+      </svg>
+      <span class="lbl redm" style="left:40px;top:14px">食べる　24枚</span>
+      <span class="lbl blue" style="left:414px;top:14px">あそぶ　21枚</span>
+      <span class="lbl grn" style="left:796px;top:14px">まなぶ　17枚</span>
+      <div class="st" style="position:absolute;left:44px;top:84px;width:190px;font-size:24px">こども食堂</div>
+      <div class="st or" style="position:absolute;left:146px;top:196px;width:190px;font-size:24px">シェア<br>キッチン</div>
+      <div class="st" style="position:absolute;left:40px;top:302px;width:180px;font-size:24px;rotate:3deg">朝の<br>おにぎり屋</div>
+      <div class="st bl" style="position:absolute;left:424px;top:86px;width:200px;font-size:24px">夜の<br>ボードゲーム</div>
+      <div class="st pk" style="position:absolute;left:520px;top:220px;width:190px;font-size:24px">駄菓子と<br>レトロゲーム</div>
+      <div class="st bl" style="position:absolute;left:420px;top:318px;width:170px;font-size:24px;rotate:2deg">写真展</div>
+      <div class="st gr" style="position:absolute;left:806px;top:88px;width:190px;font-size:24px">無人の<br>古本棚</div>
+      <div class="st" style="position:absolute;left:880px;top:208px;width:190px;font-size:24px;rotate:2deg">親子の<br>工作教室</div>
+      <div class="st gr" style="position:absolute;left:800px;top:320px;width:200px;font-size:24px;rotate:-3deg">スマホ<br>相談室</div>
+    </div>
+    <aside class="notes">かたまりの名前は参加者に決めてもらったもの。各かたまりから1つずつ、合計4つを候補として次のページで比べる。</aside>
+  </section>
+
+  <section class="slide" data-title="重みで選ぶ">
+    <div class="bg"></div>
+    <p class="kicker">③ 選ぶ</p>
+    <h2 style="margin-bottom:18px">何を大事にするかで、1位が変わる。</h2>
+    <div data-rank>
+      <script type="application/json">{"max":5,"rowHeight":118,
+        "criteria":[{"key":"visit","label":"人が集まる","weight":4},{"key":"easy","label":"すぐ始められる","weight":3},{"key":"cost","label":"お金がかからない","weight":2},{"key":"keep","label":"続けやすい","weight":3}],
+        "options":[
+          {"name":"こども食堂","note":"集客◎ ／ 食品の許可と人手が要る","scores":{"visit":5,"easy":2,"cost":2,"keep":3}},
+          {"name":"夜のボードゲーム","note":"すぐできる ／ 夜の見守り役が要る","scores":{"visit":3,"easy":5,"cost":4,"keep":3}},
+          {"name":"無人の古本棚","note":"ほぼ費用ゼロ ／ にぎわいは小さめ","scores":{"visit":2,"easy":5,"cost":5,"keep":4}},
+          {"name":"シェアキッチン","note":"続けば家賃が入る ／ 改装が要る","scores":{"visit":4,"easy":1,"cost":1,"keep":5}}
+        ]}</script>
+    </div>
+    <aside class="notes">まず「人が集まる」を5、ほかを1にしてみせる → こども食堂。次に「お金がかからない」を5 → 古本棚。どれを重く見るかを話し合うのが、このページの目的。</aside>
+  </section>
+
+  <section class="slide" data-title="次の一歩">
+    <div class="bg"></div>
+    <p class="kicker">決まったこと</p>
+    <h2 style="font-size:60px">11月の土曜、<span class="ring">夜のボードゲーム</span>を<br>3回だけ試す。</h2>
+    <div class="grid cols-3" style="gap:36px;margin-top:26px">
+      <div class="st step" style="min-height:230px;font-size:34px">だれが<small>発案者の田村さん（仮名）と、青年部の2人</small></div>
+      <div class="st pk step" style="min-height:230px;font-size:34px">いつまでに<small>10月20日までに、鍵と保険の手続き</small></div>
+      <div class="st bl step" style="min-height:230px;font-size:34px">どうなったら続ける<small>3回で延べ60人来たら、12月も続ける</small></div>
+    </div>
+    <p style="margin-top:auto;font-size:20px;font-weight:700;color:var(--muted)">記録係：写真を撮ってから、付箋をはがしてください。　／　人名・数字は架空のサンプルです。</p>
+    <aside class="notes">最後に「だれが・いつまでに・どうなったら続ける」を読み上げて終わる。決まらなかった案の付箋は、次回のために箱に保管。</aside>
+  </section>
+
+</main>

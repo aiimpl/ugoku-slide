@@ -1,0 +1,246 @@
+<!--meta
+{"title":"二号店 出店計画","style":"ボタニカル","use":"カフェ新店舗の出店計画","group":"和・ナチュラル",
+ "aim":"小さなカフェを営む会社の店舗開発担当が、経営会議で二号店の出店を決めてもらうための資料。",
+ "desc":"深緑とクリームに、植物図鑑のような枝と葉の線画。1日の客数と客単価を動かすと、月の利益と損益分岐の客数、投資の回収期間がその場で出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Shippori+Mincho:wght@400;600;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f2ead8; --surface:#faf5ea; --ink:#1d3a2c; --muted:#4f5f52; --line:#cdc4ad;
+  --accent:#7a4f1f; --accent-ink:#f2ead8; --good:#2f6b43; --bad:#9b3a22; --frame:#18301f;
+  --green:#1d3a2c; --cream:#f2ead8; --sage:#8fa58a; --gold:#c9a45e;
+  --radius:2px; --shadow:none;
+  --font:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-num:"Cormorant Garamond","Shippori Mincho","Hiragino Mincho ProN",serif;
+  --head-weight:600; --head-track:.04em; --pad-y:76px; --pad-x:110px;
+}
+.slide.dark{--bg:#1d3a2c; --surface:#244636; --ink:#f2ead8; --muted:#c7cfbf; --line:rgb(242 234 216 / .28);
+  --accent:#d9b56e; --accent-ink:#1d3a2c; --good:#a9cf97; --bad:#f0a58b; background:var(--bg); color:var(--ink)}
+/* 図鑑の図版のような二重の枠 */
+.slide::before{content:"";position:absolute;inset:26px;border:1px solid var(--line);pointer-events:none}
+.slide::after{content:"";position:absolute;inset:32px;border:1px solid var(--line);opacity:.55;pointer-events:none}
+.plate{position:absolute;top:44px;right:56px;font:italic 500 18px var(--font-num);letter-spacing:.08em;color:var(--muted)}
+.kicker{font:italic 500 22px var(--font-num);letter-spacing:.06em;text-transform:none;color:var(--accent);margin-bottom:10px}
+h1{font-size:72px;font-weight:600;line-height:1.35;letter-spacing:.08em}
+h2{font-size:40px;line-height:1.55;font-weight:600;margin-bottom:34px}
+.lead{font-size:22px;line-height:2;color:var(--muted)}
+.latin{font:italic 500 18px var(--font-num);letter-spacing:.05em;color:var(--muted)}
+.draw{position:absolute;color:var(--ink);opacity:.9}
+.draw svg{display:block;width:100%;height:100%;overflow:visible}
+.slide.dark .draw{color:var(--gold)}
+.slide.active .draw path.stem{stroke-dasharray:1400;animation:grow 3.2s ease-out both}
+@keyframes grow{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+.slide.active .draw .lf{animation:sway 6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+/* 標本ラベル風の数字 */
+.spec{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.spec>div{padding:26px 30px 26px 0;position:relative}
+.spec>div+div{padding-left:30px;border-left:1px solid var(--line)}
+.spec .no{font:600 18px var(--font);color:var(--accent);letter-spacing:.06em}
+.spec .no em{font:italic 500 21px var(--font-num);margin-right:4px}
+.kicker .jp{font:600 16px var(--font);letter-spacing:.12em;margin-left:12px;font-style:normal}
+.spec .v{font:500 96px/1 var(--font-num);letter-spacing:-.01em;margin:10px 0 8px}
+.spec .v small{font:600 24px var(--font);margin-left:6px}
+.spec p{font-size:19px;line-height:1.75;color:var(--muted);margin:0}
+.tabs{background:none;border-radius:0;padding:0;gap:34px;border-bottom:1px solid var(--line);width:100%}
+.tabs>[data-tab]{border-radius:0;padding:10px 0 12px;font:600 22px var(--font);letter-spacing:.1em;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs>[data-tab] em{font:italic 500 18px var(--font-num);margin-right:10px;color:var(--accent)}
+.tabs>[data-tab][aria-selected=true]{background:none;box-shadow:none;color:var(--ink);border-bottom-color:var(--ink)}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:8px}
+.menu h3{font-size:34px;font-weight:600;letter-spacing:.06em;margin-bottom:14px}
+.menu dl{margin:0;display:grid;grid-template-columns:auto 1fr auto;gap:22px 16px;font-size:23px;align-items:baseline;padding-top:10px}
+.share{display:flex;align-items:baseline;gap:4px;margin-top:26px;border-top:1px solid var(--line);padding-top:18px;flex-wrap:wrap}
+.share b{font:500 120px/1 var(--font-num);font-variant-numeric:lining-nums}
+.share span{font:500 44px var(--font-num)}
+.share em{font-style:normal;font-size:19px;color:var(--muted);flex-basis:100%}
+.menu dt{white-space:nowrap}
+.menu dd{margin:0;border-bottom:1px dotted var(--muted);height:.6em}
+.menu dd+dd{border:0;height:auto;font:500 26px var(--font-num)}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:500 32px var(--font-num)}
+input[type=range]{accent-color:var(--gold)}
+.meter{height:6px;background:var(--line);border-radius:0}
+.meter>i{background:var(--gold);border-radius:0}
+.big-out{font:500 128px/1 var(--font-num);letter-spacing:-.01em}
+.sub-outs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:26px}
+.sub-outs>div{padding:20px 0}
+.sub-outs>div+div{border-left:1px solid var(--line);padding-left:30px}
+.sub-outs .lbl{font-size:19px;color:var(--muted)}
+.sub-outs .val{font:500 52px/1.1 var(--font-num);margin-top:6px}
+details.why{border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;margin-top:6px}
+details.why>summary{font-weight:600;font-size:19px;color:var(--accent);padding:14px 0;letter-spacing:.06em}
+details.why>summary::before{content:"❧";background:none;width:auto;font-size:20px;transform:none!important}
+details.why>.body{padding:0 0 14px;font-size:19px;line-height:1.9}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--line);border-radius:2px;padding:16px 22px}
+table.t{font-size:21px}
+table.t th{font-size:18px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--ink)}
+table.t td{padding:15px 14px;border-bottom:1px solid var(--line)}
+table.t td.n{font:500 28px var(--font-num)}
+table.t tr.total td{border-bottom:1px solid var(--ink);font-weight:800}
+ol.list{gap:22px;font-size:26px}
+ol.list>li{padding-left:64px}
+ol.list>li::before{background:none;border:1px solid var(--accent);color:var(--accent);font:italic 500 22px var(--font-num);width:42px;height:42px}
+.foot{bottom:44px;font-size:15px;left:110px}
+/* Cormorant の数字を揃い数字に */
+.deck .slide *{font-variant-numeric:lining-nums!important;font-feature-settings:"lnum" 1,"palt" 1}
+@media (prefers-reduced-motion:reduce){.slide.active .draw path.stem,.slide.active .draw .lf{animation:none}}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover dark" data-title="表紙">
+    <div class="bg"><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <g id="leaf"><path d="M0 0C20-22 26-64 0-100C-26-64-20-22 0 0Z"/><path d="M0-4V-94M0-30l10-10M0-52l12-12M0-30l-10-10M0-52l-12-12M0-72l8-10M0-72l-8-10"/></g>
+      <g id="branch" fill="none" stroke="currentColor" stroke-width="1.3" vector-effect="non-scaling-stroke" stroke-linecap="round">
+        <path class="stem" d="M210 600C196 500 222 410 200 320S168 150 232 20"/>
+        <path class="stem" d="M204 420C250 400 290 360 312 300"/>
+        <path class="stem" d="M196 250C150 230 118 190 104 130"/>
+        <g class="lf" transform="translate(206 520) rotate(-58) scale(.9)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(206 470) rotate(52) scale(.85)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(312 300) rotate(28) scale(.95)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(262 380) rotate(-20) scale(.7)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(104 130) rotate(-24) scale(.95)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(140 212) rotate(-78) scale(.7)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(196 300) rotate(64) scale(.8)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(222 110) rotate(40) scale(.75)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(232 22) rotate(8) scale(.6)"><use href="#leaf"/></g>
+        <circle cx="228" cy="430" r="9"/><circle cx="244" cy="438" r="8"/><circle cx="236" cy="452" r="8"/>
+        <circle cx="166" cy="236" r="8"/><circle cx="180" cy="224" r="7"/>
+      </g>
+      <g id="sprig" fill="none" stroke="currentColor" stroke-width="1.3" vector-effect="non-scaling-stroke" stroke-linecap="round">
+        <path class="stem" d="M20 290C80 230 140 150 260 40"/>
+        <g class="lf" transform="translate(90 214) rotate(-10) scale(.7)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(90 214) rotate(110) scale(.62)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(160 140) rotate(-4) scale(.66)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(160 140) rotate(118) scale(.58)"><use href="#leaf"/></g>
+        <g class="lf" transform="translate(260 40) rotate(46) scale(.55)"><use href="#leaf"/></g>
+      </g></defs></svg></div>
+    <div class="draw" style="right:120px;top:60px;width:400px;height:600px"><svg viewBox="0 0 400 600"><use href="#branch"/></svg></div>
+    <div class="latin" style="position:absolute;right:130px;bottom:58px;color:var(--gold)">Fig. 2 — Coffea, the second branch</div>
+    <div class="kicker">Plan for the second shop</div>
+    <h1>緑の路地に、<br>二号店をひらく。</h1>
+    <p class="lead" style="margin-top:30px">喫茶サンプル　二号店 出店計画<br>候補地　サンプル町三丁目　路地裏の元・花屋</p>
+    <aside class="notes">表紙は長く置かない。「今日は出店するかどうかを決めていただきたい」と最初に言う。</aside>
+  </section>
+
+  <section class="slide" data-title="なぜこの場所か">
+    <div class="bg"></div>
+    <p class="foot">数字・店名はすべて架空のサンプルです。</p>
+    <div class="plate">Plate II</div>
+    <div class="draw" style="right:30px;bottom:40px;width:330px;height:330px;opacity:.5"><svg viewBox="0 0 300 300"><use href="#sprig"/></svg></div>
+    <div class="kicker">Why here</div>
+    <h2>駅から4分。朝の人通りが、<br>本店の前の1.6倍ある。</h2>
+    <div class="spec" style="max-width:900px">
+      <div class="step"><div class="no"><em>i.</em> 朝7〜9時の通行量</div><div class="v"><span data-count="1240"></span><small>人</small></div><p>本店前は 780 人。平日5日間の平均。</p></div>
+      <div class="step"><div class="no"><em>ii.</em> 徒歩5分のオフィス</div><div class="v"><span data-count="38"></span><small>棟</small></div><p>働く人はおよそ 6,200 人。</p></div>
+      <div class="step"><div class="no"><em>iii.</em> 同じ路地のカフェ</div><div class="v"><span data-count="0"></span><small>軒</small></div><p>チェーン店は駅前の 2 軒のみ。</p></div>
+    </div>
+    <details class="why" style="max-width:900px;border-top:0"><summary>数え方</summary><div class="body">2026年9月の平日5日、7時〜9時に店舗予定地の前をカウンターで計測（サンプル）。オフィスの棟数は地図から数えた。</div></details>
+    <aside class="notes">3つ目の「0軒」で間を置く。競合がいないのは弱みにもなり得る点は6枚目で触れる。</aside>
+  </section>
+
+  <section class="slide" data-title="店のかたち">
+    <div class="bg"></div>
+    <div class="plate">Plate III</div>
+    <div class="kicker">The shop</div>
+    <h2>朝は持ち帰り、昼は食事、夕方は豆を売る。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="m"><em>i.</em>朝 7:00–10:00</button><button data-tab="d"><em>ii.</em>昼 11:00–15:00</button><button data-tab="e"><em>iii.</em>夕 15:00–19:00</button></div>
+      <div data-panel="m" class="menu">
+        <div><h3>通勤の人に、90秒で一杯。</h3><p class="lead" style="font-size:20px">窓口を路地側に開け、並ばずに受け取れる。</p><div class="share"><b>45</b><span>%</span><em>1日の客数のうち、朝に来る人</em></div></div>
+        <dl><dt>本日のドリップ</dt><dd></dd><dd>¥480</dd><dt>カフェラテ</dt><dd></dd><dd>¥560</dd><dt>全粒粉のスコーン</dt><dd></dd><dd>¥380</dd><dt>朝の客単価</dt><dd></dd><dd>¥620</dd></dl>
+      </div>
+      <div data-panel="d" class="menu">
+        <div><h3>12席で、ゆっくり食べる昼。</h3><p class="lead" style="font-size:20px">元・花屋の天窓を残し、植物に囲まれた席に。</p><div class="share"><b>35</b><span>%</span><em>1日の客数のうち、昼に来る人</em></div></div>
+        <dl><dt>季節野菜のプレート</dt><dd></dd><dd>¥1,280</dd><dt>ドリンクセット</dt><dd></dd><dd>+¥300</dd><dt>焼き菓子</dt><dd></dd><dd>¥420</dd><dt>昼の客単価</dt><dd></dd><dd>¥1,450</dd></dl>
+      </div>
+      <div data-panel="e" class="menu">
+        <div><h3>帰り道に、豆を買って帰る。</h3><p class="lead" style="font-size:20px">本店の焙煎豆を量り売り。飲むより買う人が多い時間帯。</p><div class="share"><b>20</b><span>%</span><em>1日の客数のうち、夕方に来る人</em></div></div>
+        <dl><dt>焙煎豆 200g</dt><dd></dd><dd>¥1,600</dd><dt>ドリップバッグ 5袋</dt><dd></dd><dd>¥900</dd><dt>カフェオレ</dt><dd></dd><dd>¥560</dd><dt>夕の客単価</dt><dd></dd><dd>¥1,100</dd></dl>
+      </div>
+    </div>
+    <aside class="notes">タブを朝→昼→夕の順に押す。時間帯で客が入れ替わるので、1日の客単価は平均で 900 円前後になる。</aside>
+  </section>
+
+  <section class="slide dark" data-title="損益分岐">
+    <div class="bg"></div>
+    <div class="plate">Plate IV</div>
+    <div class="kicker">Break-even <span class="jp">動かせます</span></div>
+    <h2>客単価 900 円なら、1日 124 人で黒字に乗る。</h2>
+    <div class="split fill" style="grid-template-columns:.9fr 1.1fr;gap:80px" data-calc
+      data-let="days = 26; sales = cust*price*days; gross = sales*(1-0.32); fixed = rent*1e4 + 1650000; profit = gross-fixed; be = fixed/(price*(1-0.32)*days)">
+      <div>
+        <div class="field"><label>1日の客数 <b data-show="cust" data-unit=" 人"></b></label><input type="range" name="cust" min="60" max="260" step="2" value="160"></div>
+        <div class="field"><label>客単価 <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="500" max="1600" step="10" value="900"></div>
+        <div class="field"><label>月の家賃 <b data-show="rent" data-unit=" 万円"></b></label><input type="range" name="rent" min="20" max="60" value="32"></div>
+        <details class="why"><summary>前提</summary><div class="body">営業は月26日。原価率 32%。人件費 135万円と水道光熱・その他 30万円を固定費に入れた。初期投資は 1,800万円。</div></details>
+      </div>
+      <div>
+        <div style="font-size:20px;color:var(--muted)">月の営業利益</div>
+        <div class="big-out" data-out="profit" data-format="man" data-sign></div>
+        <p class="lead" style="font-size:19px;margin:8px 0 0">参考　本店の平日の客数は、1日平均 170 人</p>
+                <div class="sub-outs">
+          <div><div class="lbl">損益分岐の客数</div><div class="val"><span data-out="be" data-unit=" 人/日"></span></div></div>
+          <div><div class="lbl">投資の回収</div><div class="val"><span data-out="profit>0 ? 1800e4/profit : 999" data-format="dec1" data-unit=" か月"></span></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">客数を 120 人まで下げて赤字になるところを見せる。「本店の平日平均は 170 人」と添えて、142 人は無理のない線だと伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="初期投資">
+    <div class="bg"></div>
+    <div class="plate">Plate V</div>
+    <div class="draw" style="right:40px;bottom:40px;width:250px;height:250px;opacity:.45;transform:scaleX(-1)"><svg viewBox="0 0 300 300"><use href="#sprig"/></svg></div>
+    <div class="kicker">Investment</div>
+    <h2>初期投資は 1,800 万円。<br>居抜きの内装を活かし、新築より 1,000 万円抑えた。</h2>
+    <table class="t" style="max-width:860px">
+      <tr><th>項目</th><th>内容</th><th style="text-align:right">金額</th></tr>
+      <tr class="step"><td>内装・設備</td><td>天窓と床はそのまま。厨房だけ新設</td><td class="n">980万</td></tr>
+      <tr class="step"><td>焙煎豆の棚・什器</td><td>本店と同じ木工所に依頼</td><td class="n">260万</td></tr>
+      <tr class="step"><td>保証金・開業前の家賃</td><td>家賃 6か月分</td><td class="n">390万</td></tr>
+      <tr class="step"><td>開業前の採用・研修</td><td>4名を本店で1か月研修</td><td class="n">170万</td></tr>
+      <tr class="step total"><td>合計</td><td>新築の見積もりより 1,000万円少ない</td><td class="n">1,800万</td></tr>
+    </table>
+    <aside class="notes">→で1行ずつ。内装費は新築の場合の見積もり 1,900万円と比べて半分であることを口頭で。</aside>
+  </section>
+
+  <section class="slide" data-title="気がかり">
+    <div class="bg"></div>
+    <div class="draw" style="right:40px;bottom:36px;width:230px;height:230px;opacity:.4"><svg viewBox="0 0 300 300"><use href="#sprig"/></svg></div>
+    <div class="plate">Plate VI</div>
+    <div class="kicker">Concerns</div>
+    <h2>心配は2つ。どちらも、開く前に手を打てる。<br>撤退の線も先に決めておく。</h2>
+    <div class="grid cols-3" style="gap:56px;margin-top:6px">
+      <div class="step" style="border-top:1px solid var(--ink);padding-top:24px">
+        <div class="latin" style="color:var(--accent);font-size:24px">i.</div>
+        <h3 style="font-size:28px;margin:6px 0 14px">路地が知られていない</h3>
+        <p class="lead" style="font-size:20px;line-height:1.9">大通りから見えない。開店の1か月前から、本店で地図入りのカードを配る。</p>
+      </div>
+      <div class="step" style="border-top:1px solid var(--ink);padding-top:24px">
+        <div class="latin" style="color:var(--accent);font-size:24px">ii.</div>
+        <h3 style="font-size:28px;margin:6px 0 14px">焙煎が追いつかない</h3>
+        <p class="lead" style="font-size:20px;line-height:1.9">豆の量が 1.4 倍になる。本店の焙煎を週4日から5日に増やせば足りる。</p>
+      </div>
+      <div class="step" style="border-top:1px solid var(--accent);padding-top:24px">
+        <div class="latin" style="color:var(--accent);font-size:24px">iii.</div>
+        <h3 style="font-size:28px;margin:6px 0 14px">それでも届かなければ</h3>
+        <p class="lead" style="font-size:20px;line-height:1.9">開店6か月で1日100人に届かなければ、席を減らして豆の販売店に切り替える。</p>
+      </div>
+    </div>
+    <details class="why" style="max-width:640px;margin-top:40px"><summary>本店が手薄にならないか</summary><div class="body">店長は二号店に移さず、本店の副店長を昇格させる。本店の人員は 6 名のまま。</div></details>
+  </section>
+
+  <section class="slide cover dark" data-title="決めてほしいこと">
+    <div class="bg"></div>
+    <div class="draw" style="right:100px;top:70px;width:380px;height:570px"><svg viewBox="0 0 400 600"><use href="#branch"/></svg></div>
+    <div class="kicker">Decision</div>
+    <h1 style="font-size:58px">今日、決めて<br>いただきたいこと。</h1>
+    <ol class="list" style="margin-top:40px;max-width:620px">
+      <li class="step">三丁目の物件で、10月中に契約する</li>
+      <li class="step">初期投資 1,800 万円を承認する</li>
+      <li class="step">開店は 2027年 3月、桜の前に</li>
+    </ol>
+  </section>
+
+</main>

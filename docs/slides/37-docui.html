@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1on1 ノート 2027年4月</title>
+<meta name="description" content="左に目次、チェックボックスとトグルが並ぶノートアプリのような1ページ。約束にチェックを入れると完了数が変わり、案件数を動かすと来月の残業の見込みが出る。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=M+PLUS+2:wght@400;500;700;800&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-show="x" で入力値そのものを表示
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：ドキュメント風（ノートアプリ） / 1on1・議事録の共有
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted)}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+details.why.float{position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#ffffff; --surface:#f7f7f5; --ink:#37352f; --muted:#6f6e69; --line:#e9e9e7;
+  --accent:#2383e2; --accent-ink:#fff; --good:#448361; --bad:#d44c47; --frame:#ececea;
+  --radius:6px; --shadow:none;
+  --font:"Inter","M PLUS 2","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Inter","M PLUS 2",sans-serif; --head-weight:700; --head-track:-.005em;
+  --pad-y:92px; --pad-x:84px;
+}
+.slide{padding-left:calc(272px + 76px);padding-right:84px}
+/* 左の目次（.bg の中。リンクだけ押せる） */
+.side{position:absolute;left:0;top:0;bottom:0;width:272px;background:var(--surface);border-right:1px solid var(--line);padding:18px 10px;font-size:15px;color:#5f5e5b}
+.side a{pointer-events:auto;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:5px;color:inherit;text-decoration:none;line-height:1.3;cursor:pointer}
+.side a:hover{background:#ebebe9}
+.side .ic{font-style:normal;width:16px;text-align:center;color:#9b9a97;font-size:13px}
+.side .ws{display:flex;align-items:center;gap:10px;padding:6px 10px 16px;font-weight:600;color:var(--ink);font-size:15px}
+.side .wsi{width:24px;height:24px;border-radius:5px;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 13px var(--font)}
+.side .grp{padding:8px 10px 4px;font-size:13px;font-weight:600;color:#91918e}
+.side .pg.cur{color:var(--ink);font-weight:600}
+.side .sub{padding-left:16px}
+.side .sub a{font-size:14.5px}
+.side .sub a.on{background:#e3e2e0;color:var(--ink);font-weight:600}
+.crumb{position:absolute;left:300px;top:26px;font-size:15px;color:#7d7c78}
+/* 表紙の帯とアイコン */
+.cover-img{margin:-92px -84px 0 -76px;height:170px;background:
+  radial-gradient(circle at 20% 120%,#f5d9b8 0 30%,transparent 30.5%),
+  radial-gradient(circle at 70% -20%,#cfe2d8 0 34%,transparent 34.5%),
+  linear-gradient(90deg,#e9eef5,#f3ece4)}
+.page-ic{width:92px;height:92px;margin-top:-46px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font:800 32px var(--font-num);color:var(--ink);box-shadow:0 2px 8px rgb(0 0 0 / .06)}
+h1{font-size:48px;line-height:1.3;margin:22px 0 22px;letter-spacing:-.01em}
+h2{font-size:36px;line-height:1.35;margin-bottom:28px}
+h2::before{content:"";display:block;width:100%;height:1px;background:transparent}
+.props{display:grid;gap:0;font-size:21px;max-width:860px}
+.props .p{display:grid;grid-template-columns:180px 1fr;align-items:center;padding:11px 0;border-bottom:1px solid transparent}
+.props .k{color:#7d7c78;display:flex;align-items:center;gap:8px}
+.props .k::before{content:"≡";color:#b3b2ae}
+.props .u{text-decoration:underline;text-decoration-color:#c7c6c2;text-underline-offset:4px}
+.av{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#e8deee;color:#5a3d78;font-size:13px;font-weight:700;margin-right:4px;vertical-align:1px}
+.av.g{background:#dbeddb;color:#2b593f}
+.tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:16px;line-height:1.5}
+.tag.blue{background:#e7f3f8;color:#1f6c9f}.tag.green{background:#edf3ec;color:#2f5f3a}.tag.orange{background:#fbecdd;color:#8a4712}
+.callout{display:flex;gap:16px;align-items:flex-start;background:#f1f1ef;border-radius:6px;padding:20px 24px;font-size:22px;line-height:1.7;margin-top:26px;max-width:860px}
+.callout .ci{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 16px var(--font-num);margin-top:2px}
+.callout.warn{background:#fbf3db}.callout.warn .ci{background:#b07d17}
+.callout.ok{background:#edf3ec}.callout.ok .ci{background:var(--good)}
+/* チェックリスト */
+.todo{display:grid;gap:4px;max-width:860px}
+.chk{display:grid;grid-template-columns:30px 1fr auto auto auto;gap:14px;align-items:center;padding:14px 6px;border-radius:5px;font-size:25px;cursor:pointer}
+.chk:hover{background:#f5f5f3}
+.chk input,.chk .box{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:1.5px solid #5f5e5b;border-radius:3px;cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.chk input:checked{background:var(--accent);border-color:var(--accent)}
+.chk input:checked::after{content:"";width:10px;height:5px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:translateY(-2px) rotate(-45deg)}
+.chk input:checked+span{color:#9b9a97;text-decoration:line-through;text-decoration-color:#b9b8b4}
+.who{font-style:normal;font-size:16px;background:#f1f1ef;border-radius:4px;padding:2px 10px;color:#5f5e5b}
+.est{font-style:normal;font-size:16px;color:#7d7c78;font-variant-numeric:tabular-nums}
+.left{color:#7d7c78;font-weight:500;margin-left:10px}
+.due{font-style:normal;font-size:16px;color:var(--bad);font-variant-numeric:tabular-nums}
+.todo.big .chk{font-size:26px;padding:20px 6px;border-bottom:1px solid var(--line);border-radius:0}
+.prog{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.prog b{font:600 22px var(--font-num)}
+.meter{height:10px;background:#ebebea}
+.meter>i{background:var(--accent)}
+.hint{font-size:17px;color:#7d7c78;margin-top:18px}
+/* タブ（ページ内の切り替え） */
+.tabs{background:none;padding:0;gap:2px;border-radius:0;border-bottom:1px solid var(--line);width:100%;margin-bottom:18px}
+.tabs>[data-tab]{border-radius:5px 5px 0 0;padding:10px 18px;font-size:18px;font-weight:600;color:#7d7c78}
+.tabs>[data-tab][aria-selected=true]{background:none;box-shadow:inset 0 -2px 0 var(--ink);color:var(--ink)}
+.blocks{max-width:860px}
+.bl{font-size:26px;line-height:1.65;margin:0;padding:10px 0 10px 32px;position:relative}
+.bl::before{content:"";position:absolute;left:8px;top:.95em;width:7px;height:7px;border-radius:50%;background:var(--ink)}
+blockquote{margin:22px 0 0;padding:6px 0 6px 22px;border-left:3px solid var(--ink);font-size:24px;line-height:1.7}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;max-width:860px}
+.blk{border:1px solid var(--line);border-radius:6px;padding:20px 22px 22px}
+.blk .bh{font-size:18px;color:#7d7c78}
+.blk .bv{font-size:20px;margin-top:6px}
+.blk .bv b{font:700 72px/1.1 var(--font-num);letter-spacing:-.02em;margin:0 4px}
+.blk .bv b.r{color:var(--bad)}
+.blk p{font-size:19px;color:var(--muted);margin:4px 0 0}
+details.why{border:0;background:none;border-radius:0;margin-top:16px;max-width:860px}
+details.why>summary{color:var(--ink);font-weight:500;padding:8px 4px;font-size:20px}
+details.why>summary::before{content:"▸";background:none;width:18px;height:auto;font-size:16px;color:#5f5e5b}
+details.why[open]>summary::before{transform:rotate(90deg)}
+details.why>.body{padding:4px 0 8px 32px;font-size:19px;color:var(--ink)}
+.calcwrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:860px}
+.field{margin-bottom:28px}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:600 22px var(--font-num)}
+input[type=range]{accent-color:var(--accent)}
+.res{background:var(--surface);border-radius:6px;padding:26px 30px}
+.rrow{display:flex;justify-content:space-between;align-items:baseline;font-size:21px;padding:8px 0}
+.rrow b{font:600 26px var(--font-num)}
+.rrow.col{display:block;border-top:1px solid var(--line);margin-top:8px;padding-top:14px}
+.rrow.col b.big{display:block;white-space:nowrap;line-height:1.1;margin-top:4px}
+.rrow b.big{font-size:80px;letter-spacing:-.02em;color:var(--ink)}
+.res .meter{margin-top:10px;background:linear-gradient(90deg,transparent 44.2%,#d44c47 44.2% 44.6%,transparent 44.6%),#e6e6e3}
+.scale{display:flex;justify-content:space-between;font-size:15px;color:#7d7c78;margin-top:8px}
+.ph{color:#a3a29e}
+.empty{margin-top:22px;max-width:860px;padding:22px 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:22px;color:#a3a29e}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="fade">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class="on"><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　ページの情報</div></div>
+    <div class="cover-img"></div>
+    <div class="page-ic">1:1</div>
+    <h1>1on1｜青木 × 森　2027年4月</h1>
+    <div class="props">
+      <div class="p"><span class="k">日付</span><span>2027年4月21日（水）16:00–16:30</span></div>
+      <div class="p"><span class="k">参加者</span><span><span class="av">青</span>青木（リーダー）　<span class="av g">森</span>森（メンバー）</span></div>
+      <div class="p"><span class="k">タグ</span><span><span class="tag blue">1on1</span> <span class="tag green">月次</span> <span class="tag orange">負荷の相談</span></span></div>
+      <div class="p"><span class="k">前回</span><span class="u">2027年3月の1on1</span></div>
+    </div>
+    <div class="callout"><span class="ci">!</span><div><b>今日のゴール</b>　来月の担当案件を1つ減らすかどうかを、2人で決める。</div></div>
+    <aside class="notes">画面共有でこのページを開いたまま進める。書き込みはその場で。</aside>
+  </section>
+
+  <section class="slide" data-title="前回の約束">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class="on"><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　前回の約束</div></div>
+    <h2>前回の約束は、5つのうち3つ終わった。</h2>
+    <div class="todo" data-calc data-let="done = c1+c2+c3+c4+c5; left = (1-c1)*3 + (1-c2)*2 + (1-c3)*1 + (1-c4)*4 + (1-c5)*6">
+      <label class="chk"><input type="checkbox" name="c1" checked><span>テスト自動化の手順書を書く</span><em class="est">3h</em><em class="who">森</em></label>
+      <label class="chk"><input type="checkbox" name="c2" checked><span>週1回、設計レビューに同席する</span><em class="est">2h</em><em class="who">森</em></label>
+      <label class="chk"><input type="checkbox" name="c3" checked><span>評価面談の日程を人事と決める</span><em class="est">1h</em><em class="who">青木</em></label>
+      <label class="chk"><input type="checkbox" name="c4"><span>他チームの勉強会で10分話す</span><em class="est">4h</em><em class="who">森</em></label>
+      <label class="chk"><input type="checkbox" name="c5"><span>夜の障害当番を月2回までにする</span><em class="est">6h</em><em class="who">青木</em></label>
+      <div class="prog"><div class="meter" data-bar="done" data-max="5"><i></i></div><b><span data-out="done"></span> / 5 完了　<span class="left">残り <span data-out="left"></span> 時間分</span></b></div>
+    </div>
+    <p class="hint">チェックを押すと、完了数と残りの見積もり時間が変わります。</p>
+    <aside class="notes">終わっていない2つは責めずに「何が邪魔したか」だけ聞く。5つ目はリーダー側の宿題なので先に謝る。</aside>
+  </section>
+
+  <section class="slide" data-title="今月の話">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class="on"><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　今月の話</div></div>
+    <h2>今月の山場は、初めての設計レビュー。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="g">よかったこと</button><button data-tab="b">困っていること</button><button data-tab="c">これからのこと</button></div>
+      <div data-panel="g" class="blocks">
+        <p class="bl">決済まわりの設計を、初めて自分で書いてレビューに出した。</p>
+        <p class="bl">指摘は 12件。うち 9件はその日のうちに直せた。</p>
+        <p class="bl">残り 3件は、次の設計で最初から入れる。</p>
+        <blockquote>「前より質問が具体的になった」— 設計レビューでの佐野さんの一言</blockquote>
+      </div>
+      <div data-panel="b" class="blocks">
+        <p class="bl">案件が3つ重なり、平日の夜に作業する日が週2〜3日ある。</p>
+        <p class="bl">障害当番の夜の呼び出しが、今月は4回あった。</p>
+        <p class="bl">週末に疲れが残り、月曜の午前が進まない。</p>
+        <blockquote>「どれも手放したくないが、どれも中途半端になっている気がする」</blockquote>
+      </div>
+      <div data-panel="c" class="blocks">
+        <p class="bl">1年後には、1つの機能の設計を最初から最後まで持ちたい。</p>
+        <p class="bl">そのために、今年は「設計を書く回数」を増やしたい。</p>
+        <p class="bl">秋の社内勉強会で、決済の設計を発表してみる。</p>
+        <blockquote>リーダーから：年内にあと3回、設計を書く機会をつくる</blockquote>
+      </div>
+    </div>
+    <aside class="notes">タブは本人に選んでもらう。話したことは、その場でこのページに書き足す。</aside>
+  </section>
+
+  <section class="slide" data-title="困りごと">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class="on"><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　困りごとの深掘り</div></div>
+    <h2>夜の作業の原因は、案件の数より「待ち」。</h2>
+    <div class="callout warn"><span class="ci">?</span><div><b>分かったこと</b>　3つの案件のうち2つが、他チームの返事待ちで止まる。止まっている間に別の案件を進め、返事が来た夕方から作業が始まる。</div></div>
+    <div class="cols3">
+      <div class="blk"><div class="bh">案件A　決済の改修</div><div class="bv">待ち <b>0</b> 日</div><p>自分で進められる。</p></div>
+      <div class="blk"><div class="bh">案件B　帳票の出力</div><div class="bv">待ち <b class="r">6</b> 日</div><p>経理チームの確認待ち。</p></div>
+      <div class="blk"><div class="bh">案件C　通知の見直し</div><div class="bv">待ち <b class="r">4</b> 日</div><p>インフラの設定待ち。</p></div>
+    </div>
+    <details class="why"><summary>待ち日数の数え方</summary><div class="body">4月1日〜20日の作業記録から、「他チームの返事がないと次に進めない」状態だった日を数えた（営業日ベース）。</div></details>
+    <aside class="notes">トグルは聞かれたら開く。「原因は森さんではなく段取り」と言葉にして伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="来月の負荷">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class="on"><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　来月の負荷</div></div>
+    <h2>案件を2つにすれば、残業は月 9 時間ほど。</h2>
+    <div class="calcwrap" data-calc data-let="week = cases*hours + meet; over = max(0, week-38)*4.3">
+      <div>
+        <div class="field"><label>担当する案件の数 <b data-show="cases" data-unit=" 件"></b></label><input type="range" name="cases" min="1" max="5" value="2"></div>
+        <div class="field"><label>1案件あたり、週に使う時間 <b data-show="hours" data-unit=" 時間"></b></label><input type="range" name="hours" min="6" max="20" value="14"></div>
+        <div class="field"><label>会議・当番など <b data-show="meet" data-unit=" 時間/週"></b></label><input type="range" name="meet" min="4" max="16" value="12"></div>
+      </div>
+      <div class="res">
+        <div class="rrow"><span>週の作業時間</span><b data-out="week" data-unit=" 時間"></b></div>
+        <div class="rrow col"><span>月の残業（見込み）</span><b class="big" data-out="over" data-unit=" 時間"></b></div>
+        <div class="meter" data-bar="over" data-max="45"><i></i></div>
+        <div class="scale"><span>0</span><span>社内の目安 20時間</span><span>45</span></div>
+      </div>
+    </div>
+    <p class="hint">所定は週38時間。月の残業 ＝ 週の超過 × 4.3 週。数字は架空のサンプルです。</p>
+    <aside class="notes">案件を3にしてみせ、残業が倍以上になるのを2人で確認してから、案件Cを外す案を出す。</aside>
+  </section>
+
+  <section class="slide" data-title="次の約束">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class="on"><i class="ic">§</i>次の約束</a><a href="#7" class=""><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　次の約束</div></div>
+    <h2>次の1か月の約束は3つ。</h2>
+    <div class="todo big">
+      <div class="chk step"><span class="box"></span><span>案件Cを、5月から村井さんに引き継ぐ</span><em class="who">青木</em><em class="due">5/1</em></div>
+      <div class="chk step"><span class="box"></span><span>案件Bの経理確認を、毎週火曜の定例にする</span><em class="who">森</em><em class="due">4/27</em></div>
+      <div class="chk step"><span class="box"></span><span>障害当番を月2回にする（シフト表の更新）</span><em class="who">青木</em><em class="due">4/30</em></div>
+    </div>
+    <div class="callout ok"><span class="ci">✓</span><div>次回の1on1で、最初にこの3つを確認する。</div></div>
+    <details class="why"><summary>案件Cの引き継ぎの範囲</summary><div class="body">設計はここまで森さんが書いた分を残し、実装とテストから村井さんが持つ。5月の第1週は2人で並んで作業する。</div></details>
+    <aside class="notes">→で1つずつ出し、担当と期日を声に出して確認する。</aside>
+  </section>
+
+  <section class="slide" data-title="次回">
+    <div class="bg"><nav class="side">
+      <div class="ws"><span class="wsi">S</span>サンプル開発部</div>
+      <div class="grp">1on1 ノート</div>
+      <a class="pg"><i class="ic">▸</i>2027年3月</a>
+      <a class="pg cur"><i class="ic">▾</i>2027年4月</a>
+      <div class="sub"><a href="#1" class=""><i class="ic">¶</i>ページの情報</a><a href="#2" class=""><i class="ic">§</i>前回の約束</a><a href="#3" class=""><i class="ic">§</i>今月の話</a><a href="#4" class=""><i class="ic">§</i>困りごとの深掘り</a><a href="#5" class=""><i class="ic">§</i>来月の負荷</a><a href="#6" class=""><i class="ic">§</i>次の約束</a><a href="#7" class="on"><i class="ic">§</i>次回の予定</a></div>
+      <a class="pg"><i class="ic">▸</i>テンプレート</a>
+    </nav><div class="crumb">1on1 ノート　/　2027年4月　/　次回の予定</div></div>
+    <h2>次回は 5月19日（水）16:00。</h2>
+    <div class="props" style="margin-top:4px">
+      <div class="p"><span class="k">場所</span><span>3階 小会議室 B（またはオンライン）</span></div>
+      <div class="p"><span class="k">持ちもの</span><span>このページ（約束の3つにチェックを入れておく）</span></div>
+      <div class="p"><span class="k">話したいこと</span><span>下にメモを書いておく</span></div>
+    </div>
+    <div class="todo" style="margin-top:22px">
+      <div class="chk"><span class="box"></span><span>約束の3つの確認</span><em class="who">2人</em></div>
+      <div class="chk"><span class="box"></span><span>案件Cの引き継ぎで困ったこと</span><em class="who">森</em></div>
+      <div class="chk"><span class="box"></span><span class="ph">話したいことを、ここに書き足す …</span></div>
+    </div>
+    <p class="hint">このページを複製すると、翌月の1on1ノートになります。</p>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      el.classList.toggle("neg", to < 0);
+      el.classList.toggle("pos", to > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => tween(el, run(f)));
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
+    el._v = 0; tween(el, Number(el.dataset.count));
+  });
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    render();
+    if (prev !== -1) countUp(slides[i]);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

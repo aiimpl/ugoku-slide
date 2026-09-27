@@ -1,0 +1,280 @@
+<!--meta
+{"title":"次の新作、どれを作る？ 企画会議資料","style":"シンセウェイブ","use":"ゲーム新作の企画","group":"レトロ・ポップ",
+ "aim":"ゲーム会社の企画チームが、社内の企画会議で次の新作を3案から1本に絞るための資料。",
+ "desc":"夕日と遠近のグリッド地平線、クロームのネオン文字。評価の重みを動かすと3つの企画案の順位が入れ替わり、販売本数から損益も出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=RocknRoll+One&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0d0221; --surface:rgb(24 8 58 / .78); --ink:#f6ecff; --muted:#c9b6f2; --line:rgb(255 255 255 / .16);
+  --accent:#ff4fa3; --accent-ink:#12002b; --cyan:#35e8ff; --sun1:#ffe45c; --sun2:#ff8a3d; --frame:#07010f;
+  --good:#5dffb0; --bad:#ff6b8b;
+  --radius:4px; --shadow:0 0 0 1px rgb(53 232 255 / .35),0 0 24px rgb(53 232 255 / .18);
+  --font:"RocknRoll One","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-head:"RocknRoll One","Hiragino Sans",sans-serif; --font-num:"Orbitron","Hiragino Sans",sans-serif;
+  --head-weight:400; --head-track:.02em; --pad-y:56px; --pad-x:84px;
+}
+.slide{isolation:isolate}
+/* ---- 空・太陽・グリッドの地平線 ---- */
+.slide>.bg{overflow:hidden;background:
+  radial-gradient(1.5px 1.5px at 12% 18%,#fff 60%,transparent),radial-gradient(1px 1px at 28% 8%,#fff 60%,transparent),
+  radial-gradient(1.5px 1.5px at 46% 22%,#fff 60%,transparent),radial-gradient(1px 1px at 63% 12%,#fff 60%,transparent),
+  radial-gradient(1.5px 1.5px at 81% 26%,#fff 60%,transparent),radial-gradient(1px 1px at 92% 9%,#fff 60%,transparent),
+  radial-gradient(1px 1px at 7% 40%,#fff 60%,transparent),radial-gradient(1px 1px at 37% 36%,#fff 60%,transparent),
+  linear-gradient(#0d0221 0%,#1c0540 46%,#4a0d63 64%,#8c1a6a 72%,#0d0221 72.2%)}
+.horizon{position:absolute;left:0;right:0;top:72%;height:2px;background:var(--accent);box-shadow:0 0 18px 4px rgb(255 79 163 / .7)}
+.floor{position:absolute;left:-60%;right:-60%;top:72%;height:520px;transform-origin:50% 0;transform:perspective(260px) rotateX(58deg);
+  background:repeating-linear-gradient(90deg,rgb(255 79 163 / .75) 0 2px,transparent 2px 70px),
+             repeating-linear-gradient(0deg,rgb(255 79 163 / .75) 0 2px,transparent 2px 56px);
+  animation:run 2.4s linear infinite}
+.floor::after{content:"";position:absolute;inset:0;background:linear-gradient(#0d0221 0%,transparent 45%)}
+@keyframes run{to{background-position:0 0,0 56px}}
+.sun{position:absolute;left:50%;top:72%;width:420px;height:420px;margin:-300px 0 0 -210px;border-radius:50%;
+  background:linear-gradient(var(--sun1) 8%,var(--sun2) 46%,var(--accent) 78%);
+  box-shadow:0 0 90px 10px rgb(255 79 163 / .35);
+  -webkit-mask:linear-gradient(#000 0 50%,transparent 50% 53%,#000 53% 60%,transparent 60% 64%,#000 64% 69%,transparent 69% 100%);
+  mask:linear-gradient(#000 0 50%,transparent 50% 53%,#000 53% 60%,transparent 60% 64%,#000 64% 69%,transparent 69% 100%)}
+.mtn{position:absolute;left:0;right:0;top:calc(72% - 90px);height:92px;background:#16042f;
+  clip-path:polygon(0 100%,0 62%,7% 30%,13% 58%,21% 12%,30% 64%,36% 44%,42% 100%,58% 100%,63% 40%,70% 70%,77% 18%,85% 56%,92% 26%,100% 58%,100% 100%)}
+/* 中身のページは地平線を低く */
+.slide.low>.bg{background:
+  radial-gradient(1.5px 1.5px at 12% 18%,#fff 60%,transparent),radial-gradient(1px 1px at 58% 8%,#fff 60%,transparent),
+  radial-gradient(1.5px 1.5px at 86% 22%,#fff 60%,transparent),radial-gradient(1px 1px at 33% 30%,#fff 60%,transparent),
+  linear-gradient(#0d0221 0%,#170437 70%,#3a0a55 87%,#0d0221 87.2%)}
+.slide.low .horizon,.slide.low .floor{top:87%}
+.slide.low .floor{opacity:.55}
+@media (prefers-reduced-motion:reduce){.floor{animation:none}}
+
+/* ---- 文字：クロームとネオン ---- */
+.chrome{font-family:var(--font-num);font-weight:900;letter-spacing:.04em;font-style:italic;
+  background:linear-gradient(#ffffff 0%,#d9f7ff 38%,#5a3ea8 49%,#1a0b3d 51%,#ff7cc8 60%,#fff2fb 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 14px rgb(255 79 163 / .6))}
+.neon{color:#fff;text-shadow:0 0 6px rgb(255 79 163 / .9),0 0 22px rgb(255 79 163 / .6)}
+.cy{color:var(--cyan);text-shadow:0 0 12px rgb(53 232 255 / .55)}
+.kicker{font:700 15px var(--font-num);letter-spacing:.34em;color:var(--cyan);text-shadow:0 0 10px rgb(53 232 255 / .6);display:flex;align-items:center;gap:14px}
+.kicker::before{content:"";width:34px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+h2{font-size:44px;line-height:1.35;margin:12px 0 30px;color:#fff;text-shadow:0 0 18px rgb(255 79 163 / .45)}
+h2 em{font-style:normal;color:var(--accent);text-shadow:0 0 14px rgb(255 79 163 / .8)}
+.lead{color:var(--muted);font-size:23px;line-height:1.75}
+.foot{color:var(--muted);font-size:15px}
+
+/* ---- 部品 ---- */
+.card{background:var(--surface);border:0;border-radius:4px;box-shadow:var(--shadow);backdrop-filter:blur(4px)}
+.card p{color:var(--muted);font-size:19px}
+details.why{background:rgb(24 8 58 / .9);border:1px solid rgb(53 232 255 / .45);border-radius:4px}
+details.why>summary{color:var(--cyan)}
+details.why>summary::before{background:transparent;border:1px solid var(--cyan);border-radius:2px}
+details.why>.body{color:var(--muted)}
+details.why.float[open]>.body{background:#1a0840;border-color:rgb(53 232 255 / .45);box-shadow:0 0 30px rgb(53 232 255 / .2)}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,var(--cyan),var(--accent));box-shadow:0 0 10px rgb(255 79 163 / .6)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-9px;transform:rotate(45deg);background:#0d0221;border:2px solid #fff;box-shadow:0 0 12px var(--accent)}
+input[type=range]::-moz-range-track{height:4px;background:linear-gradient(90deg,var(--cyan),var(--accent))}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:#0d0221;border:2px solid #fff;border-radius:0}
+.field>label{color:var(--muted);font-size:18px}
+.field>label b{font:700 22px var(--font-num);color:#fff}
+.meter{background:rgb(255 255 255 / .1);border-radius:0;height:10px}
+.meter>i{border-radius:0;background:linear-gradient(90deg,var(--cyan),var(--accent));box-shadow:0 0 12px rgb(255 79 163 / .7)}
+
+/* ---- 表紙 ---- */
+.cover-top{position:absolute;left:0;right:0;top:78px;text-align:center}
+.logo{font-size:118px;line-height:1;margin:14px 0 0}
+.cover-sub{position:absolute;left:0;right:0;top:568px;text-align:center}
+.cover-sub p{font-size:30px;margin:0;color:#fff;text-shadow:0 0 16px rgb(255 79 163 / .8),0 2px 0 #0d0221}
+.cover-sub small{display:block;margin-top:14px;font:500 15px var(--font-num);letter-spacing:.3em;color:var(--cyan)}
+
+/* ---- 3つの案：カートリッジ ---- */
+.cart{position:relative;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.cart .art{height:150px;position:relative;overflow:hidden;border-bottom:1px solid rgb(53 232 255 / .35)}
+.cart .art b{position:absolute;left:22px;bottom:14px;font:900 italic 34px/1 var(--font-num);letter-spacing:.03em;color:#fff;text-shadow:0 0 12px var(--c)}
+.cart .art span{position:absolute;right:18px;top:16px;font:700 13px var(--font-num);letter-spacing:.2em;color:#0d0221;background:var(--c);padding:4px 10px}
+.cart .in{padding:20px 24px 22px;display:flex;flex-direction:column;flex:1}
+.cart h3{font-size:25px;line-height:1.45;margin-bottom:10px;color:#fff}
+.cart p{font-size:18px;line-height:1.7;margin:0}
+.cart dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:auto 0 0;padding-top:14px;border-top:1px dashed var(--line);font-size:17px}
+.cart dt{color:var(--muted)}.cart dd{margin:0;color:#fff;font-family:var(--font-num);font-weight:700;text-align:right}
+.a1{--c:var(--accent);background:linear-gradient(transparent 60%,rgb(255 79 163 / .35)),repeating-linear-gradient(90deg,transparent 0 38px,rgb(255 79 163 / .5) 38px 40px),linear-gradient(#25064d,#5a0f6e)}
+.a2{--c:var(--cyan);background:repeating-linear-gradient(0deg,transparent 0 14px,rgb(53 232 255 / .18) 14px 16px),repeating-linear-gradient(90deg,transparent 0 14px,rgb(53 232 255 / .18) 14px 16px),linear-gradient(135deg,#051a3d,#1d0a47)}
+.a3{--c:var(--sun1);background:radial-gradient(circle at 70% 120%,rgb(255 228 92 / .7) 0 30%,transparent 31%),radial-gradient(circle at 70% 120%,transparent 0 40%,rgb(255 138 61 / .5) 41% 43%,transparent 44%),linear-gradient(#2a0845,#6b1452)}
+
+/* ---- グラフ ---- */
+.chart{border-bottom:2px solid var(--cyan);box-shadow:0 8px 16px -12px var(--cyan);height:330px;gap:30px}
+.chart>.col>i{border-radius:0;background:linear-gradient(var(--accent),#7a2ad8);box-shadow:0 0 18px rgb(255 79 163 / .45)}
+.chart>.col.dim>i{background:linear-gradient(rgb(255 79 163 / .45),rgb(122 42 216 / .35))}
+.chart>.col::before{font:700 18px var(--font-num);color:#fff}
+.chart>.col::after{font:500 15px var(--font-num);color:var(--muted);letter-spacing:.1em}
+.kpi .label{color:var(--muted);font-size:18px}
+.kpi .value{font:900 italic 62px/1.1 var(--font-num);color:#fff;text-shadow:0 0 18px rgb(53 232 255 / .6)}
+
+/* ---- 順位 ---- */
+.rank{grid-template-columns:360px 1fr;gap:50px}
+.rank .opt{background:rgb(24 8 58 / .86);border:1px solid rgb(255 255 255 / .18);border-radius:4px;box-shadow:none;padding:16px 22px}
+.rank .opt .name{font-size:24px;font-weight:400;color:#fff}
+.rank .opt .score{font:900 italic 34px var(--font-num);color:#fff}
+.rank .opt .note{color:var(--muted);font-size:16px}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 32px rgb(255 79 163 / .45)}
+.rank .opt.top .name::after{content:"推奨";background:var(--accent);color:#12002b;border-radius:2px;font-family:var(--font);font-size:15px;padding:3px 10px}
+
+/* ---- 損益 ---- */
+.pl{display:grid;grid-template-columns:430px 1fr;gap:54px}
+.big-out{font:900 italic 112px/1 var(--font-num);letter-spacing:-.01em;color:#fff;text-shadow:0 0 22px rgb(255 79 163 / .7)}
+.big-out.neg{color:var(--bad)}.big-out.pos{color:#fff}
+.outs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+.outs>div{border-top:1px solid rgb(53 232 255 / .5);padding-top:12px}
+.outs small{color:var(--muted);font-size:17px}
+.outs b{display:block;font:700 34px/1.3 var(--font-num);color:#fff}
+
+.vsbar{margin-top:28px;display:grid;gap:14px}
+.vsbar>div{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:16px;font-size:17px;color:var(--muted)}
+.vsbar .meter{height:14px}
+.meter.alt>i{background:repeating-linear-gradient(90deg,#fff 0 6px,transparent 6px 10px);box-shadow:0 0 10px rgb(255 255 255 / .5)}
+/* ---- スケジュール ---- */
+.lane{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin-top:24px}
+.lane::before{content:"";position:absolute;left:0;right:0;top:25px;height:2px;background:linear-gradient(90deg,var(--cyan),var(--accent));box-shadow:0 0 12px var(--accent)}
+.lane .m{padding-right:26px}
+.lane .m i{display:block;width:20px;height:20px;margin:16px 0 26px;transform:rotate(45deg);background:#0d0221;border:2px solid #fff;box-shadow:0 0 12px var(--accent)}
+.lane .m small{font:700 16px var(--font-num);letter-spacing:.2em;color:var(--cyan)}
+.lane .m h3{font-size:30px;line-height:1.4;margin:8px 0 10px;color:#fff;font-weight:400}
+.lane .m p{font-size:20px;line-height:1.7;color:var(--muted)}
+
+.strip{margin-top:auto;margin-bottom:84px;gap:0;border-top:1px solid rgb(53 232 255 / .4);border-bottom:1px solid rgb(53 232 255 / .4);background:rgb(13 2 33 / .6)}
+.strip>div{padding:14px 26px;border-right:1px solid var(--line)}
+.strip>div:last-child{border:0}
+.strip small{color:var(--muted);font-size:17px}
+.strip b{display:block;font:900 italic 52px/1.15 var(--font-num);color:#fff;text-shadow:0 0 16px rgb(255 79 163 / .6)}
+.strip b span{font:400 22px var(--font);margin-left:6px;font-style:normal}
+/* ---- 締め ---- */
+.end{position:absolute;left:0;right:0;top:92px;text-align:center}
+.end h1{font-size:84px;line-height:1.2}
+.asks{position:absolute;left:170px;right:170px;top:560px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.asks>div{background:rgb(13 2 33 / .82);border:1px solid var(--cyan);box-shadow:0 0 22px rgb(53 232 255 / .3);padding:16px 24px;text-align:left}
+.asks small{font:700 14px var(--font-num);letter-spacing:.24em;color:var(--cyan)}
+.asks b{display:block;font-size:26px;font-weight:400;color:#fff;margin-top:4px}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"><div class="sun"></div><div class="mtn"></div><div class="floor"></div><div class="horizon"></div></div>
+    <div class="cover-top">
+      <div class="kicker" style="justify-content:center">SAMPLE GAMES ／ 企画会議 2026.10</div>
+      <p class="logo chrome">NEXT&nbsp;GAME</p>
+    </div>
+    <div class="cover-sub">
+      <p>次の新作を、3案から1本に決める。</p>
+      <small>PITCH × 3 — VOTE × 1</small>
+    </div>
+    <aside class="notes">今日のゴールは「1本に決める」こと。3案の良し悪しを語り合う会ではない、と最初に言う。所要30分。</aside>
+  </section>
+
+  <section class="slide low" data-title="3つの案">
+    <div class="bg"><div class="floor"></div><div class="horizon"></div></div>
+    <div class="kicker">THE PITCHES</div>
+    <h2>候補は3本。どれも<em>80年代の夜</em>が舞台。</h2>
+    <div class="grid cols-3 fill" style="gap:28px;padding-bottom:50px">
+      <div class="card cart step"><div class="art a1"><span>RACING</span><b>NEON DRIFT</b></div>
+        <div class="in"><h3>夜の湾岸を流す、<br>1分間のドリフト</h3><p>曲に合わせて曲がると加点。1プレイ60秒で何度も遊べる。</p>
+        <dl><dt>開発</dt><dd>18か月</dd><dt>人数</dt><dd>14人</dd></dl></div></div>
+      <div class="card cart step"><div class="art a2"><span>ACTION</span><b>PIXEL HEIST</b></div>
+        <div class="in"><h3>4人で忍び込む、<br>ドット絵の泥棒劇</h3><p>協力プレイが前提。配信で見て楽しい作りにする。</p>
+        <dl><dt>開発</dt><dd>26か月</dd><dt>人数</dt><dd>22人</dd></dl></div></div>
+      <div class="card cart step"><div class="art a3"><span>RHYTHM</span><b>MIDNIGHT FM</b></div>
+        <div class="in"><h3>深夜ラジオの<br>DJになるリズムゲーム</h3><p>曲は社内で作る。追加曲を毎月売れる。</p>
+        <dl><dt>開発</dt><dd>12か月</dd><dt>人数</dt><dd>9人</dd></dl></div></div>
+    </div>
+    <aside class="notes">→ で1本ずつ出す。1本につき30秒。細かい仕様は聞かれても「企画書の別紙で」と流す。</aside>
+  </section>
+
+  <section class="slide low" data-title="市場">
+    <div class="bg"><div class="floor"></div><div class="horizon"></div></div>
+    <div class="kicker">MARKET</div>
+    <h2>「レトロな新作」の売上は、<br>4年で<em>3.2倍</em>になった。</h2>
+    <div class="split fill" style="grid-template-columns:1.25fr .75fr;gap:56px">
+      <div class="chart" style="margin-top:6px">
+        <div class="col dim" style="--v:30" data-label="2022" data-val="41"><i></i></div>
+        <div class="col dim" style="--v:44" data-label="2023" data-val="60"><i></i></div>
+        <div class="col dim" style="--v:58" data-label="2024" data-val="79"><i></i></div>
+        <div class="col dim" style="--v:77" data-label="2025" data-val="104"><i></i></div>
+        <div class="col" style="--v:96" data-label="2026" data-val="131"><i></i></div>
+      </div>
+      <div>
+        <div class="kpi" style="margin-bottom:26px"><div class="label">2026年の国内売上（見込み）</div><div class="value"><span data-count="131"></span><small style="font-size:30px">億円</small></div></div>
+        <div class="kpi"><div class="label">そのうち、1人〜2人で遊ぶ作品</div><div class="value"><span data-count="72"></span><small style="font-size:30px">%</small></div></div>
+        <details class="why"><summary>数字の出どころ</summary><div class="body">社内の市場調査チームが、ドット絵・80年代風を打ち出した家庭用・PC作品の売上を推計（単位：億円）。数字は架空のサンプルです。</div></details>
+      </div>
+    </div>
+    <aside class="notes">市場は伸びている、ただし大作ではなく小さく作って長く売る作品が中心、という点を強調する。</aside>
+  </section>
+
+  <section class="slide low" data-title="どれを選ぶか">
+    <div class="bg"><div class="floor"></div><div class="horizon"></div></div>
+    <div class="kicker">WEIGH IT ／ 動かせます</div>
+    <h2>何を重く見るかで、1位は入れ替わる。</h2>
+    <div data-rank>
+      <script type="application/json">{"max":5,"rowHeight":126,
+        "criteria":[{"key":"sales","label":"売上の見込み","weight":4},{"key":"cost","label":"開発の軽さ","weight":3},{"key":"fresh","label":"新しさ","weight":2},{"key":"team","label":"今のチームで作れるか","weight":3}],
+        "options":[
+          {"name":"NEON DRIFT","note":"レース ／ 18か月 ／ 14人","scores":{"sales":4,"cost":3,"fresh":3,"team":5}},
+          {"name":"PIXEL HEIST","note":"協力アクション ／ 26か月 ／ 22人","scores":{"sales":5,"cost":1,"fresh":4,"team":2}},
+          {"name":"MIDNIGHT FM","note":"リズム ／ 12か月 ／ 9人","scores":{"sales":2,"cost":5,"fresh":5,"team":3}}]}</script>
+    </div>
+    <aside class="notes">会議の本番はここ。参加者に「あなたなら何を重く見る？」と聞きながら重みを動かす。売上を最重視すると PIXEL HEIST、軽さを重く見ると MIDNIGHT FM が上がる。</aside>
+  </section>
+
+  <section class="slide low" data-title="損益">
+    <div class="bg"><div class="floor"></div><div class="horizon"></div></div>
+    <div class="kicker">PAYBACK ／ 動かせます</div>
+    <h2>NEON DRIFT は、<em>9万本</em>で元が取れる。</h2>
+    <div class="pl fill" data-calc data-let="net = price*0.7; sales = units*1e4*net; cost = dev*1e8 + 0.6e8; profit = sales - cost; be = cost/net">
+      <div>
+        <div class="field"><label>販売本数 <b data-show="units" data-unit="万本"></b></label><input type="range" name="units" min="2" max="30" value="14"></div>
+        <div class="field"><label>価格（税抜） <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="1500" max="6000" step="100" value="3200"></div>
+        <div class="field"><label>開発費 <b data-show="dev" data-format="dec1" data-unit="億円"></b></label><input type="range" name="dev" min="0.8" max="4" step="0.1" value="1.4"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">手元に残るのは価格の 70%（販売手数料 30% を引く）。<br>費用 ＝ 開発費 ＋ 宣伝費 6,000万円。<br>元が取れる本数 ＝ 費用 ÷ 1本あたりの手取り。</div></details>
+      </div>
+      <div>
+        <small style="color:var(--muted);font-size:18px">利益</small>
+        <div class="big-out" data-out="profit" data-format="man" data-sign></div>
+        <div class="outs">
+          <div><small>元が取れる本数</small><b data-out="be/1e4" data-format="dec1" data-unit="万本"></b></div>
+          <div><small>売上</small><b data-out="sales" data-format="man"></b></div>
+        </div>
+        <div class="vsbar"><div><span>販売本数</span><div class="meter" data-bar="units" data-max="30"><i></i></div></div>
+          <div><span>元が取れる本数</span><div class="meter alt" data-bar="be/1e4" data-max="30"><i></i></div></div></div>
+        <p class="foot" style="position:static;margin-top:18px">数字は架空のサンプルです。目盛りは30万本まで。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide low" data-title="スケジュール">
+    <div class="bg"><div class="floor"></div><div class="horizon"></div></div>
+    <div class="kicker">ROADMAP</div>
+    <h2>決まれば、2028年の春に出せる。</h2>
+    <div class="lane">
+      <div class="m step"><small>2026.11</small><i></i><h3>遊べる試作</h3><p>1コースだけの試作を6週間で作り、社内で遊ぶ。</p></div>
+      <div class="m step"><small>2027.04</small><i></i><h3>体験版を配る</h3><p>イベントで体験版を出し、反応を見て作り直す。</p></div>
+      <div class="m step"><small>2027.10</small><i></i><h3>曲とコースを量産</h3><p>曲は12曲、コースは24本。外注は背景だけ。</p></div>
+      <div class="m step"><small>2028.04</small><i></i><h3 class="neon">発売</h3><p>家庭用とPCで同時に出す。価格は 3,200円。</p></div>
+    </div>
+    <div class="grid cols-3 strip">
+      <div><small>チーム</small><b>14<span>人</span></b></div>
+      <div><small>開発費</small><b>1.4<span>億円</span></b></div>
+      <div><small>発売まで</small><b>18<span>か月</span></b></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="決めること">
+    <div class="bg"><div class="sun"></div><div class="mtn"></div><div class="floor"></div><div class="horizon"></div></div>
+    <div class="end">
+      <div class="kicker" style="justify-content:center">DECISION</div>
+      <h1 class="neon" style="margin-top:16px">今日、1本に決める。</h1>
+    </div>
+    <div class="asks">
+      <div class="step"><small>01 ／ VOTE</small><b>3案から1本を選ぶ</b></div>
+      <div class="step"><small>02 ／ BUDGET</small><b>試作費 1,200万円を承認</b></div>
+    </div>
+    <aside class="notes">重みの議論で出た結論を読み上げてから、挙手で決める。決まらなければ、試作を2本並行（費用は倍）という逃げ道もある。</aside>
+  </section>
+
+</main>

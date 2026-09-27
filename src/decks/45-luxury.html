@@ -1,0 +1,231 @@
+<!--meta
+{"title":"ザ・サンプルレジデンス 桜ヶ丘 ご案内","style":"黒と金（ラグジュアリー）","use":"高級マンションの販売説明","group":"ビジネス定番",
+ "aim":"分譲マンションの販売担当が、モデルルームの商談席でご検討中のお客さまに、住まいの価値・間取り・月々のご返済を落ち着いて示すための資料。",
+ "desc":"深い黒に金の細線、セリフ体と大きな余白。間取りは3タイプを切り替えて図面で見せ、借入額・金利・年数を動かすと月々のご返済がその場で出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Shippori+Mincho:wght@400;600&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0d0c0b; --surface:#15130f; --ink:#efe8da; --muted:#aaa293; --line:rgb(200 164 92 / .35); --accent:#c9a65e; --accent-ink:#0d0c0b;
+  --gold:#c9a65e; --good:#d8bf85; --bad:#d99a86; --frame:#000; --radius:0; --shadow:none;
+  --font:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif; --font-en:"Cormorant Garamond","Times New Roman",serif; --font-num:"Cormorant Garamond",serif;
+  --head-weight:400; --head-track:.08em; --pad-y:84px; --pad-x:118px;
+}
+/* 金の細い額縁と四隅の飾り */
+.slide>.bg{background:radial-gradient(ellipse 900px 520px at 70% 20%,rgb(201 166 94 / .07),transparent 70%),var(--bg)}
+.slide>.bg::before{content:"";position:absolute;inset:30px;border:1px solid rgb(201 166 94 / .45)}
+.slide>.bg::after{content:"";position:absolute;inset:38px;
+  background:
+   linear-gradient(var(--gold),var(--gold)) 0 0/34px 1px,linear-gradient(var(--gold),var(--gold)) 0 0/1px 34px,
+   linear-gradient(var(--gold),var(--gold)) 100% 0/34px 1px,linear-gradient(var(--gold),var(--gold)) 100% 0/1px 34px,
+   linear-gradient(var(--gold),var(--gold)) 0 100%/34px 1px,linear-gradient(var(--gold),var(--gold)) 0 100%/1px 34px,
+   linear-gradient(var(--gold),var(--gold)) 100% 100%/34px 1px,linear-gradient(var(--gold),var(--gold)) 100% 100%/1px 34px;background-repeat:no-repeat}
+.slide{color:var(--ink)}
+.en{font-family:var(--font-en);letter-spacing:.32em;text-transform:uppercase;font-weight:500}
+.kicker{font-family:var(--font-en);font-weight:500;color:var(--gold);letter-spacing:.42em;font-size:16px;display:flex;align-items:center;gap:18px;margin-bottom:26px}
+.kicker::before{content:"";width:48px;height:1px;background:var(--gold)}
+h2{font-size:44px;font-weight:400;line-height:1.55;letter-spacing:.08em;margin-bottom:30px}
+.gold{background:linear-gradient(100deg,#a8823c 0%,#f0d99b 38%,#c29a52 62%,#e9cf8f 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hair{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);border:0;margin:0}
+.num{font-family:var(--font-num);font-weight:300;letter-spacing:.02em;line-height:1}
+.it{font-family:var(--font-en);font-style:italic;font-weight:300}
+.spec{display:grid;grid-template-columns:120px 1fr;border-top:1px solid var(--line);font-size:19px}
+.spec>*{padding:12px 0;border-bottom:1px solid var(--line)}
+.spec dt{color:var(--gold);font-family:var(--font-en);letter-spacing:.2em;font-size:16px;padding-top:16px}
+.spec dd{margin:0;letter-spacing:.06em}
+/* 部品を金と黒に */
+.tabs{background:none;padding:0;gap:44px;border-radius:0;margin-bottom:26px}
+.tabs>[data-tab]{padding:6px 0;border-radius:0;font-family:var(--font-en);font-weight:500;font-size:22px;letter-spacing:.24em;color:var(--muted);border-bottom:1px solid transparent}
+.tabs>[data-tab][aria-selected=true]{background:none;color:var(--gold);box-shadow:none;border-bottom-color:var(--gold)}
+.field{margin-bottom:26px}
+.field>label{color:var(--muted);font-size:18px;letter-spacing:.14em}
+.field>label b{font-family:var(--font-num);font-weight:500;font-size:30px;color:var(--ink);letter-spacing:.02em}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:26px}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--gold)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;margin-top:-7px;background:var(--bg);border:1px solid var(--gold);transform:rotate(45deg)}
+input[type=range]::-moz-range-track{height:1px;background:var(--gold)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:0;background:var(--bg);border:1px solid var(--gold);transform:rotate(45deg)}
+details.why{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;margin-top:22px}
+details.why>summary{color:var(--gold);font-size:16px;letter-spacing:.16em;font-weight:400;padding-left:0}
+details.why>summary::before{background:transparent;border:1px solid var(--gold);border-radius:0;rotate:45deg;width:14px;height:14px;font-size:0}
+details.why>.body{color:var(--muted);font-size:18px;padding-left:0}
+ol.list{font-size:22px;gap:0;letter-spacing:.06em}
+ol.list>li{padding:22px 0 22px 90px;border-bottom:1px solid var(--line)}
+ol.list>li::before{background:none;color:var(--gold);font-family:var(--font-num);font-weight:300;font-size:40px;width:auto;height:auto;top:14px;content:"0" counter(n)}
+ol.list>li small{display:block;color:var(--muted);font-size:18px;margin-top:4px}
+.foot{left:118px;bottom:46px;color:var(--muted);font-size:14px;letter-spacing:.12em}
+/* 図面 */
+.fp{flex:1;min-height:0;display:grid;grid-template-columns:540px 1fr;gap:72px;align-items:center}
+.fp>svg{height:400px}
+.plan{width:100%;height:100%}
+.plan .w{fill:none;stroke:var(--gold);stroke-width:2.5}
+.plan .r{fill:rgb(201 166 94 / .05);stroke:var(--gold);stroke-width:1}
+.plan .b{fill:none;stroke:var(--gold);stroke-width:1;stroke-dasharray:4 5}
+.plan text{fill:var(--ink);font:15px var(--font);letter-spacing:.1em;text-anchor:middle}
+.plan text.s{fill:var(--muted);font-size:12px}
+.map circle.ring{fill:none;stroke:rgb(201 166 94 / .45);stroke-width:1}
+.map text{fill:var(--muted);font:14px var(--font);letter-spacing:.1em}
+.map .pt{fill:var(--gold)}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide center" data-title="表紙">
+    <div class="bg"></div>
+    <svg width="70" height="70" viewBox="0 0 70 70" aria-hidden="true" style="margin-bottom:26px">
+      <path d="M35 4 L66 35 L35 66 L4 35Z" fill="none" stroke="#c9a65e" stroke-width="1"/><path d="M35 14 L56 35 L35 56 L14 35Z" fill="none" stroke="#c9a65e" stroke-width=".8"/>
+      <text x="35" y="42" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="20" fill="#c9a65e">S</text>
+    </svg>
+    <p class="en" style="color:var(--gold);font-size:18px;margin:0 0 22px">The Sample Residence</p>
+    <h1 style="font-size:64px;font-weight:400;letter-spacing:.2em;margin-right:-.2em;line-height:1.3">ザ・サンプルレジデンス<br><span style="font-size:40px;letter-spacing:.5em;margin-right:-.5em">桜ヶ丘</span></h1>
+    <hr class="hair" style="width:420px;margin:40px 0 30px">
+    <p style="font-size:20px;letter-spacing:.3em;color:var(--muted);margin:0">全48邸　／　2027年3月 竣工予定</p>
+    <aside class="notes">席に着かれたら、まず表紙のままで一呼吸。物件名を読み上げ、「本日は30分ほどお時間をいただきます」と伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="コンセプト">
+    <div class="bg"></div>
+    <p class="kicker">CONCEPT</p>
+    <div style="display:grid;grid-template-columns:1fr 1px 1fr;gap:70px;flex:1;align-items:center">
+      <div>
+        <h2 style="font-size:48px;line-height:1.6">駅から四分、<br>緑地に面した<br><span class="gold">四十八邸</span>だけの<br>住まい。</h2>
+        <p style="font-size:20px;line-height:2.1;color:var(--muted);letter-spacing:.08em;margin:0">南側は、将来も建物の建たない公園緑地。<br>一邸ごとの窓の先に、季節が変わります。</p>
+      </div>
+      <div style="width:1px;height:100%;background:linear-gradient(transparent,var(--gold),transparent)"></div>
+      <div style="display:grid;gap:34px">
+        <div><p class="en" style="color:var(--gold);font-size:14px;margin:0 0 6px">Station</p><p style="margin:0;font-size:22px;letter-spacing:.1em">駅まで徒歩　<span class="num gold" style="font-size:92px" data-count="4">4</span>　分</p></div>
+        <div><p class="en" style="color:var(--gold);font-size:14px;margin:0 0 6px">Residences</p><p style="margin:0;font-size:22px;letter-spacing:.1em">総戸数　<span class="num gold" style="font-size:92px" data-count="48">48</span>　邸</p></div>
+        <div><p class="en" style="color:var(--gold);font-size:14px;margin:0 0 6px">Ceiling</p><p style="margin:0;font-size:22px;letter-spacing:.1em">天井高　<span class="num gold" style="font-size:92px" data-count="2.7" data-format="dec1">2.7</span>　m</p></div>
+      </div>
+    </div>
+    <aside class="notes">数字は開くたびに静かに数え上がる。「48邸だけ」を一番ゆっくり言う。</aside>
+  </section>
+
+  <section class="slide" data-title="立地">
+    <div class="bg"></div>
+    <p class="kicker">LOCATION</p>
+    <div style="display:grid;grid-template-columns:460px 1fr;gap:80px;flex:1">
+      <svg class="map" viewBox="0 0 460 460" aria-label="周辺の距離を表した図" style="width:460px;height:460px;margin-top:-20px">
+        <circle class="ring" cx="230" cy="230" r="90"/><circle class="ring" cx="230" cy="230" r="170" stroke-dasharray="3 6"/><circle class="ring" cx="230" cy="230" r="226" stroke-dasharray="1 7"/>
+        <path d="M0 150 C120 170 320 120 460 160" stroke="rgb(201 166 94 / .6)" stroke-width="1" fill="none"/>
+        <path d="M0 155 C120 175 320 125 460 165" stroke="rgb(201 166 94 / .3)" stroke-width="1" fill="none"/>
+        <rect x="250" y="250" width="150" height="120" fill="rgb(201 166 94 / .08)" stroke="rgb(201 166 94 / .4)"/>
+        <path d="M230 222 L238 230 L230 238 L222 230Z" class="pt"/>
+        <circle class="pt" cx="170" cy="160" r="4"/><circle class="pt" cx="120" cy="330" r="4"/><circle class="pt" cx="330" cy="90" r="4"/>
+        <text x="180" y="152">駅</text><text x="270" y="318">公園緑地</text><text x="130" y="352">小学校</text><text x="340" y="84">病院</text>
+        <text x="236" y="136" style="font-size:12px">400m</text><text x="236" y="56" style="font-size:12px">800m</text>
+      </svg>
+      <div style="display:flex;flex-direction:column;justify-content:center">
+        <h2 style="margin-bottom:10px;font-size:40px">毎日の行き先が、<br>歩いて十分の輪の中に。</h2>
+        <ol class="list">
+          <li class="step">サンプル線「桜ヶ丘」駅<small>徒歩4分（約320m）　都心まで直通18分</small></li>
+          <li class="step">桜ヶ丘公園緑地<small>徒歩1分（約60m）　約3.2haの芝生と並木</small></li>
+          <li class="step">区立 桜ヶ丘小学校<small>徒歩7分（約540m）</small></li>
+        </ol>
+      </div>
+    </div>
+    <aside class="notes">→キーで一件ずつ。地図の菱形がこの物件。お子さまのいるご家族には小学校、ご夫婦のみなら公園を先に話す。</aside>
+  </section>
+
+  <section class="slide" data-title="間取り">
+    <div class="bg"></div>
+    <p class="kicker">FLOOR PLAN</p>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">Type A</button><button data-tab="b" data-default>Type B</button><button data-tab="c">Type C</button></div>
+      <div data-panel="a" class="fp">
+        <svg class="plan" viewBox="0 0 440 340" aria-label="Type A の図面">
+          <rect class="r" x="20" y="20" width="260" height="280"/><rect class="r" x="280" y="20" width="140" height="150"/>
+          <rect class="r" x="280" y="170" width="70" height="70"/><rect class="r" x="350" y="170" width="70" height="70"/><rect class="r" x="280" y="240" width="70" height="60"/><rect class="r" x="350" y="240" width="70" height="60"/>
+          <rect class="w" x="20" y="20" width="400" height="280"/><rect class="b" x="20" y="300" width="260" height="30"/>
+          <text x="150" y="160">LDK</text><text class="s" x="150" y="182">15.2帖</text><text x="350" y="92">洋室</text><text class="s" x="350" y="114">6.1帖</text>
+          <text class="s" x="315" y="210">浴室</text><text class="s" x="385" y="210">洗面</text><text class="s" x="315" y="275">WC</text><text class="s" x="385" y="275">玄関</text><text class="s" x="150" y="320">バルコニー</text>
+        </svg>
+        <div>
+          <p class="en" style="color:var(--gold);font-size:16px;margin:0">Type A　—　1LDK</p>
+          <p style="margin:6px 0 26px;font-size:30px;letter-spacing:.1em">おひとり、またはご夫婦に。</p>
+          <dl class="spec" style="margin:0"><dt>AREA</dt><dd>専有面積 58.40㎡</dd><dt>PRICE</dt><dd><span class="num gold" style="font-size:44px">7,280</span>　万円〜</dd><dt>UNITS</dt><dd>12邸（2〜6階）</dd></dl>
+        </div>
+      </div>
+      <div data-panel="b" class="fp">
+        <svg class="plan" viewBox="0 0 440 340" aria-label="Type B の図面">
+          <rect class="r" x="20" y="20" width="150" height="130"/><rect class="r" x="20" y="150" width="150" height="150"/><rect class="r" x="170" y="110" width="250" height="190"/>
+          <rect class="r" x="170" y="20" width="90" height="90"/><rect class="r" x="260" y="20" width="70" height="90"/><rect class="r" x="330" y="20" width="90" height="90"/>
+          <rect class="w" x="20" y="20" width="400" height="280"/><rect class="b" x="20" y="300" width="400" height="30"/>
+          <text x="95" y="90">洋室1</text><text class="s" x="95" y="112">6.0帖</text><text x="95" y="222">洋室2</text><text class="s" x="95" y="244">5.5帖</text>
+          <text x="295" y="200">LDK</text><text class="s" x="295" y="222">17.8帖</text><text class="s" x="215" y="70">浴室</text><text class="s" x="295" y="70">洗面</text><text class="s" x="375" y="70">玄関</text><text class="s" x="220" y="320">ワイドバルコニー</text>
+        </svg>
+        <div>
+          <p class="en" style="color:var(--gold);font-size:16px;margin:0">Type B　—　2LDK</p>
+          <p style="margin:6px 0 26px;font-size:30px;letter-spacing:.1em">南に開く、17.8帖のLDK。</p>
+          <dl class="spec" style="margin:0"><dt>AREA</dt><dd>専有面積 74.10㎡</dd><dt>PRICE</dt><dd><span class="num gold" style="font-size:44px">8,980</span>　万円〜</dd><dt>UNITS</dt><dd>24邸（2〜8階）</dd></dl>
+        </div>
+      </div>
+      <div data-panel="c" class="fp">
+        <svg class="plan" viewBox="0 0 440 340" aria-label="Type C の図面">
+          <rect class="r" x="20" y="20" width="130" height="120"/><rect class="r" x="150" y="20" width="130" height="120"/><rect class="r" x="20" y="140" width="130" height="160"/><rect class="r" x="150" y="140" width="270" height="160"/>
+          <rect class="r" x="280" y="20" width="70" height="70"/><rect class="r" x="350" y="20" width="70" height="70"/><rect class="r" x="280" y="90" width="140" height="50"/>
+          <rect class="w" x="20" y="20" width="400" height="280"/><rect class="b" x="20" y="300" width="400" height="30"/>
+          <text x="85" y="80">洋室1</text><text class="s" x="85" y="102">6.2帖</text><text x="215" y="80">洋室2</text><text class="s" x="215" y="102">5.8帖</text><text x="85" y="222">主寝室</text><text class="s" x="85" y="244">7.5帖</text>
+          <text x="285" y="222">LDK</text><text class="s" x="285" y="244">20.4帖</text><text class="s" x="315" y="60">浴室</text><text class="s" x="385" y="60">洗面</text><text class="s" x="350" y="120">玄関</text><text class="s" x="220" y="320">ルーフバルコニー</text>
+        </svg>
+        <div>
+          <p class="en" style="color:var(--gold);font-size:16px;margin:0">Type C　—　3LDK</p>
+          <p style="margin:6px 0 26px;font-size:30px;letter-spacing:.1em">最上階だけの、角住戸。</p>
+          <dl class="spec" style="margin:0"><dt>AREA</dt><dd>専有面積 96.80㎡</dd><dt>PRICE</dt><dd><span class="num gold" style="font-size:44px">13,800</span>　万円〜</dd><dt>UNITS</dt><dd>4邸（9階）</dd></dl>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">最初は一番人気の Type B を開いておく（data-default）。お客さまのご家族構成を聞いてから A か C に切り替える。</aside>
+  </section>
+
+  <section class="slide" data-title="ご返済の目安">
+    <div class="bg"></div>
+    <p class="kicker">FINANCE</p>
+    <h2 style="margin-bottom:34px">月々のご返済を、この場でお確かめください。</h2>
+    <div data-calc class="fill" data-let="P = loan*1e4; r = rate/100/12; n = yrs*12; m = r > 0 ? P*r/(1-pow(1+r,-n)) : P/n; tot = m*n" style="display:grid;grid-template-columns:1fr 1px 1fr;gap:70px">
+      <div>
+        <div class="field"><label>お借入額 <b data-show="loan" data-unit=" 万円"></b></label><input type="range" name="loan" min="3000" max="12000" step="100" value="7500"></div>
+        <div class="field"><label>金利（年） <b data-show="rate" data-format="dec1" data-unit=" %"></b></label><input type="range" name="rate" min="0.3" max="2.5" step="0.1" value="0.8"></div>
+        <div class="field"><label>ご返済期間 <b data-show="yrs" data-unit=" 年"></b></label><input type="range" name="yrs" min="15" max="35" step="1" value="35"></div>
+        <details class="why"><summary>計算の前提</summary><div class="body">元利均等返済・ボーナス払いなし・全期間同じ金利として計算。実際の金利や審査は金融機関によって異なります。</div></details>
+      </div>
+      <div style="background:linear-gradient(transparent,var(--gold),transparent)"></div>
+      <div style="display:flex;flex-direction:column;justify-content:center">
+        <p class="en" style="color:var(--gold);font-size:15px;margin:0">Monthly</p>
+        <p style="margin:4px 0 30px;font-size:22px;letter-spacing:.1em">月々　<span class="num gold" style="font-size:96px" data-out="m/1e4" data-format="dec1"></span>　万円</p>
+        <dl class="spec" style="margin:0"><dt>TOTAL</dt><dd>総返済額　<span class="num" style="font-size:30px" data-out="tot" data-format="man"></span></dd><dt>INTEREST</dt><dd>うち利息　<span class="num" style="font-size:30px" data-out="tot-P" data-format="man"></span></dd></dl>
+      </div>
+    </div>
+    <p class="foot">金額・金利は架空のサンプルです。</p>
+    <aside class="notes">お客さまの自己資金を伺って、借入額をその場で合わせる。金利を 0.3% 上げたときの差も一緒に見せると安心につながる。</aside>
+  </section>
+
+  <section class="slide" data-title="ご契約まで">
+    <div class="bg"></div>
+    <p class="kicker">SCHEDULE</p>
+    <div style="display:grid;grid-template-columns:400px 1fr;gap:80px;flex:1">
+      <div>
+        <h2 style="font-size:46px">ご見学から<br>お引き渡しまで。</h2>
+        <p style="font-size:19px;line-height:2;color:var(--muted);letter-spacing:.06em">第1期は12邸。お申し込みは先着順ではなく、登録いただいた方の抽選となります。</p>
+      </div>
+      <ol class="list">
+        <li class="step">ご見学・ご相談<small>モデルルーム（ご予約制）　所要 90分</small></li>
+        <li class="step">登録・抽選<small>第1期 登録受付 11月7日〜15日　抽選 11月16日</small></li>
+        <li class="step">ご契約<small>重要事項のご説明のうえ、手付金 10%</small></li>
+        <li class="step">お引き渡し<small>2027年3月下旬　内覧会は2月を予定</small></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="slide center" data-title="ご予約">
+    <div class="bg"></div>
+    <p class="kicker" style="justify-content:center">RESERVATION</p>
+    <p style="font-size:46px;letter-spacing:.2em;margin:0 -.2em 0 0;line-height:1.6">次は、<span class="gold">実際の窓</span>から。</p>
+    <p style="font-size:20px;color:var(--muted);letter-spacing:.16em;margin:18px 0 40px">現地の9階・角住戸（Type C）を、特別にご案内いたします。</p>
+    <hr class="hair" style="width:520px;margin:0 0 34px">
+    <p class="num" style="font-size:52px;letter-spacing:.12em;margin:0">0120-000-000</p>
+    <p style="font-size:18px;color:var(--muted);letter-spacing:.2em;margin:14px 0 0">10:00 – 18:00　水・木曜定休　／　サンプル不動産 販売センター</p>
+    <p class="foot" style="left:0;right:0;text-align:center">物件名・価格・図面はすべて架空のサンプルです。</p>
+  </section>
+
+</main>

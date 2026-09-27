@@ -1,0 +1,191 @@
+<!--meta
+{"title":"サンプルこども応援サービスのご案内","style":"ペーパーカット","use":"子育て支援サービスの紹介","group":"和・ナチュラル",
+ "aim":"一時預かりサービスの担当者が、子育てひろばの保護者向け説明会で、サービスの中身と市の補助を使った実際の負担額を伝え、登録してもらうため。",
+ "desc":"切り抜いた紙を重ねた丘と雲、やわらかな影とやさしい色。3つのサービスをタブで切り替え、月の利用時間を動かすと市の補助を引いた自己負担が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&display=swap"}
+-->
+<style>
+/* エンジンの rise/zoom/blur は表示中のスライドにも変形が残るので打ち消す */
+.deck[data-transition] .slide.active{transform:none;filter:none}
+:root{
+  --cream:#fbf4e8; --peach:#f6c9ab; --coral:#e9876f; --mint:#b5dcc9; --sage:#7fb39d; --sky:#d4e8ee; --sun:#f7d27a;
+  --bg:#fbf4e8; --surface:#fffaf2; --ink:#3d3230; --muted:#6a5a55; --line:#ead9c6; --accent:#b8543d; --accent-ink:#fff;
+  --frame:#eadfcd; --radius:18px; --good:#3f7d64; --bad:#b8543d;
+  --shadow:0 2px 2px rgb(90 60 40 / .12),0 10px 22px rgb(90 60 40 / .14);
+  --font:"Kiwi Maru","Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif; --font-num:"Kiwi Maru",sans-serif;
+  --head-weight:500; --head-track:.02em;
+}
+.slide{isolation:isolate;padding:60px 84px}
+/* 紙の質感 */
+.slide>.bg{overflow:hidden;background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .25 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
+  linear-gradient(180deg,var(--sky) 0,#e9f2ee 45%,var(--cream) 75%)}
+.layer{position:absolute;left:-2%;width:104%;filter:drop-shadow(0 -4px 6px rgb(90 60 40 / .16)) drop-shadow(0 -1px 1px rgb(90 60 40 / .12))}
+.layer svg{display:block;width:100%;height:auto}
+.cloud{position:absolute;filter:drop-shadow(0 6px 8px rgb(90 60 40 / .14))}
+.sunp{position:absolute;border-radius:50%;background:var(--sun);box-shadow:0 8px 16px rgb(150 100 30 / .2),inset 0 0 0 14px #f9dc93,inset 0 0 0 28px #fae3a5}
+.kicker{font:500 18px var(--font);letter-spacing:.18em;color:var(--accent);display:inline-flex;align-items:center;gap:12px;margin-bottom:16px;align-self:flex-start;
+  background:var(--surface);padding:7px 18px;border-radius:99px;box-shadow:var(--shadow)}
+.kicker::before{content:"";width:14px;height:14px;border-radius:50% 50% 50% 0;background:var(--coral);transform:rotate(-45deg)}
+h1,h2{color:var(--ink)}
+h2{font-size:44px;line-height:1.45;margin-bottom:26px}
+h2 em{font-style:normal;color:var(--accent)}
+.lead{color:var(--muted)}
+.foot{color:var(--muted);font-size:16px}
+/* 紙を重ねたカード：下にもう1枚、色紙がずれてのぞく */
+.paper{position:relative;background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:30px 32px}
+.paper::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--c,var(--peach));transform:translate(8px,10px) rotate(1.2deg);z-index:-1;box-shadow:var(--shadow)}
+.paper.m{--c:var(--mint)}.paper.s{--c:var(--sky)}.paper.y{--c:#f8dfa0}
+.paper h3{font:500 34px/1.45 var(--font);margin:18px 0 10px}
+.paper p{font-size:23px;line-height:1.75;color:var(--muted);margin:0}
+.ico{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:var(--c,var(--peach));box-shadow:inset 0 -4px 0 rgb(90 60 40 / .12)}
+.ico svg{width:54px;height:54px}
+/* タブ：紙のしおり */
+.tabs{background:none;padding:0;gap:10px}
+.tabs>[data-tab]{background:#f3e6d3;color:var(--muted);border-radius:16px 16px 6px 6px;padding:12px 26px;font:500 21px var(--font);box-shadow:0 2px 4px rgb(90 60 40 / .12)}
+.tabs>[data-tab][aria-selected=true]{background:var(--coral);color:#fff;box-shadow:var(--shadow);transform:translateY(-4px)}
+.svc{display:grid;grid-template-columns:420px 1fr;gap:48px;align-items:center;flex:1}
+.svc .price{font:500 88px/1 var(--font-num);color:var(--accent)}
+.svc .price small{font-size:24px;color:var(--muted);margin-left:6px;white-space:nowrap}
+.svc h3{font:500 40px/1.4 var(--font);margin:0 0 14px}
+ul.list{font-size:25px;gap:16px}
+ul.list>li::before{background:var(--sage);width:14px;height:14px;border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.kpi .label{font-size:20px;color:var(--muted)}
+.kpi .value{font:500 104px/1.1 var(--font-num);color:var(--ink);letter-spacing:0;white-space:nowrap;margin-top:10px}
+.kpi .value small{font-size:30px;margin-left:6px}
+details.why{border:0;border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+details.why>summary{color:var(--accent);font-size:19px;font-weight:500}
+details.why>summary::before{background:var(--mint);color:var(--ink)}
+details.why>.body{color:var(--muted);font-size:18px}
+.field>label{color:var(--ink);font-size:20px}
+.field>label b{font:500 28px var(--font-num);color:var(--accent)}
+input[type=range]{accent-color:var(--coral)}
+.res{margin-bottom:18px;padding:18px 26px}
+.res .label{font-size:19px;color:var(--muted)}
+.res .v{font:500 56px/1.2 var(--font-num);color:var(--ink);white-space:nowrap}
+.res.big .v{font-size:72px;color:var(--accent)}
+.meter{height:22px;background:#f0e2cf;box-shadow:inset 0 2px 3px rgb(90 60 40 / .15)}
+.meter>i{background:var(--sage)}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;flex:1;align-items:start;margin-top:10px}
+.how .n{font:500 96px/1 var(--font-num);color:var(--coral)}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .cloud{animation:pc-drift 14s ease-in-out infinite alternate}
+  @keyframes pc-drift{to{transform:translateX(40px)}}
+}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="sunp" style="width:170px;height:170px;right:170px;top:70px"></div>
+      <svg class="cloud" style="left:620px;top:90px" width="180" height="70" viewBox="0 0 180 70"><path d="M20 60a20 20 0 0 1 8-38 30 30 0 0 1 56-8 26 26 0 0 1 46 10 22 22 0 0 1 32 36z" fill="#fffaf2"/></svg>
+      <svg class="cloud" style="right:40px;top:230px" width="140" height="56" viewBox="0 0 180 70"><path d="M20 60a20 20 0 0 1 8-38 30 30 0 0 1 56-8 26 26 0 0 1 46 10 22 22 0 0 1 32 36z" fill="#fffaf2"/></svg>
+      <div class="layer" style="bottom:170px"><svg viewBox="0 0 1300 200" preserveAspectRatio="none"><path d="M0 120C160 40 300 30 460 90S760 170 920 80 1200 20 1300 70V200H0Z" fill="#c9e2d5"/></svg></div>
+      <div class="layer" style="bottom:90px"><svg viewBox="0 0 1300 200" preserveAspectRatio="none"><path d="M0 90C200 150 360 60 560 100S900 170 1080 90 1260 70 1300 90V200H0Z" fill="#9fcdb7"/></svg></div>
+      <div class="layer" style="bottom:0"><svg viewBox="0 0 1300 200" preserveAspectRatio="none"><path d="M0 110C180 60 420 140 640 90S1000 40 1300 110V200H0Z" fill="#f6c9ab"/></svg></div>
+      <svg style="position:absolute;right:250px;bottom:150px;filter:drop-shadow(0 6px 8px rgb(90 60 40 / .2))" width="150" height="140" viewBox="0 0 150 140"><path d="M10 64L75 10l65 54v76H10z" fill="#fffaf2"/><path d="M0 70L75 6l75 64-10 8-65-55-65 55z" fill="#e9876f"/><rect x="58" y="88" width="34" height="52" rx="6" fill="#b5dcc9"/><rect x="24" y="80" width="24" height="24" rx="4" fill="#f7d27a"/><rect x="102" y="80" width="24" height="24" rx="4" fill="#f7d27a"/></svg>
+    </div>
+    <div class="kicker">サンプル市 子育てひろば 説明会</div>
+    <h1 style="font:500 68px/1.4 var(--font);margin:6px 0 20px">ちょっと預けて、<br>ひと息つこう。</h1>
+    <p style="font-size:26px;color:var(--ink);margin:0 0 150px">サンプルこども応援サービス のご案内</p>
+    <aside class="notes">最初に「今日は、1時間だけでも預けられるサービスのお話です」。お子さん連れの方が多いので、10分で終える。</aside>
+  </section>
+
+  <section class="slide" data-title="こんな時に">
+    <div class="bg"><div class="layer" style="bottom:0"><svg viewBox="0 0 1300 160" preserveAspectRatio="none"><path d="M0 100C220 40 460 130 700 80S1100 40 1300 90V160H0Z" fill="#b5dcc9"/></svg></div></div>
+    <div class="kicker">こんなときに</div>
+    <h2>「用事は1時間だけ」でも、<br>頼っていい。</h2>
+    <div class="grid cols-3" style="gap:40px">
+      <div class="paper step"><div class="ico"><svg viewBox="0 0 44 44"><circle cx="22" cy="16" r="9" fill="#fffaf2"/><path d="M8 40c2-10 26-10 28 0z" fill="#fffaf2"/></svg></div><h3>自分の通院</h3><p>歯医者や健診のあいだ、2時間だけ。</p></div>
+      <div class="paper m step"><div class="ico" style="--c:var(--mint)"><svg viewBox="0 0 44 44"><rect x="8" y="12" width="28" height="22" rx="4" fill="#fffaf2"/><rect x="16" y="6" width="12" height="8" rx="3" fill="#fffaf2"/></svg></div><h3>上の子の行事</h3><p>参観日や発表会に、下の子を連れずに。</p></div>
+      <div class="paper s step"><div class="ico" style="--c:var(--sky)"><svg viewBox="0 0 44 44"><path d="M22 36c-10-7-14-12-14-18a7 7 0 0 1 14-2 7 7 0 0 1 14 2c0 6-4 11-14 18z" fill="#fffaf2"/></svg></div><h3>ただ、休みたい</h3><p>理由はいりません。眠る、ひとりでお茶を飲む。</p></div>
+    </div>
+    <aside class="notes">→ で1枚ずつ出す。3枚目の「理由はいりません」をいちばん伝えたい。</aside>
+  </section>
+
+  <section class="slide" data-title="3つのサービス">
+    <div class="bg"><div class="sunp" style="width:120px;height:120px;right:80px;top:50px"></div></div>
+    <div class="kicker">3つのサービス</div>
+    <h2 style="margin-bottom:20px">預ける・送り迎え・家のこと。</h2>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">一時あずかり</button><button data-tab="b">送り迎え</button><button data-tab="c">家事サポート</button></div>
+      <div data-panel="a" class="svc">
+        <div class="paper"><h3>一時あずかり</h3><div class="price">900<small>円／1時間</small></div><p style="margin-top:14px">生後6か月〜小学3年生</p></div>
+        <ul class="list"><li>ご自宅か、駅前の「ひろば室」で</li><li>保育の資格をもつスタッフが担当</li><li>前日の20時まで予約できる</li><li>1時間から、30分単位で延長</li></ul>
+      </div>
+      <div data-panel="b" class="svc">
+        <div class="paper m"><h3>送り迎え</h3><div class="price">700<small>円／1回</small></div><p style="margin-top:14px">保育園・学童・習いごと</p></div>
+        <ul class="list"><li>お迎えから、ご帰宅まで見守り</li><li>毎週の定期予約もできる</li><li>到着時にスマホへお知らせ</li><li>雨の日はタクシー代込み</li></ul>
+      </div>
+      <div data-panel="c" class="svc">
+        <div class="paper y"><h3>家事サポート</h3><div class="price">1,200<small>円／1時間</small></div><p style="margin-top:14px">産後1年までの家庭</p></div>
+        <ul class="list"><li>食事づくり・洗濯・そうじ</li><li>赤ちゃんの沐浴の手伝い</li><li>上の子の遊び相手も</li><li>2時間から予約できる</li></ul>
+      </div>
+    </div>
+    <aside class="notes">会場で「いちばん使いたいのは？」と聞いてからタブを押す。料金は補助を引く前の金額。</aside>
+  </section>
+
+  <section class="slide" data-title="安心の理由">
+    <div class="bg"><div class="layer" style="bottom:0"><svg viewBox="0 0 1300 160" preserveAspectRatio="none"><path d="M0 90C240 130 480 40 720 90S1100 130 1300 80V160H0Z" fill="#f6c9ab"/></svg></div></div>
+    <div class="kicker">安心の理由</div>
+    <h2>市内の <em>1,280家庭</em> が、もう使っている。</h2>
+    <div class="grid" style="grid-template-columns:1.4fr 1fr 1fr;gap:40px">
+      <div class="paper kpi" style="padding:34px 32px 40px"><div class="label">登録している家庭</div><div class="value"><span data-count="1280"></span><small>家庭</small></div></div>
+      <div class="paper m kpi" style="padding:34px 32px 40px"><div class="label">「また頼みたい」</div><div class="value"><span data-count="96"></span><small>%</small></div></div>
+      <div class="paper s kpi" style="padding:34px 32px 40px"><div class="label">スタッフ</div><div class="value"><span data-count="84"></span><small>人</small></div></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1.4fr 1fr;gap:40px;margin-top:40px;align-items:start">
+    <div class="paper y" style="padding:22px 30px"><p style="font-size:24px;color:var(--ink);margin:0">「はじめて預けた日、ひとりで温かいご飯を食べられた。」</p><p style="font-size:18px;margin:6px 0 0">2歳の子の母・利用者アンケートより</p></div>
+    <div><details class="why"><summary>スタッフはどんな人？</summary><div class="body">全員が保育士・看護師・子育て支援員のいずれかの資格をもち、市の研修（24時間）を受けています。初回は必ず面談してから担当を決めます。</div></details></div></div>
+    <p class="foot">サービス名・数字は架空のサンプルです。</p>
+    <aside class="notes">数字は開くとカウントアップ。スタッフの資格の話は、質問が出たら根拠を開く。</aside>
+  </section>
+
+  <section class="slide" data-title="費用の目安">
+    <div class="bg"></div>
+    <div class="kicker">動かせます</div>
+    <h2>月に8時間あずけても、自己負担は <em>3,600円</em>。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:52px" data-calc data-let="full = hours*rate; sub = min(hours,cap)*min(rate,450)*(kids>1?1.2:1); own = max(0,full-sub)">
+      <div class="paper s" style="align-self:start">
+        <div class="field"><label>1か月に使う時間 <b data-show="hours" data-unit=" 時間"></b></label><input type="range" name="hours" min="1" max="30" value="8"></div>
+        <div class="field"><label>1時間の料金 <b data-show="rate" data-format="yen"></b></label><input type="range" name="rate" min="700" max="1500" step="100" value="900"></div>
+        <div class="field"><label>補助が出る上限（月） <b data-show="cap" data-unit=" 時間"></b></label><input type="range" name="cap" min="4" max="20" value="12"></div>
+        <div class="field"><label>きょうだいの人数 <b data-show="kids" data-unit=" 人"></b></label><input type="range" name="kids" min="1" max="3" value="1"></div>
+        <details class="why"><summary>補助のしくみ</summary><div class="body">市の「子育てひと息補助」（サンプル）。1時間につき450円まで、月の上限時間まで補助。きょうだいが2人以上なら補助が2割増し。</div></details>
+      </div>
+      <div>
+        <div class="paper res"><div class="label">料金の合計</div><div class="v" data-out="full" data-format="yen"></div></div>
+        <div class="paper m res"><div class="label">市の補助（1時間 450円まで）</div><div class="v"><span style="font-size:.6em">− </span><span data-out="sub" data-format="yen"></span></div><div class="meter" style="margin-top:6px" data-bar="sub" data-max="full"><i></i></div></div>
+        <div class="paper y res big"><div class="label">自己負担</div><div class="v" data-out="own" data-format="yen"></div></div>
+      </div>
+    </div>
+    <aside class="notes">会場の方に「月に何時間くらい？」と聞いて、その場で動かす。上限を超えると負担が一気に増えることも見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="使いはじめるまで">
+    <div class="bg"><div class="layer" style="bottom:0"><svg viewBox="0 0 1300 160" preserveAspectRatio="none"><path d="M0 110C260 50 520 130 780 80S1150 60 1300 100V160H0Z" fill="#b5dcc9"/></svg></div></div>
+    <div class="kicker">使いはじめるまで</div>
+    <h2>登録から最初の利用まで、<em>最短1週間</em>。</h2>
+    <div class="how">
+      <div class="paper step"><div class="n">1</div><h3>登録する</h3><p>この会場の用紙か、市のサイトから。5分で終わります。</p></div>
+      <div class="paper m step"><div class="n">2</div><h3>面談する</h3><p>スタッフがご自宅へ。お子さんと顔を合わせます（無料）。</p></div>
+      <div class="paper y step"><div class="n">3</div><h3>予約して使う</h3><p>アプリか電話で。前日の20時まで受け付けます。</p></div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="ご登録のお願い">
+    <div class="bg">
+      <div class="sunp" style="width:150px;height:150px;right:200px;top:80px"></div>
+      <svg class="cloud" style="right:420px;top:120px" width="160" height="62" viewBox="0 0 180 70"><path d="M20 60a20 20 0 0 1 8-38 30 30 0 0 1 56-8 26 26 0 0 1 46 10 22 22 0 0 1 32 36z" fill="#fffaf2"/></svg>
+      <div class="layer" style="bottom:120px"><svg viewBox="0 0 1300 200" preserveAspectRatio="none"><path d="M0 110C200 50 420 70 640 110S1040 150 1300 70V200H0Z" fill="#c9e2d5"/></svg></div>
+      <div class="layer" style="bottom:40px"><svg viewBox="0 0 1300 200" preserveAspectRatio="none"><path d="M0 80C220 140 460 60 700 100S1100 150 1300 100V200H0Z" fill="#9fcdb7"/></svg></div>
+      <div class="layer" style="bottom:-20px"><svg viewBox="0 0 1300 200" preserveAspectRatio="none"><path d="M0 120C300 70 560 140 820 100S1160 60 1300 110V200H0Z" fill="#f6c9ab"/></svg></div>
+    </div>
+    <div class="kicker">ご登録のお願い</div>
+    <h2 style="font-size:58px;line-height:1.4;margin-bottom:18px">使う予定がなくても、<br>登録だけ先に。</h2>
+    <p style="font-size:24px;color:var(--ink);margin:0 0 130px">いざというとき、面談が済んでいればすぐ頼めます。<br>申し込み用紙は受付にあります ／ 0120-000-000</p>
+    <aside class="notes">最後は「登録だけでも」と念を押す。用紙は受付で回収し、面談の日程はこちらから電話する。</aside>
+  </section>
+
+</main>

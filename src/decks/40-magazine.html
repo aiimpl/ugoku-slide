@@ -1,0 +1,217 @@
+<!--meta
+{"title":"年間表彰 2027 — THE SAMPLE","style":"雑誌の表紙","use":"年間表彰（ベスト社員）","group":"ミニマル・タイポ",
+ "aim":"総務・広報が年末の全社表彰式で、受賞者を雑誌の特集のように1人ずつ紹介し、会場を盛り上げるための資料。",
+ "desc":"題字と見出しが重なる雑誌の表紙、号数とバーコード。受賞者の特集ページをめくるように進む。大賞の改善を自分の仕事に当てはめると、1年で浮く時間が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,900;1,6..96,500&family=Noto+Serif+JP:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f6c9d1; --surface:#fff5f6; --ink:#141010; --muted:#4d3a3e; --line:rgb(20 16 16 / .25);
+  --accent:#c8102e; --accent-ink:#fff; --good:#1c1c1c; --bad:#c8102e; --frame:#2a1a1d;
+  --radius:0px; --shadow:none;
+  --font:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  --font-head:"Noto Serif JP","Hiragino Mincho ProN",serif;
+  --font-num:"Bodoni Moda","Noto Serif JP",serif; --head-weight:900; --head-track:-.01em;
+  --pad-y:56px; --pad-x:64px;
+}
+.slide.paper{--bg:#fbf6f1; background:var(--bg); isolation:isolate}
+.bodoni{font-family:var(--font-num)}
+/* 題字 */
+.mast{position:absolute;left:44px;right:44px;top:18px;font:900 250px/.86 var(--font-num);letter-spacing:-.035em;color:var(--accent);text-align:center;white-space:nowrap}
+.mast small{font-size:.3em;line-height:1;letter-spacing:.02em;vertical-align:.95em;margin-right:.08em;font-style:italic;font-weight:500}
+.issue{position:absolute;left:64px;right:64px;top:250px;display:flex;justify-content:space-between;font:500 17px var(--font-num);letter-spacing:.18em;text-transform:uppercase;border-top:2px solid var(--ink);border-bottom:1px solid var(--ink);padding:7px 0}
+/* 網点の人物（写真の代わり） */
+.photo{position:absolute;background:radial-gradient(circle,var(--accent) 38%,transparent 41%) 0 0/9px 9px;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Ccircle cx='200' cy='165' r='98'/%3E%3Cpath d='M14 500C26 356 110 292 200 292S374 356 386 500Z'/%3E%3C/svg%3E") center bottom/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Ccircle cx='200' cy='165' r='98'/%3E%3Cpath d='M14 500C26 356 110 292 200 292S374 356 386 500Z'/%3E%3C/svg%3E") center bottom/contain no-repeat}
+.photo.ink{background-image:radial-gradient(circle,var(--ink) 36%,transparent 40%)}
+.barcode{position:absolute;right:64px;bottom:40px;width:170px;background:#fff;padding:10px 12px 6px;text-align:center;font:500 12px var(--font-num);letter-spacing:.2em}
+.barcode i{display:block;height:58px;background:repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 4px,#111 4px 5px,transparent 5px 8px,#111 8px 11px,transparent 11px 12px,#111 12px 13px,transparent 13px 16px)}
+.cl{position:absolute;font-family:var(--font)}
+.cl .k{font:italic 500 22px var(--font-num);color:var(--accent)}
+.cl b{display:block;font-weight:900;font-size:26px;line-height:1.35}
+.cl span{display:block;font-size:18px;line-height:1.6;color:var(--muted);margin-top:4px}
+.headline{font:900 76px/1.18 var(--font);letter-spacing:-.02em}
+.headline em{font-style:normal;color:var(--accent)}
+.kicker{font:italic 500 24px var(--font-num);letter-spacing:.02em;color:var(--accent);text-transform:none;margin-bottom:6px}
+h2{font-size:44px;line-height:1.35;margin-bottom:24px}
+.lead{font-size:21px;line-height:1.9;color:var(--muted)}
+.folio{position:absolute;left:64px;right:64px;bottom:22px;display:flex;justify-content:space-between;font:500 14px var(--font-num);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+/* 目次 */
+.toc{display:grid;gap:0;border-top:2px solid var(--ink)}
+.toc>div{display:grid;grid-template-columns:110px 1fr auto;align-items:baseline;gap:24px;padding:11px 0;border-bottom:1px solid var(--line)}
+.toc .p{font:900 54px/1 var(--font-num);color:var(--accent)}
+.toc b{font-size:28px;font-weight:900}
+.toc span{display:block;font-size:18px;color:var(--muted);margin-top:4px;font-weight:500}
+.toc em{font:italic 500 20px var(--font-num);color:var(--muted)}
+/* 数字の見開き */
+.figs{display:grid;grid-template-columns:1.3fr 1fr 1fr;grid-template-rows:auto auto;gap:0;border-top:2px solid var(--ink)}
+.figs>div{padding:18px 26px 20px 0;border-bottom:1px solid var(--line)}
+.figs>div+div{padding-left:26px;border-left:1px solid var(--line)}
+.figs>div:nth-child(4){padding-left:0;border-left:0}
+.figs .v{font:900 104px/1 var(--font-num);letter-spacing:-.03em;white-space:nowrap}
+.figs .v small{font:900 26px var(--font);margin-left:6px;letter-spacing:0}
+.figs .v.red{color:var(--accent)}
+.figs .l{font-size:19px;font-weight:700}
+.figs p{font-size:18px;color:var(--muted);margin:8px 0 0}
+.figs .hero{grid-row:span 2;display:flex;flex-direction:column}
+.figs .hero .v{font-size:190px}
+/* 特集ページ */
+.feature{display:grid;grid-template-columns:420px 1fr;gap:56px;height:100%}
+.feature .pic{position:relative;background:var(--bg);border:2px solid var(--ink)}
+.feature .pic .photo{inset:30px 20px 0}
+.feature .pic .cap{position:absolute;left:0;right:0;bottom:0;background:var(--ink);color:#fff;padding:10px 16px;font-size:17px}
+.award{font:italic 500 26px var(--font-num);color:var(--accent)}
+.name{font:900 72px/1.1 var(--font);letter-spacing:.02em;margin:6px 0 4px}
+.name small{font-size:24px;font-weight:700;margin-left:14px;letter-spacing:0}
+.quote{font:900 34px/1.55 var(--font);border-top:2px solid var(--ink);padding-top:20px;margin-top:18px}
+.quote{box-shadow:inset 6px 0 0 var(--accent);padding-left:26px}
+.drop::first-letter{float:left;font:900 78px/.9 var(--font);color:var(--accent);margin:6px 10px 0 0}
+details.why{border:0;border-top:2px solid var(--ink);border-radius:0;background:transparent;margin-top:18px}
+details.why>summary{color:var(--ink);font-size:19px;padding:12px 0}
+details.why>summary::before{border-radius:0;background:var(--accent);color:#fff}
+details.why>.body{font-size:18px;color:var(--ink);padding:0 0 12px}
+details.why.float[open]>.body{background:var(--surface);border:2px solid var(--ink);border-radius:0;box-shadow:none;padding:14px 18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid var(--ink)}
+.two>div{padding:26px 34px 0 0;display:grid;grid-template-columns:230px 1fr;gap:28px}
+.two>div+div{padding-left:34px;padding-right:0;border-left:1px solid var(--line)}
+.two .pic{position:relative;height:320px;border:2px solid var(--ink);background:var(--bg)}
+.two .pic .photo{inset:16px 10px 0}
+.two .name{font-size:48px}
+.two .q{font:900 23px/1.6 var(--font);border-top:2px solid var(--ink);padding-top:14px;margin-top:14px}
+.two p{font-size:19px;line-height:1.8;color:var(--muted)}
+.field>label{font-size:19px;color:var(--ink);font-weight:700}
+.field>label b{font:900 30px var(--font-num);color:var(--accent)}
+input[type=range]{accent-color:var(--accent)}
+.meter{height:12px;border-radius:0;background:rgb(20 16 16 / .1)}
+.meter>i{border-radius:0;background:var(--accent)}
+.bigout{font:900 150px/1 var(--font-num);letter-spacing:-.03em;color:var(--accent);white-space:nowrap}
+.bigout small{font:900 36px var(--font);color:var(--ink);margin-left:8px;letter-spacing:0}
+.subs{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--ink);margin-top:22px}
+.subs>div{padding-top:14px}
+.subs>div+div{border-left:1px solid var(--line);padding-left:26px}
+.subs .l{font-size:18px;font-weight:700}
+.subs .v{font:900 54px/1.1 var(--font-num)}
+.subs .v small{font:900 20px var(--font);margin-left:4px}
+.foot{font-size:14px;color:var(--muted);bottom:44px}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg">
+      <div class="photo" style="right:150px;bottom:0;width:470px;height:560px"></div>
+    </div>
+    <div class="mast"><small>The</small>SAMPLE</div>
+    <div class="issue"><span>No. 20 · Awards Issue</span><span>Winter 2027</span><span>サンプル工業 社内報</span></div>
+    <div style="position:absolute;left:64px;top:312px;width:780px">
+      <div class="kicker">Special — The Awards 2027</div>
+      <div class="headline" style="font-size:72px">今年いちばん、<br>会社を<em>動かした</em>人。</div>
+    </div>
+    <div class="cl" style="left:64px;bottom:40px;width:360px"><div class="k">p.04</div><b>大賞は、出荷を12分縮めた人</b><span>物流部・山際 みのり</span></div>
+    <div class="cl" style="left:460px;bottom:40px;width:260px"><div class="k">p.03</div><b>数字で見る、この1年</b><span>改善提案 1,284 件</span></div>
+    <div class="barcode"><i></i>4 912027 000200</div>
+    <aside class="notes">表紙を映したまま音楽を少し流す。司会が「THE SAMPLE 年間表彰号、開きます」と読んでから次へ。</aside>
+  </section>
+
+  <section class="slide paper" data-title="目次">
+    <div class="bg"><div class="photo ink" style="right:64px;top:70px;width:300px;height:370px;opacity:.14"></div></div>
+    <div class="kicker">Contents</div>
+    <h2>この号で紹介するのは、5人と1チーム。</h2>
+    <div class="toc" style="max-width:880px">
+      <div class="step"><span class="p">03</span><div><b>数字で見る、この1年</b><span>改善提案・表彰の候補・投票数</span></div><em>Figures</em></div>
+      <div class="step"><span class="p">04</span><div><b>大賞　山際 みのり</b><span>物流部　出荷の段取りを変えた人</span></div><em>Grand Prize</em></div>
+      <div class="step"><span class="p">05</span><div><b>新人賞とチーム賞</b><span>入社1年目の2人と、品質保証チーム</span></div><em>Rookie &amp; Team</em></div>
+      <div class="step"><span class="p">06</span><div><b>あなたの仕事に当てはめる</b><span>大賞の改善を、自分の職場で試算する</span></div><em>Try it</em></div>
+    </div>
+    <div class="folio"><span>The Sample · No.20</span><span>02</span></div>
+    <aside class="notes">→で目次を1行ずつ。ページ番号はスライドの番号と同じ。</aside>
+  </section>
+
+  <section class="slide paper" data-title="数字で見る1年">
+    <div class="bg"></div>
+    <div class="kicker">Figures of the year</div>
+    <h2>改善の提案は、去年の 1.6 倍になった。</h2>
+    <div class="figs">
+      <div class="hero"><div class="l">改善の提案</div><div class="v red"><span data-count="1284"></span></div><p>去年は 802 件。いちばん多かったのは物流部の 311 件。</p></div>
+      <div><div class="l">表彰の候補</div><div class="v"><span data-count="46"></span><small>人</small></div><p>推薦は全社員から</p></div>
+      <div><div class="l">投票した人</div><div class="v"><span data-count="87"></span><small>%</small></div><p>1,540 人のうち</p></div>
+      <div style="padding-left:26px;border-left:1px solid var(--line)"><div class="l">浮いた時間</div><div class="v"><span data-count="9800"></span><small>時間</small></div><p>採用された提案の合計</p></div>
+      <div><div class="l">受賞</div><div class="v"><span data-count="6"></span><small>組</small></div><p>大賞・新人賞・チーム賞</p></div>
+    </div>
+    <p class="foot">社名・人名・数字はすべて架空のサンプルです。</p>
+    <div class="folio"><span>The Sample · No.20</span><span>03</span></div>
+    <aside class="notes">1,284 だけ読み上げる。残りは画面に任せる。</aside>
+  </section>
+
+  <section class="slide paper" data-title="大賞">
+    <div class="bg"></div>
+    <div class="feature" style="height:560px">
+      <div class="pic"><div class="photo"></div><div class="cap">物流部　入社9年目</div></div>
+      <div>
+        <div class="award">The Grand Prize 2027</div>
+        <div class="name">山際 みのり<small>物流部</small></div>
+        <div class="quote step">段取りを変えたのは私じゃなくて、毎朝の5分の立ち話です。</div>
+        <p class="lead drop step" style="margin-top:18px;color:var(--ink)">出荷の前に、倉庫と配送の担当が5分だけ集まる。その日の荷物の順番を決めてから棚を回る。それだけで、1件あたりの出荷は 12 分短くなった。</p>
+        <details class="why"><summary>選ばれた理由</summary><div class="body">1日 80 件の出荷で、年間 3,800 時間が浮いた。残業は物流部全体で月 22% 減り、同じやり方がほかの2拠点にも広がった（選考委員会の講評より）。</div></details>
+      </div>
+    </div>
+    <div class="folio"><span>The Sample · No.20</span><span>04 · Grand Prize</span></div>
+    <aside class="notes">→でことばを出す。本人が壇上にいれば、ここで拍手をもらう。</aside>
+  </section>
+
+  <section class="slide paper" data-title="新人賞とチーム賞">
+    <div class="bg"></div>
+    <div class="kicker">Rookie &amp; Team</div>
+    <h2>1年目で、現場のやり方を変えた2組。</h2>
+    <div class="two">
+      <div class="step"><div class="pic"><div class="photo ink"></div></div><div><div class="award" style="font-size:22px">Rookie of the Year</div><div class="name">津田 陽<small>営業部</small></div><p>見積もりの作り方を動画にまとめ、部の見積もりにかかる時間を半分にした。</p><div class="q">「先輩に聞いたことを、次の人が聞かなくていいようにしたかった」</div></div></div>
+      <div class="step"><div class="pic"><div class="photo"></div></div><div><div class="award" style="font-size:22px">Team of the Year</div><div class="name">品質保証<small>6人</small></div><p>検査の記録を紙からタブレットへ。不良の見逃しが年間 14 件から 2 件に。</p><div class="q">「記録を書く時間を、見る時間に回せた」</div></div></div>
+    </div>
+    <div class="folio"><span>The Sample · No.20</span><span>05 · Rookie &amp; Team</span></div>
+    <aside class="notes">→で1組ずつ。名前を呼んでから、壇上に上がってもらう。</aside>
+  </section>
+
+  <section class="slide paper" data-title="あなたの仕事に当てはめる">
+    <div class="bg"></div>
+    <div class="kicker">Try it · 動かせます</div>
+    <h2>1回10分縮めるだけで、1年に 800 時間が浮く。</h2>
+    <div class="split fill" style="grid-template-columns:.9fr 1.1fr;gap:64px" data-calc
+      data-let="yearh = mins*times*people*240/60">
+      <div>
+        <div class="field"><label>1回あたり縮まる時間 <b data-show="mins" data-unit=" 分"></b></label><input type="range" name="mins" min="1" max="30" value="10"></div>
+        <div class="field"><label>その作業の1日の回数 <b data-show="times" data-unit=" 回"></b></label><input type="range" name="times" min="1" max="40" value="5"></div>
+        <div class="field"><label>同じ作業をする人数 <b data-show="people" data-unit=" 人"></b></label><input type="range" name="people" min="1" max="50" value="4"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">縮まる時間 × 1日の回数 × 人数 × 年間 240 営業日。大賞の改善は「12分 × 80件 × 1人分の段取り」に近い。</div></details>
+      </div>
+      <div>
+        <div style="font-size:20px;font-weight:700">1年で浮く時間</div>
+        <div class="bigout"><span data-out="yearh"></span><small>時間</small></div>
+        <div class="meter" style="margin-top:18px" data-bar="yearh" data-max="3800"><i></i></div>
+        <div class="row" style="justify-content:space-between;font-size:16px;color:var(--muted);margin-top:6px"><span>0</span><span>大賞の改善 3,800時間</span></div>
+        <div class="subs">
+          <div><div class="l">人の日数にすると</div><div class="v"><span data-out="yearh/8"></span><small>人日</small></div></div>
+          <div><div class="l">1人あたり1年で</div><div class="v"><span data-out="yearh/people" data-format="dec1"></span><small>時間</small></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="folio"><span>The Sample · No.20</span><span>06 · Try it</span></div>
+    <aside class="notes">会場の誰かに自分の作業を言ってもらい、その場で数字を入れる。</aside>
+  </section>
+
+  <section class="slide" data-title="来年の表紙">
+    <div class="bg">
+      <div class="photo ink" style="right:150px;bottom:0;width:470px;height:560px;opacity:.9"></div>
+      <div style="position:absolute;right:250px;top:330px;font:900 150px/1 var(--font-num);color:var(--accent)">?</div>
+    </div>
+    <div class="mast"><small>The</small>SAMPLE</div>
+    <div class="issue"><span>No. 21 · Awards Issue</span><span>Winter 2028</span><span>次の号</span></div>
+    <div style="position:absolute;left:64px;top:312px;width:780px">
+      <div class="kicker">Next issue</div>
+      <div class="headline" style="font-size:66px">来年の表紙は、<br><em>あなた</em>かもしれない。</div>
+      <p class="lead" style="margin-top:22px;color:var(--ink)">2028年の推薦は、4月1日から社内ポータルで受け付けます。</p>
+    </div>
+    <div class="barcode"><i></i>4 912028 000210</div>
+  </section>
+
+</main>

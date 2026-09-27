@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>動くスライド {{COUNT}}選</title>
+<meta name="description" content="クリックで根拠が開き、数字を動かすとその場で再計算される。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類。全部無料・MIT ライセンス。">
+<meta property="og:title" content="動くスライド {{COUNT}}選">
+<meta property="og:description" content="1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類。全部無料。Claude に渡して中身を差し替えるだけ。">
+<meta property="og:image" content="https://aiimpl.github.io/ugoku-slide/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='6' width='28' height='20' rx='4' fill='%23ff5a36'/%3E%3Cpath d='M13 11l8 5-8 5z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#f6f5f1;--surface:#fff;--ink:#16171b;--muted:#62666f;--line:#e4e2db;--accent:#ff5a36;--accent-ink:#fff;--code:#1b1d22;
+  --font:"Inter","Noto Sans JP","Hiragino Sans",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101114;--surface:#191b20;--ink:#ecebe6;--muted:#9da2ab;--line:#2a2d34;--code:#0b0c0e}}
+:root[data-theme=dark]{--bg:#101114;--surface:#191b20;--ink:#ecebe6;--muted:#9da2ab;--line:#2a2d34;--code:#0b0c0e}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.7;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+header.top{position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.logo{font-weight:900;letter-spacing:-.02em;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo i{width:26px;height:18px;border-radius:5px;background:var(--accent);position:relative}
+.logo i::after{content:"";position:absolute;left:10px;top:5px;border-left:7px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent}
+nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+nav a{text-decoration:none;color:var(--muted)}nav a:hover{color:var(--ink)}
+.hero{padding:72px 0 40px;display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(38px,5.2vw,68px);line-height:1.12;letter-spacing:-.03em;margin:0 0 20px;font-weight:900}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:18px;color:var(--muted);margin:0 0 26px}
+.stats{display:flex;gap:28px;margin-bottom:28px}
+.stats b{display:block;font:800 34px/1.1 "Inter",sans-serif;letter-spacing:-.03em}
+.stats span{font-size:13px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  font:700 14px var(--font);text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.big{padding:14px 24px;font-size:16px;border-radius:12px}
+.stage{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px -20px rgb(0 0 0 / .35);background:#000}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.stage .hint{position:absolute;right:12px;bottom:12px;padding:6px 12px;border-radius:8px;background:rgb(0 0 0 / .6);color:#fff;font-size:12px;pointer-events:none}
+.pick{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.pick button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:4px 12px;font:600 12px var(--font);cursor:pointer}
+.pick button[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}
+section{padding:56px 0}
+h2.sec{font-size:32px;letter-spacing:-.02em;margin:0 0 8px;font-weight:900}
+.sub{color:var(--muted);margin:0 0 28px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+.steps>div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;counter-increment:s}
+.steps>div::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;margin-bottom:12px}
+.steps h3{margin:0 0 6px;font-size:18px}.steps p{margin:0;color:var(--muted);font-size:15px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.filters button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 16px;font:700 14px var(--font);cursor:pointer}
+.filters button small{margin-left:6px;color:var(--muted);font-weight:600}
+.filters button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button[aria-pressed=true] small{color:inherit;opacity:.7}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+.tpl{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.tpl:hover{transform:translateY(-3px);box-shadow:0 18px 40px -18px rgb(0 0 0 / .3)}
+.tpl[hidden]{display:none}
+.thumb{display:block;position:relative;aspect-ratio:16/9;background:var(--line);overflow:hidden}
+.thumb iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+.tpl .meta{display:flex;gap:14px;padding:16px 18px 6px}
+.tpl .no{font:800 13px "Inter",sans-serif;color:var(--muted);padding-top:4px}
+.tpl h3{margin:0;font-size:18px;line-height:1.4}
+.tpl .use{margin:2px 0 6px;font-size:13px;color:var(--accent);font-weight:700}
+.tpl .aim{margin:0 0 6px;font-size:14px;font-weight:700;line-height:1.55}
+.tpl .desc{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.65}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
+.acts{display:flex;gap:8px;padding:12px 18px 18px;margin-top:auto;flex-wrap:wrap}
+.acts .btn{padding:8px 12px;font-size:13px}
+.prompt{position:relative;background:var(--code);color:#e8e8e8;border-radius:14px;padding:20px 22px;font:14px/1.8 ui-monospace,"SF Mono",Menlo,monospace;white-space:pre-wrap;margin:0 0 14px}
+.prompt .btn{position:absolute;right:12px;top:12px;background:#2a2d34;color:#fff;border-color:#3a3d44}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.two h3{font-size:17px;margin:0 0 10px}
+table.keys{border-collapse:collapse;width:100%;font-size:15px}
+table.keys td{padding:9px 10px;border-bottom:1px solid var(--line)}
+kbd{display:inline-block;min-width:28px;padding:1px 8px;border-radius:6px;border:1px solid var(--line);border-bottom-width:3px;background:var(--surface);font:600 13px "Inter",sans-serif;text-align:center}
+details.faq{border-bottom:1px solid var(--line);padding:14px 0}
+details.faq summary{cursor:pointer;font-weight:700;font-size:16px}
+details.faq p{color:var(--muted);margin:10px 0 0;font-size:15px}
+footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:700;font-size:14px;transition:.3s;z-index:50}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:40px}
+  .steps,.two{grid-template-columns:1fr}
+  nav{display:none}
+}
+@media (max-width:420px){.gallery{grid-template-columns:1fr}.wrap{padding:0 16px}.stats{gap:18px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#"><i></i>動くスライド</a>
+  <nav><a href="#how">使い方</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <h1>押すと、根拠が開く。<br>動かすと、<em>再計算</em>。</h1>
+      <p>1ファイルで完結する「動くスライド」の雛形を {{COUNT}} 種類。どれも無料で、何本でもダウンロードできます。Claude に渡して「この内容に作り替えて」と頼むだけで、自分の資料になります。</p>
+      <div class="stats"><div><b>{{COUNT}}</b><span>デザイン</span></div><div><b>{{SLIDES}}</b><span>枚のスライド</span></div><div><b>0円</b><span>MIT ライセンス</span></div></div>
+      <div class="row" style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn primary big" href="ugoku-slide-all.zip" download>全部まとめてダウンロード（zip）</a>
+        <a class="btn big" href="#gallery">一覧を見る</a>
+      </div>
+    </div>
+    <div>
+      <div class="stage"><iframe id="feature" title="見本" src="slides/01-swiss.html#4"></iframe><span class="hint">クリックして → キー／スライダーを動かせます</span></div>
+      <div class="pick" id="pick"></div>
+    </div>
+  </div>
+
+  <section id="how">
+    <h2 class="sec">使い方（ターミナル不要・3ステップ）</h2>
+    <p class="sub">Claude のデスクトップアプリでも、ブラウザの claude.ai でも同じです。</p>
+    <div class="steps">
+      <div><h3>雛形をダウンロード</h3><p>下の一覧から好きなデザインの「ダウンロード」を押す。ダブルクリックすればブラウザでそのまま動きます。</p></div>
+      <div><h3>Claude に渡して頼む</h3><p>ファイルをチャットにドラッグして、「Claude用の指示をコピー」で写した文を貼り、テーマと数字を書き足して送る。</p></div>
+      <div><h3>プレビューで直して保存</h3><p>出てきた HTML をその場で確かめ、「3枚目の文字を大きく」のように話しかけて直す。できたらダウンロード。</p></div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <h2 class="sec">雛形 {{COUNT}} 種</h2>
+    <p class="sub">見本にマウスを乗せるとページが送られます。どれも中身（文章・数字）は架空のサンプルです。</p>
+    <div class="filters" id="filters"><button type="button" data-filter="" aria-pressed="true">すべて<small>{{COUNT}}</small></button>{{GROUPS}}</div>
+    <div class="gallery" id="list">
+<!--CARDS-->
+    </div>
+  </section>
+
+  <section id="prompts">
+    <h2 class="sec">Claude への頼み方</h2>
+    <p class="sub">雛形のファイルを添付して、そのまま貼って使えます。【 】の中を書き換えてください。</p>
+    <pre class="prompt" id="p-main">添付の HTML は「動くスライド」の雛形です。
+先頭のコメントに書かれた部品とルールだけを使って、次の内容のスライドに作り替えてください。
+・1ファイルのまま。「ugoku-slide engine」の BEGIN〜END の中は変えない
+・デザイン（2つ目の &lt;style&gt;）はそのまま活かす
+・1枚に言いたいことは1つ。文字は少なめに
+・数字の話は data-calc で、見る人が動かして確かめられるように
+・根拠や補足は &lt;details class="why"&gt; に入れる
+・各スライドに発表者メモ（&lt;aside class="notes"&gt;）を付ける
+・完成したら HTML の全文を出す
+
+テーマ：【例）来期の採用計画】
+見せる相手：【例）役員会】
+いちばん伝えたい結論：【例）エンジニアを12人増やせば、開発の遅れが解消する】
+使いたい数字：【例）今の人数 38人、1人あたりの採用費 120万円、遅れている案件 9件】
+枚数：【7枚くらい】</pre>
+    <div class="two">
+      <div>
+        <h3>あとから足す</h3>
+        <pre class="prompt">【4】枚目に、【単価】と【数量】を動かすと
+【売上】が再計算されるシミュレーターを足して。</pre>
+        <pre class="prompt">各スライドの主張に、クリックで開く
+「根拠」を付けて。出典や計算式を中に書いて。</pre>
+      </div>
+      <div>
+        <h3>見た目を変える</h3>
+        <pre class="prompt">色を会社のコーポレートカラー【#0055aa】に合わせて。
+文字の大きさと余白は変えないで。</pre>
+        <pre class="prompt">これを【10分】で話せるように、枚数を調整して、
+発表者メモに話す内容と目安の秒数を書いて。</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="keys">
+    <h2 class="sec">発表するときの操作</h2>
+    <p class="sub">どの雛形でも同じです。画面の下にマウスを動かすとボタンも出ます。</p>
+    <table class="keys">
+      <tr><td><kbd>→</kbd> <kbd>Space</kbd></td><td>次へ（順番に出す要素があれば先にそちら）</td><td><kbd>←</kbd></td><td>戻る</td></tr>
+      <tr><td><kbd>F</kbd></td><td>全画面</td><td><kbd>O</kbd></td><td>一覧（押すとそのページへ）</td></tr>
+      <tr><td><kbd>N</kbd></td><td>発表者メモを重ねて表示</td><td><kbd>P</kbd></td><td>発表者画面（メモ・次のページ・経過時間）</td></tr>
+      <tr><td><kbd>B</kbd></td><td>画面を暗くする</td><td><kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>PDF に保存（1ページ1枚・補足は開いた状態）</td></tr>
+    </table>
+  </section>
+
+  <section id="faq">
+    <h2 class="sec">よくある質問</h2>
+    <details class="faq"><summary>本当に無料？ 仕事で使っていい？</summary><p>無料です。MIT ライセンスなので、社内資料・商談・研修・販売物への組み込みまで自由に使えます。クレジット表記も不要です（ファイル先頭のコメントは残してもらえると嬉しいです）。</p></details>
+    <details class="faq"><summary>インターネットがないと動かない？</summary><p>動きます。仕組みはすべてファイルの中に入っています。ネットから読むのはフォントだけで、つながらないときはパソコンにある文字で表示されます。</p></details>
+    <details class="faq"><summary>PowerPoint で渡したいと言われたら？</summary><p>ブラウザの印刷から「PDF に保存」すると、1ページ1枚のきれいな PDF になります（クリックで開く補足も開いた状態で出ます）。PowerPoint で編集できる形にはなりませんが、PDF なら PowerPoint にも挿入できます。</p></details>
+    <details class="faq"><summary>相手のパソコンやスマホでも見られる？</summary><p>Chrome・Edge・Safari・Firefox の最近の版で動きます。画面の大きさに合わせて 16:9 のまま拡大縮小するので、レイアウトは崩れません。スマホは横向きで、左右にスワイプするとページが送れます。</p></details>
+    <details class="faq"><summary>HTML が分からなくても直せる？</summary><p>Claude に頼めば直せます。各ファイルの先頭に「使える部品と書き方」の説明が入っているので、Claude はそれを読んで同じ作りのまま中身を書き換えます。</p></details>
+  </section>
+</main>
+
+<footer><div class="wrap">動くスライド（ugoku-slide）— MIT License · <a href="https://github.com/aiimpl/ugoku-slide">github.com/aiimpl/ugoku-slide</a> · 作：<a href="https://x.com/ai_impl">@ai_impl</a></div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const manifest = {{MANIFEST}};
+  const byId = Object.fromEntries(manifest.map(m => [m.id, m]));
+  const toast = document.getElementById("toast");
+  const say = t => { toast.textContent = t; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  // 見本は画面に入ったときだけ読み込む
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { const f = e.target; f.src = f.dataset.src; io.unobserve(f); }
+  }), { rootMargin: "300px" });
+  document.querySelectorAll(".thumb iframe").forEach(f => io.observe(f));
+
+  // マウスを乗せるとページ送り
+  document.querySelectorAll(".tpl").forEach(card => {
+    const f = card.querySelector("iframe"); let t;
+    card.addEventListener("mouseenter", () => { t = setInterval(() => f.contentWindow && f.contentWindow.postMessage({ ugk: "next" }, "*"), 1300); });
+    card.addEventListener("mouseleave", () => { clearInterval(t); f.contentWindow && f.contentWindow.postMessage({ ugk: "first" }, "*"); });
+  });
+
+  // 絞り込み
+  const fbtns = [...document.querySelectorAll("#filters button")];
+  fbtns.forEach(b => b.addEventListener("click", () => {
+    fbtns.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    document.querySelectorAll(".tpl").forEach(c => { c.hidden = !!b.dataset.filter && c.dataset.group !== b.dataset.filter; });
+  }));
+
+  // 上の大きな見本を切り替える
+  const feature = document.getElementById("feature"), pick = document.getElementById("pick");
+  const featured = ["01-swiss", "16-consulting", "18-wa-modern", "05-neobrutal", "38-dashboard", "14-terminal"].filter(id => byId[id]);
+  featured.forEach((id, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = byId[id].style; b.setAttribute("aria-pressed", String(i === 0));
+    b.addEventListener("click", () => {
+      pick.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      feature.src = byId[id].file;
+    });
+    pick.appendChild(b);
+  });
+
+  // コピー
+  const copy = async text => {
+    try { await navigator.clipboard.writeText(text); say("コピーしました"); }
+    catch (e) { const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); say("コピーしました"); }
+  };
+  const base = document.getElementById("p-main").textContent;
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+    const m = byId[b.dataset.copy];
+    copy(base.replace("添付の HTML は「動くスライド」の雛形です。", `添付の「${m.id}.html」は「動くスライド」の雛形（${m.style}）です。`));
+  }));
+  document.querySelectorAll("pre.prompt").forEach(pre => {
+    const b = document.createElement("button");
+    b.className = "btn"; b.type = "button"; b.textContent = "コピー";
+    b.addEventListener("click", () => copy(pre.firstChild.textContent));
+    pre.appendChild(b);
+  });
+})();
+</script>
+</body>
+</html>

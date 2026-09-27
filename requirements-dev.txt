@@ -1,0 +1,4 @@
+# 確かめ用（make qa）。スライドを使うだけなら不要
+playwright>=1.45
+pillow>=10
+pyflakes>=3

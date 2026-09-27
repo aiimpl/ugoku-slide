@@ -1,0 +1,181 @@
+<!--meta
+{"title":"2028年卒 会社説明会","style":"特大タイポ","use":"採用説明会","group":"ミニマル・タイポ",
+ "aim":"新卒採用の担当者が、大学の合同説明会で学生に職種と年収の見通しを伝え、その日のうちにエントリーしてもらうための資料。",
+ "desc":"画面からはみ出すほど大きな文字と、青と黄の2色だけ。職種をタブで切り替え、入社年数と評価を動かすと年収のモデルがその場で出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#1c27f2; --surface:#1420c9; --ink:#ffffff; --muted:#d3d7ff; --line:rgb(255 255 255 / .3);
+  --accent:#e4ff3c; --accent-ink:#1c27f2; --good:#e4ff3c; --bad:#ffb4a8; --frame:#0c1290;
+  --radius:0px; --shadow:none;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-num:"Anton","Noto Sans JP","Impact",sans-serif; --head-weight:900; --head-track:-.02em;
+  --pad-y:60px; --pad-x:72px;
+}
+.slide.y{--bg:#e4ff3c; --ink:#0f1590; --muted:#2b3280; --line:rgb(15 21 144 / .3); --accent:#1c27f2; --accent-ink:#e4ff3c; background:var(--bg); color:var(--ink); isolation:isolate}
+/* はみ出す巨大な文字（飾りなので .bg の中） */
+.giant{position:absolute;font:400 560px/.8 var(--font-num);letter-spacing:-.02em;white-space:nowrap;color:#3541ff;user-select:none}
+.slide.y .giant{color:#f4ffa6}
+.giant.out{color:transparent;-webkit-text-stroke:2px rgb(228 255 60 / .8)}
+.giant.jp{font-family:var(--font);font-weight:900;letter-spacing:-.06em}
+.slide.active .giant{animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+.kicker{font:400 24px var(--font-num);letter-spacing:.06em;color:var(--accent);margin-bottom:12px}
+h1{font-size:128px;line-height:1.12;letter-spacing:-.04em}
+h2{font-size:52px;line-height:1.2;letter-spacing:-.03em;margin-bottom:30px}
+.lead{font-size:24px;line-height:1.7;color:var(--muted)}
+.hl{background:var(--accent);color:var(--accent-ink);padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.num3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:0;border-top:3px solid var(--ink)}
+.num3>div{padding:20px 28px 0 0}
+.num3>div+div{padding-left:28px;border-left:3px solid var(--ink)}
+.num3 .v{font:400 200px/.9 var(--font-num);letter-spacing:-.02em;white-space:nowrap}
+.num3 .v small{font:900 34px var(--font);margin-left:8px;letter-spacing:0}
+.num3 .l{font-size:22px;font-weight:700;margin-bottom:10px}
+.num3 p{font-size:19px;color:var(--muted);margin-top:14px}
+.tabs{background:none;border-radius:0;padding:0;gap:0;border:3px solid var(--ink);margin-bottom:26px}
+.tabs>[data-tab]{border-radius:0;padding:12px 30px;font:900 20px var(--font);color:var(--ink)}
+.tabs>[data-tab]+[data-tab]{border-left:3px solid var(--ink)}
+.tabs>[data-tab][aria-selected=true]{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.role{display:grid;grid-template-columns:600px 1fr;gap:40px;align-items:start;margin-top:10px}
+.role .word{font:400 330px/.8 var(--font-num);letter-spacing:-.02em;color:var(--accent)}
+.role .word small{display:block;font:900 26px var(--font);color:var(--ink);letter-spacing:.02em;margin-top:18px}
+.role h3{font-size:36px;font-weight:900;margin-bottom:16px;line-height:1.35}
+.role ul{margin:0;padding:0;list-style:none;font-size:23px;line-height:1.6}
+.role li{padding:16px 0;border-top:2px solid var(--line)}
+.role li b{font-family:var(--font-num);font-weight:400;font-size:26px;color:var(--accent);margin-right:14px}
+.grow{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.grow>div{border-left:3px solid var(--ink);padding:0 30px}
+.grow .t{font:400 150px/.85 var(--font-num)}
+.grow .t small{font:900 30px var(--font);margin-left:6px}
+.grow h3{font-size:30px;font-weight:900;margin:20px 0 10px}
+.grow p{font-size:20px;line-height:1.7;color:var(--muted)}
+.field>label{font:900 22px var(--font);color:var(--ink)}
+.field>label b{font:400 40px var(--font-num);color:var(--accent)}
+input[type=range]{accent-color:var(--accent);height:34px}
+.slide.y input[type=range]{accent-color:#1c27f2}
+.pay{margin-top:18px;font:400 240px/.85 var(--font-num);letter-spacing:-.02em;white-space:nowrap}
+.pay small{font:900 44px var(--font);letter-spacing:0;margin-left:8px}
+.pay2{display:grid;grid-template-columns:1fr 1fr;border-top:3px solid var(--ink);margin-top:24px}
+.pay2>div{padding-top:14px}
+.pay2 .l{font-size:19px;font-weight:700}
+.pay2 .v{font:400 56px/1.1 var(--font-num)}
+details.why{border:3px solid var(--ink);border-radius:0;background:transparent}
+details.why>summary{color:var(--ink);font-weight:900;font-size:19px}
+details.why>summary::before{border-radius:0;background:var(--accent);color:var(--accent-ink)}
+details.why>.body{color:var(--ink);font-size:19px}
+details.why.float[open]>.body{background:var(--bg);border:3px solid var(--ink);border-radius:0;box-shadow:none}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:6px}
+.flow>div{position:relative;padding:22px 26px 24px 0;border-top:3px solid var(--ink)}
+.flow>div+div{padding-left:26px;border-left:3px solid var(--ink)}
+.flow .n{font:400 110px/.9 var(--font-num)}
+.flow h3{font-size:26px;font-weight:900;margin:14px 0 6px}
+.flow p{font-size:19px;color:var(--muted);margin:0;line-height:1.6}
+.foot{font-size:15px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.slide.active .giant{animation:none}}
+</style>
+
+<main class="deck" data-transition="slide">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="giant" style="left:-30px;bottom:-150px">JOIN US</div></div>
+    <div class="kicker">2028 GRADUATES · SAMPLE KOBO INC.</div>
+    <h1>つくる側に、<br><span class="hl" style="display:inline-block;line-height:1.08;padding:.02em .1em .06em;margin-top:.08em">来ないか。</span></h1>
+    <p class="lead" style="margin-top:30px;max-width:620px">サンプル工房株式会社　2028年卒 会社説明会<br>アプリと道具を、自分たちの手でつくる会社です。</p>
+    <aside class="notes">大きな声で1行目を読むだけ。自己紹介は30秒以内。</aside>
+  </section>
+
+  <section class="slide" data-title="数字で見る">
+    <div class="bg"><div class="giant out" style="right:-40px;bottom:-330px;opacity:.7">148</div></div>
+    <div class="kicker">BY THE NUMBERS</div>
+    <h2>小さい会社だから、<br>1年目から名前で呼ばれる。</h2>
+    <div class="num3">
+      <div><div class="l">社員の数</div><div class="v"><span data-count="148"></span><small>人</small></div><p>エンジニアとデザイナーが 6 割</p></div>
+      <div><div class="l">平均年齢</div><div class="v"><span data-count="31"></span><small>歳</small></div><p>新卒は毎年 12 人前後</p></div>
+      <div><div class="l">3年後も在籍</div><div class="v"><span data-count="92"></span><small>%</small></div><p>2022〜24年入社の平均</p></div>
+    </div>
+    <p class="foot">社名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">「92%」のところで一呼吸。辞めない理由は次のページの職種の話につなげる。</aside>
+  </section>
+
+  <section class="slide y" data-title="職種">
+    <div class="bg"><div class="giant jp" style="right:-120px;bottom:-170px;font-size:480px">職種</div></div>
+    <div class="kicker">3 ROLES</div>
+    <h2 style="margin-bottom:22px">職種は3つ。どれも「つくる」仕事。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="dev">エンジニア</button><button data-tab="des">デザイナー</button><button data-tab="biz">セールス</button></div>
+      <div data-panel="dev" class="role">
+        <div class="word">CODE<small>エンジニア　新卒 6 人</small></div>
+        <div><h3>1年目の夏には、自分の書いた機能が世に出る。</h3>
+          <ul><li><b>01</b>入社3か月は、先輩と二人一組で開発</li><li><b>02</b>使う言語は TypeScript と Go</li><li><b>03</b>文系出身も毎年 2 人ほど</li></ul></div>
+      </div>
+      <div data-panel="des" class="role">
+        <div class="word">FORM<small>デザイナー　新卒 3 人</small></div>
+        <div><h3>画面だけでなく、何をつくるかから考える。</h3>
+          <ul><li><b>01</b>企画の会議に1年目から出る</li><li><b>02</b>ユーザーに会いに行くのも仕事</li><li><b>03</b>作品集は「考えた過程」を見ます</li></ul></div>
+      </div>
+      <div data-panel="biz" class="role">
+        <div class="word">TALK<small>セールス　新卒 3 人</small></div>
+        <div><h3>売るより先に、困りごとを聞きに行く。</h3>
+          <ul><li><b>01</b>担当は中小の工場と町の商店</li><li><b>02</b>聞いた声は翌週の開発会議へ</li><li><b>03</b>ノルマはなく、チームで目標</li></ul></div>
+      </div>
+    </div>
+    <aside class="notes">会場の学生の専攻を聞いてから、近いタブを押す。3つとも見せる必要はない。</aside>
+  </section>
+
+  <section class="slide" data-title="成長の道">
+    <div class="bg"><div class="giant out" style="left:-60px;bottom:-230px">GROW</div></div>
+    <div class="kicker">YOUR FIRST 3 YEARS</div>
+    <h2>3年で、ひとつの製品を任される。</h2>
+    <div class="grow">
+      <div class="step"><div class="t">3<small>か月</small></div><h3>二人一組で学ぶ</h3><p>先輩の横で、実際の仕事を小さく切って渡される。</p></div>
+      <div class="step"><div class="t">1<small>年</small></div><h3>ひとりで一機能</h3><p>企画から公開まで、1つの機能を持つ。</p></div>
+      <div class="step"><div class="t">3<small>年</small></div><h3>製品のリーダー</h3><p>5人ほどのチームで、1つの製品の方向を決める。</p></div>
+    </div>
+    <aside class="notes">→で1つずつ。「3年でリーダーは早すぎないか」と聞かれたら、実際に3年目のリーダーが4人いると答える。</aside>
+  </section>
+
+  <section class="slide" data-title="年収のモデル">
+    <div class="bg"><div class="giant" style="right:-100px;top:-150px">¥</div></div>
+    <div class="kicker">SALARY MODEL · 動かせます</div>
+    <h2>5年目、ふつうの評価で <span class="hl">年収 480 万円</span> ほど。</h2>
+    <div class="split fill" style="grid-template-columns:.8fr 1.2fr;gap:64px" data-calc
+      data-let="mult = 0.6 + grade*0.2; monthly = 25 + (years-1)*1.3*mult; bonus = monthly*(2 + grade*0.5); annual = monthly*12 + bonus">
+      <div style="padding-top:8px">
+        <div class="field"><label>入社して <b data-show="years" data-unit=" 年目"></b></label><input type="range" name="years" min="1" max="10" value="5"></div>
+        <div class="field"><label>評価（5段階） <b data-show="grade"></b></label><input type="range" name="grade" min="1" max="5" value="3"></div>
+        <details class="why float"><summary>どう決まる？</summary><div class="body">初任給は月 25 万円（全職種同じ）。昇給は毎年、評価に応じて 0.8〜1.8 万円。賞与は年2回で、合わせて月給の 2.5〜4.5 か月分。残業代は別に全額出ます。</div></details>
+      </div>
+      <div>
+        <div style="font:900 22px var(--font)">年収（残業代を除く）</div>
+        <div class="pay"><span data-out="annual" data-format="dec1"></span><small>万円</small></div>
+        <div class="pay2">
+          <div><div class="l">月給</div><div class="v"><span data-out="monthly" data-format="dec1"></span> <small style="font:900 20px var(--font)">万円</small></div></div>
+          <div><div class="l">賞与（年間）</div><div class="v"><span data-out="bonus" data-format="dec1"></span> <small style="font:900 20px var(--font)">万円</small></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">年数を 1 に戻して初年度の額を見せ、次に 10 年目まで動かす。評価は 3 のままで話すと誤解が少ない。</aside>
+  </section>
+
+  <section class="slide y" data-title="選考の流れ">
+    <div class="bg"><div class="giant" style="right:-80px;bottom:-200px">4 STEPS</div></div>
+    <div class="kicker">SELECTION</div>
+    <h2>面接は2回だけ。<br>最短 3 週間で結果が出る。</h2>
+    <div class="flow">
+      <div class="step"><div class="n">01</div><h3>エントリー</h3><p>名前と連絡先だけ。履歴書はいらない。</p></div>
+      <div class="step"><div class="n">02</div><h3>課題</h3><p>職種ごとの小さな課題。1週間で提出。</p></div>
+      <div class="step"><div class="n">03</div><h3>面接①</h3><p>現場の社員と、課題について話す。</p></div>
+      <div class="step"><div class="n">04</div><h3>面接②</h3><p>社長と、これからやりたいことを話す。</p></div>
+    </div>
+    <details class="why" style="max-width:640px;margin-top:26px"><summary>なぜ履歴書がいらないのか</summary><div class="body">過去より「一緒に働いたらどうか」を見たいから。課題を一緒に振り返る時間が、いちばんお互いを知れる。</div></details>
+  </section>
+
+  <section class="slide" data-title="エントリー">
+    <div class="bg"><div class="giant" style="left:-40px;bottom:-160px;color:var(--accent)">ENTRY</div></div>
+    <div class="kicker">NEXT</div>
+    <h1 style="font-size:96px">今日、名前だけ<br>置いていって。</h1>
+    <p class="lead" style="margin-top:26px;color:#fff">entry.example.jp　締め切り 2027年3月31日</p>
+  </section>
+
+</main>

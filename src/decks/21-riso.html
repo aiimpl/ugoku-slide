@@ -1,0 +1,227 @@
+<!--meta
+{"title":"協賛のお願い サンプル・サウンズ 2027","style":"リソグラフ印刷","use":"音楽フェスの協賛のお願い","group":"レトロ・ポップ",
+ "aim":"フェス実行委員会の協賛担当が、地元企業の宣伝担当との初回の商談で、協賛プランを1つ選んでもらうため。",
+ "desc":"蛍光ピンクと青の2色刷り。版ずれ・網点・紙のざらつきまで再現。来場者数と接触率を動かすと、会場での露出数と1接触あたりの費用が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --paper:#f4efe4; --pink:#ff48b0; --blue:#0078bf;
+  --bg:var(--paper); --surface:#fbf8f1; --ink:#1d3690; --muted:#3a4f9e; --line:#1d3690; --accent:#1d3690; --accent-ink:#f4efe4;
+  --frame:#d8d2c4; --radius:0px; --shadow:none; --good:#1d3690; --bad:#b0005f;
+  --font:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-head:"Dela Gothic One","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif; --font-num:"Dela Gothic One","Hiragino Sans",sans-serif;
+  --head-weight:400; --head-track:0;
+}
+.slide{isolation:isolate;padding:60px 76px}
+/* 紙のざらつき＋端の網点 */
+.slide>.bg{background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+  var(--paper)}
+.dots{position:absolute;border-radius:50%;background:radial-gradient(circle,var(--pink) 42%,transparent 44%) 0 0/14px 14px;mix-blend-mode:multiply;
+  -webkit-mask:radial-gradient(circle,#000 30%,transparent 72%);mask:radial-gradient(circle,#000 30%,transparent 72%)}
+.dots.b{background-image:radial-gradient(circle,var(--blue) 38%,transparent 41%);background-size:11px 11px}
+.solid{position:absolute;border-radius:50%;background:var(--pink);mix-blend-mode:multiply}
+.band{position:absolute;background:var(--blue);mix-blend-mode:multiply;opacity:.9}
+/* 版ずれ：ピンクの版が右下にずれて重なる */
+.mis{position:relative;display:inline-block;color:var(--ink)}
+.mis::after{content:attr(data-t);position:absolute;left:6px;top:5px;color:var(--pink);mix-blend-mode:multiply;pointer-events:none;white-space:pre}
+.kicker{font:700 17px var(--font);letter-spacing:.2em;color:var(--ink);display:inline-flex;align-items:center;gap:12px;margin-bottom:18px}
+.kicker::before{content:"";width:34px;height:14px;background:var(--pink);mix-blend-mode:multiply;box-shadow:4px 3px 0 var(--blue)}
+h2{font-size:46px;line-height:1.3;color:var(--ink);margin-bottom:24px}
+h2 .hl{background:linear-gradient(transparent 55%,color-mix(in srgb,var(--pink) 70%,transparent) 55% 92%,transparent 92%);mix-blend-mode:multiply}
+.lead{color:var(--ink);font-weight:500}
+.foot{color:var(--ink);font-size:16px;bottom:24px}
+/* 刷り物のカード：ピンクの網点地に青の線 */
+.card{background:radial-gradient(circle,color-mix(in srgb,var(--pink) 55%,transparent) 30%,transparent 33%) 0 0/9px 9px,var(--surface);
+  border:3px solid var(--ink);padding:22px 26px;box-shadow:7px 6px 0 var(--pink)}
+.card p{color:var(--ink);font-size:19px;font-weight:500}
+.card h3{font-family:var(--font-head);font-weight:400;font-size:26px}
+.kpi .label{font-size:18px;color:var(--ink);font-weight:700}
+.kpi .value{font-family:var(--font-num);font-weight:400;color:var(--ink);font-size:66px;letter-spacing:-.01em;text-shadow:4px 3px 0 color-mix(in srgb,var(--pink) 80%,transparent)}
+.kpi .value small{font:700 24px var(--font);text-shadow:none;margin-left:4px}
+/* タブ：切り取り線のチケット */
+.tabs{background:none;padding:0;gap:14px;border-radius:0}
+.tabs>[data-tab]{border:3px solid var(--ink);border-radius:0;background:var(--surface);color:var(--ink);font:400 20px var(--font-head);padding:10px 22px}
+.tabs>[data-tab][aria-selected=true]{background:var(--pink);color:var(--ink);box-shadow:5px 4px 0 var(--blue)}
+ul.list{font-size:24px;gap:14px;font-weight:500}
+ul.list>li::before{border-radius:0;width:14px;height:14px;background:var(--pink);box-shadow:3px 2px 0 var(--blue);top:.5em}
+details.why{border:3px dashed var(--ink);border-radius:0;background:var(--surface)}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{border-radius:0;background:var(--pink);color:var(--ink)}
+details.why>.body{color:var(--ink);font-size:18px}
+.field>label{color:var(--ink);font-size:19px;font-weight:700}
+.field>label b{font:400 26px var(--font-num);color:var(--ink)}
+input[type=range]{accent-color:var(--blue)}
+.meter{height:30px;border-radius:0;background:radial-gradient(circle,color-mix(in srgb,var(--blue) 45%,transparent) 30%,transparent 34%) 0 0/8px 8px;border:2px solid var(--ink)}
+.meter>i{border-radius:0;background:var(--pink);mix-blend-mode:multiply}
+.chart{border-bottom:3px solid var(--ink);height:340px;gap:26px;margin-bottom:40px}
+.chart>.col>i{border-radius:0;background:var(--blue);mix-blend-mode:multiply;box-shadow:6px 0 0 color-mix(in srgb,var(--pink) 85%,transparent)}
+.chart>.col.dim>i{background:radial-gradient(circle,var(--blue) 40%,transparent 44%) 0 0/8px 8px}
+.chart>.col::before{font:400 20px var(--font-num);color:var(--ink)}
+.chart>.col::after{font-size:18px;color:var(--ink);font-weight:700}
+.price{font:400 104px/1 var(--font-num);color:var(--ink);text-shadow:5px 4px 0 color-mix(in srgb,var(--pink) 85%,transparent)}
+.price small{font:700 26px var(--font);text-shadow:none}
+.stamp{display:inline-block;border:3px solid var(--ink);padding:4px 14px;font:400 18px var(--font-head);color:var(--ink);transform:rotate(-4deg);background:var(--paper)}
+.tl{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:72px;border-top:4px solid var(--ink);position:relative}
+.tl>div{padding:24px 18px 0 0;position:relative}
+.tl>div::before{content:"";position:absolute;top:-17px;left:0;width:30px;height:30px;border-radius:50%;background:var(--pink);mix-blend-mode:multiply;box-shadow:4px 3px 0 var(--blue)}
+.tl b{display:block;font:400 72px/1.1 var(--font-num);color:var(--ink)}
+.tl span{display:block;font-size:24px;font-weight:700;margin-top:10px;line-height:1.55}
+.est{border-top:3px dashed var(--ink);padding-top:18px;font-size:20px;font-weight:700;display:flex;align-items:baseline;justify-content:space-between}
+.est b{font:400 44px var(--font-num)}
+.pn{font-size:48px!important;margin:22px 0 6px}
+.kpis .kpi .value{font-size:52px;white-space:nowrap}
+.kpis .card{padding:18px 20px}
+.res{border:3px solid var(--ink);background:var(--surface);padding:18px 24px;margin-bottom:16px;box-shadow:7px 6px 0 var(--pink)}
+.res .label{font-size:18px;font-weight:700}
+.res .v{font:400 60px/1.15 var(--font-num);color:var(--ink);white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .solid{animation:riso-in 1.2s var(--ease) both}
+  @keyframes riso-in{from{transform:translate(-14px,10px)}to{transform:none}}
+}
+</style>
+
+<main class="deck" data-transition="slide">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="solid" style="width:500px;height:500px;right:-40px;top:-60px"></div>
+      <div class="dots b" style="width:640px;height:640px;right:-190px;top:-40px"></div>
+      <div class="band" style="left:0;right:0;bottom:0;height:120px"></div>
+      <div class="dots" style="width:420px;height:420px;left:-150px;bottom:-140px"></div>
+    </div>
+    <div class="kicker">SAMPLE SOUNDS 2027 ／ 協賛のお願い</div>
+    <h1 style="font-size:88px;line-height:1.2;margin-bottom:26px;margin-top:6px"><span class="mis" data-t="夏の3日間を、">夏の3日間を、</span><br><span class="mis" data-t="一緒に鳴らそう。">一緒に鳴らそう。</span></h1>
+    <p class="lead" style="font-size:26px;line-height:1.7">来年で5回目の音楽フェス。<br>街の夏をいっしょにつくる<br>協賛社を探しています。</p>
+    <div style="position:absolute;right:84px;bottom:150px;text-align:right;color:var(--ink)">
+      <div style="display:inline-block;font:400 28px/1 var(--font-head);letter-spacing:.1em;margin-bottom:12px;padding:8px 14px;background:var(--paper);border:3px solid var(--ink)">2027 AUG. ／ 3 DAYS</div>
+      <div style="font:400 132px/1 var(--font-num);letter-spacing:-.02em"><span class="mis" data-t="20—22">20—22</span></div>
+    </div>
+    <div style="position:absolute;left:76px;bottom:38px;font:700 24px var(--font);color:var(--paper);letter-spacing:.12em">サンプル湾岸公園 特設ステージ ／ 主催 サンプル・サウンズ実行委員会</div>
+    <aside class="notes">最初の一言は「協賛のお願いです」とはっきり言う。日付と場所だけ読み上げて次へ。</aside>
+  </section>
+
+  <section class="slide" data-title="フェスの規模">
+    <div class="bg"><div class="dots" style="width:520px;height:520px;right:-220px;top:-250px"></div></div>
+    <div class="kicker">SCALE ／ 規模</div>
+    <h2>4年で来場者は <span class="hl">2.6倍</span>。<br>街でいちばん人が集まる3日間。</h2>
+    <div class="split fill" style="grid-template-columns:1.15fr .85fr;gap:52px;align-items:stretch">
+      <div class="grid cols-3 kpis" style="gap:22px;align-content:start">
+        <div class="card kpi" style="grid-column:1/-1"><div class="label">2026年の来場者（3日間の合計）</div><div class="value" style="font-size:112px;margin:10px 0 6px"><span data-count="42000"></span><small style="font-size:32px">人</small></div></div>
+        <div class="card kpi"><div class="label">出演アーティスト</div><div class="value"><span data-count="64"></span><small>組</small></div></div>
+        <div class="card kpi"><div class="label">会期中のSNS投稿</div><div class="value"><span data-count="18"></span><small>万件</small></div></div>
+        <div class="card kpi"><div class="label">また来たい</div><div class="value"><span data-count="92"></span><small>%</small></div></div>
+      </div>
+      <div>
+        <p style="font:700 20px var(--font);margin-bottom:0">来場者数の推移（千人）</p>
+        <div class="chart">
+          <div class="col dim" style="--v:38" data-label="2023" data-val="16"><i></i></div>
+          <div class="col dim" style="--v:55" data-label="2024" data-val="23"><i></i></div>
+          <div class="col dim" style="--v:74" data-label="2025" data-val="31"><i></i></div>
+          <div class="col" style="--v:100" data-label="2026" data-val="42"><i></i></div>
+        </div>
+      </div>
+    </div>
+    <p class="foot">数字は架空のサンプルです。</p>
+    <aside class="notes">左の数字は開くたびにカウントアップする。「4.2万人」と「また来たい92%」の2つだけ強調する。</aside>
+  </section>
+
+  <section class="slide" data-title="来場者像">
+    <div class="bg"><div class="solid" style="width:300px;height:300px;right:70px;top:70px;opacity:.85"></div><div class="dots b" style="width:420px;height:420px;right:10px;top:10px"></div></div>
+    <div class="kicker">AUDIENCE ／ 来る人</div>
+    <h2>来場者の <span class="hl">7割が20〜30代</span>。<br>ふだん広告が届きにくい層です。</h2>
+    <div class="grid" style="grid-template-columns:1fr 380px;gap:56px;flex:1">
+      <div>
+        <div class="step" style="display:grid;grid-template-columns:130px 1fr 90px;align-items:center;gap:18px;margin-bottom:18px;font-size:22px;font-weight:700"><span>10代</span><div class="meter"><i style="width:14%"></i></div><b style="font:400 30px var(--font-num)">9%</b></div>
+        <div class="step" style="display:grid;grid-template-columns:130px 1fr 90px;align-items:center;gap:18px;margin-bottom:18px;font-size:22px;font-weight:700"><span>20代</span><div class="meter"><i style="width:68%"></i></div><b style="font:400 30px var(--font-num)">43%</b></div>
+        <div class="step" style="display:grid;grid-template-columns:130px 1fr 90px;align-items:center;gap:18px;margin-bottom:18px;font-size:22px;font-weight:700"><span>30代</span><div class="meter"><i style="width:44%"></i></div><b style="font:400 30px var(--font-num)">28%</b></div>
+        <div class="step" style="display:grid;grid-template-columns:130px 1fr 90px;align-items:center;gap:18px;margin-bottom:18px;font-size:22px;font-weight:700"><span>40代以上</span><div class="meter"><i style="width:31%"></i></div><b style="font:400 30px var(--font-num)">20%</b></div>
+        <details class="why"><summary>根拠：2026年の来場者アンケート</summary><div class="body">会場で回答した 3,120 人（サンプル）。「テレビをほぼ見ない」61%、「フェスで知ったブランドを買ったことがある」38%。</div></details>
+      </div>
+      <div style="align-self:end;padding-bottom:10px">
+        <div style="font:400 150px/1 var(--font-num);color:var(--ink)"><span class="mis" data-t="71%">71%</span></div>
+        <p style="font-size:24px;font-weight:700;margin-top:10px">が 20〜30代</p>
+      </div>
+    </div>
+    <aside class="notes">→ で年代の棒が1本ずつ出る。20代で止めて「ここが一番多い」と言う。根拠はクリックで開く。</aside>
+  </section>
+
+  <section class="slide" data-title="協賛プラン">
+    <div class="bg"><div class="dots b" style="width:460px;height:460px;left:-200px;bottom:-200px"></div></div>
+    <div class="kicker">PLANS ／ 協賛プラン</div>
+    <h2>目的に合わせて、3つから選べます。</h2>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">ヘッドライナー</button><button data-tab="b">ステージ</button><button data-tab="c">ブース</button></div>
+      <div data-panel="a" class="grid" style="grid-template-columns:1fr 1.1fr;gap:48px;flex:1">
+        <div class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+          <div><span class="stamp">1社のみ</span><h3 class="pn">冠協賛</h3><p>フェスそのものに、社名が付く。</p></div>
+          <div class="price">800<small>万円</small></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;gap:36px"><ul class="list" style="font-size:27px;gap:22px"><li>フェスの名前に社名が入る</li><li>メインステージの幕・リストバンドにロゴ</li><li>公式SNSで告知 12回</li><li>招待券 200枚</li></ul><div class="est">会場での露出の目安<b>約30万回</b></div></div>
+      </div>
+      <div data-panel="b" class="grid" style="grid-template-columns:1fr 1.1fr;gap:48px;flex:1">
+        <div class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+          <div><span class="stamp">残り2社</span><h3 class="pn">ステージ協賛</h3><p>2つめのステージを、1社で持つ。</p></div>
+          <div class="price">300<small>万円</small></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;gap:36px"><ul class="list" style="font-size:27px;gap:22px"><li>2つめのステージに社名を付ける</li><li>転換中の画面で15秒の映像を流す</li><li>公式SNSで告知 5回</li><li>招待券 60枚</li></ul><div class="est">会場での露出の目安<b>約10万回</b></div></div>
+      </div>
+      <div data-panel="c" class="grid" style="grid-template-columns:1fr 1.1fr;gap:48px;flex:1">
+        <div class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+          <div><span class="stamp">12区画</span><h3 class="pn">ブース出展</h3><p>来場者に、手渡しで試してもらう。</p></div>
+          <div class="price">80<small>万円</small></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;gap:36px"><ul class="list" style="font-size:27px;gap:22px"><li>6m×6m の区画、テント・電源つき</li><li>試供品の配布・販売ができる</li><li>会場マップに社名を掲載</li><li>招待券 10枚</li></ul><div class="est">会場での露出の目安<b>約3万回</b></div></div>
+      </div>
+    </div>
+    <aside class="notes">相手の目的を聞いてからタブを押す。「名前を覚えてほしい」ならヘッドライナー、「試してほしい」ならブース。</aside>
+  </section>
+
+  <section class="slide" data-title="露出の試算">
+    <div class="bg"><div class="solid" style="width:260px;height:260px;left:-90px;bottom:-90px"></div></div>
+    <div class="kicker">SIMULATOR ／ 動かせます</div>
+    <h2>協賛金 300万円で、会場だけで <span class="hl">約10万回</span> 目に入る。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:56px" data-calc data-let="reach = visitors*rate/100; imp = reach*times">
+      <div>
+        <div class="field"><label>来場者数 <b data-show="visitors" data-unit="人"></b></label><input type="range" name="visitors" min="20000" max="60000" step="1000" value="42000"></div>
+        <div class="field"><label>ロゴ・ブースに気づく人の割合 <b data-show="rate" data-unit="%"></b></label><input type="range" name="rate" min="10" max="90" step="5" value="60"></div>
+        <div class="field"><label>1人が目にする回数 <b data-show="times" data-unit="回"></b></label><input type="range" name="times" min="1" max="8" value="4"></div>
+        <div class="field"><label>協賛金 <b data-show="fee" data-unit="万円"></b></label><input type="range" name="fee" min="80" max="800" step="10" value="300"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">気づく人 ＝ 来場者 × 割合。露出数 ＝ 気づく人 × 回数。<br>1回あたりの費用 ＝ 協賛金 ÷ 露出数。SNS・配信での露出は含めていません。</div></details>
+      </div>
+      <div>
+        <div class="res"><div class="label">ロゴに気づく人</div><div class="v" data-out="reach" data-unit="人"></div><div class="meter" style="margin-top:8px" data-bar="reach" data-max="60000"><i></i></div></div>
+        <div class="res"><div class="label">会場での露出数</div><div class="v" data-out="imp" data-unit="回"></div></div>
+        <div class="res" style="box-shadow:7px 6px 0 var(--blue)"><div class="label">1回見てもらう費用</div><div class="v" data-out="fee*10000/imp" data-format="dec1" data-unit="円"></div></div>
+      </div>
+    </div>
+    <aside class="notes">ここで協賛金を800万円に上げて見せる。1回あたりの費用はネット広告と比べてもらうと話が早い。</aside>
+  </section>
+
+  <section class="slide" data-title="スケジュール">
+    <div class="bg"><div class="dots" style="width:560px;height:560px;right:-200px;top:-230px"></div><div class="band" style="left:0;width:26px;top:0;bottom:0"></div></div>
+    <div class="kicker">SCHEDULE ／ 進め方</div>
+    <h2>申し込みから当日まで、<br>準備は <span class="hl">4回の打ち合わせ</span> だけ。</h2>
+    <div class="tl">
+      <div class="step"><b>12月</b><span>プランの申込<br>（12/20 締切）</span></div>
+      <div class="step"><b>2月</b><span>ロゴ・映像の<br>入稿</span></div>
+      <div class="step"><b>5月</b><span>出演者発表と<br>同時に告知</span></div>
+      <div class="step"><b>8月</b><span>本番 3日間<br>ブース設営</span></div>
+      <div class="step"><b>9月</b><span>来場・露出の<br>報告書を提出</span></div>
+    </div>
+    <p style="margin-top:auto;font:400 30px/1.5 var(--font-head);border-top:3px dashed var(--ink);padding-top:22px">打ち合わせはオンライン可。設営と撤去は、実行委員会が行います。</p>
+  </section>
+
+  <section class="slide cover" data-title="お願い">
+    <div class="bg"><div class="solid" style="width:620px;height:620px;right:-140px;top:50px"></div><div class="dots b" style="width:520px;height:520px;left:-200px;bottom:-260px"></div></div>
+    <div class="kicker">NEXT ／ お願い</div>
+    <h1 style="font-size:84px;line-height:1.22"><span class="mis" data-t="12月20日までに、">12月20日までに、</span><br><span class="mis" data-t="プランをひとつ。">プランをひとつ。</span></h1>
+    <p class="lead" style="font-size:26px;margin-top:26px">見積もり・過去の報告書は、すぐにお送りします。</p>
+    <div class="card" style="position:absolute;left:76px;bottom:60px;width:560px;box-shadow:7px 6px 0 var(--blue)">
+      <p style="font-size:22px;margin:0;font-weight:700">サンプル・サウンズ実行委員会 協賛担当<br>sponsor@example.com ／ 03-0000-0000</p>
+    </div>
+    <p class="foot" style="left:auto;right:76px;text-align:right;color:var(--ink)">数字・団体名はすべて架空のサンプルです。</p>
+  </section>
+
+</main>

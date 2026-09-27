@@ -1,0 +1,247 @@
+<!--meta
+{"title":"スマートホームのご提案｜サンプル電機","style":"ニューモーフィズム","use":"スマート家電の提案","group":"テック・未来",
+ "aim":"住宅設備の営業担当が、新築の打ち合わせの席で、エアコンと照明の自動運転で電気代がいくら下がるかを施主と一緒に確かめるため。",
+ "desc":"同じ灰色の面から、ボタンやダイヤルが柔らかく押し出され、へこむ。スマート家電の提案書。使う時間や設定温度を動かすと、月と年の電気代の節約額と元が取れる時期が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=Murecho:wght@400;500;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#e4e8ee; --surface:#e4e8ee; --ink:#27303f; --muted:#535d6f; --line:#cdd3dc; --accent:#e0632f; --accent-ink:#fff; --acc-text:#b8481b;
+  --frame:#d5dae2; --radius:28px; --good:#1c7a5a; --bad:#b8481b;
+  --hi:#ffffff; --lo:#bcc3ce;
+  --out:9px 9px 20px var(--lo),-9px -9px 20px var(--hi);
+  --out-s:5px 5px 10px var(--lo),-5px -5px 10px var(--hi);
+  --in:inset 6px 6px 12px var(--lo),inset -6px -6px 12px var(--hi);
+  --in-s:inset 3px 3px 6px var(--lo),inset -3px -3px 6px var(--hi);
+  --shadow:var(--out);
+  --font:"Murecho","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Lexend","Murecho",sans-serif; --head-weight:800; --head-track:0;
+  --pad-y:58px; --pad-x:76px;
+}
+.deck .slide.active{transform:none;filter:none} /* エンジンの rise/zoom/blur で表示中のスライドがずれたままになるのを補正 */
+.slide>.bg{background:radial-gradient(circle at 15% 0%,#eef1f5,transparent 60%)}
+.kicker{display:flex;align-items:center;gap:12px;color:var(--ink);font:600 16px var(--font-num);letter-spacing:.16em}
+.kicker::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgb(224 99 47 / .6),var(--out-s)}
+h1{font-size:66px;line-height:1.3}
+h2{font-size:44px;line-height:1.35;margin-bottom:30px}
+p{font-size:20px;line-height:1.8}
+.lead{color:var(--muted)}
+.raised{background:var(--surface);border-radius:var(--radius);box-shadow:var(--out);padding:28px 32px}
+.sunk{background:var(--surface);border-radius:var(--radius);box-shadow:var(--in);padding:22px 26px}
+.card{background:var(--surface);border:0;box-shadow:var(--out);border-radius:var(--radius)}
+.card p{color:var(--muted);font-size:19px}
+.n{font:600 64px/1 var(--font-num);letter-spacing:-.03em;color:var(--ink);white-space:nowrap}
+.n small{font:700 24px var(--font);margin-left:4px;letter-spacing:0;color:var(--muted)}
+.hot{color:var(--acc-text)}
+
+/* ダイヤル */
+.dial{--d:430px;width:var(--d);height:var(--d);border-radius:50%;background:var(--surface);box-shadow:18px 18px 40px var(--lo),-18px -18px 40px var(--hi);
+  display:grid;place-items:center;position:relative}
+.dial .track{position:absolute;inset:32px;border-radius:50%;
+  background:conic-gradient(from 220deg,#f2a276 0,var(--accent) 62%,transparent 62% 78%,transparent 78%);
+  -webkit-mask:radial-gradient(closest-side,transparent 86%,#000 87%);mask:radial-gradient(closest-side,transparent 86%,#000 87%);filter:drop-shadow(0 0 8px rgb(224 99 47 / .45))}
+.dial .groove{position:absolute;inset:26px;border-radius:50%;box-shadow:var(--in)}
+.dial .face{width:62%;height:62%;border-radius:50%;background:linear-gradient(145deg,#eef1f5,#d9dee6);box-shadow:var(--out);display:grid;place-items:center;text-align:center}
+.dial .t{font:300 92px/1 var(--font-num);letter-spacing:-.04em;color:var(--ink)}
+.dial .t sup{font-size:34px;vertical-align:42px}
+.dial .m{font:500 18px var(--font);color:var(--muted);margin-top:4px}
+.dial .knob{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--surface);box-shadow:var(--out-s);
+  left:calc(50% - 15px);top:18px;transform-origin:15px calc(var(--d)/2 - 18px);transform:rotate(-17deg)}
+.dial .knob::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--accent)}
+@keyframes breathe{0%,100%{filter:drop-shadow(0 0 6px rgb(224 99 47 / .35))}50%{filter:drop-shadow(0 0 16px rgb(224 99 47 / .7))}}
+.dial .track{animation:breathe 4s ease-in-out infinite}
+
+/* 表紙 */
+.cv{display:grid;grid-template-columns:1fr 470px;gap:40px;flex:1;min-height:0;align-items:center}
+.pills{display:flex;gap:18px;margin-top:34px}
+.pill-n{display:flex;align-items:center;gap:12px;padding:14px 22px;border-radius:999px;background:var(--surface);box-shadow:var(--out-s);font-size:19px;font-weight:700;color:var(--ink)}
+.pill-n.on{box-shadow:var(--in-s);color:var(--acc-text)}
+.pill-n i{width:10px;height:10px;border-radius:50%;background:#aab2bf}
+.pill-n.on i{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+
+/* しくみ */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;flex:1;min-height:0}
+.how .raised{display:flex;flex-direction:column}
+.btn-ic{width:96px;height:96px;border-radius:30px;background:var(--surface);box-shadow:var(--out);display:grid;place-items:center;margin-bottom:auto}
+.btn-ic.on{box-shadow:var(--in)}
+.btn-ic svg{width:42px;height:42px}
+.how h3{font-size:30px;margin:26px 0 10px}
+.how p{color:var(--muted);margin:0;min-height:5.4em;font-size:21px}
+.how .btn-ic{width:120px;height:120px;border-radius:36px}.how .btn-ic svg{width:52px;height:52px}
+.how .stepno{font:600 16px var(--font-num);letter-spacing:.14em;color:var(--muted);margin-bottom:6px}
+
+/* 1日の流れ */
+.day{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:28px 40px;flex:1;min-height:0;margin-bottom:10px}
+.scene{display:grid;grid-template-columns:140px 1fr 74px;align-items:center;gap:20px;padding:20px 26px;border-radius:24px;background:var(--surface);box-shadow:var(--out-s)}
+.scene .tm{font:600 40px var(--font-num);letter-spacing:-.02em}
+.scene b{font-size:25px;display:block}
+.scene span{font-size:19px;color:var(--muted)}
+.sw{width:74px;height:40px;border-radius:20px;box-shadow:var(--in-s);position:relative}
+.sw::after{content:"";position:absolute;left:5px;top:5px;width:30px;height:30px;border-radius:50%;background:var(--surface);box-shadow:var(--out-s)}
+.sw.on::after{left:39px;background:var(--accent);box-shadow:0 0 10px rgb(224 99 47 / .6)}
+
+/* 計算 */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;min-height:0}
+.field{margin-bottom:22px}
+.field>label{font-size:19px;color:var(--ink);font-weight:500}
+.field>label b{font:600 24px var(--font-num);color:var(--ink)}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:34px}
+input[type=range]::-webkit-slider-runnable-track{height:14px;border-radius:7px;background:var(--surface);box-shadow:var(--in-s)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;margin-top:-9px;
+  background:radial-gradient(circle,var(--accent) 0 5px,var(--surface) 6px);box-shadow:4px 4px 8px var(--lo),-4px -4px 8px var(--hi)}
+input[type=range]::-moz-range-track{height:14px;border-radius:7px;background:var(--surface);box-shadow:var(--in-s)}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;border:0;background:radial-gradient(circle,var(--accent) 0 5px,var(--surface) 6px);box-shadow:4px 4px 8px var(--lo),-4px -4px 8px var(--hi)}
+.outs{display:grid;grid-template-rows:1.4fr 1fr;gap:26px}
+.outs .sunk{display:flex;flex-direction:column;justify-content:center}
+.outs .sunk span{font-size:19px;color:var(--muted)}
+.outs .big{font:600 110px/1 var(--font-num);letter-spacing:-.04em;color:var(--acc-text);white-space:nowrap}
+.outs .row2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.outs .row2 .raised{padding:22px 26px}
+.outs .row2 span{font-size:18px;color:var(--muted)}
+.outs .row2 b{display:block;font:600 44px/1.2 var(--font-num);letter-spacing:-.02em;white-space:nowrap}
+details.why{background:var(--surface);border:0;box-shadow:var(--out-s);border-radius:18px;margin-top:6px}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:var(--surface);box-shadow:var(--out-s);color:var(--acc-text)}
+details.why>.body{color:var(--muted);font-size:17px}
+details.why.float[open]>.body{background:var(--surface);border:0;box-shadow:var(--out);border-radius:18px}
+
+/* グラフ */
+.chartwrap{display:grid;grid-template-columns:1fr 330px;gap:34px;flex:1;min-height:0}
+.chart{height:300px;border-bottom:0;gap:14px;padding:40px 26px 0;margin-bottom:36px}
+.chart>.col{border-radius:14px;box-shadow:var(--in-s);padding:0 6px}
+.chart>.col>i{border-radius:10px;background:linear-gradient(180deg,#f19a6c,var(--accent));box-shadow:0 4px 10px rgb(224 99 47 / .35)}
+.chart>.col.dim>i{background:linear-gradient(180deg,#eef1f5,#cfd5de);box-shadow:var(--out-s)}
+.chart>.col::before{font:600 17px var(--font-num);color:var(--ink)}
+.chart>.col::after{font-size:16px;color:var(--muted)}
+.legend{display:flex;gap:24px;font-size:18px;color:var(--muted);margin-left:26px}
+.legend i{display:inline-block;width:16px;height:16px;border-radius:5px;margin-right:8px;vertical-align:-2px}
+
+/* 価格 */
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;flex:1;min-height:0}
+.price .raised{display:flex;flex-direction:column}
+.price .raised.sel{box-shadow:var(--in)}
+.price h3{font-size:24px;margin:0 0 auto}
+.price .n{font-size:66px;margin:22px 0 8px}
+.price p{color:var(--muted);margin:0;font-size:19px}
+.badge{align-self:flex-start;font:700 15px var(--font);padding:6px 14px;border-radius:999px;box-shadow:var(--out-s);color:var(--acc-text);margin-bottom:18px}
+.foot{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.dial .track{animation:none}}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <div class="cv">
+      <div>
+        <div class="kicker">SMART HOME PROPOSAL</div>
+        <h1 style="margin:22px 0 22px">エアコンと照明が、<br>勝手に節約する家。</h1>
+        <p class="lead" style="margin:0">サンプル様邸　新築のご提案　／　サンプル電機</p>
+        <div class="pills"><span class="pill-n on"><i></i>自動運転 オン</span><span class="pill-n"><i></i>外出モード</span><span class="pill-n"><i></i>おやすみ</span></div>
+      </div>
+      <div class="dial"><div class="groove"></div><div class="track"></div><div class="knob"></div>
+        <div class="face"><div><div class="t">26.5<sup>°</sup></div><div class="m">冷房・自動</div></div></div></div>
+    </div>
+    <aside class="notes">ダイヤルの絵を指して「これをもう触らなくていい家です」と始める。</aside>
+  </section>
+
+  <section class="slide" data-title="しくみ">
+    <div class="bg"></div>
+    <div class="kicker">HOW IT WORKS</div>
+    <h2>家が、住む人のくらしを覚える。</h2>
+    <div class="how">
+      <div class="raised step"><div class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#27303f" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7"/></svg></div>
+        <div class="stepno" style="margin-top:28px">STEP 1</div><h3 style="margin-top:0">感じる</h3><p>部屋ごとの温度・湿度・人がいるかを、センサーが1分ごとに見る。</p></div>
+      <div class="raised step"><div class="btn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#27303f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l5-6 4 3 7-9"/><path d="M15 6h5v5"/></svg></div>
+        <div class="stepno" style="margin-top:28px">STEP 2</div><h3 style="margin-top:0">覚える</h3><p>起きる時間・帰る時間・好きな温度を、2週間で覚える。</p></div>
+      <div class="raised step"><div class="btn-ic on"><svg viewBox="0 0 24 24" fill="none" stroke="#e0632f" stroke-width="2" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 7.5a8 8 0 1 0 11.4 0"/></svg></div>
+        <div class="stepno" style="margin-top:28px">STEP 3</div><h3 style="margin-top:0">先回りする</h3><p>帰る20分前に冷やし、だれもいない部屋の照明とエアコンを止める。</p></div>
+    </div>
+    <aside class="notes">→ で1つずつ。3つ目のボタンだけ「押された」形になっているのは、ここが実際に電気代を下げる場面だから。</aside>
+  </section>
+
+  <section class="slide" data-title="ある1日">
+    <div class="bg"></div>
+    <div class="kicker">A DAY AT HOME</div>
+    <h2>ある平日、家が自分でやること。</h2>
+    <div class="day">
+      <div class="scene step"><span class="tm">6:10</span><div><b>起きる前に暖める</b><span>寝室だけ、20分前から</span></div><span class="sw on"></span></div>
+      <div class="scene step"><span class="tm">8:30</span><div><b>家じゅうを省エネに</b><span>最後の人が出たら自動で</span></div><span class="sw on"></span></div>
+      <div class="scene step"><span class="tm">13:00</span><div><b>西日の前に日よけ</b><span>電動カーテンを半分閉じる</span></div><span class="sw on"></span></div>
+      <div class="scene step"><span class="tm">17:40</span><div><b>帰る20分前に冷やす</b><span>スマホの位置から判断</span></div><span class="sw on"></span></div>
+      <div class="scene step"><span class="tm">21:00</span><div><b>照明を暖かい色に</b><span>明るさも少しずつ落とす</span></div><span class="sw on"></span></div>
+      <div class="scene step"><span class="tm">23:30</span><div><b>空いた部屋を消灯</b><span>消し忘れはアプリに通知</span></div><span class="sw on"></span></div>
+    </div>
+    <aside class="notes">施主さんの実際の起床・帰宅時間を聞いて、ここに当てはめて話す。</aside>
+  </section>
+
+  <section class="slide" data-title="電気代の試算">
+    <div class="bg"></div>
+    <div class="kicker">SIMULATION · 動かせます</div>
+    <h2>サンプル様邸なら、電気代はこれだけ下がる。</h2>
+    <div class="calc" data-calc data-let="ac = achours*0.65*30*unit*(0.1*deg+0.12); lt = lthours*0.12*30*unit*0.4; month = ac+lt; year = month*12; payback = 48000/max(1,month)">
+      <div class="sunk" style="padding:28px 32px">
+        <div class="field"><label>エアコンを使う時間（1日） <b data-show="achours" data-unit="時間"></b></label><input type="range" name="achours" min="2" max="20" value="10"></div>
+        <div class="field"><label>自動で温度をゆるめる幅 <b data-show="deg" data-unit="℃"></b></label><input type="range" name="deg" min="0" max="3" step="0.5" value="1"></div>
+        <div class="field"><label>照明をつける時間（1日） <b data-show="lthours" data-unit="時間"></b></label><input type="range" name="lthours" min="2" max="12" value="6"></div>
+        <div class="field" style="margin-bottom:10px"><label>電気の単価（1kWh） <b data-show="unit" data-unit="円"></b></label><input type="range" name="unit" min="25" max="45" value="36"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">エアコン：1時間 0.65kWh × 時間 × 30日 × 単価 ×（ゆるめた幅1℃ごとに10% ＋ 止め忘れ防止12%）。<br>照明：1時間 0.12kWh × 時間 × 30日 × 単価 × 40%。元が取れるまで ＝ 機器代 48,000円 ÷ 月の節約。</div></details>
+      </div>
+      <div class="outs">
+        <div class="sunk"><span>1か月の節約</span><div class="big" data-out="month" data-format="yen"></div></div>
+        <div class="row2">
+          <div class="raised"><span>1年で</span><b data-out="year" data-format="yen"></b></div>
+          <div class="raised"><span>元が取れるまで</span><b data-out="payback" data-format="dec1" data-unit="か月"></b></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">ご家族の在宅時間を聞いて、エアコンの時間を合わせる。単価は今の電気の明細を見せてもらうと説得力が出る。</aside>
+  </section>
+
+  <section class="slide" data-title="導入した家の実績">
+    <div class="bg"></div>
+    <div class="kicker">RESULTS</div>
+    <h2>導入した家では、夏の電気代が2割下がった。</h2>
+    <div class="chartwrap">
+      <div class="sunk" style="padding:22px 10px 8px">
+        <div class="legend"><span><i style="background:linear-gradient(#eef1f5,#cfd5de);box-shadow:var(--out-s)"></i>導入前（2025年）</span><span><i style="background:var(--accent)"></i>導入後（2026年）</span></div>
+        <div class="chart">
+          <div class="col dim" style="--v:62" data-label="6月" data-val="9.8"><i></i></div><div class="col" style="--v:50" data-label="6月" data-val="7.9"><i></i></div>
+          <div class="col dim" style="--v:88" data-label="7月" data-val="13.9"><i></i></div><div class="col" style="--v:70" data-label="7月" data-val="11.0"><i></i></div>
+          <div class="col dim" style="--v:100" data-label="8月" data-val="15.8"><i></i></div><div class="col" style="--v:79" data-label="8月" data-val="12.5"><i></i></div>
+          <div class="col dim" style="--v:74" data-label="9月" data-val="11.7"><i></i></div><div class="col" style="--v:59" data-label="9月" data-val="9.3"><i></i></div>
+        </div>
+      </div>
+      <div style="display:grid;gap:26px;align-content:start">
+        <div class="raised"><span style="font-size:18px;color:var(--muted)">夏4か月の合計</span><div class="n hot" style="font-size:78px;margin-top:6px">−21<small>%</small></div></div>
+        <div class="raised"><span style="font-size:18px;color:var(--muted)">浮いた金額</span><div class="n" style="margin-top:6px">¥10,500</div></div>
+        <p class="foot" style="position:static;margin:0">単位：千円。導入した 120 世帯の平均。数字・社名は架空のサンプルです。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="費用">
+    <div class="bg"></div>
+    <div class="kicker">PRICE</div>
+    <h2>必要なのは、機器代だけ。</h2>
+    <div class="price">
+      <div class="raised"><span class="badge">かならず</span><h3>センサーと中継機</h3><div class="n">¥48,000</div><p>部屋ごとのセンサー 5個と、中継機 1台。新築なら配線は工事に含む。</p></div>
+      <div class="raised sel"><span class="badge">おすすめ</span><h3>電動カーテン（2窓）</h3><div class="n">¥36,000</div><p>西日の強い窓だけ。夏の冷房の効きが変わる。</p></div>
+      <div class="raised"><span class="badge">無料</span><h3>アプリと自動運転</h3><div class="n">¥0<small>/月</small></div><p>月額はかからない。設定は引き渡しの日に一緒に。</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="次の一歩">
+    <div class="bg"></div>
+    <div class="cv" style="grid-template-columns:1fr 400px">
+      <div>
+        <div class="kicker">NEXT STEP</div>
+        <h1 style="margin:22px 0 24px;font-size:62px">次の打ち合わせで、<br>部屋ごとの置き場所を<br>決めましょう。</h1>
+        <p class="lead" style="margin:0">担当　サンプル電機 住まいの設備部　サンプル 次郎<br><span style="font-family:var(--font-num)">0120-000-000 ／ home@sample-denki.example</span></p>
+      </div>
+      <div class="dial" style="--d:380px"><div class="groove"></div><div class="track"></div><div class="knob"></div>
+        <div class="face"><div><div class="t" style="font-size:72px">OK</div><div class="m">自動運転の準備</div></div></div></div>
+    </div>
+  </section>
+
+</main>

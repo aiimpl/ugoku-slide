@@ -1,0 +1,230 @@
+<!--meta
+{"title":"創業20周年 沿革 2007–2027","style":"年表・タイムライン","use":"創業20周年の沿革","group":"データ・図解",
+ "aim":"創業20周年の記念式典で、社長室が社員と来賓に会社の20年を振り返り、次の10年の目標を示すための資料。",
+ "desc":"藍色の地に金の一本線がのびる年表。節目の点をたどり、年代をタブで切り替える。成長率を動かすと、10年後の売上と仲間の数が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Oswald:wght@300;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#1d2259; --surface:#272d6c; --ink:#f7f2e4; --muted:#c6c6e0; --line:rgb(247 242 228 / .22);
+  --accent:#f2c14e; --accent-ink:#1d2259; --good:#9fe0b4; --bad:#ffab9a; --frame:#11143a;
+  --radius:4px; --shadow:none;
+  --font:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Oswald","BIZ UDPGothic",sans-serif; --head-weight:700; --head-track:.02em;
+  --pad-y:60px; --pad-x:80px;
+}
+.slide>.bg{background:
+  radial-gradient(1200px 500px at 50% 120%,rgb(242 193 78 / .10),transparent 60%),
+  repeating-linear-gradient(90deg,rgb(247 242 228 / .035) 0 1px,transparent 1px 64px)}
+.kicker{font:500 18px var(--font-num);letter-spacing:.3em;color:var(--accent)}
+h1{font-size:72px;line-height:1.3}
+h2{font-size:40px;line-height:1.45;margin-bottom:26px}
+.lead{font-size:22px;line-height:1.85;color:var(--muted)}
+.yr{font-family:var(--font-num);font-weight:500;letter-spacing:.02em}
+/* 金の一本線（画面の端から端へ） */
+.tline{--y:124px;position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:0}
+.tline::before{content:"";position:absolute;left:-80px;right:-80px;top:var(--y,86px);height:2px;background:var(--accent)}
+.tline.cont::after{content:"";position:absolute;right:-80px;width:120px;top:var(--y,86px);height:2px;background:repeating-linear-gradient(90deg,var(--bg) 0 8px,transparent 8px 16px)}
+.ev{position:relative;padding-right:22px}
+.ev .yr{font-size:80px;line-height:1;height:var(--y,86px);display:flex;align-items:flex-end;padding-bottom:18px}
+.ev::after{content:"";position:absolute;left:0;top:calc(var(--y,86px) - 8px);width:18px;height:18px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);box-sizing:border-box}
+.ev.big::after{width:26px;height:26px;top:calc(var(--y,86px) - 12px);background:var(--accent)}
+.ev.big .yr{color:var(--accent)}
+.ev h3{font-size:27px;margin:32px 0 10px;line-height:1.45}
+.ev p{font-size:20px;line-height:1.7;color:var(--muted);margin:0}
+.slide.active .tline::before{animation:line 1.4s var(--ease) both;transform-origin:left}
+@keyframes line{from{transform:scaleX(0)}}
+.tabs{background:none;border-radius:0;padding:0;gap:0;border:1px solid var(--accent);margin-bottom:6px}
+.era{display:flex;align-items:baseline;gap:40px;margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:19px;color:var(--muted)}
+.era b{font:500 30px var(--font-num);color:var(--ink);margin-left:8px}
+.tabs>[data-tab]{border-radius:0;padding:10px 26px;font-size:18px;color:var(--ink);font-weight:700}
+.tabs>[data-tab] b{font:500 20px var(--font-num);margin-right:10px;letter-spacing:.04em}
+.tabs>[data-tab]+[data-tab]{border-left:1px solid var(--accent)}
+.tabs>[data-tab][aria-selected=true]{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats>div{padding:26px 26px 28px 0}
+.stats>div+div{padding-left:26px;border-left:1px solid var(--line)}
+.stats .l{font-size:19px;color:var(--muted)}
+.stats .v{font:500 116px/1 var(--font-num);color:var(--ink);margin:12px 0 10px;white-space:nowrap}
+.stats .v small{font:700 24px var(--font);margin-left:6px}
+.stats .f{font:300 20px var(--font-num);color:var(--accent);letter-spacing:.04em}
+blockquote{margin:0;font-size:36px;line-height:1.7;font-weight:700;border-left:3px solid var(--accent);padding-left:28px}
+blockquote cite{display:block;font-style:normal;font-size:19px;font-weight:400;color:var(--muted);margin-top:14px}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:500 30px var(--font-num);color:var(--accent)}
+input[type=range]{accent-color:var(--accent)}
+.meter{height:8px;background:rgb(247 242 228 / .14);border-radius:0}
+.meter>i{background:var(--accent);border-radius:0}
+.out{font:500 150px/1 var(--font-num);letter-spacing:-.01em;color:var(--accent);white-space:nowrap}
+.out small{font:700 34px var(--font);margin-left:8px;color:var(--ink)}
+.subo{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:24px}
+.subo>div{padding-top:16px}
+.subo>div+div{border-left:1px solid var(--line);padding-left:26px}
+.subo .l{font-size:19px;color:var(--muted)}
+.subo .v{font:500 54px/1.1 var(--font-num)}
+.subo .v small{font:700 20px var(--font);margin-left:4px}
+details.why{border:1px solid var(--line);background:rgb(0 0 0 / .12);border-radius:var(--radius)}
+details.why>summary{color:var(--accent)}
+details.why>summary::before{background:rgb(242 193 78 / .18);color:var(--accent)}
+details.why>.body{font-size:19px;color:var(--muted)}
+.chart{gap:18px;border-bottom:1px solid var(--line);padding-top:30px;margin-bottom:30px}
+.chart>.col>i{border-radius:0;background:var(--accent)}
+.chart>.col.dim>i{background:rgb(247 242 228 / .24)}
+.chart>.col::before{font:500 16px var(--font-num);color:var(--ink)}
+.chart>.col::after{font:500 15px var(--font-num);color:var(--muted)}
+.foot{font-size:15px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.slide.active .tline::before{animation:none}}
+</style>
+
+<main class="deck" data-transition="slide">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div style="position:absolute;right:40px;top:10px;font:700 520px/1 var(--font-num);color:transparent;-webkit-text-stroke:2px rgb(242 193 78 / .5);letter-spacing:-.02em">20</div>
+      <div style="position:absolute;left:0;right:0;top:512px;height:2px;background:var(--accent)"></div>
+      <div style="position:absolute;top:503px;left:80px;width:20px;height:20px;border-radius:50%;background:var(--accent)"></div>
+      <div style="position:absolute;top:503px;left:360px;width:20px;height:20px;border-radius:50%;border:3px solid var(--accent);background:var(--bg);box-sizing:border-box"></div>
+      <div style="position:absolute;top:503px;left:640px;width:20px;height:20px;border-radius:50%;border:3px solid var(--accent);background:var(--bg);box-sizing:border-box"></div>
+      <div style="position:absolute;top:503px;left:920px;width:20px;height:20px;border-radius:50%;border:3px solid var(--accent);background:var(--bg);box-sizing:border-box"></div>
+      <div style="position:absolute;top:497px;left:1170px;width:32px;height:32px;border-radius:50%;background:var(--accent)"></div>
+    </div>
+    <div style="margin-top:-120px">
+      <div class="kicker">2007 — 2027 · 20TH ANNIVERSARY</div>
+      <h1 style="margin-top:16px">20年分の、<br>ありがとう。</h1>
+      <p class="lead" style="margin-top:22px">サンプル設計株式会社　創業20周年 記念式典</p>
+    </div>
+    <div style="position:absolute;left:80px;right:80px;top:545px;display:grid;grid-template-columns:repeat(5,1fr);font:500 26px var(--font-num);color:var(--ink)">
+      <span>2007</span><span>2012</span><span>2017</span><span>2022</span><span style="text-align:right;color:var(--accent)">2027</span>
+    </div>
+    <aside class="notes">会場が静かになるまで待つ。「今日は20年を5分で振り返ります」とだけ言う。</aside>
+  </section>
+
+  <section class="slide" data-title="20年の数字">
+    <div class="bg"></div>
+    <div class="kicker">IN NUMBERS</div>
+    <h2 style="margin-top:12px">3人で始めた会社が、412人になった。</h2>
+    <div class="stats">
+      <div><div class="l">仲間の数</div><div class="v"><span data-count="412"></span><small>人</small></div><div class="f">2007 · 3</div></div>
+      <div><div class="l">取引先</div><div class="v"><span data-count="1860"></span><small>社</small></div><div class="f">2007 · 2</div></div>
+      <div><div class="l">送り出した製品</div><div class="v"><span data-count="64"></span><small>品目</small></div><div class="f">2007 · 0</div></div>
+      <div><div class="l">拠点</div><div class="v"><span data-count="9"></span><small>か所</small></div><div class="f">2007 · 1（6畳の一室）</div></div>
+    </div>
+    <div style="margin-top:26px;font-size:18px;color:var(--muted)">仲間の数の移り変わり（人）</div>
+      <div class="chart" style="height:200px">
+        <div class="col dim" style="--v:0.7" data-label="2007" data-val="3"><i></i></div>
+        <div class="col dim" style="--v:2.2" data-label="2009" data-val="9"><i></i></div>
+        <div class="col dim" style="--v:3.4" data-label="2011" data-val="14"><i></i></div>
+        <div class="col dim" style="--v:9.7" data-label="2013" data-val="40"><i></i></div>
+        <div class="col dim" style="--v:24.3" data-label="2015" data-val="100"><i></i></div>
+        <div class="col dim" style="--v:36.4" data-label="2017" data-val="150"><i></i></div>
+        <div class="col dim" style="--v:46.1" data-label="2019" data-val="190"><i></i></div>
+        <div class="col dim" style="--v:60.7" data-label="2021" data-val="250"><i></i></div>
+        <div class="col dim" style="--v:77.7" data-label="2023" data-val="320"><i></i></div>
+        <div class="col dim" style="--v:89.8" data-label="2025" data-val="370"><i></i></div>
+        <div class="col" style="--v:100.0" data-label="2027" data-val="412"><i></i></div>
+      </div>
+    <p class="foot">社名・人名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">数字は読み上げない。「6畳の一室」のところだけ、少し笑いを取る。最初の事務所は駅から15分の古いビルの3階で、最初の仕事は町工場の検査装置の設計図を1枚書くことだった、と話す。</aside>
+  </section>
+
+  <section class="slide" data-title="年表">
+    <div class="bg"></div>
+    <div class="kicker">HISTORY</div>
+    <h2 style="margin-top:12px">20年は、3つの時代に分けられる。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="a"><b>2007–2012</b>創業期</button><button data-tab="b"><b>2013–2019</b>成長期</button><button data-tab="c"><b>2020–2027</b>転換期</button></div>
+      <div data-panel="a"><div class="tline">
+        <div class="ev big"><div class="yr">2007</div><h3>3人で創業</h3><p>検査装置の設計を請け負う会社として始まる。</p></div>
+        <div class="ev"><div class="yr">2009</div><h3>初めての自社製品</h3><p>小型の外観検査機「S-1」を発売。</p></div>
+        <div class="ev"><div class="yr">2011</div><h3>最大の取引先を失う</h3><p>売上の6割がなくなる。全員で営業に出る。</p></div>
+        <div class="ev"><div class="yr">2012</div><h3>取引先が100社に</h3><p>1社に頼らない形へ。</p></div>
+      </div>
+        <div class="era">仲間<b>3 → 28 人</b>売上<b>0 → 12 億円</b>取引先<b>2 → 100 社</b></div>
+      </div>
+      <div data-panel="b"><div class="tline">
+        <div class="ev"><div class="yr">2013</div><h3>第1工場を建てる</h3><p>設計だけでなく、組み立てまで自社で。</p></div>
+        <div class="ev big"><div class="yr">2015</div><h3>社員100人</h3><p>新卒採用を始めて3年目。</p></div>
+        <div class="ev"><div class="yr">2017</div><h3>海外の最初の拠点</h3><p>ベトナムにサポート拠点を開く。</p></div>
+        <div class="ev"><div class="yr">2019</div><h3>売上 50億円</h3><p>検査機の出荷台数が国内で上位に。</p></div>
+      </div>
+        <div class="era">仲間<b>28 → 190 人</b>売上<b>12 → 50 億円</b>取引先<b>100 → 820 社</b></div>
+      </div>
+      <div data-panel="c"><div class="tline">
+        <div class="ev"><div class="yr">2020</div><h3>全員リモートの半年</h3><p>装置の立ち上げをオンラインで支援する仕組みができる。</p></div>
+        <div class="ev"><div class="yr">2023</div><h3>画像AIの検査へ</h3><p>検査の判定をソフトで更新できる製品に。</p></div>
+        <div class="ev"><div class="yr">2025</div><h3>サービス売上が3割</h3><p>装置を売って終わりにしない会社へ。</p></div>
+        <div class="ev big"><div class="yr">2027</div><h3>創業20年</h3><p>仲間 412人、売上 86億円。</p></div>
+      </div>
+        <div class="era">仲間<b>190 → 412 人</b>売上<b>50 → 86 億円</b>取引先<b>820 → 1,860 社</b></div>
+      </div>
+    </div>
+    <aside class="notes">タブを左から順に。2011年の「最大の取引先を失う」で止め、次のページにつなぐ。</aside>
+  </section>
+
+  <section class="slide" data-title="転機">
+    <div class="bg"><div style="position:absolute;right:-20px;bottom:-110px;font:700 380px/1 var(--font-num);color:rgb(242 193 78 / .08)">2011</div></div>
+    <div class="kicker">TURNING POINT · 2011</div>
+    <h2 style="margin-top:12px">いちばん苦しかった年が、いまの形をつくった。</h2>
+    <div class="split" style="grid-template-columns:1.2fr .8fr;gap:64px;margin-top:10px">
+      <div>
+        <blockquote class="step">「1社に頼るのは、もうやめよう。100社に少しずつ必要とされる会社になろう。」<cite>— 2011年 秋の全員会議で、創業者のことば</cite></blockquote>
+      </div>
+      <div class="step">
+        <p class="lead" style="margin:0 0 20px">売上の6割を占めていた取引先が、海外に工場を移した。翌年の売上は半分になった。</p>
+        <details class="why"><summary>そのとき何をしたか</summary><div class="body">設計者も含めた全員が、1人月20社を訪ねた。1年で訪問は2,400件。そこから生まれたのが、小さな工場でも買える価格の検査機だった。</div></details>
+      </div>
+    </div>
+    <aside class="notes">→で言葉を出し、少し間を置いてから右を出す。創業者が会場にいれば目を合わせる。</aside>
+  </section>
+
+  <section class="slide" data-title="次の10年">
+    <div class="bg"></div>
+    <div class="kicker">NEXT 10 YEARS · 動かせます</div>
+    <h2 style="margin-top:12px">年 8% で伸び続ければ、2037年に売上 186 億円。</h2>
+    <div class="split fill" style="grid-template-columns:.85fr 1.15fr;gap:70px" data-calc
+      data-let="s37 = 86*pow(1+g/100,10); ppl = s37*1e8/(per*1e4)">
+      <div>
+        <div class="field"><label>年の成長率 <b data-show="g" data-unit="%"></b></label><input type="range" name="g" min="0" max="15" step="0.5" value="8"></div>
+        <div class="field"><label>1人あたりの売上 <b data-show="per" data-unit=" 万円"></b></label><input type="range" name="per" min="1500" max="4000" step="100" value="2100"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">2027年の売上 86億円 に、成長率を10回かける。仲間の数 ＝ 2037年の売上 ÷ 1人あたりの売上。いまの1人あたりは 2,090 万円。</div></details>
+      </div>
+      <div>
+        <div style="font-size:20px;color:var(--muted)">2037年の売上</div>
+        <div class="out"><span data-out="s37" data-format="int"></span><small>億円</small></div>
+        <div class="meter" style="margin-top:22px" data-bar="s37" data-max="350"><i></i></div>
+        <div class="subo">
+          <div><div class="l">いまの何倍</div><div class="v"><span data-out="s37/86" data-format="x"></span></div></div>
+          <div><div class="l">仲間の数</div><div class="v"><span data-out="ppl"></span><small>人</small></div></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">成長率を 5% と 12% の2つだけ見せる。「どちらを選ぶかは、ここにいる皆さんが決める」と締める。</aside>
+  </section>
+
+  <section class="slide" data-title="次の年表">
+    <div class="bg"></div>
+    <div class="kicker">2027 — 2037</div>
+    <h2 style="margin-top:12px">年表の続きは、ここから一緒に書く。</h2>
+    <div class="tline cont" style="margin-top:22px">
+      <div class="ev big"><div class="yr">2027</div><h3>20周年</h3><p>いま、ここ。</p></div>
+      <div class="ev step"><div class="yr">2029</div><h3>検査の判定を<br>すべてソフトで更新</h3><p>出荷した装置が、年々賢くなる。</p></div>
+      <div class="ev step"><div class="yr">2032</div><h3>海外の売上を<br>半分に</h3><p>ベトナムとタイに組み立ての拠点。</p></div>
+      <div class="ev step"><div class="yr" style="color:var(--accent)">2037</div><h3>30周年</h3><p>1,000社の工場の「目」になる。</p></div>
+    </div>
+    <p class="lead step" style="margin-top:40px;border-top:1px solid var(--line);padding-top:22px">式典のあと、ロビーの年表に「あなたの2037年」を1行書いていってください。</p>
+    <aside class="notes">→で1つずつ未来の点を置いていく。点線はまだ決まっていない、という意味。</aside>
+  </section>
+
+  <section class="slide cover" data-title="ありがとう">
+    <div class="bg">
+      <div style="position:absolute;left:0;right:0;top:470px;height:2px;background:var(--accent)"></div>
+      <div style="position:absolute;top:455px;left:620px;width:32px;height:32px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 14px rgb(242 193 78 / .16)"></div>
+    </div>
+    <div style="text-align:center;margin-top:-120px">
+      <div class="kicker">THANK YOU</div>
+      <h1 style="margin-top:16px">次の20年も、<br>一緒に。</h1>
+    </div>
+    <p class="lead" style="position:absolute;left:0;right:0;top:520px;text-align:center">このあと 19:00 から、懇親会（3階 ホール）</p>
+  </section>
+
+</main>

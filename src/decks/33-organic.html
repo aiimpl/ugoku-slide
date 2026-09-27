@@ -1,0 +1,189 @@
+<!--meta
+{"title":"ウェルネス・ポイントのご案内","style":"オーガニック・シェイプ","use":"福利厚生（ウェルネス）の案内","group":"和・ナチュラル",
+ "aim":"人事部が全社員向けの説明会で、歩数と睡眠がポイントになる新しい福利厚生を紹介し、その場で登録してもらうための資料。",
+ "desc":"ゆっくり形を変える丸いかたちと、やわらかな色。自分の歩数と睡眠時間を動かすと、1年でたまるポイントと交換できるものが分かる。クイズつき。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#fbf6ee; --surface:#fffdf8; --ink:#2b2740; --muted:#595470; --line:#e6ddcf;
+  --accent:#d0582f; --accent-ink:#fff; --good:#2f7d58; --bad:#c0392b; --frame:#efe6d8;
+  --apricot:#f7b48c; --sage:#b8d5ae; --lilac:#cbc0ec; --butter:#f6dc86; --sky:#aad3e6;
+  --radius:40px; --shadow:none;
+  --font:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+  --font-num:"Outfit","Zen Maru Gothic",sans-serif; --head-weight:900; --head-track:.01em;
+  --pad-y:64px; --pad-x:88px;
+}
+.blob{position:absolute;border-radius:62% 38% 46% 54% / 55% 44% 56% 45%;animation:morph 16s ease-in-out infinite alternate}
+.blob.b2{animation-duration:21s;animation-delay:-6s}
+.blob.b3{animation-duration:25s;animation-delay:-12s}
+@keyframes morph{
+  0%{border-radius:62% 38% 46% 54% / 55% 44% 56% 45%;transform:rotate(0) translate(0,0)}
+  50%{border-radius:40% 60% 62% 38% / 42% 58% 42% 58%;transform:rotate(8deg) translate(10px,-8px)}
+  100%{border-radius:52% 48% 34% 66% / 62% 36% 64% 38%;transform:rotate(-6deg) translate(-8px,6px)}}
+.a{background:var(--apricot)}.s{background:var(--sage)}.l{background:var(--lilac)}.y{background:var(--butter)}.k{background:var(--sky)}
+.kicker{font:800 16px var(--font-num);letter-spacing:.2em;color:var(--accent);text-transform:uppercase}
+h1{font-size:84px;line-height:1.2;font-weight:900;letter-spacing:.02em}
+h2{font-size:44px;line-height:1.35;margin-bottom:32px}
+.lead{font-size:23px;line-height:1.8;color:var(--muted)}
+.pillx{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 26px;font-size:20px;font-weight:700}
+/* 3つの習慣：形を変える丸の中に数字 */
+.habits{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:4px}
+.habit{position:relative;text-align:center;padding-top:10px}
+.habit .shape{position:relative;width:290px;height:270px;margin:0 auto 18px;display:grid;place-items:center}
+.habit .shape .blob{inset:0}
+.habit .shape b{position:relative;font:800 96px/1 var(--font-num);letter-spacing:-.02em}
+.habit .shape b small{display:block;font:700 20px var(--font);letter-spacing:.06em;margin-top:6px}
+.habit h3{font-size:34px;font-weight:900;margin-bottom:6px}
+.habit p{font-size:21px;line-height:1.6;color:var(--muted);margin:0}
+/* スライダー */
+.field>label{font-size:20px;color:var(--ink);font-weight:700}
+.field>label b{font:800 28px var(--font-num)}
+input[type=range]{accent-color:var(--accent);height:32px}
+.panel{border-radius:48px;padding:28px 40px 20px}
+.meter{height:18px;background:rgb(43 39 64 / .1)}
+.meter>i{background:var(--ink)}
+.gift{display:flex;justify-content:space-between;align-items:baseline;font-size:20px;padding:9px 0;border-top:2px dotted rgb(43 39 64 / .25)}
+.gift b{font:800 28px var(--font-num)}
+/* クイズ */
+.quiz .choices{grid-template-columns:1fr 1fr;gap:20px}
+.quiz .choices>button::before{content:attr(data-k);display:inline-grid;place-items:center;width:44px;height:44px;margin-right:16px;border-radius:50%;background:rgb(255 255 255 / .8);font:800 22px var(--font-num);vertical-align:middle}
+.quiz .choices>button{border:0;border-radius:40px;padding:0 36px;min-height:150px;font-size:28px;font-weight:700;background:var(--surface);box-shadow:inset 0 0 0 2px var(--line)}
+.quiz .choices>button:nth-child(1){background:#fde6d7}.quiz .choices>button:nth-child(2){background:#e6f0e1}
+.quiz .choices>button:nth-child(3){background:#ece7f8}.quiz .choices>button:nth-child(4){background:#fbf0cc}
+.quiz .choices>button:hover{transform:translateY(-3px)}
+.quiz.answered .choices>button[data-correct]{background:var(--ink);color:#fff;box-shadow:none}
+.quiz.answered .choices>button.picked:not([data-correct]){box-shadow:inset 0 0 0 3px var(--bad);background:#fff}
+.quiz.answered .choices>button:not([data-correct]):not(.picked){opacity:.45}
+.quiz .explain{font-size:22px;color:var(--ink);margin-top:22px;padding:18px 28px;border-radius:28px;background:var(--surface)}
+details.why{border:0;border-radius:28px;background:var(--surface);box-shadow:inset 0 0 0 2px var(--line)}
+details.why>summary{color:var(--ink);font-size:19px;padding:14px 22px}
+details.why>summary::before{background:var(--butter);color:var(--ink)}
+details.why>.body{font-size:19px;padding:0 24px 18px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.stat>div{border-radius:44px;padding:30px 34px 28px}
+.stat .v{white-space:nowrap;font:800 88px/1 var(--font-num);letter-spacing:-.03em}
+.stat .v small{font:700 26px var(--font);margin-left:4px;letter-spacing:0}
+.stat .spark{display:block;width:100%;height:84px;margin:18px 0 4px;overflow:visible}
+.stat .spark path{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:600;stroke-dashoffset:600}
+.slide.active .stat .spark path{animation:draw 1.6s .4s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.stat p{font-size:20px;line-height:1.6;margin:12px 0 0;color:var(--ink)}
+.stat .lb{font-size:19px;font-weight:700}
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;counter-reset:h}
+.howto>div{counter-increment:h;position:relative;padding-top:190px}
+.howto>div::before{content:counter(h);position:absolute;left:0;top:0;width:170px;height:158px;display:grid;place-items:center;font:800 88px var(--font-num);animation:morph 18s ease-in-out infinite alternate;border-radius:58% 42% 50% 50% / 48% 56% 44% 52%}
+.howto>div:nth-child(1)::before{background:var(--apricot)}.howto>div:nth-child(2)::before{background:var(--sage)}.howto>div:nth-child(3)::before{background:var(--lilac)}
+.howto h3{font-size:32px;font-weight:900}
+.howto p{font-size:22px;line-height:1.7;color:var(--muted)}
+.foot{font-size:15px}
+@media (prefers-reduced-motion:reduce){.blob,.howto>div::before{animation:none}.slide.active .stat .spark path{animation:none;stroke-dashoffset:0}}
+@media print{.stat .spark path{stroke-dashoffset:0}}
+</style>
+
+<main class="deck" data-transition="rise">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="blob a" style="width:560px;height:520px;right:-90px;top:-80px"></div>
+      <div class="blob s b2" style="width:380px;height:360px;right:300px;bottom:-120px"></div>
+      <div class="blob l b3" style="width:300px;height:280px;right:40px;bottom:60px;mix-blend-mode:multiply"></div>
+      <div class="blob y b2" style="width:120px;height:110px;left:620px;top:90px"></div>
+    </div>
+    <div class="kicker">Wellness Point · 2027年1月から</div>
+    <h1>からだの調子を、<br>ポイントに。</h1>
+    <p class="lead" style="margin-top:26px;max-width:600px">歩く・眠る・休む。いつもの習慣がポイントになって、マッサージやジムに使える新しい福利厚生です。</p>
+    <p style="margin-top:28px"><span class="pillx">人事部　福利厚生チーム</span></p>
+    <aside class="notes">堅い制度説明にしない。「今日のうちに登録まで終わらせてほしい」とだけ最初に伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="3つの習慣">
+    <div class="bg"><div class="blob y b3" style="width:260px;height:240px;left:-110px;bottom:-90px;opacity:.6"></div></div>
+    <div class="kicker">How it works</div>
+    <h2>ポイントになるのは、3つの習慣だけ。</h2>
+    <div class="habits">
+      <div class="habit step"><div class="shape"><div class="blob a"></div><b>1<small>pt / 1,000歩</small></b></div><h3>歩く</h3><p>スマホの歩数をそのまま使う。<br>1日 12pt まで。</p></div>
+      <div class="habit step"><div class="shape"><div class="blob s b2"></div><b>8<small>pt / 7時間</small></b></div><h3>眠る</h3><p>7時間以上で 8pt、<br>6時間以上で 4pt。</p></div>
+      <div class="habit step"><div class="shape"><div class="blob l b3"></div><b>30<small>pt / 1日</small></b></div><h3>休む</h3><p>有給休暇を1日取ると 30pt。<br>半日なら 15pt。</p></div>
+    </div>
+    <aside class="notes">→で1つずつ出す。「休む」もポイントになるのがこの制度の特徴、と強調。</aside>
+  </section>
+
+  <section class="slide" data-title="ポイント計算">
+    <div class="bg"><div class="blob k" style="width:420px;height:400px;right:-140px;top:-160px;opacity:.55"></div></div>
+    <div class="kicker">Simulator · 動かせます</div>
+    <h2>毎日 8,000 歩と 7 時間の睡眠で、<br>1年に 3 万円分をこえる。</h2>
+    <div class="split" style="grid-template-columns:1fr 1fr;gap:48px;align-items:start" data-calc
+      data-let="walk = min(12, floor(steps/1000)); sl = sleep>=7 ? 8 : (sleep>=6 ? 4 : 0); year = (walk+sl)*365 + leave*30; yen = year*5">
+      <div style="padding-top:6px">
+        <div class="field"><label>1日の歩数 <b data-show="steps" data-unit=" 歩"></b></label><input type="range" name="steps" min="1000" max="15000" step="500" value="8000"></div>
+        <div class="field"><label>睡眠時間 <b data-show="sleep" data-format="dec1" data-unit=" 時間"></b></label><input type="range" name="sleep" min="4" max="9" step="0.5" value="7"></div>
+        <div class="field"><label>1年に取る有給 <b data-show="leave" data-unit=" 日"></b></label><input type="range" name="leave" min="0" max="20" value="12"></div>
+        <details class="why"><summary>1pt はいくら？</summary><div class="body">1pt ＝ 5円分。社内のポイント交換所で、提携施設の利用券に交換できる。有効期限は2年。</div></details>
+      </div>
+      <div class="panel a" style="position:relative">
+        <div style="font-size:20px;font-weight:700">1年でたまるのは</div>
+        <div style="font:800 96px/1.05 var(--font-num);letter-spacing:-.03em"><span data-out="yen" data-format="yen"></span></div>
+        <div style="font-size:20px;margin-bottom:14px"><span data-out="year" data-unit=" pt"></span>（1日あたり <span data-out="walk+sl" data-unit=" pt"></span>）</div>
+        <div class="gift"><span>マッサージ（60分）</span><b data-out="floor(yen/4000)" data-unit=" 回"></b></div>
+        <div class="gift"><span>ジムの1か月券</span><b data-out="floor(yen/6000)" data-unit=" か月"></b></div>
+        <div class="gift"><span>健康診断のオプション検査</span><b data-out="floor(yen/8000)" data-unit=" 回"></b></div>
+      </div>
+    </div>
+    <aside class="notes">会場の人に「きのう何時間寝ましたか」と聞いてから、睡眠を 6 時間に下げてみせる。</aside>
+  </section>
+
+  <section class="slide" data-title="クイズ">
+    <div class="bg"><div class="blob s b2" style="width:340px;height:320px;right:-120px;bottom:-120px;opacity:.7"></div><div class="blob y" style="width:140px;height:130px;right:130px;top:60px;opacity:.8"></div></div>
+    <div class="kicker">Quiz</div>
+    <h2>次のうち、ポイントに<span style="color:var(--accent)">ならない</span>のはどれ？</h2>
+    <div class="quiz">
+      <div class="choices">
+        <button data-k="A">通勤で 6,000 歩あるいた</button>
+        <button data-k="B">休日に 8 時間ねむった</button>
+        <button data-correct data-k="C">残業を 2 時間がんばった</button>
+        <button data-k="D">有給を半日とった</button>
+      </div>
+      <div class="explain">正解は「残業」。この制度は、がんばった量ではなく、からだを休めた量をたたえます。</div>
+    </div>
+    <aside class="notes">会場に手を挙げてもらってから押す。答えのあと「残業が減ると睡眠のポイントも増える」と一言。</aside>
+  </section>
+
+  <section class="slide" data-title="試験導入の結果">
+    <div class="bg"></div>
+    <p class="foot">数字はすべて架空のサンプルです。</p>
+    <div class="kicker">Pilot · 3 months</div>
+    <h2>先に試した 3 部署では、歩数も睡眠も増えた。</h2>
+    <div class="stat">
+      <div class="s"><div class="lb">1日の平均歩数</div><div class="v">+<span data-count="1900"></span><small>歩</small></div><svg class="spark" viewBox="0 0 300 80" preserveAspectRatio="none"><path d="M4 70C40 66 60 62 90 56S140 44 170 38 230 22 296 12"/></svg><p>5,400 歩 → 7,300 歩</p></div>
+      <div class="l"><div class="lb">7時間以上ねむれた日</div><div class="v">+<span data-count="18"></span><small>%</small></div><svg class="spark" viewBox="0 0 300 80" preserveAspectRatio="none"><path d="M4 60C30 64 60 50 90 52S140 36 170 40 230 22 296 18"/></svg><p>週の 41% → 59%</p></div>
+      <div class="y"><div class="lb">続けたいと答えた人</div><div class="v"><span data-count="92"></span><small>%</small></div><svg class="spark" viewBox="0 0 300 80" preserveAspectRatio="none"><path d="M4 30C40 22 60 26 90 20S150 16 180 18 240 10 296 12"/></svg><p>参加 146 人のうち 134 人</p></div>
+    </div>
+    <details class="why" style="max-width:780px;margin-top:30px"><summary>どうやって測ったか</summary><div class="body">2026年6〜8月、営業部・開発部・総務部で試験導入。スマホとアプリの記録を本人の同意を得て集計した。個人の記録は人事部も見られない。</div></details>
+    <aside class="notes">「個人の記録は人事も見られない」は必ず言う。一番よく出る質問。</aside>
+  </section>
+
+  <section class="slide" data-title="始め方">
+    <div class="bg"><div class="blob a b3" style="width:220px;height:200px;right:-60px;top:-50px;opacity:.6"></div></div>
+    <div class="kicker">Start</div>
+    <h2>始めるのは、3分でおわる。</h2>
+    <div class="howto" style="margin-top:14px">
+      <div class="step"><h3>アプリを入れる</h3><p>社内ポータルの「ウェルネス」から。会社のスマホでも自分のスマホでもよい。</p></div>
+      <div class="step"><h3>社員番号でログイン</h3><p>歩数と睡眠の記録を読みこむ許可を出す。どちらか片方だけでもよい。</p></div>
+      <div class="step"><h3>あとはいつも通り</h3><p>ポイントは毎朝ふえる。月末にたまった分がメールで届く。</p></div>
+    </div>
+  </section>
+
+  <section class="slide center" data-title="今日のお願い">
+    <div class="bg">
+      <div class="blob s" style="width:520px;height:480px;left:-160px;top:-140px"></div>
+      <div class="blob l b2" style="width:460px;height:420px;right:-140px;bottom:-160px"></div>
+      <div class="blob y b3" style="width:160px;height:150px;right:220px;top:80px"></div>
+    </div>
+    <div class="kicker">Today</div>
+    <h1 style="font-size:76px">今日のうちに、<br>登録だけ。</h1>
+    <p class="lead" style="margin-top:22px">12月20日までに登録すると、はじめに <b style="color:var(--ink)">500pt</b> がもらえます。</p>
+    <p style="margin-top:26px"><span class="pillx">問い合わせ　人事部 内線 2525</span></p>
+  </section>
+
+</main>

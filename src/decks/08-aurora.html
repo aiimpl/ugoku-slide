@@ -1,0 +1,241 @@
+<!--meta
+{"title":"生成AIの活用方針 2026｜サンプル工業","style":"オーロラ・グラデーション","use":"生成AIの活用方針","group":"テック・未来",
+ "aim":"情報システム部長が、全社説明会で、生成AIの使い方のルールと「どの業務から始めるか」を社員と合意するため。",
+ "desc":"白い空にゆっくり流れるオーロラと、細い線と大きな余白。全社向けの方針説明。重みを動かすと、どの業務から始めるかの順位が入れ替わり、浮く時間も試算できる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f8f8fb; --surface:rgb(255 255 255 / .72); --ink:#16142b; --muted:#4d4a63; --line:rgb(22 20 43 / .14); --accent:#0e7a66; --accent-ink:#fff;
+  --frame:#e9e8f0; --radius:20px; --shadow:0 10px 40px rgb(60 50 120 / .08); --good:#0e7a66; --bad:#b4234a;
+  --font:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --serif:"Instrument Serif","Hiragino Mincho ProN",serif; --font-num:"Instrument Serif","Zen Kaku Gothic New",serif;
+  --head-weight:700; --head-track:.01em; --pad-y:60px; --pad-x:80px;
+}
+.deck .slide.active{transform:none;filter:none} /* エンジンの rise/zoom/blur で表示中のスライドがずれたままになるのを補正 */
+/* オーロラ */
+.slide>.bg{overflow:hidden;background:var(--bg)}
+.slide>.bg::before,.slide>.bg::after{content:"";position:absolute;inset:-30%;filter:blur(70px);opacity:.85}
+.slide>.bg::before{background:
+  radial-gradient(40% 28% at 22% 30%,#86efc9 0,transparent 70%),
+  radial-gradient(36% 30% at 70% 22%,#bba8ff 0,transparent 70%),
+  radial-gradient(34% 26% at 80% 75%,#ffd0bd 0,transparent 70%),
+  radial-gradient(30% 24% at 35% 80%,#aee3ff 0,transparent 70%);
+  animation:aur 26s ease-in-out infinite alternate}
+.slide>.bg::after{background:linear-gradient(115deg,transparent 30%,rgb(159 243 211 / .55) 42%,rgb(201 184 255 / .5) 52%,transparent 64%);
+  animation:aur2 34s ease-in-out infinite alternate}
+@keyframes aur{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(-6%,4%) rotate(8deg)}}
+@keyframes aur2{0%{transform:translateX(-12%) skewY(-4deg)}100%{transform:translateX(12%) skewY(4deg)}}
+.slide.soft>.bg::before{opacity:.55}.slide.soft>.bg::after{opacity:.4}
+/* 表紙と締めは、光の帯（カーテン）を見せる */
+.slide.cover>.bg::after{inset:-20% -10%;filter:blur(14px);opacity:.9;
+  background:repeating-linear-gradient(90deg,transparent 0 22px,rgb(255 255 255 / .55) 22px 25px,transparent 25px 41px),
+    linear-gradient(180deg,transparent 18%,#74ecc0 38%,#9fe7ff 50%,#b09cff 62%,transparent 82%);
+  -webkit-mask:radial-gradient(55% 26% at 60% 46%,#000 35%,transparent 72%);mask:radial-gradient(55% 26% at 60% 46%,#000 35%,transparent 72%);
+  transform:rotate(-14deg);animation:curtain 22s ease-in-out infinite alternate}
+.slide.cover>.bg .band{position:absolute;inset:-20% -10%;filter:blur(22px);opacity:.75;
+  background:repeating-linear-gradient(90deg,transparent 0 30px,rgb(255 255 255 / .5) 30px 34px,transparent 34px 52px),
+    linear-gradient(180deg,transparent 25%,#ffc6b3 45%,#c7b5ff 60%,transparent 80%);
+  -webkit-mask:radial-gradient(45% 20% at 40% 70%,#000 30%,transparent 70%);mask:radial-gradient(45% 20% at 40% 70%,#000 30%,transparent 70%);
+  transform:rotate(8deg);animation:curtain2 28s ease-in-out infinite alternate}
+@keyframes curtain{0%{transform:rotate(-14deg) translateX(-4%)}100%{transform:rotate(-10deg) translateX(5%)}}
+@keyframes curtain2{0%{transform:rotate(8deg) translateX(4%)}100%{transform:rotate(4deg) translateX(-5%)}}
+.slide::after{content:attr(data-no);position:absolute;right:80px;top:56px;font:italic 400 22px var(--serif);color:var(--muted)}
+.slide.cover::after{display:none}
+
+.kicker{font:italic 400 24px var(--serif);letter-spacing:.01em;text-transform:none;color:var(--accent);margin-bottom:8px}
+h1{font:900 84px/1.2 var(--font);letter-spacing:.01em}
+h2{font:700 46px/1.35 var(--font);margin-bottom:30px}
+.serif{font-family:var(--serif);font-weight:400}
+p{font-size:20px;line-height:1.85}
+.lead{color:var(--muted);font-size:24px}
+.hair{border-top:1px solid var(--ink)}
+
+/* 表紙 */
+.cv-meta{display:flex;gap:44px;margin-top:48px;border-top:1px solid var(--ink);padding-top:18px;width:max-content}
+.cv-meta div span{display:block;font:italic 400 20px var(--serif);color:var(--muted)}
+.cv-meta div b{font-size:22px}
+
+/* 三原則 */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:0;flex:1;min-height:0}
+.three>div{padding:10px 36px 0;border-left:1px solid var(--line)}
+.three>div:first-child{border-left:0;padding-left:0}
+.three .rn{font:italic 400 210px/0.85 var(--serif);color:var(--accent)}
+.three h3{font:900 40px/1.3 var(--font);margin:26px 0 14px;white-space:nowrap}
+.three p{font-size:21px}
+.three p{color:var(--muted)}
+
+/* OK / NG */
+.okng{display:grid;grid-template-columns:1fr 1fr;gap:28px;flex:1;min-height:0}
+.panel{background:var(--surface);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgb(255 255 255 / .9);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 34px}
+.panel .hd{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+.panel .hd b{font:italic 400 52px/1 var(--serif)}
+.panel .hd span{font-size:22px;font-weight:700}
+.panel ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.panel li{font-size:23px;line-height:1.6;padding:15px 0 15px 36px;position:relative;border-bottom:1px solid var(--line)}
+.panel li:last-child{border-bottom:0}
+.panel.ok li::before{content:"";position:absolute;left:2px;top:25px;width:14px;height:7px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
+.panel.ng li::before,.panel.ng li::after{content:"";position:absolute;left:2px;top:30px;width:16px;height:2px;background:var(--bad);transform:rotate(45deg)}
+.panel.ng li::after{transform:rotate(-45deg)}
+.panel.ok .hd b{color:var(--accent)}.panel.ng .hd b{color:var(--bad)}
+details.why{background:rgb(255 255 255 / .6);border:1px solid var(--line);border-radius:14px}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:var(--ink);color:#fff}
+details.why>.body{color:var(--muted);font-size:17px}
+details.why.float[open]>.body{background:#fff}
+
+/* 順位 */
+.rank{grid-template-columns:360px 1fr;gap:56px}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:italic 400 26px var(--serif);color:var(--accent)}
+.field{margin-bottom:24px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--ink);margin-top:-11px;box-shadow:0 0 0 6px rgb(159 243 211 / .6)}
+input[type=range]::-moz-range-track{height:2px;background:var(--ink)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--ink)}
+.rank .opt{background:var(--surface);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgb(255 255 255 / .9);box-shadow:var(--shadow);padding:14px 22px}
+.rank .opt .name{font-size:23px}
+.rank .opt .score{font:italic 400 40px var(--serif)}
+.rank .opt .note{font-size:18px}
+.rank .opt .meter{height:4px;background:var(--line)}
+.rank .opt .meter>i{background:linear-gradient(90deg,#3fd6a8,#8f7bff)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"最初に始める";background:var(--accent);font-size:14px}
+
+/* 計算 */
+.sim{display:grid;grid-template-columns:1fr 1fr;gap:70px;flex:1;min-height:0;align-items:center}
+.big-out{font:400 190px/0.9 var(--serif);letter-spacing:-.02em;white-space:nowrap}
+.big-out small{font:700 36px var(--font);margin-left:8px}
+.pair{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink);margin-top:26px}
+.pair>div{padding-top:14px}
+.pair>div+div{border-left:1px solid var(--line);padding-left:24px}
+.pair span{font-size:18px;color:var(--muted)}
+.pair b{display:block;font:400 54px/1.1 var(--serif);white-space:nowrap}
+
+/* 進め方 */
+.road{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;flex:1;min-height:0;position:relative}
+.road::before{content:"";position:absolute;left:0;right:0;top:34px;height:1px;background:var(--ink)}
+.road>div{position:relative;padding-top:70px}
+.road>div::before{content:"";position:absolute;left:0;top:26px;width:17px;height:17px;border-radius:50%;background:var(--bg);border:2px solid var(--ink)}
+.road>div.now::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 8px rgb(14 122 102 / .15)}
+.road .when{font:italic 400 30px var(--serif);color:var(--accent)}
+.road h3{font:900 42px/1.35 var(--font);margin:8px 0 12px}
+.road p{font-size:21px}
+.road p{color:var(--muted);margin:0}
+.road .panel{padding:24px 28px;margin-top:26px}
+.road .panel b{font:400 64px/1.1 var(--serif)}
+
+.end{flex:1;display:flex;flex-direction:column;justify-content:center}
+.foot{font-size:15px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.slide>.bg::before,.slide>.bg::after,.slide>.bg .band{animation:none}}
+</style>
+
+<main class="deck" data-transition="blur">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="band"></div></div>
+    <div class="kicker">Generative AI Policy, 2026</div>
+    <h1>生成AIは、<br><span style="margin-left:-.5em">「</span>下書き係」として使う。</h1>
+    <p class="lead" style="margin-top:22px">サンプル工業　全社の活用方針と、最初に始める業務</p>
+    <div class="cv-meta">
+      <div><span>For</span><b>全社員</b></div>
+      <div><span>From</span><b>情報システム部</b></div>
+      <div><span>Effective</span><b>2026年11月1日</b></div>
+    </div>
+    <aside class="notes">タイトルの「下書き係」がこの方針の全部。最後まで、この言葉に戻ってくる。</aside>
+  </section>
+
+  <section class="slide soft" data-no="i" data-title="三つの原則">
+    <div class="bg"></div>
+    <div class="kicker">Three principles</div>
+    <h2>守ることは、三つだけ。</h2>
+    <div class="three">
+      <div class="step"><div class="rn">i.</div><h3>下書きに使う</h3><p>文章・表・要約の最初の形をつくらせる。仕上げと判断は、人がする。</p></div>
+      <div class="step"><div class="rn">ii.</div><h3>秘密は入れない</h3><p>お客様の名前・個人の情報・未発表の数字は、会社が用意した環境でも入れない。</p></div>
+      <div class="step"><div class="rn">iii.</div><h3>使ったと書く</h3><p>社外に出す資料は、AIで下書きした部分があれば、その旨を残す。</p></div>
+    </div>
+    <aside class="notes">→ で一つずつ。二つ目は質問が多いので、次のページで具体例を見せる。</aside>
+  </section>
+
+  <section class="slide soft" data-no="ii" data-title="していいこと・だめなこと">
+    <div class="bg"></div>
+    <div class="kicker">Do &amp; Don't</div>
+    <h2>迷ったら、この表で決める。</h2>
+    <div class="okng">
+      <div class="panel ok"><div class="hd"><b>Do</b><span>していいこと</span></div>
+        <ul><li>会議の録音から議事録の下書き</li><li>社内規程をさがして要点をまとめる</li><li>メールの言い回しを整える</li><li>企画書の構成案を3つ出させる</li></ul>
+      </div>
+      <div class="panel ng"><div class="hd"><b>Don't</b><span>だめなこと</span></div>
+        <ul><li>お客様の名前や連絡先を入れる</li><li>AIの答えをそのまま社外に出す</li><li>採用・評価の判断をまかせる</li><li>個人のアカウントで仕事に使う</li></ul>
+        <details class="why float" style="margin-top:10px"><summary>なぜ個人のアカウントはだめ？</summary><div class="body">個人向けの契約では、入力した内容が学習に使われる設定のことがある。会社の環境は、学習に使われない契約にしている。</div></details>
+      </div>
+    </div>
+    <aside class="notes">「だめなこと」の4つ目が、いちばん守られていない。理由を開いて説明する。</aside>
+  </section>
+
+  <section class="slide soft" data-no="iii" data-title="どの業務から始めるか">
+    <div class="bg"></div>
+    <div class="kicker">Where to start · 動かせます</div>
+    <h2>何を大事にするかで、始める業務が変わる。</h2>
+    <div data-rank>
+      <script type="application/json">{"max":5,"rowHeight":112,
+        "criteria":[
+          {"key":"time","label":"浮く時間の大きさ","weight":4},
+          {"key":"risk","label":"まちがえても困らない","weight":5},
+          {"key":"easy","label":"すぐ始められる","weight":3},
+          {"key":"see","label":"効果が見えやすい","weight":2}],
+        "options":[
+          {"name":"議事録の下書き","note":"全部署・週に約2時間","scores":{"time":4,"risk":5,"easy":5,"see":4}},
+          {"name":"社内の問い合わせ一次回答","note":"総務・情シスに月900件","scores":{"time":5,"risk":3,"easy":2,"see":5}},
+          {"name":"規程・マニュアルの検索","note":"探す時間が1日15分","scores":{"time":3,"risk":4,"easy":3,"see":2}},
+          {"name":"提案書の下書き","note":"営業部・1本3時間","scores":{"time":4,"risk":2,"easy":4,"see":3}}]}</script>
+    </div>
+    <aside class="notes">説明会では「まちがえても困らない」を 1 に下げてみせると、問い合わせ回答が1位に上がる。安全を重く見るから議事録から始める、という説明になる。</aside>
+  </section>
+
+  <section class="slide soft" data-no="iv" data-title="浮く時間">
+    <div class="bg"></div>
+    <div class="kicker">Estimate · 動かせます</div>
+    <h2>議事録だけで、全社で年に何時間浮くか。</h2>
+    <div class="sim" data-calc data-let="yearH = people*hours*cut/100*48; money = yearH*wage">
+      <div>
+        <div class="field"><label>使う人数 <b data-show="people" data-unit="人"></b></label><input type="range" name="people" min="50" max="2000" step="10" value="820"></div>
+        <div class="field"><label>1人が議事録に使う時間（週） <b data-show="hours" data-format="dec1" data-unit="時間"></b></label><input type="range" name="hours" min="0.5" max="6" step="0.5" value="2"></div>
+        <div class="field"><label>下書きで減らせる割合 <b data-show="cut" data-unit="%"></b></label><input type="range" name="cut" min="10" max="80" step="5" value="50"></div>
+        <div class="field"><label>1時間あたりの人件費 <b data-show="wage" data-format="yen"></b></label><input type="range" name="wage" min="2000" max="8000" step="100" value="4200"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">年に浮く時間 ＝ 人数 × 週の時間 × 減らせる割合 × 48週。<br>人件費に直すと ＝ 年に浮く時間 × 時給。</div></details>
+      </div>
+      <div>
+        <p style="font:italic 400 26px var(--serif);color:var(--accent);margin:0">Hours returned per year</p>
+        <div class="big-out"><span data-out="yearH"></span><small>時間</small></div>
+        <div class="pair">
+          <div><span>人件費に直すと</span><b data-out="money" data-format="man"></b></div>
+          <div><span>1人あたり（年）</span><b data-out="hours*cut/100*48" data-format="dec1" data-unit="時間"></b></div>
+        </div>
+      </div>
+    </div>
+    <p class="foot">社名・数字はすべて架空のサンプルです。</p>
+  </section>
+
+  <section class="slide soft" data-no="v" data-title="進め方">
+    <div class="bg"></div>
+    <div class="kicker">Roadmap</div>
+    <h2>小さく始めて、半年で広げる。</h2>
+    <div class="road">
+      <div class="now step"><div class="when">Nov — Dec</div><h3>議事録で試す</h3><p>3部署・120人で2か月。困ったことを毎週集める。</p><div class="panel"><span style="font-size:18px;color:var(--muted)">目標</span><br><b>週 1時間</b> 減らす</div></div>
+      <div class="step"><div class="when">Jan — Mar</div><h3>全社に広げる</h3><p>議事録を全社へ。規程の検索を2部署で試す。</p><div class="panel"><span style="font-size:18px;color:var(--muted)">目標</span><br><b>820人</b> が使う</div></div>
+      <div class="step"><div class="when">Apr —</div><h3>問い合わせへ</h3><p>総務・情シスへの問い合わせの一次回答を下書きさせる。</p><div class="panel"><span style="font-size:18px;color:var(--muted)">目標</span><br><b>月 300件</b> を自動に</div></div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="締め">
+    <div class="bg"><div class="band"></div></div>
+    <div class="end">
+      <div class="kicker">Next step</div>
+      <h1>来週から、<br>議事録で試します。</h1>
+      <p class="lead" style="margin-top:24px">参加したい部署は、10月31日までに情報システム部へ。<br><span class="serif" style="font-size:28px;font-style:italic;color:var(--ink)">ai-policy@sample-kogyo.example</span></p>
+    </div>
+  </section>
+
+</main>

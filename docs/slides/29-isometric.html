@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>西倉庫 自動化計画 ／ サンプル物流</title>
+<meta name="description" content="斜め上から見た立体の棚とロボットを、線の少ない図解で描く。ロボット台数と1台の搬送回数、作業する人数を動かすと1時間の出荷数と、どちらが詰まるかが分かる。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=IBM+Plex+Sans+JP:wght@400;500;700&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-show="x" で入力値そのものを表示
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：アイソメトリック / 物流倉庫の自動化
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted)}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+details.why.float{position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+/* エンジンの rise/zoom/blur は表示中のスライドにも変形が残るので打ち消す */
+.deck[data-transition] .slide.active{transform:none;filter:none}
+:root{
+  --teal:#14968c; --teal-d:#0e6f68; --org:#ff8a3d; --navy:#1d2940;
+  --bg:#eef1f5; --surface:#ffffff; --ink:#1d2940; --muted:#4a5872; --line:#c9d2de; --accent:#0e6f68; --accent-ink:#fff;
+  --frame:#d5dce6; --radius:6px; --shadow:10px 10px 0 #cfd7e2; --good:#0e6f68; --bad:#c2412d;
+  --font:"Space Grotesk","IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Space Grotesk",sans-serif; --head-weight:700; --head-track:-.01em;
+}
+.slide{isolation:isolate;padding:60px 80px}
+/* 30度の等角グリッド */
+.slide>.bg{background:
+  repeating-linear-gradient(30deg,transparent 0 39px,rgb(29 41 64 / .055) 39px 40px),
+  repeating-linear-gradient(-30deg,transparent 0 39px,rgb(29 41 64 / .055) 39px 40px),var(--bg)}
+.iso{position:absolute}
+.iso svg{display:block}
+.kicker{font:700 16px var(--font-num);letter-spacing:.16em;color:var(--teal-d);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.kicker::before{content:"";width:18px;height:18px;background:var(--org);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.kicker .no{color:var(--ink)}
+h2{font-size:44px;line-height:1.32;color:var(--ink)}
+h2 em{font-style:normal;color:var(--teal-d);background:linear-gradient(transparent 70%,rgb(255 138 61 / .35) 70%)}
+.lead{color:var(--muted)}
+.foot{font-size:16px;color:var(--muted)}
+.card{border:2px solid var(--navy);border-radius:6px;box-shadow:10px 10px 0 #cfd7e2;padding:24px 28px}
+.card p{color:var(--muted);font-size:20px}
+.kpi .label{font-size:18px;color:var(--muted);font-weight:700}
+.kpi .value{font:700 96px/1 var(--font-num);color:var(--ink);letter-spacing:-.03em;margin-top:8px}
+.kpi .value small{font:700 26px var(--font);margin-left:6px;letter-spacing:0}
+.stack{display:flex;height:84px;margin-bottom:44px;border:2px solid var(--navy);border-radius:6px;overflow:hidden;box-shadow:10px 10px 0 #cfd7e2}
+.stack span{display:flex;align-items:center;padding:0 18px;font:700 22px var(--font);color:var(--ink);border-right:2px solid var(--navy);white-space:nowrap;overflow:hidden}
+.stack span:last-child{border-right:0}
+.stack .walk{background:var(--org)}
+.flow{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:end;flex:1}
+.flow .arrow{align-self:center;height:4px;background:var(--navy);position:relative;margin-top:-80px}
+.flow .arrow::after{content:"";position:absolute;right:-2px;top:-9px;border:11px solid transparent;border-left:16px solid var(--navy);border-right:0}
+.flow .st{display:flex;flex-direction:column;align-items:center;text-align:center}
+.flow .st .pic{height:250px;display:flex;align-items:flex-end;justify-content:center}
+.flow h3{font:700 28px/1.4 var(--font);margin:14px 0 6px}
+.flow p{font-size:20px;line-height:1.6;color:var(--muted);margin:0}
+.flow .n{font:700 20px var(--font-num);color:#fff;background:var(--navy);width:40px;height:40px;display:grid;place-items:center;border-radius:50%;margin-top:6px}
+details.why{border:2px solid var(--navy);border-radius:6px;background:#fff;box-shadow:6px 6px 0 #cfd7e2}
+details.why>summary{color:var(--teal-d);font-size:19px}
+details.why>summary::before{border-radius:3px;background:var(--org);color:var(--navy)}
+details.why>.body{color:var(--muted);font-size:18px}
+.chart{height:300px;gap:18px;border-bottom:2px solid var(--navy);padding-top:36px;margin-bottom:38px}
+.chart>.col>i{border-radius:0;background:linear-gradient(90deg,var(--teal) 0 70%,var(--teal-d) 70%);position:relative}
+.chart>.col>i::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px;background:#5ee0d2;clip-path:polygon(0 100%,14% 0,100% 0,70% 100%)}
+.chart>.col.dim>i{background:linear-gradient(90deg,#b6c2d2 0 70%,#94a3b8 70%)}
+.chart>.col.dim>i::before{background:#dbe2eb}
+.chart>.col::before{font:700 20px var(--font-num);color:var(--ink);bottom:calc(var(--v) * 1% + 16px)}
+.chart>.col::after{font-size:17px;color:var(--ink);font-weight:500}
+.field>label{color:var(--ink);font-size:19px;font-weight:700}
+.field>label b{font:700 26px var(--font-num);color:var(--teal-d)}
+input[type=range]{accent-color:var(--teal)}
+.res .label{font-size:18px;font-weight:700;color:var(--muted)}
+.res .v{font:700 96px/1.05 var(--font-num);color:var(--ink);letter-spacing:-.03em;white-space:nowrap}
+.res .v small{font:700 26px var(--font);margin-left:6px}
+.cap{display:grid;grid-template-columns:140px 1fr 120px;align-items:center;gap:16px;margin-top:26px;font-size:21px;font-weight:700}
+.cap b{font:700 30px var(--font-num);text-align:right}
+.meter{height:38px;border-radius:0;background:#fff;border:2px solid var(--navy)}
+.meter>i{border-radius:0;background:var(--teal)}
+.meter.o>i{background:var(--org)}
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;flex:1}
+.phases .card{padding:10px 22px 22px;display:flex;flex-direction:column;align-items:flex-start}
+.phases .pic{align-self:center}
+.phases b{font:700 22px var(--font-num);color:var(--teal-d);letter-spacing:.08em}
+.phases h3{font:700 30px/1.35 var(--font);margin:6px 0 6px}
+.phases p{font-size:19px;margin:0}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .move{animation:iso-move 5s ease-in-out infinite alternate}
+  @keyframes iso-move{to{transform:translate(-52px,-30px)}}
+}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="rise">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="iso" style="right:-40px;top:40px"><svg viewBox="0 0 780 640" width="780" height="640" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M360.0 190.0 L741.1 410.0 L436.2 586.0 L55.2 366.0Z" fill="#e4e9f0"/><path d="M360.0 190.0 L55.2 366.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M398.1 212.0 L93.3 388.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M436.2 234.0 L131.4 410.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M474.3 256.0 L169.5 432.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M512.4 278.0 L207.6 454.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M550.5 300.0 L245.7 476.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M588.6 322.0 L283.8 498.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M626.7 344.0 L321.9 520.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M664.8 366.0 L360.0 542.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M702.9 388.0 L398.1 564.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M741.1 410.0 L436.2 586.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M360.0 190.0 L741.1 410.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M321.9 212.0 L702.9 432.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M283.8 234.0 L664.8 454.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M245.7 256.0 L626.7 476.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M207.6 278.0 L588.6 498.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M169.5 300.0 L550.5 520.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M131.4 322.0 L512.4 542.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M93.3 344.0 L474.3 564.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M55.2 366.0 L436.2 586.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M356.6 214.0 L360.0 216.0 L360.0 92.8 L356.6 90.8Z" fill="#46536a"/><path d="M363.4 214.0 L360.0 216.0 L360.0 92.8 L363.4 90.8Z" fill="#35415a"/><path d="M360.0 88.8 L363.4 90.8 L360.0 92.8 L356.6 90.8Z" fill="#5d6b82"/><path d="M475.1 282.4 L478.5 284.4 L478.5 161.2 L475.1 159.2Z" fill="#46536a"/><path d="M481.9 282.4 L478.5 284.4 L478.5 161.2 L481.9 159.2Z" fill="#35415a"/><path d="M478.5 157.2 L481.9 159.2 L478.5 161.2 L475.1 159.2Z" fill="#5d6b82"/><path d="M321.9 234.0 L325.3 236.0 L325.3 112.8 L321.9 110.8Z" fill="#46536a"/><path d="M328.8 234.0 L325.3 236.0 L325.3 112.8 L328.8 110.8Z" fill="#35415a"/><path d="M325.3 108.8 L328.8 110.8 L325.3 112.8 L321.9 110.8Z" fill="#5d6b82"/><path d="M321.9 228.7 L443.8 299.1 L443.8 296.0 L321.9 225.6Z" fill="#dfe5ee"/><path d="M481.9 277.1 L443.8 299.1 L443.8 296.0 L481.9 274.0Z" fill="#c3cddb"/><path d="M360.0 203.6 L481.9 274.0 L443.8 296.0 L321.9 225.6Z" fill="#ffffff"/><path d="M333.3 225.2 L352.4 236.2 L352.4 215.1 L333.3 204.1Z" fill="#ff9a4d"/><path d="M378.3 221.2 L352.4 236.2 L352.4 215.1 L378.3 200.1Z" fill="#e07a2c"/><path d="M359.2 189.1 L378.3 200.1 L352.4 215.1 L333.3 204.1Z" fill="#ffd7b5"/><path d="M357.7 239.3 L376.8 250.3 L376.8 229.2 L357.7 218.2Z" fill="#e6ae6c"/><path d="M402.7 235.3 L376.8 250.3 L376.8 229.2 L402.7 214.2Z" fill="#cc9150"/><path d="M383.6 203.2 L402.7 214.2 L376.8 229.2 L357.7 218.2Z" fill="#f6cf9a"/><path d="M382.1 253.4 L401.2 264.4 L401.2 243.2 L382.1 232.2Z" fill="#e6ae6c"/><path d="M427.1 249.4 L401.2 264.4 L401.2 243.2 L427.1 228.3Z" fill="#cc9150"/><path d="M408.0 217.3 L427.1 228.3 L401.2 243.2 L382.1 232.2Z" fill="#f6cf9a"/><path d="M406.5 267.4 L425.5 278.4 L425.5 257.3 L406.5 246.3Z" fill="#e6ae6c"/><path d="M451.5 263.5 L425.5 278.4 L425.5 257.3 L451.5 242.4Z" fill="#cc9150"/><path d="M432.4 231.4 L451.5 242.4 L425.5 257.3 L406.5 246.3Z" fill="#f6cf9a"/><path d="M321.9 189.1 L443.8 259.5 L443.8 256.4 L321.9 186.0Z" fill="#dfe5ee"/><path d="M481.9 237.5 L443.8 259.5 L443.8 256.4 L481.9 234.4Z" fill="#c3cddb"/><path d="M360.0 164.0 L481.9 234.4 L443.8 256.4 L321.9 186.0Z" fill="#ffffff"/><path d="M333.3 185.6 L352.4 196.6 L352.4 175.5 L333.3 164.5Z" fill="#e6ae6c"/><path d="M378.3 181.6 L352.4 196.6 L352.4 175.5 L378.3 160.5Z" fill="#cc9150"/><path d="M359.2 149.5 L378.3 160.5 L352.4 175.5 L333.3 164.5Z" fill="#f6cf9a"/><path d="M382.1 213.8 L401.2 224.8 L401.2 203.6 L382.1 192.6Z" fill="#e6ae6c"/><path d="M427.1 209.8 L401.2 224.8 L401.2 203.6 L427.1 188.7Z" fill="#cc9150"/><path d="M408.0 177.7 L427.1 188.7 L401.2 203.6 L382.1 192.6Z" fill="#f6cf9a"/><path d="M406.5 227.8 L425.5 238.8 L425.5 217.7 L406.5 206.7Z" fill="#ff9a4d"/><path d="M451.5 223.9 L425.5 238.8 L425.5 217.7 L451.5 202.8Z" fill="#e07a2c"/><path d="M432.4 191.8 L451.5 202.8 L425.5 217.7 L406.5 206.7Z" fill="#ffd7b5"/><path d="M321.9 149.5 L443.8 219.9 L443.8 216.8 L321.9 146.4Z" fill="#dfe5ee"/><path d="M481.9 197.9 L443.8 219.9 L443.8 216.8 L481.9 194.8Z" fill="#c3cddb"/><path d="M360.0 124.4 L481.9 194.8 L443.8 216.8 L321.9 146.4Z" fill="#ffffff"/><path d="M333.3 146.0 L352.4 157.0 L352.4 135.9 L333.3 124.9Z" fill="#e6ae6c"/><path d="M378.3 142.0 L352.4 157.0 L352.4 135.9 L378.3 120.9Z" fill="#cc9150"/><path d="M359.2 109.9 L378.3 120.9 L352.4 135.9 L333.3 124.9Z" fill="#f6cf9a"/><path d="M357.7 160.1 L376.8 171.1 L376.8 150.0 L357.7 139.0Z" fill="#e6ae6c"/><path d="M402.7 156.1 L376.8 171.1 L376.8 150.0 L402.7 135.0Z" fill="#cc9150"/><path d="M383.6 124.0 L402.7 135.0 L376.8 150.0 L357.7 139.0Z" fill="#f6cf9a"/><path d="M382.1 174.2 L401.2 185.2 L401.2 164.0 L382.1 153.0Z" fill="#ff9a4d"/><path d="M427.1 170.2 L401.2 185.2 L401.2 164.0 L427.1 149.1Z" fill="#e07a2c"/><path d="M408.0 138.1 L427.1 149.1 L401.2 164.0 L382.1 153.0Z" fill="#ffd7b5"/><path d="M440.4 302.4 L443.8 304.4 L443.8 181.2 L440.4 179.2Z" fill="#46536a"/><path d="M447.3 302.4 L443.8 304.4 L443.8 181.2 L447.3 179.2Z" fill="#35415a"/><path d="M443.8 177.2 L447.3 179.2 L443.8 181.2 L440.4 179.2Z" fill="#5d6b82"/><path d="M261.3 269.0 L264.7 271.0 L264.7 147.8 L261.3 145.8Z" fill="#46536a"/><path d="M268.2 269.0 L264.7 271.0 L264.7 147.8 L268.2 145.8Z" fill="#35415a"/><path d="M264.7 143.8 L268.2 145.8 L264.7 147.8 L261.3 145.8Z" fill="#5d6b82"/><path d="M379.8 337.4 L383.2 339.4 L383.2 216.2 L379.8 214.2Z" fill="#46536a"/><path d="M386.7 337.4 L383.2 339.4 L383.2 216.2 L386.7 214.2Z" fill="#35415a"/><path d="M383.2 212.2 L386.7 214.2 L383.2 216.2 L379.8 214.2Z" fill="#5d6b82"/><path d="M226.6 289.0 L230.1 291.0 L230.1 167.8 L226.6 165.8Z" fill="#46536a"/><path d="M233.5 289.0 L230.1 291.0 L230.1 167.8 L233.5 165.8Z" fill="#35415a"/><path d="M230.1 163.8 L233.5 165.8 L230.1 167.8 L226.6 165.8Z" fill="#5d6b82"/><path d="M226.6 283.7 L348.6 354.1 L348.6 351.0 L226.6 280.6Z" fill="#dfe5ee"/><path d="M386.7 332.1 L348.6 354.1 L348.6 351.0 L386.7 329.0Z" fill="#c3cddb"/><path d="M264.7 258.6 L386.7 329.0 L348.6 351.0 L226.6 280.6Z" fill="#ffffff"/><path d="M238.1 280.2 L257.1 291.2 L257.1 270.1 L238.1 259.1Z" fill="#e6ae6c"/><path d="M283.0 276.2 L257.1 291.2 L257.1 270.1 L283.0 255.1Z" fill="#cc9150"/><path d="M264.0 244.1 L283.0 255.1 L257.1 270.1 L238.1 259.1Z" fill="#f6cf9a"/><path d="M262.5 294.3 L281.5 305.3 L281.5 284.2 L262.5 273.2Z" fill="#e6ae6c"/><path d="M307.4 290.3 L281.5 305.3 L281.5 284.2 L307.4 269.2Z" fill="#cc9150"/><path d="M288.4 258.2 L307.4 269.2 L281.5 284.2 L262.5 273.2Z" fill="#f6cf9a"/><path d="M286.8 308.4 L305.9 319.4 L305.9 298.2 L286.8 287.2Z" fill="#e6ae6c"/><path d="M331.8 304.4 L305.9 319.4 L305.9 298.2 L331.8 283.3Z" fill="#cc9150"/><path d="M312.7 272.3 L331.8 283.3 L305.9 298.2 L286.8 287.2Z" fill="#f6cf9a"/><path d="M226.6 244.1 L348.6 314.5 L348.6 311.4 L226.6 241.0Z" fill="#dfe5ee"/><path d="M386.7 292.5 L348.6 314.5 L348.6 311.4 L386.7 289.4Z" fill="#c3cddb"/><path d="M264.7 219.0 L386.7 289.4 L348.6 311.4 L226.6 241.0Z" fill="#ffffff"/><path d="M262.5 254.7 L281.5 265.7 L281.5 244.6 L262.5 233.6Z" fill="#e6ae6c"/><path d="M307.4 250.7 L281.5 265.7 L281.5 244.6 L307.4 229.6Z" fill="#cc9150"/><path d="M288.4 218.6 L307.4 229.6 L281.5 244.6 L262.5 233.6Z" fill="#f6cf9a"/><path d="M286.8 268.8 L305.9 279.8 L305.9 258.6 L286.8 247.6Z" fill="#ff9a4d"/><path d="M331.8 264.8 L305.9 279.8 L305.9 258.6 L331.8 243.7Z" fill="#e07a2c"/><path d="M312.7 232.7 L331.8 243.7 L305.9 258.6 L286.8 247.6Z" fill="#ffd7b5"/><path d="M311.2 282.8 L330.3 293.8 L330.3 272.7 L311.2 261.7Z" fill="#e6ae6c"/><path d="M356.2 278.9 L330.3 293.8 L330.3 272.7 L356.2 257.8Z" fill="#cc9150"/><path d="M337.1 246.8 L356.2 257.8 L330.3 272.7 L311.2 261.7Z" fill="#f6cf9a"/><path d="M226.6 204.5 L348.6 274.9 L348.6 271.8 L226.6 201.4Z" fill="#dfe5ee"/><path d="M386.7 252.9 L348.6 274.9 L348.6 271.8 L386.7 249.8Z" fill="#c3cddb"/><path d="M264.7 179.4 L386.7 249.8 L348.6 271.8 L226.6 201.4Z" fill="#ffffff"/><path d="M238.1 201.0 L257.1 212.0 L257.1 190.9 L238.1 179.9Z" fill="#e6ae6c"/><path d="M283.0 197.0 L257.1 212.0 L257.1 190.9 L283.0 175.9Z" fill="#cc9150"/><path d="M264.0 164.9 L283.0 175.9 L257.1 190.9 L238.1 179.9Z" fill="#f6cf9a"/><path d="M262.5 215.1 L281.5 226.1 L281.5 205.0 L262.5 194.0Z" fill="#ff9a4d"/><path d="M307.4 211.1 L281.5 226.1 L281.5 205.0 L307.4 190.0Z" fill="#e07a2c"/><path d="M288.4 179.0 L307.4 190.0 L281.5 205.0 L262.5 194.0Z" fill="#ffd7b5"/><path d="M311.2 243.2 L330.3 254.2 L330.3 233.1 L311.2 222.1Z" fill="#e6ae6c"/><path d="M356.2 239.3 L330.3 254.2 L330.3 233.1 L356.2 218.2Z" fill="#cc9150"/><path d="M337.1 207.2 L356.2 218.2 L330.3 233.1 L311.2 222.1Z" fill="#f6cf9a"/><path d="M345.1 357.4 L348.6 359.4 L348.6 236.2 L345.1 234.2Z" fill="#46536a"/><path d="M352.0 357.4 L348.6 359.4 L348.6 236.2 L352.0 234.2Z" fill="#35415a"/><path d="M348.6 232.2 L352.0 234.2 L348.6 236.2 L345.1 234.2Z" fill="#5d6b82"/><path d="M512.8 304.2 L516.2 306.2 L516.2 183.0 L512.8 181.0Z" fill="#46536a"/><path d="M519.7 304.2 L516.2 306.2 L516.2 183.0 L519.7 181.0Z" fill="#35415a"/><path d="M516.2 179.0 L519.7 181.0 L516.2 183.0 L512.8 181.0Z" fill="#5d6b82"/><path d="M631.3 372.6 L634.7 374.6 L634.7 251.4 L631.3 249.4Z" fill="#46536a"/><path d="M638.2 372.6 L634.7 374.6 L634.7 251.4 L638.2 249.4Z" fill="#35415a"/><path d="M634.7 247.4 L638.2 249.4 L634.7 251.4 L631.3 249.4Z" fill="#5d6b82"/><path d="M478.1 324.2 L481.6 326.2 L481.6 203.0 L478.1 201.0Z" fill="#46536a"/><path d="M485.0 324.2 L481.6 326.2 L481.6 203.0 L485.0 201.0Z" fill="#35415a"/><path d="M481.6 199.0 L485.0 201.0 L481.6 203.0 L478.1 201.0Z" fill="#5d6b82"/><path d="M478.1 318.9 L600.1 389.3 L600.1 386.2 L478.1 315.8Z" fill="#dfe5ee"/><path d="M638.2 367.3 L600.1 389.3 L600.1 386.2 L638.2 364.2Z" fill="#c3cddb"/><path d="M516.2 293.8 L638.2 364.2 L600.1 386.2 L478.1 315.8Z" fill="#ffffff"/><path d="M489.6 315.4 L508.6 326.4 L508.6 305.3 L489.6 294.3Z" fill="#e6ae6c"/><path d="M534.5 311.4 L508.6 326.4 L508.6 305.3 L534.5 290.3Z" fill="#cc9150"/><path d="M515.5 279.3 L534.5 290.3 L508.6 305.3 L489.6 294.3Z" fill="#f6cf9a"/><path d="M513.9 329.5 L533.0 340.5 L533.0 319.4 L513.9 308.4Z" fill="#e6ae6c"/><path d="M558.9 325.5 L533.0 340.5 L533.0 319.4 L558.9 304.4Z" fill="#cc9150"/><path d="M539.9 293.4 L558.9 304.4 L533.0 319.4 L513.9 308.4Z" fill="#f6cf9a"/><path d="M562.7 357.6 L581.8 368.6 L581.8 347.5 L562.7 336.5Z" fill="#e6ae6c"/><path d="M607.7 353.7 L581.8 368.6 L581.8 347.5 L607.7 332.6Z" fill="#cc9150"/><path d="M588.6 321.6 L607.7 332.6 L581.8 347.5 L562.7 336.5Z" fill="#f6cf9a"/><path d="M478.1 279.3 L600.1 349.7 L600.1 346.6 L478.1 276.2Z" fill="#dfe5ee"/><path d="M638.2 327.7 L600.1 349.7 L600.1 346.6 L638.2 324.6Z" fill="#c3cddb"/><path d="M516.2 254.2 L638.2 324.6 L600.1 346.6 L478.1 276.2Z" fill="#ffffff"/><path d="M489.6 275.8 L508.6 286.8 L508.6 265.7 L489.6 254.7Z" fill="#e6ae6c"/><path d="M534.5 271.8 L508.6 286.8 L508.6 265.7 L534.5 250.7Z" fill="#cc9150"/><path d="M515.5 239.7 L534.5 250.7 L508.6 265.7 L489.6 254.7Z" fill="#f6cf9a"/><path d="M513.9 289.9 L533.0 300.9 L533.0 279.8 L513.9 268.8Z" fill="#ff9a4d"/><path d="M558.9 285.9 L533.0 300.9 L533.0 279.8 L558.9 264.8Z" fill="#e07a2c"/><path d="M539.9 253.8 L558.9 264.8 L533.0 279.8 L513.9 268.8Z" fill="#ffd7b5"/><path d="M538.3 304.0 L557.4 315.0 L557.4 293.8 L538.3 282.8Z" fill="#e6ae6c"/><path d="M583.3 300.0 L557.4 315.0 L557.4 293.8 L583.3 278.9Z" fill="#cc9150"/><path d="M564.2 267.9 L583.3 278.9 L557.4 293.8 L538.3 282.8Z" fill="#f6cf9a"/><path d="M562.7 318.0 L581.8 329.0 L581.8 307.9 L562.7 296.9Z" fill="#e6ae6c"/><path d="M607.7 314.1 L581.8 329.0 L581.8 307.9 L607.7 293.0Z" fill="#cc9150"/><path d="M588.6 282.0 L607.7 293.0 L581.8 307.9 L562.7 296.9Z" fill="#f6cf9a"/><path d="M478.1 239.7 L600.1 310.1 L600.1 307.0 L478.1 236.6Z" fill="#dfe5ee"/><path d="M638.2 288.1 L600.1 310.1 L600.1 307.0 L638.2 285.0Z" fill="#c3cddb"/><path d="M516.2 214.6 L638.2 285.0 L600.1 307.0 L478.1 236.6Z" fill="#ffffff"/><path d="M489.6 236.2 L508.6 247.2 L508.6 226.1 L489.6 215.1Z" fill="#ff9a4d"/><path d="M534.5 232.2 L508.6 247.2 L508.6 226.1 L534.5 211.1Z" fill="#e07a2c"/><path d="M515.5 200.1 L534.5 211.1 L508.6 226.1 L489.6 215.1Z" fill="#ffd7b5"/><path d="M538.3 264.4 L557.4 275.4 L557.4 254.2 L538.3 243.2Z" fill="#e6ae6c"/><path d="M583.3 260.4 L557.4 275.4 L557.4 254.2 L583.3 239.3Z" fill="#cc9150"/><path d="M564.2 228.3 L583.3 239.3 L557.4 254.2 L538.3 243.2Z" fill="#f6cf9a"/><path d="M562.7 278.4 L581.8 289.4 L581.8 268.3 L562.7 257.3Z" fill="#e6ae6c"/><path d="M607.7 274.5 L581.8 289.4 L581.8 268.3 L607.7 253.4Z" fill="#cc9150"/><path d="M588.6 242.4 L607.7 253.4 L581.8 268.3 L562.7 257.3Z" fill="#f6cf9a"/><path d="M596.6 392.6 L600.1 394.6 L600.1 271.4 L596.6 269.4Z" fill="#46536a"/><path d="M603.5 392.6 L600.1 394.6 L600.1 271.4 L603.5 269.4Z" fill="#35415a"/><path d="M600.1 267.4 L603.5 269.4 L600.1 271.4 L596.6 269.4Z" fill="#5d6b82"/><path d="M207.6 374.8 L253.3 401.2 L253.3 388.0 L207.6 361.6Z" fill="#1fa39a"/><path d="M299.0 374.8 L253.3 401.2 L253.3 388.0 L299.0 361.6Z" fill="#15817a"/><path d="M253.3 335.2 L299.0 361.6 L253.3 388.0 L207.6 361.6Z" fill="#5ee0d2"/><path d="M215.2 361.6 L253.3 383.6 L253.3 381.0 L215.2 359.0Z" fill="#6f7c93"/><path d="M291.4 361.6 L253.3 383.6 L253.3 381.0 L291.4 359.0Z" fill="#58647a"/><path d="M253.3 337.0 L291.4 359.0 L253.3 381.0 L215.2 359.0Z" fill="#8a97ad"/><path d="M249.9 338.9 L253.3 340.9 L253.3 257.3 L249.9 255.3Z" fill="#46536a"/><path d="M256.7 338.9 L253.3 340.9 L253.3 257.3 L256.7 255.3Z" fill="#35415a"/><path d="M253.3 253.4 L256.7 255.3 L253.3 257.3 L249.9 255.3Z" fill="#5d6b82"/><path d="M284.6 359.0 L288.0 360.9 L288.0 277.3 L284.6 275.4Z" fill="#46536a"/><path d="M291.4 359.0 L288.0 360.9 L288.0 277.3 L291.4 275.4Z" fill="#35415a"/><path d="M288.0 273.4 L291.4 275.4 L288.0 277.3 L284.6 275.4Z" fill="#5d6b82"/><path d="M215.2 359.0 L218.6 360.9 L218.6 277.3 L215.2 275.4Z" fill="#46536a"/><path d="M222.1 359.0 L218.6 360.9 L218.6 277.3 L222.1 275.4Z" fill="#35415a"/><path d="M218.6 273.4 L222.1 275.4 L218.6 277.3 L215.2 275.4Z" fill="#5d6b82"/><path d="M215.2 353.7 L253.3 375.7 L253.3 372.6 L215.2 350.6Z" fill="#dfe5ee"/><path d="M291.4 353.7 L253.3 375.7 L253.3 372.6 L291.4 350.6Z" fill="#c3cddb"/><path d="M253.3 328.6 L291.4 350.6 L253.3 372.6 L215.2 350.6Z" fill="#ffffff"/><path d="M226.6 350.2 L245.7 361.2 L245.7 340.0 L226.6 329.0Z" fill="#ff9a4d"/><path d="M271.6 346.2 L245.7 361.2 L245.7 340.0 L271.6 325.1Z" fill="#e07a2c"/><path d="M252.5 314.1 L271.6 325.1 L245.7 340.0 L226.6 329.0Z" fill="#ffd7b5"/><path d="M215.2 314.1 L253.3 336.1 L253.3 333.0 L215.2 311.0Z" fill="#dfe5ee"/><path d="M291.4 314.1 L253.3 336.1 L253.3 333.0 L291.4 311.0Z" fill="#c3cddb"/><path d="M253.3 289.0 L291.4 311.0 L253.3 333.0 L215.2 311.0Z" fill="#ffffff"/><path d="M226.6 310.6 L245.7 321.6 L245.7 300.4 L226.6 289.4Z" fill="#e6ae6c"/><path d="M271.6 306.6 L245.7 321.6 L245.7 300.4 L271.6 285.5Z" fill="#cc9150"/><path d="M252.5 274.5 L271.6 285.5 L245.7 300.4 L226.6 289.4Z" fill="#f6cf9a"/><path d="M249.9 379.0 L253.3 381.0 L253.3 297.4 L249.9 295.4Z" fill="#46536a"/><path d="M256.7 379.0 L253.3 381.0 L253.3 297.4 L256.7 295.4Z" fill="#35415a"/><path d="M253.3 293.4 L256.7 295.4 L253.3 297.4 L249.9 295.4Z" fill="#5d6b82"/><path d="M398.1 396.8 L443.8 423.2 L443.8 410.0 L398.1 383.6Z" fill="#1fa39a"/><path d="M489.6 396.8 L443.8 423.2 L443.8 410.0 L489.6 383.6Z" fill="#15817a"/><path d="M443.8 357.2 L489.6 383.6 L443.8 410.0 L398.1 383.6Z" fill="#5ee0d2"/><path d="M405.7 383.6 L443.8 405.6 L443.8 403.0 L405.7 381.0Z" fill="#6f7c93"/><path d="M481.9 383.6 L443.8 405.6 L443.8 403.0 L481.9 381.0Z" fill="#58647a"/><path d="M443.8 359.0 L481.9 381.0 L443.8 403.0 L405.7 381.0Z" fill="#8a97ad"/><path d="M440.4 360.9 L443.8 362.9 L443.8 279.3 L440.4 277.3Z" fill="#46536a"/><path d="M447.3 360.9 L443.8 362.9 L443.8 279.3 L447.3 277.3Z" fill="#35415a"/><path d="M443.8 275.4 L447.3 277.3 L443.8 279.3 L440.4 277.3Z" fill="#5d6b82"/><path d="M475.1 381.0 L478.5 382.9 L478.5 299.3 L475.1 297.4Z" fill="#46536a"/><path d="M481.9 381.0 L478.5 382.9 L478.5 299.3 L481.9 297.4Z" fill="#35415a"/><path d="M478.5 295.4 L481.9 297.4 L478.5 299.3 L475.1 297.4Z" fill="#5d6b82"/><path d="M405.7 381.0 L409.2 382.9 L409.2 299.3 L405.7 297.4Z" fill="#46536a"/><path d="M412.6 381.0 L409.2 382.9 L409.2 299.3 L412.6 297.4Z" fill="#35415a"/><path d="M409.2 295.4 L412.6 297.4 L409.2 299.3 L405.7 297.4Z" fill="#5d6b82"/><path d="M405.7 375.7 L443.8 397.7 L443.8 394.6 L405.7 372.6Z" fill="#dfe5ee"/><path d="M481.9 375.7 L443.8 397.7 L443.8 394.6 L481.9 372.6Z" fill="#c3cddb"/><path d="M443.8 350.6 L481.9 372.6 L443.8 394.6 L405.7 372.6Z" fill="#ffffff"/><path d="M417.2 372.2 L436.2 383.2 L436.2 362.0 L417.2 351.0Z" fill="#e6ae6c"/><path d="M462.1 368.2 L436.2 383.2 L436.2 362.0 L462.1 347.1Z" fill="#cc9150"/><path d="M443.1 336.1 L462.1 347.1 L436.2 362.0 L417.2 351.0Z" fill="#f6cf9a"/><path d="M405.7 336.1 L443.8 358.1 L443.8 355.0 L405.7 333.0Z" fill="#dfe5ee"/><path d="M481.9 336.1 L443.8 358.1 L443.8 355.0 L481.9 333.0Z" fill="#c3cddb"/><path d="M443.8 311.0 L481.9 333.0 L443.8 355.0 L405.7 333.0Z" fill="#ffffff"/><path d="M417.2 332.6 L436.2 343.6 L436.2 322.4 L417.2 311.4Z" fill="#ff9a4d"/><path d="M462.1 328.6 L436.2 343.6 L436.2 322.4 L462.1 307.5Z" fill="#e07a2c"/><path d="M443.1 296.5 L462.1 307.5 L436.2 322.4 L417.2 311.4Z" fill="#ffd7b5"/><path d="M440.4 401.0 L443.8 403.0 L443.8 319.4 L440.4 317.4Z" fill="#46536a"/><path d="M447.3 401.0 L443.8 403.0 L443.8 319.4 L447.3 317.4Z" fill="#35415a"/><path d="M443.8 315.4 L447.3 317.4 L443.8 319.4 L440.4 317.4Z" fill="#5d6b82"/><path d="M527.7 436.4 L573.4 462.8 L573.4 449.6 L527.7 423.2Z" fill="#1fa39a"/><path d="M619.1 436.4 L573.4 462.8 L573.4 449.6 L619.1 423.2Z" fill="#15817a"/><path d="M573.4 396.8 L619.1 423.2 L573.4 449.6 L527.7 423.2Z" fill="#5ee0d2"/><path d="M562.0 423.2 L573.4 429.8 L573.4 425.4 L562.0 418.8Z" fill="#ff9a4d"/><path d="M584.8 423.2 L573.4 429.8 L573.4 425.4 L584.8 418.8Z" fill="#e07a2c"/><path d="M573.4 412.2 L584.8 418.8 L573.4 425.4 L562.0 418.8Z" fill="#ffe08a"/><path d="M325.7 482.6 L417.2 535.4 L417.2 495.8 L325.7 443.0Z" fill="#2a3752"/><path d="M466.7 506.8 L417.2 535.4 L417.2 495.8 L466.7 467.2Z" fill="#1e2940"/><path d="M375.2 414.4 L466.7 467.2 L417.2 495.8 L325.7 443.0Z" fill="#3a4a68"/><path d="M352.4 436.4 L375.2 449.6 L375.2 434.2 L352.4 421.0Z" fill="#ff9a4d"/><path d="M398.1 436.4 L375.2 449.6 L375.2 434.2 L398.1 421.0Z" fill="#e07a2c"/><path d="M375.2 407.8 L398.1 421.0 L375.2 434.2 L352.4 421.0Z" fill="#ffd7b5"/><path d="M386.7 456.2 L405.7 467.2 L405.7 454.0 L386.7 443.0Z" fill="#e6ae6c"/><path d="M424.8 456.2 L405.7 467.2 L405.7 454.0 L424.8 443.0Z" fill="#cc9150"/><path d="M405.7 432.0 L424.8 443.0 L405.7 454.0 L386.7 443.0Z" fill="#f6cf9a"/></svg></div></div>
+    <div class="kicker"><span class="no">01</span> 経営会議 ／ 2026.10</div>
+    <h1 style="font:700 76px/1.2 var(--font);letter-spacing:-.03em;max-width:560px">棚のほうが、<br>人のところへ<br>来る倉庫へ。</h1>
+    <p class="lead" style="font-size:24px;margin-top:26px;max-width:520px">西倉庫 自動化計画<br>棚ごと運ぶ搬送ロボットの導入</p>
+    <p style="position:absolute;left:80px;bottom:48px;font:700 18px var(--font);color:var(--muted);margin:0">サンプル物流株式会社　倉庫改善チーム</p>
+    <aside class="notes">最初に結論。「人が棚まで歩くのをやめ、棚のほうを動かします。今日は第1期の台数を決めてください」。</aside>
+  </section>
+
+  <section class="slide" data-title="いまの課題">
+    <div class="kicker"><span class="no">02</span> いまの西倉庫</div>
+    <h2>作業時間の <em>6割</em> は、<br>棚まで歩いている時間。</h2>
+    <div class="grid cols-3" style="gap:30px;margin-bottom:40px">
+      <div class="card kpi"><div class="label">1人・1日に歩く距離</div><div class="value"><span data-count="14.2" data-format="dec1"></span><small>km</small></div></div>
+      <div class="card kpi"><div class="label">1時間の出荷（22人）</div><div class="value"><span data-count="1100"></span><small>件</small></div></div>
+      <div class="card kpi"><div class="label">繁忙期の残業</div><div class="value"><span data-count="46"></span><small>時間/月</small></div></div>
+    </div>
+    <p style="font:700 20px var(--font);margin:auto 0 14px">ピッキング担当の作業時間の内訳</p>
+    <div class="stack"><span class="walk" style="flex:61">歩く 61%</span><span style="flex:14">探す 14%</span><span style="flex:17">取り出す 17%</span><span style="flex:8"></span></div>
+    <p class="foot">社名・数字は架空のサンプルです。</p>
+    <aside class="notes">数字は開くとカウントアップ。オレンジの「歩く」をロボットに任せる、と言って次へ。</aside>
+  </section>
+
+  <section class="slide" data-title="仕組み">
+    <div class="kicker"><span class="no">03</span> しくみ</div>
+    <h2>ロボットが棚ごと運び、人は <em>定位置</em> で取り出すだけ。</h2>
+    <div class="flow">
+      <div class="st step"><div class="pic"><svg viewBox="0 0 240 300" width="240" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M96.1 162.2 L100.0 164.5 L100.0 24.5 L96.1 22.2Z" fill="#46536a"/><path d="M103.9 162.2 L100.0 164.5 L100.0 24.5 L103.9 22.2Z" fill="#35415a"/><path d="M100.0 20.0 L103.9 22.2 L100.0 24.5 L96.1 22.2Z" fill="#5d6b82"/><path d="M196.1 220.0 L200.0 222.2 L200.0 82.2 L196.1 80.0Z" fill="#46536a"/><path d="M203.9 220.0 L200.0 222.2 L200.0 82.2 L203.9 80.0Z" fill="#35415a"/><path d="M200.0 77.8 L203.9 80.0 L200.0 82.2 L196.1 80.0Z" fill="#5d6b82"/><path d="M56.7 185.0 L60.6 187.2 L60.6 47.2 L56.7 45.0Z" fill="#46536a"/><path d="M64.5 185.0 L60.6 187.2 L60.6 47.2 L64.5 45.0Z" fill="#35415a"/><path d="M60.6 42.8 L64.5 45.0 L60.6 47.2 L56.7 45.0Z" fill="#5d6b82"/><path d="M56.7 179.0 L160.6 239.0 L160.6 235.5 L56.7 175.5Z" fill="#dfe5ee"/><path d="M203.9 214.0 L160.6 239.0 L160.6 235.5 L203.9 210.5Z" fill="#c3cddb"/><path d="M100.0 150.5 L203.9 210.5 L160.6 235.5 L56.7 175.5Z" fill="#ffffff"/><path d="M69.7 175.0 L91.3 187.5 L91.3 163.5 L69.7 151.0Z" fill="#ff9a4d"/><path d="M120.8 170.5 L91.3 187.5 L91.3 163.5 L120.8 146.5Z" fill="#e07a2c"/><path d="M99.1 134.0 L120.8 146.5 L91.3 163.5 L69.7 151.0Z" fill="#ffd7b5"/><path d="M97.4 191.0 L119.1 203.5 L119.1 179.5 L97.4 167.0Z" fill="#e6ae6c"/><path d="M148.5 186.5 L119.1 203.5 L119.1 179.5 L148.5 162.5Z" fill="#cc9150"/><path d="M126.8 150.0 L148.5 162.5 L119.1 179.5 L97.4 167.0Z" fill="#f6cf9a"/><path d="M125.1 207.0 L146.8 219.5 L146.8 195.5 L125.1 183.0Z" fill="#e6ae6c"/><path d="M176.2 202.5 L146.8 219.5 L146.8 195.5 L176.2 178.5Z" fill="#cc9150"/><path d="M154.6 166.0 L176.2 178.5 L146.8 195.5 L125.1 183.0Z" fill="#f6cf9a"/><path d="M56.7 134.0 L160.6 194.0 L160.6 190.5 L56.7 130.5Z" fill="#dfe5ee"/><path d="M203.9 169.0 L160.6 194.0 L160.6 190.5 L203.9 165.5Z" fill="#c3cddb"/><path d="M100.0 105.5 L203.9 165.5 L160.6 190.5 L56.7 130.5Z" fill="#ffffff"/><path d="M69.7 130.0 L91.3 142.5 L91.3 118.5 L69.7 106.0Z" fill="#e6ae6c"/><path d="M120.8 125.5 L91.3 142.5 L91.3 118.5 L120.8 101.5Z" fill="#cc9150"/><path d="M99.1 89.0 L120.8 101.5 L91.3 118.5 L69.7 106.0Z" fill="#f6cf9a"/><path d="M125.1 162.0 L146.8 174.5 L146.8 150.5 L125.1 138.0Z" fill="#e6ae6c"/><path d="M176.2 157.5 L146.8 174.5 L146.8 150.5 L176.2 133.5Z" fill="#cc9150"/><path d="M154.6 121.0 L176.2 133.5 L146.8 150.5 L125.1 138.0Z" fill="#f6cf9a"/><path d="M56.7 89.0 L160.6 149.0 L160.6 145.5 L56.7 85.5Z" fill="#dfe5ee"/><path d="M203.9 124.0 L160.6 149.0 L160.6 145.5 L203.9 120.5Z" fill="#c3cddb"/><path d="M100.0 60.5 L203.9 120.5 L160.6 145.5 L56.7 85.5Z" fill="#ffffff"/><path d="M69.7 85.0 L91.3 97.5 L91.3 73.5 L69.7 61.0Z" fill="#e6ae6c"/><path d="M120.8 80.5 L91.3 97.5 L91.3 73.5 L120.8 56.5Z" fill="#cc9150"/><path d="M99.1 44.0 L120.8 56.5 L91.3 73.5 L69.7 61.0Z" fill="#f6cf9a"/><path d="M97.4 101.0 L119.1 113.5 L119.1 89.5 L97.4 77.0Z" fill="#e6ae6c"/><path d="M148.5 96.5 L119.1 113.5 L119.1 89.5 L148.5 72.5Z" fill="#cc9150"/><path d="M126.8 60.0 L148.5 72.5 L119.1 89.5 L97.4 77.0Z" fill="#f6cf9a"/><path d="M125.1 117.0 L146.8 129.5 L146.8 105.5 L125.1 93.0Z" fill="#ff9a4d"/><path d="M176.2 112.5 L146.8 129.5 L146.8 105.5 L176.2 88.5Z" fill="#e07a2c"/><path d="M154.6 76.0 L176.2 88.5 L146.8 105.5 L125.1 93.0Z" fill="#ffd7b5"/><path d="M156.7 242.8 L160.6 245.0 L160.6 105.0 L156.7 102.8Z" fill="#46536a"/><path d="M164.5 242.8 L160.6 245.0 L160.6 105.0 L164.5 102.8Z" fill="#35415a"/><path d="M160.6 100.5 L164.5 102.8 L160.6 105.0 L156.7 102.8Z" fill="#5d6b82"/></svg></div><div class="n">1</div><h3>注文が入る</h3><p>必要な商品の棚が決まる</p></div>
+      <div class="arrow step"></div>
+      <div class="st step"><div class="pic"><svg viewBox="0 0 240 330" width="240" height="330" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M51.4 229.6 L120.0 269.2 L120.0 249.4 L51.4 209.8Z" fill="#1fa39a"/><path d="M188.6 229.6 L120.0 269.2 L120.0 249.4 L188.6 209.8Z" fill="#15817a"/><path d="M120.0 170.2 L188.6 209.8 L120.0 249.4 L51.4 209.8Z" fill="#5ee0d2"/><path d="M62.8 209.8 L120.0 242.8 L120.0 238.8 L62.8 205.8Z" fill="#6f7c93"/><path d="M177.2 209.8 L120.0 242.8 L120.0 238.8 L177.2 205.8Z" fill="#58647a"/><path d="M120.0 172.8 L177.2 205.8 L120.0 238.8 L62.8 205.8Z" fill="#8a97ad"/><path d="M114.9 175.8 L120.0 178.8 L120.0 53.4 L114.9 50.4Z" fill="#46536a"/><path d="M125.1 175.8 L120.0 178.8 L120.0 53.4 L125.1 50.4Z" fill="#35415a"/><path d="M120.0 47.4 L125.1 50.4 L120.0 53.4 L114.9 50.4Z" fill="#5d6b82"/><path d="M166.9 205.8 L172.0 208.8 L172.0 83.4 L166.9 80.4Z" fill="#46536a"/><path d="M177.2 205.8 L172.0 208.8 L172.0 83.4 L177.2 80.4Z" fill="#35415a"/><path d="M172.0 77.5 L177.2 80.4 L172.0 83.4 L166.9 80.4Z" fill="#5d6b82"/><path d="M62.8 205.8 L68.0 208.8 L68.0 83.4 L62.8 80.4Z" fill="#46536a"/><path d="M73.1 205.8 L68.0 208.8 L68.0 83.4 L73.1 80.4Z" fill="#35415a"/><path d="M68.0 77.5 L73.1 80.4 L68.0 83.4 L62.8 80.4Z" fill="#5d6b82"/><path d="M62.8 197.9 L120.0 230.9 L120.0 226.3 L62.8 193.3Z" fill="#dfe5ee"/><path d="M177.2 197.9 L120.0 230.9 L120.0 226.3 L177.2 193.3Z" fill="#c3cddb"/><path d="M120.0 160.3 L177.2 193.3 L120.0 226.3 L62.8 193.3Z" fill="#ffffff"/><path d="M80.0 192.6 L108.6 209.1 L108.6 177.5 L80.0 161.0Z" fill="#e6ae6c"/><path d="M147.4 186.7 L108.6 209.1 L108.6 177.5 L147.4 155.0Z" fill="#cc9150"/><path d="M118.9 138.5 L147.4 155.0 L108.6 177.5 L80.0 161.0Z" fill="#f6cf9a"/><path d="M62.8 138.5 L120.0 171.5 L120.0 166.9 L62.8 133.9Z" fill="#dfe5ee"/><path d="M177.2 138.5 L120.0 171.5 L120.0 166.9 L177.2 133.9Z" fill="#c3cddb"/><path d="M120.0 100.9 L177.2 133.9 L120.0 166.9 L62.8 133.9Z" fill="#ffffff"/><path d="M114.9 235.9 L120.0 238.8 L120.0 113.4 L114.9 110.5Z" fill="#46536a"/><path d="M125.1 235.9 L120.0 238.8 L120.0 113.4 L125.1 110.5Z" fill="#35415a"/><path d="M120.0 107.5 L125.1 110.5 L120.0 113.4 L114.9 110.5Z" fill="#5d6b82"/></svg></div><div class="n">2</div><h3>棚ごと運ぶ</h3><p>ロボットが棚の下にもぐり、持ち上げる</p></div>
+      <div class="arrow step"></div>
+      <div class="st step"><div class="pic"><svg viewBox="0 0 260 250" width="260" height="250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M52.1 129.2 L158.8 190.8 L158.8 140.4 L52.1 78.8Z" fill="#2a3752"/><path d="M226.7 151.6 L158.8 190.8 L158.8 140.4 L226.7 101.2Z" fill="#1e2940"/><path d="M120.0 39.6 L226.7 101.2 L158.8 140.4 L52.1 78.8Z" fill="#3a4a68"/><path d="M90.9 67.6 L120.0 84.4 L120.0 64.8 L90.9 48.0Z" fill="#ff9a4d"/><path d="M149.1 67.6 L120.0 84.4 L120.0 64.8 L149.1 48.0Z" fill="#e07a2c"/><path d="M120.0 31.2 L149.1 48.0 L120.0 64.8 L90.9 48.0Z" fill="#ffd7b5"/><path d="M134.5 92.8 L158.8 106.8 L158.8 90.0 L134.5 76.0Z" fill="#e6ae6c"/><path d="M183.0 92.8 L158.8 106.8 L158.8 90.0 L183.0 76.0Z" fill="#cc9150"/><path d="M158.8 62.0 L183.0 76.0 L158.8 90.0 L134.5 76.0Z" fill="#f6cf9a"/></svg></div><div class="n">3</div><h3>その場で取る</h3><p>画面の指示どおり、箱に入れるだけ</p></div>
+    </div>
+    <details class="why"><summary>根拠：なぜ棚ごと運ぶのか</summary><div class="body">商品を1つずつ運ぶ方式より、棚を運ぶ方式のほうが今の棚をそのまま使え、工事は床の目印の貼り付けだけで済む。停止期間は2日（サンプル見積もり）。</div></details>
+    <aside class="notes">→ で左から順に出る。2のところで「ロボットは高さ30cm。棚の下にもぐる」と補足。</aside>
+  </section>
+
+  <section class="slide" data-title="試験導入の結果">
+    <div class="bg"><div class="iso move" style="right:40px;top:40px;opacity:.9"><svg viewBox="0 0 240 210" width="240" height="210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9 138.0 L120.0 186.0 L120.0 162.0 L36.9 114.0Z" fill="#1fa39a"/><path d="M203.1 138.0 L120.0 186.0 L120.0 162.0 L203.1 114.0Z" fill="#15817a"/><path d="M120.0 66.0 L203.1 114.0 L120.0 162.0 L36.9 114.0Z" fill="#5ee0d2"/><path d="M99.2 114.0 L120.0 126.0 L120.0 118.0 L99.2 106.0Z" fill="#ff9a4d"/><path d="M140.8 114.0 L120.0 126.0 L120.0 118.0 L140.8 106.0Z" fill="#e07a2c"/><path d="M120.0 94.0 L140.8 106.0 L120.0 118.0 L99.2 106.0Z" fill="#ffe08a"/></svg></div></div>
+    <div class="kicker"><span class="no">04</span> 試験エリアの結果</div>
+    <h2>試験エリアでは、1時間の出荷が <em>1.8倍</em>。</h2>
+    <div class="grid" style="grid-template-columns:1fr 320px;gap:48px;flex:1">
+      <div class="chart">
+        <div class="col dim" style="--v:44" data-label="6月 1週" data-val="410"><i></i></div>
+        <div class="col dim" style="--v:46" data-label="2週" data-val="428"><i></i></div>
+        <div class="col dim" style="--v:45" data-label="3週" data-val="421"><i></i></div>
+        <div class="col" style="--v:66" data-label="7月 1週" data-val="612"><i></i></div>
+        <div class="col" style="--v:74" data-label="2週" data-val="690"><i></i></div>
+        <div class="col" style="--v:82" data-label="3週" data-val="761"><i></i></div>
+      </div>
+      <div class="card" style="align-self:end;margin-bottom:38px">
+        <p style="margin:0 0 6px;font-weight:700;color:var(--ink)">試験エリア（8人・ロボット 12台）</p>
+        <p style="margin:0;font-size:19px">灰色が導入前、緑が導入後。慣れるまで2週間かかったが、3週目で導入前の 1.8倍。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="台数の試算">
+    <div class="kicker"><span class="no">05</span> 動かせます</div>
+    <h2>60台と8人で、1時間に <em>2,000件</em> 出せる。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:52px" data-calc data-let="bot = robots*trips*items; hum = people*250; out = min(bot,hum)">
+      <div>
+        <div class="field"><label>ロボットの台数 <b data-show="robots" data-unit=" 台"></b></label><input type="range" name="robots" min="10" max="120" step="5" value="60"></div>
+        <div class="field"><label>1台が1時間に運ぶ回数 <b data-show="trips" data-unit=" 回"></b></label><input type="range" name="trips" min="6" max="20" value="14"></div>
+        <div class="field"><label>1回の棚で取り出す件数 <b data-show="items" data-format="dec1" data-unit=" 件"></b></label><input type="range" name="items" min="1" max="4" step="0.2" value="2.4"></div>
+        <div class="field"><label>取り出す人の数 <b data-show="people" data-unit=" 人"></b></label><input type="range" name="people" min="2" max="20" value="8"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">ロボット側の上限 ＝ 台数 × 運ぶ回数 × 取り出す件数。<br>人の側の上限 ＝ 人数 × 1人1時間 250件。<br>出荷数は、少ないほうで決まる。</div></details>
+      </div>
+      <div>
+        <div class="card res"><div class="label">1時間の出荷数</div><div class="v"><span data-out="out"></span><small>件</small></div><p style="margin:6px 0 0;font-size:19px">いまの <b data-out="out/1100" data-format="x"></b>（22人で 1,100件）</p></div>
+        <div class="cap"><span>ロボット側</span><div class="meter" data-bar="bot" data-max="4000"><i></i></div><b data-out="bot"></b></div>
+        <div class="cap"><span>人の側</span><div class="meter o" data-bar="hum" data-max="4000"><i></i></div><b data-out="hum"></b></div>
+        <p style="font-size:19px;color:var(--muted);margin:16px 0 0">短いほうの棒が、詰まっているところ。</p>
+      </div>
+    </div>
+    <aside class="notes">人数を 6人に減らすと人の側が詰まる。台数を増やしても意味がない場面を見せ、60台・8人が釣り合う点だと伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="導入の順番">
+    <div class="kicker"><span class="no">06</span> 導入計画</div>
+    <h2>3期に分け、効果を見てから増やす。</h2>
+    <div class="phases">
+      <div class="card step"><div class="pic"><svg viewBox="0 0 272 250" width="272" height="250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M136.0 110.0 L253.8 178.0 L136.0 246.0 L18.2 178.0Z" fill="#e4e9f0"/><path d="M136.0 110.0 L18.2 178.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M165.4 127.0 L47.7 195.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M194.9 144.0 L77.1 212.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M224.3 161.0 L106.6 229.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M253.8 178.0 L136.0 246.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M136.0 110.0 L253.8 178.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M106.6 127.0 L224.3 195.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M77.1 144.0 L194.9 212.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M47.7 161.0 L165.4 229.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M18.2 178.0 L136.0 246.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M100.7 140.6 L136.0 161.0 L136.0 150.8 L100.7 130.4Z" fill="#1fa39a"/><path d="M171.3 140.6 L136.0 161.0 L136.0 150.8 L171.3 130.4Z" fill="#15817a"/><path d="M136.0 110.0 L171.3 130.4 L136.0 150.8 L100.7 130.4Z" fill="#5ee0d2"/><path d="M106.6 130.4 L136.0 147.4 L136.0 145.4 L106.6 128.4Z" fill="#6f7c93"/><path d="M165.4 130.4 L136.0 147.4 L136.0 145.4 L165.4 128.4Z" fill="#58647a"/><path d="M136.0 111.4 L165.4 128.4 L136.0 145.4 L106.6 128.4Z" fill="#8a97ad"/><path d="M133.3 112.9 L136.0 114.4 L136.0 49.8 L133.3 48.3Z" fill="#46536a"/><path d="M138.7 112.9 L136.0 114.4 L136.0 49.8 L138.7 48.3Z" fill="#35415a"/><path d="M136.0 46.8 L138.7 48.3 L136.0 49.8 L133.3 48.3Z" fill="#5d6b82"/><path d="M160.1 128.4 L162.8 129.9 L162.8 65.3 L160.1 63.8Z" fill="#46536a"/><path d="M165.4 128.4 L162.8 129.9 L162.8 65.3 L165.4 63.8Z" fill="#35415a"/><path d="M162.8 62.2 L165.4 63.8 L162.8 65.3 L160.1 63.8Z" fill="#5d6b82"/><path d="M106.6 128.4 L109.2 129.9 L109.2 65.3 L106.6 63.8Z" fill="#46536a"/><path d="M111.9 128.4 L109.2 129.9 L109.2 65.3 L111.9 63.8Z" fill="#35415a"/><path d="M109.2 62.2 L111.9 63.8 L109.2 65.3 L106.6 63.8Z" fill="#5d6b82"/><path d="M106.6 124.3 L136.0 141.3 L136.0 138.9 L106.6 121.9Z" fill="#dfe5ee"/><path d="M165.4 124.3 L136.0 141.3 L136.0 138.9 L165.4 121.9Z" fill="#c3cddb"/><path d="M136.0 104.9 L165.4 121.9 L136.0 138.9 L106.6 121.9Z" fill="#ffffff"/><path d="M115.4 121.6 L130.1 130.1 L130.1 113.7 L115.4 105.2Z" fill="#ff9a4d"/><path d="M150.1 118.5 L130.1 130.1 L130.1 113.7 L150.1 102.2Z" fill="#e07a2c"/><path d="M135.4 93.7 L150.1 102.2 L130.1 113.7 L115.4 105.2Z" fill="#ffd7b5"/><path d="M106.6 93.7 L136.0 110.7 L136.0 108.3 L106.6 91.3Z" fill="#dfe5ee"/><path d="M165.4 93.7 L136.0 110.7 L136.0 108.3 L165.4 91.3Z" fill="#c3cddb"/><path d="M136.0 74.3 L165.4 91.3 L136.0 108.3 L106.6 91.3Z" fill="#ffffff"/><path d="M115.4 91.0 L130.1 99.5 L130.1 83.1 L115.4 74.6Z" fill="#e6ae6c"/><path d="M150.1 87.9 L130.1 99.5 L130.1 83.1 L150.1 71.6Z" fill="#cc9150"/><path d="M135.4 63.1 L150.1 71.6 L130.1 83.1 L115.4 74.6Z" fill="#f6cf9a"/><path d="M133.3 143.8 L136.0 145.4 L136.0 80.8 L133.3 79.2Z" fill="#46536a"/><path d="M138.7 143.8 L136.0 145.4 L136.0 80.8 L138.7 79.2Z" fill="#35415a"/><path d="M136.0 77.7 L138.7 79.2 L136.0 80.8 L133.3 79.2Z" fill="#5d6b82"/></svg></div><b>PHASE 1 ・ 2027.4</b><h3>60台 ／ 日用品</h3><p>出荷件数の多い区画から。</p></div>
+      <div class="card step"><div class="pic"><svg viewBox="0 0 272 250" width="272" height="250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M136.0 110.0 L253.8 178.0 L136.0 246.0 L18.2 178.0Z" fill="#e4e9f0"/><path d="M136.0 110.0 L18.2 178.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M165.4 127.0 L47.7 195.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M194.9 144.0 L77.1 212.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M224.3 161.0 L106.6 229.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M253.8 178.0 L136.0 246.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M136.0 110.0 L253.8 178.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M106.6 127.0 L224.3 195.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M77.1 144.0 L194.9 212.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M47.7 161.0 L165.4 229.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M18.2 178.0 L136.0 246.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M100.7 140.6 L136.0 161.0 L136.0 150.8 L100.7 130.4Z" fill="#1fa39a"/><path d="M171.3 140.6 L136.0 161.0 L136.0 150.8 L171.3 130.4Z" fill="#15817a"/><path d="M136.0 110.0 L171.3 130.4 L136.0 150.8 L100.7 130.4Z" fill="#5ee0d2"/><path d="M106.6 130.4 L136.0 147.4 L136.0 145.4 L106.6 128.4Z" fill="#6f7c93"/><path d="M165.4 130.4 L136.0 147.4 L136.0 145.4 L165.4 128.4Z" fill="#58647a"/><path d="M136.0 111.4 L165.4 128.4 L136.0 145.4 L106.6 128.4Z" fill="#8a97ad"/><path d="M133.3 112.9 L136.0 114.4 L136.0 49.8 L133.3 48.3Z" fill="#46536a"/><path d="M138.7 112.9 L136.0 114.4 L136.0 49.8 L138.7 48.3Z" fill="#35415a"/><path d="M136.0 46.8 L138.7 48.3 L136.0 49.8 L133.3 48.3Z" fill="#5d6b82"/><path d="M160.1 128.4 L162.8 129.9 L162.8 65.3 L160.1 63.8Z" fill="#46536a"/><path d="M165.4 128.4 L162.8 129.9 L162.8 65.3 L165.4 63.8Z" fill="#35415a"/><path d="M162.8 62.2 L165.4 63.8 L162.8 65.3 L160.1 63.8Z" fill="#5d6b82"/><path d="M106.6 128.4 L109.2 129.9 L109.2 65.3 L106.6 63.8Z" fill="#46536a"/><path d="M111.9 128.4 L109.2 129.9 L109.2 65.3 L111.9 63.8Z" fill="#35415a"/><path d="M109.2 62.2 L111.9 63.8 L109.2 65.3 L106.6 63.8Z" fill="#5d6b82"/><path d="M106.6 124.3 L136.0 141.3 L136.0 138.9 L106.6 121.9Z" fill="#dfe5ee"/><path d="M165.4 124.3 L136.0 141.3 L136.0 138.9 L165.4 121.9Z" fill="#c3cddb"/><path d="M136.0 104.9 L165.4 121.9 L136.0 138.9 L106.6 121.9Z" fill="#ffffff"/><path d="M115.4 121.6 L130.1 130.1 L130.1 113.7 L115.4 105.2Z" fill="#ff9a4d"/><path d="M150.1 118.5 L130.1 130.1 L130.1 113.7 L150.1 102.2Z" fill="#e07a2c"/><path d="M135.4 93.7 L150.1 102.2 L130.1 113.7 L115.4 105.2Z" fill="#ffd7b5"/><path d="M106.6 93.7 L136.0 110.7 L136.0 108.3 L106.6 91.3Z" fill="#dfe5ee"/><path d="M165.4 93.7 L136.0 110.7 L136.0 108.3 L165.4 91.3Z" fill="#c3cddb"/><path d="M136.0 74.3 L165.4 91.3 L136.0 108.3 L106.6 91.3Z" fill="#ffffff"/><path d="M115.4 91.0 L130.1 99.5 L130.1 83.1 L115.4 74.6Z" fill="#e6ae6c"/><path d="M150.1 87.9 L130.1 99.5 L130.1 83.1 L150.1 71.6Z" fill="#cc9150"/><path d="M135.4 63.1 L150.1 71.6 L130.1 83.1 L115.4 74.6Z" fill="#f6cf9a"/><path d="M133.3 143.8 L136.0 145.4 L136.0 80.8 L133.3 79.2Z" fill="#46536a"/><path d="M138.7 143.8 L136.0 145.4 L136.0 80.8 L138.7 79.2Z" fill="#35415a"/><path d="M136.0 77.7 L138.7 79.2 L136.0 80.8 L133.3 79.2Z" fill="#5d6b82"/><path d="M159.6 174.6 L194.9 195.0 L194.9 184.8 L159.6 164.4Z" fill="#1fa39a"/><path d="M230.2 174.6 L194.9 195.0 L194.9 184.8 L230.2 164.4Z" fill="#15817a"/><path d="M194.9 144.0 L230.2 164.4 L194.9 184.8 L159.6 164.4Z" fill="#5ee0d2"/><path d="M186.1 164.4 L194.9 169.5 L194.9 166.1 L186.1 161.0Z" fill="#ff9a4d"/><path d="M203.7 164.4 L194.9 169.5 L194.9 166.1 L203.7 161.0Z" fill="#e07a2c"/><path d="M194.9 155.9 L203.7 161.0 L194.9 166.1 L186.1 161.0Z" fill="#ffe08a"/></svg></div><b>PHASE 2 ・ 2027.10</b><h3>+60台 ／ 食品</h3><p>第1期の効果が 1.5倍を超えたら。</p></div>
+      <div class="card step"><div class="pic"><svg viewBox="0 0 272 250" width="272" height="250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M136.0 110.0 L253.8 178.0 L136.0 246.0 L18.2 178.0Z" fill="#e4e9f0"/><path d="M136.0 110.0 L18.2 178.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M165.4 127.0 L47.7 195.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M194.9 144.0 L77.1 212.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M224.3 161.0 L106.6 229.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M253.8 178.0 L136.0 246.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M136.0 110.0 L253.8 178.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M106.6 127.0 L224.3 195.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M77.1 144.0 L194.9 212.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M47.7 161.0 L165.4 229.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M18.2 178.0 L136.0 246.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M100.7 140.6 L136.0 161.0 L136.0 150.8 L100.7 130.4Z" fill="#1fa39a"/><path d="M171.3 140.6 L136.0 161.0 L136.0 150.8 L171.3 130.4Z" fill="#15817a"/><path d="M136.0 110.0 L171.3 130.4 L136.0 150.8 L100.7 130.4Z" fill="#5ee0d2"/><path d="M106.6 130.4 L136.0 147.4 L136.0 145.4 L106.6 128.4Z" fill="#6f7c93"/><path d="M165.4 130.4 L136.0 147.4 L136.0 145.4 L165.4 128.4Z" fill="#58647a"/><path d="M136.0 111.4 L165.4 128.4 L136.0 145.4 L106.6 128.4Z" fill="#8a97ad"/><path d="M133.3 112.9 L136.0 114.4 L136.0 49.8 L133.3 48.3Z" fill="#46536a"/><path d="M138.7 112.9 L136.0 114.4 L136.0 49.8 L138.7 48.3Z" fill="#35415a"/><path d="M136.0 46.8 L138.7 48.3 L136.0 49.8 L133.3 48.3Z" fill="#5d6b82"/><path d="M160.1 128.4 L162.8 129.9 L162.8 65.3 L160.1 63.8Z" fill="#46536a"/><path d="M165.4 128.4 L162.8 129.9 L162.8 65.3 L165.4 63.8Z" fill="#35415a"/><path d="M162.8 62.2 L165.4 63.8 L162.8 65.3 L160.1 63.8Z" fill="#5d6b82"/><path d="M106.6 128.4 L109.2 129.9 L109.2 65.3 L106.6 63.8Z" fill="#46536a"/><path d="M111.9 128.4 L109.2 129.9 L109.2 65.3 L111.9 63.8Z" fill="#35415a"/><path d="M109.2 62.2 L111.9 63.8 L109.2 65.3 L106.6 63.8Z" fill="#5d6b82"/><path d="M106.6 124.3 L136.0 141.3 L136.0 138.9 L106.6 121.9Z" fill="#dfe5ee"/><path d="M165.4 124.3 L136.0 141.3 L136.0 138.9 L165.4 121.9Z" fill="#c3cddb"/><path d="M136.0 104.9 L165.4 121.9 L136.0 138.9 L106.6 121.9Z" fill="#ffffff"/><path d="M115.4 121.6 L130.1 130.1 L130.1 113.7 L115.4 105.2Z" fill="#ff9a4d"/><path d="M150.1 118.5 L130.1 130.1 L130.1 113.7 L150.1 102.2Z" fill="#e07a2c"/><path d="M135.4 93.7 L150.1 102.2 L130.1 113.7 L115.4 105.2Z" fill="#ffd7b5"/><path d="M106.6 93.7 L136.0 110.7 L136.0 108.3 L106.6 91.3Z" fill="#dfe5ee"/><path d="M165.4 93.7 L136.0 110.7 L136.0 108.3 L165.4 91.3Z" fill="#c3cddb"/><path d="M136.0 74.3 L165.4 91.3 L136.0 108.3 L106.6 91.3Z" fill="#ffffff"/><path d="M115.4 91.0 L130.1 99.5 L130.1 83.1 L115.4 74.6Z" fill="#e6ae6c"/><path d="M150.1 87.9 L130.1 99.5 L130.1 83.1 L150.1 71.6Z" fill="#cc9150"/><path d="M135.4 63.1 L150.1 71.6 L130.1 83.1 L115.4 74.6Z" fill="#f6cf9a"/><path d="M133.3 143.8 L136.0 145.4 L136.0 80.8 L133.3 79.2Z" fill="#46536a"/><path d="M138.7 143.8 L136.0 145.4 L136.0 80.8 L138.7 79.2Z" fill="#35415a"/><path d="M136.0 77.7 L138.7 79.2 L136.0 80.8 L133.3 79.2Z" fill="#5d6b82"/><path d="M159.6 174.6 L194.9 195.0 L194.9 184.8 L159.6 164.4Z" fill="#1fa39a"/><path d="M230.2 174.6 L194.9 195.0 L194.9 184.8 L230.2 164.4Z" fill="#15817a"/><path d="M194.9 144.0 L230.2 164.4 L194.9 184.8 L159.6 164.4Z" fill="#5ee0d2"/><path d="M186.1 164.4 L194.9 169.5 L194.9 166.1 L186.1 161.0Z" fill="#ff9a4d"/><path d="M203.7 164.4 L194.9 169.5 L194.9 166.1 L203.7 161.0Z" fill="#e07a2c"/><path d="M194.9 155.9 L203.7 161.0 L194.9 166.1 L186.1 161.0Z" fill="#ffe08a"/><path d="M41.8 174.6 L77.1 195.0 L77.1 184.8 L41.8 164.4Z" fill="#1fa39a"/><path d="M112.4 174.6 L77.1 195.0 L77.1 184.8 L112.4 164.4Z" fill="#15817a"/><path d="M77.1 144.0 L112.4 164.4 L77.1 184.8 L41.8 164.4Z" fill="#5ee0d2"/><path d="M47.7 164.4 L77.1 181.4 L77.1 179.4 L47.7 162.4Z" fill="#6f7c93"/><path d="M106.6 164.4 L77.1 181.4 L77.1 179.4 L106.6 162.4Z" fill="#58647a"/><path d="M77.1 145.4 L106.6 162.4 L77.1 179.4 L47.7 162.4Z" fill="#8a97ad"/><path d="M74.5 146.9 L77.1 148.4 L77.1 83.8 L74.5 82.3Z" fill="#46536a"/><path d="M79.8 146.9 L77.1 148.4 L77.1 83.8 L79.8 82.3Z" fill="#35415a"/><path d="M77.1 80.8 L79.8 82.3 L77.1 83.8 L74.5 82.3Z" fill="#5d6b82"/><path d="M101.3 162.4 L103.9 163.9 L103.9 99.3 L101.3 97.8Z" fill="#46536a"/><path d="M106.6 162.4 L103.9 163.9 L103.9 99.3 L106.6 97.8Z" fill="#35415a"/><path d="M103.9 96.2 L106.6 97.8 L103.9 99.3 L101.3 97.8Z" fill="#5d6b82"/><path d="M47.7 162.4 L50.3 163.9 L50.3 99.3 L47.7 97.8Z" fill="#46536a"/><path d="M53.0 162.4 L50.3 163.9 L50.3 99.3 L53.0 97.8Z" fill="#35415a"/><path d="M50.3 96.2 L53.0 97.8 L50.3 99.3 L47.7 97.8Z" fill="#5d6b82"/><path d="M47.7 158.3 L77.1 175.3 L77.1 172.9 L47.7 155.9Z" fill="#dfe5ee"/><path d="M106.6 158.3 L77.1 175.3 L77.1 172.9 L106.6 155.9Z" fill="#c3cddb"/><path d="M77.1 138.9 L106.6 155.9 L77.1 172.9 L47.7 155.9Z" fill="#ffffff"/><path d="M56.5 155.6 L71.2 164.1 L71.2 147.7 L56.5 139.2Z" fill="#e6ae6c"/><path d="M91.2 152.5 L71.2 164.1 L71.2 147.7 L91.2 136.2Z" fill="#cc9150"/><path d="M76.5 127.7 L91.2 136.2 L71.2 147.7 L56.5 139.2Z" fill="#f6cf9a"/><path d="M47.7 127.7 L77.1 144.7 L77.1 142.3 L47.7 125.3Z" fill="#dfe5ee"/><path d="M106.6 127.7 L77.1 144.7 L77.1 142.3 L106.6 125.3Z" fill="#c3cddb"/><path d="M77.1 108.3 L106.6 125.3 L77.1 142.3 L47.7 125.3Z" fill="#ffffff"/><path d="M56.5 125.0 L71.2 133.5 L71.2 117.1 L56.5 108.6Z" fill="#e6ae6c"/><path d="M91.2 121.9 L71.2 133.5 L71.2 117.1 L91.2 105.6Z" fill="#cc9150"/><path d="M76.5 97.1 L91.2 105.6 L71.2 117.1 L56.5 108.6Z" fill="#f6cf9a"/><path d="M74.5 177.8 L77.1 179.4 L77.1 114.8 L74.5 113.2Z" fill="#46536a"/><path d="M79.8 177.8 L77.1 179.4 L77.1 114.8 L79.8 113.2Z" fill="#35415a"/><path d="M77.1 111.7 L79.8 113.2 L77.1 114.8 L74.5 113.2Z" fill="#5d6b82"/><path d="M100.7 208.6 L136.0 229.0 L136.0 218.8 L100.7 198.4Z" fill="#1fa39a"/><path d="M171.3 208.6 L136.0 229.0 L136.0 218.8 L171.3 198.4Z" fill="#15817a"/><path d="M136.0 178.0 L171.3 198.4 L136.0 218.8 L100.7 198.4Z" fill="#5ee0d2"/><path d="M127.2 198.4 L136.0 203.5 L136.0 200.1 L127.2 195.0Z" fill="#ff9a4d"/><path d="M144.8 198.4 L136.0 203.5 L136.0 200.1 L144.8 195.0Z" fill="#e07a2c"/><path d="M136.0 189.9 L144.8 195.0 L136.0 200.1 L127.2 195.0Z" fill="#ffe08a"/></svg></div><b>PHASE 3 ・ 2028.4</b><h3>+80台 ／ 全区画</h3><p>夜間の無人補充もはじめる。</p></div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="決めてほしいこと">
+    <div class="bg"><div class="iso" style="right:30px;bottom:10px"><svg viewBox="0 0 780 640" width="780" height="640" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M360.0 190.0 L741.1 410.0 L436.2 586.0 L55.2 366.0Z" fill="#e4e9f0"/><path d="M360.0 190.0 L55.2 366.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M398.1 212.0 L93.3 388.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M436.2 234.0 L131.4 410.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M474.3 256.0 L169.5 432.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M512.4 278.0 L207.6 454.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M550.5 300.0 L245.7 476.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M588.6 322.0 L283.8 498.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M626.7 344.0 L321.9 520.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M664.8 366.0 L360.0 542.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M702.9 388.0 L398.1 564.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M741.1 410.0 L436.2 586.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M360.0 190.0 L741.1 410.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M321.9 212.0 L702.9 432.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M283.8 234.0 L664.8 454.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M245.7 256.0 L626.7 476.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M207.6 278.0 L588.6 498.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M169.5 300.0 L550.5 520.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M131.4 322.0 L512.4 542.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M93.3 344.0 L474.3 564.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M55.2 366.0 L436.2 586.0" stroke="#cfd7e2" stroke-width="1.2"/><path d="M356.6 214.0 L360.0 216.0 L360.0 92.8 L356.6 90.8Z" fill="#46536a"/><path d="M363.4 214.0 L360.0 216.0 L360.0 92.8 L363.4 90.8Z" fill="#35415a"/><path d="M360.0 88.8 L363.4 90.8 L360.0 92.8 L356.6 90.8Z" fill="#5d6b82"/><path d="M475.1 282.4 L478.5 284.4 L478.5 161.2 L475.1 159.2Z" fill="#46536a"/><path d="M481.9 282.4 L478.5 284.4 L478.5 161.2 L481.9 159.2Z" fill="#35415a"/><path d="M478.5 157.2 L481.9 159.2 L478.5 161.2 L475.1 159.2Z" fill="#5d6b82"/><path d="M321.9 234.0 L325.3 236.0 L325.3 112.8 L321.9 110.8Z" fill="#46536a"/><path d="M328.8 234.0 L325.3 236.0 L325.3 112.8 L328.8 110.8Z" fill="#35415a"/><path d="M325.3 108.8 L328.8 110.8 L325.3 112.8 L321.9 110.8Z" fill="#5d6b82"/><path d="M321.9 228.7 L443.8 299.1 L443.8 296.0 L321.9 225.6Z" fill="#dfe5ee"/><path d="M481.9 277.1 L443.8 299.1 L443.8 296.0 L481.9 274.0Z" fill="#c3cddb"/><path d="M360.0 203.6 L481.9 274.0 L443.8 296.0 L321.9 225.6Z" fill="#ffffff"/><path d="M333.3 225.2 L352.4 236.2 L352.4 215.1 L333.3 204.1Z" fill="#ff9a4d"/><path d="M378.3 221.2 L352.4 236.2 L352.4 215.1 L378.3 200.1Z" fill="#e07a2c"/><path d="M359.2 189.1 L378.3 200.1 L352.4 215.1 L333.3 204.1Z" fill="#ffd7b5"/><path d="M357.7 239.3 L376.8 250.3 L376.8 229.2 L357.7 218.2Z" fill="#e6ae6c"/><path d="M402.7 235.3 L376.8 250.3 L376.8 229.2 L402.7 214.2Z" fill="#cc9150"/><path d="M383.6 203.2 L402.7 214.2 L376.8 229.2 L357.7 218.2Z" fill="#f6cf9a"/><path d="M382.1 253.4 L401.2 264.4 L401.2 243.2 L382.1 232.2Z" fill="#e6ae6c"/><path d="M427.1 249.4 L401.2 264.4 L401.2 243.2 L427.1 228.3Z" fill="#cc9150"/><path d="M408.0 217.3 L427.1 228.3 L401.2 243.2 L382.1 232.2Z" fill="#f6cf9a"/><path d="M406.5 267.4 L425.5 278.4 L425.5 257.3 L406.5 246.3Z" fill="#e6ae6c"/><path d="M451.5 263.5 L425.5 278.4 L425.5 257.3 L451.5 242.4Z" fill="#cc9150"/><path d="M432.4 231.4 L451.5 242.4 L425.5 257.3 L406.5 246.3Z" fill="#f6cf9a"/><path d="M321.9 189.1 L443.8 259.5 L443.8 256.4 L321.9 186.0Z" fill="#dfe5ee"/><path d="M481.9 237.5 L443.8 259.5 L443.8 256.4 L481.9 234.4Z" fill="#c3cddb"/><path d="M360.0 164.0 L481.9 234.4 L443.8 256.4 L321.9 186.0Z" fill="#ffffff"/><path d="M333.3 185.6 L352.4 196.6 L352.4 175.5 L333.3 164.5Z" fill="#e6ae6c"/><path d="M378.3 181.6 L352.4 196.6 L352.4 175.5 L378.3 160.5Z" fill="#cc9150"/><path d="M359.2 149.5 L378.3 160.5 L352.4 175.5 L333.3 164.5Z" fill="#f6cf9a"/><path d="M382.1 213.8 L401.2 224.8 L401.2 203.6 L382.1 192.6Z" fill="#e6ae6c"/><path d="M427.1 209.8 L401.2 224.8 L401.2 203.6 L427.1 188.7Z" fill="#cc9150"/><path d="M408.0 177.7 L427.1 188.7 L401.2 203.6 L382.1 192.6Z" fill="#f6cf9a"/><path d="M406.5 227.8 L425.5 238.8 L425.5 217.7 L406.5 206.7Z" fill="#ff9a4d"/><path d="M451.5 223.9 L425.5 238.8 L425.5 217.7 L451.5 202.8Z" fill="#e07a2c"/><path d="M432.4 191.8 L451.5 202.8 L425.5 217.7 L406.5 206.7Z" fill="#ffd7b5"/><path d="M321.9 149.5 L443.8 219.9 L443.8 216.8 L321.9 146.4Z" fill="#dfe5ee"/><path d="M481.9 197.9 L443.8 219.9 L443.8 216.8 L481.9 194.8Z" fill="#c3cddb"/><path d="M360.0 124.4 L481.9 194.8 L443.8 216.8 L321.9 146.4Z" fill="#ffffff"/><path d="M333.3 146.0 L352.4 157.0 L352.4 135.9 L333.3 124.9Z" fill="#e6ae6c"/><path d="M378.3 142.0 L352.4 157.0 L352.4 135.9 L378.3 120.9Z" fill="#cc9150"/><path d="M359.2 109.9 L378.3 120.9 L352.4 135.9 L333.3 124.9Z" fill="#f6cf9a"/><path d="M357.7 160.1 L376.8 171.1 L376.8 150.0 L357.7 139.0Z" fill="#e6ae6c"/><path d="M402.7 156.1 L376.8 171.1 L376.8 150.0 L402.7 135.0Z" fill="#cc9150"/><path d="M383.6 124.0 L402.7 135.0 L376.8 150.0 L357.7 139.0Z" fill="#f6cf9a"/><path d="M382.1 174.2 L401.2 185.2 L401.2 164.0 L382.1 153.0Z" fill="#ff9a4d"/><path d="M427.1 170.2 L401.2 185.2 L401.2 164.0 L427.1 149.1Z" fill="#e07a2c"/><path d="M408.0 138.1 L427.1 149.1 L401.2 164.0 L382.1 153.0Z" fill="#ffd7b5"/><path d="M440.4 302.4 L443.8 304.4 L443.8 181.2 L440.4 179.2Z" fill="#46536a"/><path d="M447.3 302.4 L443.8 304.4 L443.8 181.2 L447.3 179.2Z" fill="#35415a"/><path d="M443.8 177.2 L447.3 179.2 L443.8 181.2 L440.4 179.2Z" fill="#5d6b82"/><path d="M261.3 269.0 L264.7 271.0 L264.7 147.8 L261.3 145.8Z" fill="#46536a"/><path d="M268.2 269.0 L264.7 271.0 L264.7 147.8 L268.2 145.8Z" fill="#35415a"/><path d="M264.7 143.8 L268.2 145.8 L264.7 147.8 L261.3 145.8Z" fill="#5d6b82"/><path d="M379.8 337.4 L383.2 339.4 L383.2 216.2 L379.8 214.2Z" fill="#46536a"/><path d="M386.7 337.4 L383.2 339.4 L383.2 216.2 L386.7 214.2Z" fill="#35415a"/><path d="M383.2 212.2 L386.7 214.2 L383.2 216.2 L379.8 214.2Z" fill="#5d6b82"/><path d="M226.6 289.0 L230.1 291.0 L230.1 167.8 L226.6 165.8Z" fill="#46536a"/><path d="M233.5 289.0 L230.1 291.0 L230.1 167.8 L233.5 165.8Z" fill="#35415a"/><path d="M230.1 163.8 L233.5 165.8 L230.1 167.8 L226.6 165.8Z" fill="#5d6b82"/><path d="M226.6 283.7 L348.6 354.1 L348.6 351.0 L226.6 280.6Z" fill="#dfe5ee"/><path d="M386.7 332.1 L348.6 354.1 L348.6 351.0 L386.7 329.0Z" fill="#c3cddb"/><path d="M264.7 258.6 L386.7 329.0 L348.6 351.0 L226.6 280.6Z" fill="#ffffff"/><path d="M238.1 280.2 L257.1 291.2 L257.1 270.1 L238.1 259.1Z" fill="#e6ae6c"/><path d="M283.0 276.2 L257.1 291.2 L257.1 270.1 L283.0 255.1Z" fill="#cc9150"/><path d="M264.0 244.1 L283.0 255.1 L257.1 270.1 L238.1 259.1Z" fill="#f6cf9a"/><path d="M262.5 294.3 L281.5 305.3 L281.5 284.2 L262.5 273.2Z" fill="#e6ae6c"/><path d="M307.4 290.3 L281.5 305.3 L281.5 284.2 L307.4 269.2Z" fill="#cc9150"/><path d="M288.4 258.2 L307.4 269.2 L281.5 284.2 L262.5 273.2Z" fill="#f6cf9a"/><path d="M286.8 308.4 L305.9 319.4 L305.9 298.2 L286.8 287.2Z" fill="#e6ae6c"/><path d="M331.8 304.4 L305.9 319.4 L305.9 298.2 L331.8 283.3Z" fill="#cc9150"/><path d="M312.7 272.3 L331.8 283.3 L305.9 298.2 L286.8 287.2Z" fill="#f6cf9a"/><path d="M226.6 244.1 L348.6 314.5 L348.6 311.4 L226.6 241.0Z" fill="#dfe5ee"/><path d="M386.7 292.5 L348.6 314.5 L348.6 311.4 L386.7 289.4Z" fill="#c3cddb"/><path d="M264.7 219.0 L386.7 289.4 L348.6 311.4 L226.6 241.0Z" fill="#ffffff"/><path d="M262.5 254.7 L281.5 265.7 L281.5 244.6 L262.5 233.6Z" fill="#e6ae6c"/><path d="M307.4 250.7 L281.5 265.7 L281.5 244.6 L307.4 229.6Z" fill="#cc9150"/><path d="M288.4 218.6 L307.4 229.6 L281.5 244.6 L262.5 233.6Z" fill="#f6cf9a"/><path d="M286.8 268.8 L305.9 279.8 L305.9 258.6 L286.8 247.6Z" fill="#ff9a4d"/><path d="M331.8 264.8 L305.9 279.8 L305.9 258.6 L331.8 243.7Z" fill="#e07a2c"/><path d="M312.7 232.7 L331.8 243.7 L305.9 258.6 L286.8 247.6Z" fill="#ffd7b5"/><path d="M311.2 282.8 L330.3 293.8 L330.3 272.7 L311.2 261.7Z" fill="#e6ae6c"/><path d="M356.2 278.9 L330.3 293.8 L330.3 272.7 L356.2 257.8Z" fill="#cc9150"/><path d="M337.1 246.8 L356.2 257.8 L330.3 272.7 L311.2 261.7Z" fill="#f6cf9a"/><path d="M226.6 204.5 L348.6 274.9 L348.6 271.8 L226.6 201.4Z" fill="#dfe5ee"/><path d="M386.7 252.9 L348.6 274.9 L348.6 271.8 L386.7 249.8Z" fill="#c3cddb"/><path d="M264.7 179.4 L386.7 249.8 L348.6 271.8 L226.6 201.4Z" fill="#ffffff"/><path d="M238.1 201.0 L257.1 212.0 L257.1 190.9 L238.1 179.9Z" fill="#e6ae6c"/><path d="M283.0 197.0 L257.1 212.0 L257.1 190.9 L283.0 175.9Z" fill="#cc9150"/><path d="M264.0 164.9 L283.0 175.9 L257.1 190.9 L238.1 179.9Z" fill="#f6cf9a"/><path d="M262.5 215.1 L281.5 226.1 L281.5 205.0 L262.5 194.0Z" fill="#ff9a4d"/><path d="M307.4 211.1 L281.5 226.1 L281.5 205.0 L307.4 190.0Z" fill="#e07a2c"/><path d="M288.4 179.0 L307.4 190.0 L281.5 205.0 L262.5 194.0Z" fill="#ffd7b5"/><path d="M311.2 243.2 L330.3 254.2 L330.3 233.1 L311.2 222.1Z" fill="#e6ae6c"/><path d="M356.2 239.3 L330.3 254.2 L330.3 233.1 L356.2 218.2Z" fill="#cc9150"/><path d="M337.1 207.2 L356.2 218.2 L330.3 233.1 L311.2 222.1Z" fill="#f6cf9a"/><path d="M345.1 357.4 L348.6 359.4 L348.6 236.2 L345.1 234.2Z" fill="#46536a"/><path d="M352.0 357.4 L348.6 359.4 L348.6 236.2 L352.0 234.2Z" fill="#35415a"/><path d="M348.6 232.2 L352.0 234.2 L348.6 236.2 L345.1 234.2Z" fill="#5d6b82"/><path d="M512.8 304.2 L516.2 306.2 L516.2 183.0 L512.8 181.0Z" fill="#46536a"/><path d="M519.7 304.2 L516.2 306.2 L516.2 183.0 L519.7 181.0Z" fill="#35415a"/><path d="M516.2 179.0 L519.7 181.0 L516.2 183.0 L512.8 181.0Z" fill="#5d6b82"/><path d="M631.3 372.6 L634.7 374.6 L634.7 251.4 L631.3 249.4Z" fill="#46536a"/><path d="M638.2 372.6 L634.7 374.6 L634.7 251.4 L638.2 249.4Z" fill="#35415a"/><path d="M634.7 247.4 L638.2 249.4 L634.7 251.4 L631.3 249.4Z" fill="#5d6b82"/><path d="M478.1 324.2 L481.6 326.2 L481.6 203.0 L478.1 201.0Z" fill="#46536a"/><path d="M485.0 324.2 L481.6 326.2 L481.6 203.0 L485.0 201.0Z" fill="#35415a"/><path d="M481.6 199.0 L485.0 201.0 L481.6 203.0 L478.1 201.0Z" fill="#5d6b82"/><path d="M478.1 318.9 L600.1 389.3 L600.1 386.2 L478.1 315.8Z" fill="#dfe5ee"/><path d="M638.2 367.3 L600.1 389.3 L600.1 386.2 L638.2 364.2Z" fill="#c3cddb"/><path d="M516.2 293.8 L638.2 364.2 L600.1 386.2 L478.1 315.8Z" fill="#ffffff"/><path d="M489.6 315.4 L508.6 326.4 L508.6 305.3 L489.6 294.3Z" fill="#e6ae6c"/><path d="M534.5 311.4 L508.6 326.4 L508.6 305.3 L534.5 290.3Z" fill="#cc9150"/><path d="M515.5 279.3 L534.5 290.3 L508.6 305.3 L489.6 294.3Z" fill="#f6cf9a"/><path d="M513.9 329.5 L533.0 340.5 L533.0 319.4 L513.9 308.4Z" fill="#e6ae6c"/><path d="M558.9 325.5 L533.0 340.5 L533.0 319.4 L558.9 304.4Z" fill="#cc9150"/><path d="M539.9 293.4 L558.9 304.4 L533.0 319.4 L513.9 308.4Z" fill="#f6cf9a"/><path d="M562.7 357.6 L581.8 368.6 L581.8 347.5 L562.7 336.5Z" fill="#e6ae6c"/><path d="M607.7 353.7 L581.8 368.6 L581.8 347.5 L607.7 332.6Z" fill="#cc9150"/><path d="M588.6 321.6 L607.7 332.6 L581.8 347.5 L562.7 336.5Z" fill="#f6cf9a"/><path d="M478.1 279.3 L600.1 349.7 L600.1 346.6 L478.1 276.2Z" fill="#dfe5ee"/><path d="M638.2 327.7 L600.1 349.7 L600.1 346.6 L638.2 324.6Z" fill="#c3cddb"/><path d="M516.2 254.2 L638.2 324.6 L600.1 346.6 L478.1 276.2Z" fill="#ffffff"/><path d="M489.6 275.8 L508.6 286.8 L508.6 265.7 L489.6 254.7Z" fill="#e6ae6c"/><path d="M534.5 271.8 L508.6 286.8 L508.6 265.7 L534.5 250.7Z" fill="#cc9150"/><path d="M515.5 239.7 L534.5 250.7 L508.6 265.7 L489.6 254.7Z" fill="#f6cf9a"/><path d="M513.9 289.9 L533.0 300.9 L533.0 279.8 L513.9 268.8Z" fill="#ff9a4d"/><path d="M558.9 285.9 L533.0 300.9 L533.0 279.8 L558.9 264.8Z" fill="#e07a2c"/><path d="M539.9 253.8 L558.9 264.8 L533.0 279.8 L513.9 268.8Z" fill="#ffd7b5"/><path d="M538.3 304.0 L557.4 315.0 L557.4 293.8 L538.3 282.8Z" fill="#e6ae6c"/><path d="M583.3 300.0 L557.4 315.0 L557.4 293.8 L583.3 278.9Z" fill="#cc9150"/><path d="M564.2 267.9 L583.3 278.9 L557.4 293.8 L538.3 282.8Z" fill="#f6cf9a"/><path d="M562.7 318.0 L581.8 329.0 L581.8 307.9 L562.7 296.9Z" fill="#e6ae6c"/><path d="M607.7 314.1 L581.8 329.0 L581.8 307.9 L607.7 293.0Z" fill="#cc9150"/><path d="M588.6 282.0 L607.7 293.0 L581.8 307.9 L562.7 296.9Z" fill="#f6cf9a"/><path d="M478.1 239.7 L600.1 310.1 L600.1 307.0 L478.1 236.6Z" fill="#dfe5ee"/><path d="M638.2 288.1 L600.1 310.1 L600.1 307.0 L638.2 285.0Z" fill="#c3cddb"/><path d="M516.2 214.6 L638.2 285.0 L600.1 307.0 L478.1 236.6Z" fill="#ffffff"/><path d="M489.6 236.2 L508.6 247.2 L508.6 226.1 L489.6 215.1Z" fill="#ff9a4d"/><path d="M534.5 232.2 L508.6 247.2 L508.6 226.1 L534.5 211.1Z" fill="#e07a2c"/><path d="M515.5 200.1 L534.5 211.1 L508.6 226.1 L489.6 215.1Z" fill="#ffd7b5"/><path d="M538.3 264.4 L557.4 275.4 L557.4 254.2 L538.3 243.2Z" fill="#e6ae6c"/><path d="M583.3 260.4 L557.4 275.4 L557.4 254.2 L583.3 239.3Z" fill="#cc9150"/><path d="M564.2 228.3 L583.3 239.3 L557.4 254.2 L538.3 243.2Z" fill="#f6cf9a"/><path d="M562.7 278.4 L581.8 289.4 L581.8 268.3 L562.7 257.3Z" fill="#e6ae6c"/><path d="M607.7 274.5 L581.8 289.4 L581.8 268.3 L607.7 253.4Z" fill="#cc9150"/><path d="M588.6 242.4 L607.7 253.4 L581.8 268.3 L562.7 257.3Z" fill="#f6cf9a"/><path d="M596.6 392.6 L600.1 394.6 L600.1 271.4 L596.6 269.4Z" fill="#46536a"/><path d="M603.5 392.6 L600.1 394.6 L600.1 271.4 L603.5 269.4Z" fill="#35415a"/><path d="M600.1 267.4 L603.5 269.4 L600.1 271.4 L596.6 269.4Z" fill="#5d6b82"/><path d="M207.6 374.8 L253.3 401.2 L253.3 388.0 L207.6 361.6Z" fill="#1fa39a"/><path d="M299.0 374.8 L253.3 401.2 L253.3 388.0 L299.0 361.6Z" fill="#15817a"/><path d="M253.3 335.2 L299.0 361.6 L253.3 388.0 L207.6 361.6Z" fill="#5ee0d2"/><path d="M215.2 361.6 L253.3 383.6 L253.3 381.0 L215.2 359.0Z" fill="#6f7c93"/><path d="M291.4 361.6 L253.3 383.6 L253.3 381.0 L291.4 359.0Z" fill="#58647a"/><path d="M253.3 337.0 L291.4 359.0 L253.3 381.0 L215.2 359.0Z" fill="#8a97ad"/><path d="M249.9 338.9 L253.3 340.9 L253.3 257.3 L249.9 255.3Z" fill="#46536a"/><path d="M256.7 338.9 L253.3 340.9 L253.3 257.3 L256.7 255.3Z" fill="#35415a"/><path d="M253.3 253.4 L256.7 255.3 L253.3 257.3 L249.9 255.3Z" fill="#5d6b82"/><path d="M284.6 359.0 L288.0 360.9 L288.0 277.3 L284.6 275.4Z" fill="#46536a"/><path d="M291.4 359.0 L288.0 360.9 L288.0 277.3 L291.4 275.4Z" fill="#35415a"/><path d="M288.0 273.4 L291.4 275.4 L288.0 277.3 L284.6 275.4Z" fill="#5d6b82"/><path d="M215.2 359.0 L218.6 360.9 L218.6 277.3 L215.2 275.4Z" fill="#46536a"/><path d="M222.1 359.0 L218.6 360.9 L218.6 277.3 L222.1 275.4Z" fill="#35415a"/><path d="M218.6 273.4 L222.1 275.4 L218.6 277.3 L215.2 275.4Z" fill="#5d6b82"/><path d="M215.2 353.7 L253.3 375.7 L253.3 372.6 L215.2 350.6Z" fill="#dfe5ee"/><path d="M291.4 353.7 L253.3 375.7 L253.3 372.6 L291.4 350.6Z" fill="#c3cddb"/><path d="M253.3 328.6 L291.4 350.6 L253.3 372.6 L215.2 350.6Z" fill="#ffffff"/><path d="M226.6 350.2 L245.7 361.2 L245.7 340.0 L226.6 329.0Z" fill="#ff9a4d"/><path d="M271.6 346.2 L245.7 361.2 L245.7 340.0 L271.6 325.1Z" fill="#e07a2c"/><path d="M252.5 314.1 L271.6 325.1 L245.7 340.0 L226.6 329.0Z" fill="#ffd7b5"/><path d="M215.2 314.1 L253.3 336.1 L253.3 333.0 L215.2 311.0Z" fill="#dfe5ee"/><path d="M291.4 314.1 L253.3 336.1 L253.3 333.0 L291.4 311.0Z" fill="#c3cddb"/><path d="M253.3 289.0 L291.4 311.0 L253.3 333.0 L215.2 311.0Z" fill="#ffffff"/><path d="M226.6 310.6 L245.7 321.6 L245.7 300.4 L226.6 289.4Z" fill="#e6ae6c"/><path d="M271.6 306.6 L245.7 321.6 L245.7 300.4 L271.6 285.5Z" fill="#cc9150"/><path d="M252.5 274.5 L271.6 285.5 L245.7 300.4 L226.6 289.4Z" fill="#f6cf9a"/><path d="M249.9 379.0 L253.3 381.0 L253.3 297.4 L249.9 295.4Z" fill="#46536a"/><path d="M256.7 379.0 L253.3 381.0 L253.3 297.4 L256.7 295.4Z" fill="#35415a"/><path d="M253.3 293.4 L256.7 295.4 L253.3 297.4 L249.9 295.4Z" fill="#5d6b82"/><path d="M398.1 396.8 L443.8 423.2 L443.8 410.0 L398.1 383.6Z" fill="#1fa39a"/><path d="M489.6 396.8 L443.8 423.2 L443.8 410.0 L489.6 383.6Z" fill="#15817a"/><path d="M443.8 357.2 L489.6 383.6 L443.8 410.0 L398.1 383.6Z" fill="#5ee0d2"/><path d="M405.7 383.6 L443.8 405.6 L443.8 403.0 L405.7 381.0Z" fill="#6f7c93"/><path d="M481.9 383.6 L443.8 405.6 L443.8 403.0 L481.9 381.0Z" fill="#58647a"/><path d="M443.8 359.0 L481.9 381.0 L443.8 403.0 L405.7 381.0Z" fill="#8a97ad"/><path d="M440.4 360.9 L443.8 362.9 L443.8 279.3 L440.4 277.3Z" fill="#46536a"/><path d="M447.3 360.9 L443.8 362.9 L443.8 279.3 L447.3 277.3Z" fill="#35415a"/><path d="M443.8 275.4 L447.3 277.3 L443.8 279.3 L440.4 277.3Z" fill="#5d6b82"/><path d="M475.1 381.0 L478.5 382.9 L478.5 299.3 L475.1 297.4Z" fill="#46536a"/><path d="M481.9 381.0 L478.5 382.9 L478.5 299.3 L481.9 297.4Z" fill="#35415a"/><path d="M478.5 295.4 L481.9 297.4 L478.5 299.3 L475.1 297.4Z" fill="#5d6b82"/><path d="M405.7 381.0 L409.2 382.9 L409.2 299.3 L405.7 297.4Z" fill="#46536a"/><path d="M412.6 381.0 L409.2 382.9 L409.2 299.3 L412.6 297.4Z" fill="#35415a"/><path d="M409.2 295.4 L412.6 297.4 L409.2 299.3 L405.7 297.4Z" fill="#5d6b82"/><path d="M405.7 375.7 L443.8 397.7 L443.8 394.6 L405.7 372.6Z" fill="#dfe5ee"/><path d="M481.9 375.7 L443.8 397.7 L443.8 394.6 L481.9 372.6Z" fill="#c3cddb"/><path d="M443.8 350.6 L481.9 372.6 L443.8 394.6 L405.7 372.6Z" fill="#ffffff"/><path d="M417.2 372.2 L436.2 383.2 L436.2 362.0 L417.2 351.0Z" fill="#e6ae6c"/><path d="M462.1 368.2 L436.2 383.2 L436.2 362.0 L462.1 347.1Z" fill="#cc9150"/><path d="M443.1 336.1 L462.1 347.1 L436.2 362.0 L417.2 351.0Z" fill="#f6cf9a"/><path d="M405.7 336.1 L443.8 358.1 L443.8 355.0 L405.7 333.0Z" fill="#dfe5ee"/><path d="M481.9 336.1 L443.8 358.1 L443.8 355.0 L481.9 333.0Z" fill="#c3cddb"/><path d="M443.8 311.0 L481.9 333.0 L443.8 355.0 L405.7 333.0Z" fill="#ffffff"/><path d="M417.2 332.6 L436.2 343.6 L436.2 322.4 L417.2 311.4Z" fill="#ff9a4d"/><path d="M462.1 328.6 L436.2 343.6 L436.2 322.4 L462.1 307.5Z" fill="#e07a2c"/><path d="M443.1 296.5 L462.1 307.5 L436.2 322.4 L417.2 311.4Z" fill="#ffd7b5"/><path d="M440.4 401.0 L443.8 403.0 L443.8 319.4 L440.4 317.4Z" fill="#46536a"/><path d="M447.3 401.0 L443.8 403.0 L443.8 319.4 L447.3 317.4Z" fill="#35415a"/><path d="M443.8 315.4 L447.3 317.4 L443.8 319.4 L440.4 317.4Z" fill="#5d6b82"/><path d="M527.7 436.4 L573.4 462.8 L573.4 449.6 L527.7 423.2Z" fill="#1fa39a"/><path d="M619.1 436.4 L573.4 462.8 L573.4 449.6 L619.1 423.2Z" fill="#15817a"/><path d="M573.4 396.8 L619.1 423.2 L573.4 449.6 L527.7 423.2Z" fill="#5ee0d2"/><path d="M562.0 423.2 L573.4 429.8 L573.4 425.4 L562.0 418.8Z" fill="#ff9a4d"/><path d="M584.8 423.2 L573.4 429.8 L573.4 425.4 L584.8 418.8Z" fill="#e07a2c"/><path d="M573.4 412.2 L584.8 418.8 L573.4 425.4 L562.0 418.8Z" fill="#ffe08a"/><path d="M325.7 482.6 L417.2 535.4 L417.2 495.8 L325.7 443.0Z" fill="#2a3752"/><path d="M466.7 506.8 L417.2 535.4 L417.2 495.8 L466.7 467.2Z" fill="#1e2940"/><path d="M375.2 414.4 L466.7 467.2 L417.2 495.8 L325.7 443.0Z" fill="#3a4a68"/><path d="M352.4 436.4 L375.2 449.6 L375.2 434.2 L352.4 421.0Z" fill="#ff9a4d"/><path d="M398.1 436.4 L375.2 449.6 L375.2 434.2 L398.1 421.0Z" fill="#e07a2c"/><path d="M375.2 407.8 L398.1 421.0 L375.2 434.2 L352.4 421.0Z" fill="#ffd7b5"/><path d="M386.7 456.2 L405.7 467.2 L405.7 454.0 L386.7 443.0Z" fill="#e6ae6c"/><path d="M424.8 456.2 L405.7 467.2 L405.7 454.0 L424.8 443.0Z" fill="#cc9150"/><path d="M405.7 432.0 L424.8 443.0 L405.7 454.0 L386.7 443.0Z" fill="#f6cf9a"/></svg></div></div>
+    <div class="kicker"><span class="no">07</span> 今日、決めてほしいこと</div>
+    <h2 style="font-size:60px;line-height:1.3;max-width:620px">第1期として、<br><em>60台・4.8億円</em>。</h2>
+    <ol class="list" style="margin-top:16px;max-width:560px;font-size:24px">
+      <li>投資の回収は 3.2年（人件費と残業の削減）</li>
+      <li>2027年4月に稼働、6月に効果を報告</li>
+    </ol>
+    <aside class="notes">金額と台数を1回だけはっきり言う。回収年数の内訳は質問が出たら別紙で。</aside>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      el.classList.toggle("neg", to < 0);
+      el.classList.toggle("pos", to > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => tween(el, run(f)));
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
+    el._v = 0; tween(el, Number(el.dataset.count));
+  });
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    render();
+    if (prev !== -1) countUp(slides[i]);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

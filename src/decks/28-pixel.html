@@ -1,0 +1,210 @@
+<!--meta
+{"title":"SAMPLE CUP 2026 社内ゲーム大会","style":"ピクセル・アーケード","use":"社内ゲーム大会のお知らせ","group":"レトロ・ポップ",
+ "aim":"社内イベント係が、朝会や全社チャットで、年末の社内ゲーム大会のルールと日程を伝え、参加チームを集めるため。",
+ "desc":"黒い画面にドットの文字と走査線、ドット絵のトロフィーとキャラクター。ルールのクイズと、参加チーム数と台数を動かすと試合数と大会の長さが出る計算つき。",
+ "fonts":"https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap"}
+-->
+<style>
+:root{
+  --yel:#ffd23f; --cy:#3be8ff; --mg:#ff4fa3; --gr:#5dff7a;
+  --bg:#0c0a1d; --surface:#17143a; --ink:#f4f1ff; --muted:#c9c3f0; --line:#4a4390; --accent:#ffd23f; --accent-ink:#0c0a1d;
+  --frame:#050410; --radius:0px; --shadow:none; --good:#5dff7a; --bad:#ff4f6d;
+  --font:"DotGothic16","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",monospace;
+  --font-px:"Press Start 2P","DotGothic16",monospace; --font-num:"Press Start 2P","DotGothic16",monospace; --head-weight:400; --head-track:.02em;
+}
+body{-webkit-font-smoothing:none}
+.slide{isolation:isolate;padding:56px 76px}
+.slide>.bg{overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#1a1545 0,#0c0a1d 70%)}
+/* 走査線と画面のふち */
+.slide::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;
+  background:repeating-linear-gradient(0deg,rgb(0 0 0 / .28) 0 2px,transparent 2px 4px);box-shadow:inset 0 0 120px rgb(0 0 0 / .75)}
+.stars{position:absolute;inset:0;background:
+  linear-gradient(var(--cy),var(--cy)) 8% 18%/6px 6px no-repeat,linear-gradient(#fff,#fff) 22% 72%/4px 4px no-repeat,
+  linear-gradient(var(--mg),var(--mg)) 91% 12%/6px 6px no-repeat,linear-gradient(#fff,#fff) 70% 30%/4px 4px no-repeat,
+  linear-gradient(var(--yel),var(--yel)) 55% 88%/6px 6px no-repeat,linear-gradient(#fff,#fff) 38% 10%/4px 4px no-repeat,
+  linear-gradient(#fff,#fff) 84% 64%/4px 4px no-repeat}
+.ground{position:absolute;left:0;right:0;bottom:0;height:40px;background:
+  linear-gradient(90deg,#2a2466 0 50%,#211c55 50%) 0 0/40px 20px,#2a2466;border-top:6px solid var(--gr);box-shadow:0 -6px 0 #2e9e45}
+.spr-trophy{position:absolute;width:10px;height:10px;margin:-10px 0 0 -10px;box-shadow:20px 10px 0 #ffd23f,30px 10px 0 #ffd23f,40px 10px 0 #ffd23f,50px 10px 0 #ffd23f,60px 10px 0 #ffd23f,70px 10px 0 #ffd23f,80px 10px 0 #ffd23f,90px 10px 0 #ffd23f,100px 10px 0 #ffd23f,110px 10px 0 #ffd23f,10px 20px 0 #ffd23f,20px 20px 0 #ffd23f,30px 20px 0 #ffd23f,40px 20px 0 #ffd23f,50px 20px 0 #ffd23f,60px 20px 0 #ffd23f,70px 20px 0 #ffd23f,80px 20px 0 #ffd23f,90px 20px 0 #ffd23f,100px 20px 0 #ffd23f,110px 20px 0 #ffd23f,120px 20px 0 #ffd23f,10px 30px 0 #ffd23f,30px 30px 0 #ffd23f,40px 30px 0 #ffd23f,50px 30px 0 #ffd23f,60px 30px 0 #ffd23f,70px 30px 0 #ffd23f,80px 30px 0 #ffd23f,90px 30px 0 #ffd23f,100px 30px 0 #ffd23f,120px 30px 0 #ffd23f,10px 40px 0 #ffd23f,30px 40px 0 #ffd23f,40px 40px 0 #fff8c8,50px 40px 0 #ffd23f,60px 40px 0 #ffd23f,70px 40px 0 #ffd23f,80px 40px 0 #ffd23f,90px 40px 0 #ffd23f,100px 40px 0 #ffd23f,120px 40px 0 #ffd23f,20px 50px 0 #ffd23f,30px 50px 0 #ffd23f,40px 50px 0 #fff8c8,50px 50px 0 #ffd23f,60px 50px 0 #ffd23f,70px 50px 0 #ffd23f,80px 50px 0 #ffd23f,90px 50px 0 #ffd23f,100px 50px 0 #ffd23f,110px 50px 0 #ffd23f,30px 60px 0 #ffd23f,40px 60px 0 #ffd23f,50px 60px 0 #ffd23f,60px 60px 0 #ffd23f,70px 60px 0 #ffd23f,80px 60px 0 #ffd23f,90px 60px 0 #ffd23f,100px 60px 0 #ffd23f,40px 70px 0 #ffd23f,50px 70px 0 #ffd23f,60px 70px 0 #ffd23f,70px 70px 0 #ffd23f,80px 70px 0 #ffd23f,90px 70px 0 #ffd23f,50px 80px 0 #ffd23f,60px 80px 0 #ffd23f,70px 80px 0 #ffd23f,80px 80px 0 #ffd23f,60px 90px 0 #ffd23f,70px 90px 0 #ffd23f,60px 100px 0 #ffd23f,70px 100px 0 #ffd23f,40px 110px 0 #c77d1a,50px 110px 0 #c77d1a,60px 110px 0 #c77d1a,70px 110px 0 #c77d1a,80px 110px 0 #c77d1a,90px 110px 0 #c77d1a,30px 120px 0 #c77d1a,40px 120px 0 #c77d1a,50px 120px 0 #c77d1a,60px 120px 0 #c77d1a,70px 120px 0 #c77d1a,80px 120px 0 #c77d1a,90px 120px 0 #c77d1a,100px 120px 0 #c77d1a}
+.box-trophy{position:relative;display:inline-block;width:120px;height:120px}
+.spr-slime{position:absolute;width:10px;height:10px;margin:-10px 0 0 -10px;box-shadow:60px 10px 0 #5dff7a,50px 20px 0 #5dff7a,60px 20px 0 #5dff7a,70px 20px 0 #5dff7a,40px 30px 0 #5dff7a,50px 30px 0 #5dff7a,60px 30px 0 #5dff7a,70px 30px 0 #5dff7a,80px 30px 0 #5dff7a,30px 40px 0 #5dff7a,40px 40px 0 #5dff7a,50px 40px 0 #5dff7a,60px 40px 0 #5dff7a,70px 40px 0 #5dff7a,80px 40px 0 #5dff7a,90px 40px 0 #5dff7a,20px 50px 0 #5dff7a,30px 50px 0 #5dff7a,50px 50px 0 #5dff7a,60px 50px 0 #5dff7a,70px 50px 0 #5dff7a,90px 50px 0 #5dff7a,100px 50px 0 #5dff7a,110px 50px 0 #5dff7a,10px 60px 0 #5dff7a,20px 60px 0 #5dff7a,30px 60px 0 #5dff7a,40px 60px 0 #5dff7a,50px 60px 0 #5dff7a,60px 60px 0 #5dff7a,70px 60px 0 #5dff7a,80px 60px 0 #5dff7a,90px 60px 0 #5dff7a,100px 60px 0 #5dff7a,110px 60px 0 #5dff7a,10px 70px 0 #5dff7a,20px 70px 0 #5dff7a,30px 70px 0 #5dff7a,40px 70px 0 #5dff7a,80px 70px 0 #5dff7a,90px 70px 0 #5dff7a,100px 70px 0 #5dff7a,110px 70px 0 #5dff7a,10px 80px 0 #5dff7a,20px 80px 0 #5dff7a,30px 80px 0 #5dff7a,40px 80px 0 #5dff7a,50px 80px 0 #5dff7a,60px 80px 0 #5dff7a,70px 80px 0 #5dff7a,80px 80px 0 #5dff7a,90px 80px 0 #5dff7a,100px 80px 0 #5dff7a,110px 80px 0 #5dff7a}
+.box-slime{position:relative;display:inline-block;width:110px;height:80px}
+.spr-robot{position:absolute;width:10px;height:10px;margin:-10px 0 0 -10px;box-shadow:60px 10px 0 #3be8ff,30px 20px 0 #3be8ff,40px 20px 0 #3be8ff,50px 20px 0 #3be8ff,60px 20px 0 #3be8ff,70px 20px 0 #3be8ff,80px 20px 0 #3be8ff,90px 20px 0 #3be8ff,30px 30px 0 #3be8ff,50px 30px 0 #3be8ff,60px 30px 0 #3be8ff,70px 30px 0 #3be8ff,90px 30px 0 #3be8ff,30px 40px 0 #3be8ff,40px 40px 0 #3be8ff,50px 40px 0 #3be8ff,60px 40px 0 #3be8ff,70px 40px 0 #3be8ff,80px 40px 0 #3be8ff,90px 40px 0 #3be8ff,40px 50px 0 #3be8ff,80px 50px 0 #3be8ff,10px 60px 0 #3be8ff,20px 60px 0 #3be8ff,30px 60px 0 #3be8ff,40px 60px 0 #3be8ff,50px 60px 0 #3be8ff,60px 60px 0 #3be8ff,70px 60px 0 #3be8ff,80px 60px 0 #3be8ff,90px 60px 0 #3be8ff,100px 60px 0 #3be8ff,110px 60px 0 #3be8ff,10px 70px 0 #3be8ff,30px 70px 0 #3be8ff,40px 70px 0 #3be8ff,50px 70px 0 #3be8ff,60px 70px 0 #3be8ff,70px 70px 0 #3be8ff,80px 70px 0 #3be8ff,90px 70px 0 #3be8ff,110px 70px 0 #3be8ff,30px 80px 0 #3be8ff,40px 80px 0 #3be8ff,80px 80px 0 #3be8ff,90px 80px 0 #3be8ff}
+.box-robot{position:relative;display:inline-block;width:110px;height:80px}
+.spr-heart{position:absolute;width:10px;height:10px;margin:-10px 0 0 -10px;box-shadow:20px 10px 0 #ff4fa3,30px 10px 0 #ff4fa3,50px 10px 0 #ff4fa3,60px 10px 0 #ff4fa3,10px 20px 0 #ff4fa3,20px 20px 0 #ff4fa3,30px 20px 0 #ffd1e6,40px 20px 0 #ff4fa3,50px 20px 0 #ff4fa3,60px 20px 0 #ff4fa3,70px 20px 0 #ff4fa3,10px 30px 0 #ff4fa3,20px 30px 0 #ffd1e6,30px 30px 0 #ff4fa3,40px 30px 0 #ff4fa3,50px 30px 0 #ff4fa3,60px 30px 0 #ff4fa3,70px 30px 0 #ff4fa3,20px 40px 0 #ff4fa3,30px 40px 0 #ff4fa3,40px 40px 0 #ff4fa3,50px 40px 0 #ff4fa3,60px 40px 0 #ff4fa3,30px 50px 0 #ff4fa3,40px 50px 0 #ff4fa3,50px 50px 0 #ff4fa3,40px 60px 0 #ff4fa3}
+.box-heart{position:relative;display:inline-block;width:70px;height:60px}
+.spr-coin{position:absolute;width:10px;height:10px;margin:-10px 0 0 -10px;box-shadow:30px 10px 0 #ffd23f,40px 10px 0 #ffd23f,50px 10px 0 #ffd23f,60px 10px 0 #ffd23f,20px 20px 0 #ffd23f,30px 20px 0 #fff8c8,40px 20px 0 #ffd23f,50px 20px 0 #ffd23f,60px 20px 0 #ffd23f,70px 20px 0 #ffd23f,10px 30px 0 #ffd23f,20px 30px 0 #fff8c8,30px 30px 0 #ffd23f,40px 30px 0 #ffd23f,50px 30px 0 #c77d1a,60px 30px 0 #ffd23f,70px 30px 0 #ffd23f,80px 30px 0 #ffd23f,10px 40px 0 #ffd23f,20px 40px 0 #fff8c8,30px 40px 0 #ffd23f,40px 40px 0 #ffd23f,50px 40px 0 #c77d1a,60px 40px 0 #ffd23f,70px 40px 0 #ffd23f,80px 40px 0 #ffd23f,10px 50px 0 #ffd23f,20px 50px 0 #ffd23f,30px 50px 0 #ffd23f,40px 50px 0 #ffd23f,50px 50px 0 #c77d1a,60px 50px 0 #ffd23f,70px 50px 0 #ffd23f,80px 50px 0 #ffd23f,10px 60px 0 #ffd23f,20px 60px 0 #ffd23f,30px 60px 0 #ffd23f,40px 60px 0 #ffd23f,50px 60px 0 #c77d1a,60px 60px 0 #ffd23f,70px 60px 0 #ffd23f,80px 60px 0 #ffd23f,20px 70px 0 #ffd23f,30px 70px 0 #ffd23f,40px 70px 0 #ffd23f,50px 70px 0 #ffd23f,60px 70px 0 #ffd23f,70px 70px 0 #ffd23f,30px 80px 0 #ffd23f,40px 80px 0 #ffd23f,50px 80px 0 #ffd23f,60px 80px 0 #ffd23f}
+.box-coin{position:relative;display:inline-block;width:80px;height:80px}
+
+/* ドットの枠（角が欠けた四角） */
+.px{position:relative;background:var(--surface);margin:6px;
+  box-shadow:6px 0 0 0 var(--c,#fff),-6px 0 0 0 var(--c,#fff),0 6px 0 0 var(--c,#fff),0 -6px 0 0 var(--c,#fff),inset 0 -6px 0 0 rgb(0 0 0 / .35)}
+.px.y{--c:var(--yel)}.px.c{--c:var(--cy)}.px.m{--c:var(--mg)}.px.g{--c:var(--gr)}
+.kicker{font:400 20px var(--font-px);letter-spacing:.06em;color:var(--cy);margin-bottom:18px;text-transform:uppercase}
+.kicker::before{content:"▶ ";color:var(--yel)}
+h1,h2{font-family:var(--font);font-weight:400}
+h2{font-size:46px;line-height:1.35;color:#fff;text-shadow:4px 4px 0 #3b2f9e;margin-bottom:26px}
+h2 em{font-style:normal;color:var(--yel)}
+.lead{color:var(--muted)}
+.foot{font-size:18px;color:var(--muted)}
+.blink{animation:px-blink 1.1s steps(1) infinite}
+@keyframes px-blink{50%{opacity:0}}
+.hud{display:flex;justify-content:space-between;font:400 18px var(--font-px);color:#fff;letter-spacing:.04em}
+.hud b{color:var(--yel);font-weight:400}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.info .px{padding:24px 26px}
+.info .k{font:400 16px var(--font-px);color:var(--c);margin-bottom:16px}
+.info .v{font:400 56px/1.25 var(--font);color:#fff}
+.info p{font-size:22px;line-height:1.6;color:var(--muted);margin:8px 0 0}
+.rules{display:grid;gap:26px}
+.entry{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;margin:44px 6px 0;font:400 20px var(--font-px);color:var(--cy)}
+.entry b{font:400 30px var(--font);color:#fff;font-weight:400}
+.entry .meter{height:30px}
+.rules>div{display:grid;grid-template-columns:76px 1fr;align-items:center;gap:24px;font-size:32px;line-height:1.5;color:#fff}
+.rules .n{font:400 30px var(--font-px);color:var(--bg);background:var(--yel);height:64px;display:grid;place-items:center;box-shadow:4px 4px 0 #c77d1a}
+details.why{border:0;border-radius:0;background:var(--surface);margin:18px 6px 6px;box-shadow:4px 0 0 0 var(--cy),-4px 0 0 0 var(--cy),0 4px 0 0 var(--cy),0 -4px 0 0 var(--cy)}
+details.why>summary{color:var(--cy);font-size:21px;font-weight:400}
+details.why>summary::before{border-radius:0;background:var(--cy);color:var(--bg);content:"?";font:400 12px/22px var(--font-px)}
+details.why[open]>summary::before{transform:none}
+details.why>.body{color:var(--ink);font-size:20px}
+.quiz .choices{gap:22px}
+.quiz .choices>button{border:0;border-radius:0;background:var(--surface);color:#fff;font:400 28px var(--font);padding:20px 26px;margin:0 6px;
+  box-shadow:6px 0 0 0 #fff,-6px 0 0 0 #fff,0 6px 0 0 #fff,0 -6px 0 0 #fff;display:flex;gap:22px;align-items:center}
+.quiz .choices>button b{font:400 22px var(--font-px);color:var(--yel);font-weight:400}
+.quiz .choices>button:hover{transform:none;background:#241f55}
+.quiz .choices>button:hover b::before{content:"▶";margin-right:6px}
+.quiz.answered .choices>button[data-correct]{background:#123d22;box-shadow:6px 0 0 0 var(--gr),-6px 0 0 0 var(--gr),0 6px 0 0 var(--gr),0 -6px 0 0 var(--gr)}
+.quiz.answered .choices>button.picked:not([data-correct]){background:#46122a;box-shadow:6px 0 0 0 var(--bad),-6px 0 0 0 var(--bad),0 6px 0 0 var(--bad),0 -6px 0 0 var(--bad)}
+.quiz .explain{font-size:23px;color:var(--gr);margin-top:26px;line-height:1.6}
+.quiz .explain::before{content:"CLEAR!  ";font:400 18px var(--font-px);color:var(--yel)}
+.field>label{color:var(--muted);font-size:22px}
+.field>label b{font:400 24px var(--font-px);color:var(--yel)}
+input[type=range]{accent-color:var(--mg)}
+.res{padding:18px 24px;margin:6px 6px 26px}
+.res .label{font-size:21px;color:var(--muted)}
+.res .v{font:400 44px/1.4 var(--font-px);color:#fff;white-space:nowrap}
+.res .v small{font:400 24px var(--font);margin-left:8px}
+.meter{height:24px;border-radius:0;background:#241f55;box-shadow:0 0 0 4px #fff}
+.meter>i{border-radius:0;background:repeating-linear-gradient(90deg,var(--gr) 0 14px,transparent 14px 18px)}
+.prize{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:end;flex:1}
+.prize .px{padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.prize .place{font:400 26px var(--font-px);margin-bottom:12px}
+.prize h3{font:400 32px/1.4 var(--font);color:#fff;margin:16px 0 6px}
+.prize p{font-size:21px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:reduce){.blink{animation:none}}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .hop{animation:px-hop 1.2s steps(2) infinite}
+  @keyframes px-hop{50%{transform:translateY(-10px)}}
+}
+</style>
+
+<main class="deck" data-transition="none">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="stars"></div><div class="ground"></div>
+      <div style="position:absolute;right:160px;top:170px;transform:scale(2.2);transform-origin:0 0"><div class="box-trophy hop"><i class="spr-trophy"></i></div></div>
+      <div style="position:absolute;right:420px;bottom:40px;transform:scale(1.2);transform-origin:0 100%"><div class="box-slime"><i class="spr-slime"></i></div></div>
+      <div style="position:absolute;right:90px;bottom:40px;transform:scale(1.2);transform-origin:0 100%"><div class="box-robot"><i class="spr-robot"></i></div></div>
+    </div>
+    <div class="hud" style="position:absolute;left:76px;right:76px;top:40px"><span>1UP <b>000000</b></span><span>HI-SCORE <b>202612</b></span><span>CREDIT <b>01</b></span></div>
+    <p style="font:400 22px var(--font-px);color:var(--mg);margin:40px 0 18px">SAMPLE CUP 2026</p>
+    <h1 style="font-size:84px;line-height:1.3;color:#fff;text-shadow:6px 6px 0 #3b2f9e">社内ゲーム大会<br><span style="color:var(--yel)">参加チーム募集</span></h1>
+    <p class="blink" style="font:400 24px var(--font-px);color:#fff;margin-top:34px">PRESS START ― 12.19 FRI</p>
+    <aside class="notes">朝会で表紙を出したら「今年もやります」とだけ言う。点滅しているのは演出。</aside>
+  </section>
+
+  <section class="slide" data-title="大会の概要">
+    <div class="bg"><div class="stars"></div>
+      <div style="position:absolute;right:90px;top:60px;transform:scale(1.4);transform-origin:100% 0"><div class="box-coin hop"><i class="spr-coin"></i></div></div>
+    </div>
+    <div class="kicker">Stage 1 ― 概要</div>
+    <h2>12月19日の夕方、<br>8階ラウンジが <em>ゲームセンター</em> になる。</h2>
+    <div class="info">
+      <div class="px y step"><div class="k" style="--c:var(--yel)">DATE</div><div class="v">12/19 金<br>17:00〜</div><p>終業後の3時間。途中参加もOK。</p></div>
+      <div class="px c step"><div class="k" style="--c:var(--cy)">PLACE</div><div class="v">8F<br>ラウンジ</div><p>大画面4台と、観戦席を用意。</p></div>
+      <div class="px m step"><div class="k" style="--c:var(--mg)">TEAM</div><div class="v">4人で<br>1チーム</div><p>部署をまたいだチームも歓迎。</p></div>
+    </div>
+    <div class="entry"><span>ENTRY</span><div class="meter"><i style="width:37.5%"></i></div><b><span data-count="9"></span> / 24 チーム</b></div>
+    <p class="foot">社名・数字は架空のサンプルです。</p>
+    <aside class="notes">→ で3つの箱が順に出る。「4人集まらない人は、係が組み合わせます」と必ず言う。</aside>
+  </section>
+
+  <section class="slide" data-title="ルール">
+    <div class="bg"><div class="stars"></div><div class="ground"></div>
+      <div style="position:absolute;right:120px;bottom:40px;transform:scale(1.6);transform-origin:100% 100%"><div class="box-slime hop"><i class="spr-slime"></i></div></div>
+    </div>
+    <div class="kicker">Stage 2 ― ルール</div>
+    <h2>ルールは3つ。<em>負けたら即終了</em> の勝ち抜き戦。</h2>
+    <div class="rules" style="max-width:860px">
+      <div class="step"><div class="n">1</div><div>種目は「レース」と「落ちものパズル」の2つ</div></div>
+      <div class="step"><div class="n">2</div><div>1試合は各チーム2人ずつ出て、合計点で勝負</div></div>
+      <div class="step"><div class="n">3</div><div>ゲームの腕前は問わない。初めての人も入れる</div></div>
+    </div>
+    <div style="max-width:860px"><details class="why"><summary>なぜ4人で1チーム？</summary><div class="body">1試合に出るのは2人なので、残りの2人が応援と作戦係になれる。去年のアンケートで「ひとりだと出にくい」が 62% あったため。</div></details></div>
+    <aside class="notes">→ でルールが1つずつ出る。3つ目の「初めての人も」を強調する。</aside>
+  </section>
+
+  <section class="slide" data-title="ルールクイズ">
+    <div class="bg"><div class="stars"></div>
+      <div style="position:absolute;right:110px;top:70px;transform:scale(2);transform-origin:100% 0"><div class="box-heart hop"><i class="spr-heart"></i></div></div>
+    </div>
+    <div class="kicker">Bonus stage ― クイズ</div>
+    <h2>時間切れで同点。<br>さあ、どうなる？</h2>
+    <div class="quiz" style="max-width:900px">
+      <div class="choices">
+        <button><b>A</b>じゃんけんで決める</button>
+        <button data-correct><b>B</b>1本だけのサドンデス</button>
+        <button><b>C</b>両チームとも次に進む</button>
+      </div>
+      <div class="explain">正解は B。コースを1周だけ走り、先にゴールしたチームの勝ち。</div>
+    </div>
+    <aside class="notes">会場に手を挙げてもらってからボタンを押す。正解すると緑に光る。</aside>
+  </section>
+
+  <section class="slide" data-title="大会の長さ">
+    <div class="bg"><div class="stars"></div><div class="ground" style="right:50%"></div>
+      <div style="position:absolute;left:90px;bottom:40px;transform:scale(1.3);transform-origin:0 100%"><div class="box-robot hop"><i class="spr-robot"></i></div></div>
+      <div style="position:absolute;left:330px;bottom:120px;display:flex;gap:26px"><div class="box-coin"><i class="spr-coin"></i></div><div class="box-coin"><i class="spr-coin"></i></div><div class="box-coin"><i class="spr-coin"></i></div></div>
+    </div>
+    <div class="kicker">Stage 3 ― 計算</div>
+    <h2>16チームなら、4台で <em>75分</em> で終わる。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:44px" data-calc data-let="games = teams-1; league = teams*(teams-1)/2; n2 = ceil(teams/2); n3 = ceil(n2/2); n4 = ceil(n3/2); n5 = ceil(n4/2); n6 = ceil(n5/2); slots = ceil(floor(teams/2)/tables)+ceil(floor(n2/2)/tables)+ceil(floor(n3/2)/tables)+ceil(floor(n4/2)/tables)+ceil(floor(n5/2)/tables)+ceil(floor(n6/2)/tables); mins = slots*(len+5)">
+      <div>
+        <div class="field"><label>参加チーム <b data-show="teams"></b></label><input type="range" name="teams" min="4" max="40" value="16"></div>
+        <div class="field"><label>同時に使える台数 <b data-show="tables"></b></label><input type="range" name="tables" min="1" max="8" value="4"></div>
+        <div class="field"><label>1試合の長さ（分） <b data-show="len"></b></label><input type="range" name="len" min="5" max="30" value="10"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">勝ち抜き戦の試合数 ＝ チーム数 − 1。<br>所要時間 ＝ 各回戦を台数で何回に分けるかの合計 ×（1試合 ＋ 入れ替え5分）。<br>総当たりだと チーム数×(チーム数−1)÷2 試合。</div></details>
+      </div>
+      <div>
+        <div class="px g res"><div class="label">勝ち抜き戦の試合数</div><div class="v" data-out="games" data-unit=""></div></div>
+        <div class="px y res"><div class="label">大会の長さ</div><div class="v"><span data-out="mins"></span><small>分</small></div><div class="meter" style="margin-top:12px" data-bar="mins" data-max="180"><i></i></div></div>
+        <div class="px m res" style="margin-bottom:6px"><div class="label">もし総当たりなら</div><div class="v"><span data-out="league"></span><small>試合</small></div></div>
+      </div>
+    </div>
+    <aside class="notes">40チームで2台だと3時間を超える。そのときは台数を増やす、と動かして見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="賞品">
+    <div class="bg"><div class="stars"></div><div class="ground"></div></div>
+    <div class="kicker">Stage 4 ― 賞品</div>
+    <h2>優勝チームには、<em>トロフィー</em> と 半日休暇。</h2>
+    <div class="prize">
+      <div class="px c" style="padding-top:30px"><div class="place" style="color:var(--cy)">2ND</div><div style="transform:scale(1.5);margin:22px 0"><div class="box-coin"><i class="spr-coin"></i></div></div><h3>食事券</h3><p>1人 5,000円分</p></div>
+      <div class="px y" style="padding-top:36px;padding-bottom:40px"><div class="place" style="color:var(--yel)">1ST</div><div style="transform:scale(1.6);margin:44px 0 40px"><div class="box-trophy"><i class="spr-trophy"></i></div></div><h3>トロフィーと<br>半日休暇</h3><p>トロフィーは1年間、職場に飾れる</p></div>
+      <div class="px m" style="padding-top:30px"><div class="place" style="color:var(--mg)">3RD</div><div style="transform:scale(1.8);margin:28px 0"><div class="box-heart"><i class="spr-heart"></i></div></div><h3>お菓子の詰め合わせ</h3><p>チームで分けられる量</p></div>
+    </div>
+  </section>
+
+  <section class="slide cover center" data-title="エントリー">
+    <div class="bg"><div class="stars"></div><div class="ground"></div>
+      <div style="position:absolute;left:130px;bottom:40px;transform:scale(1.3);transform-origin:0 100%"><div class="box-robot hop"><i class="spr-robot"></i></div></div>
+      <div style="position:absolute;right:130px;bottom:40px;transform:scale(1.3);transform-origin:100% 100%"><div class="box-slime hop"><i class="spr-slime"></i></div></div>
+    </div>
+    <p style="font:400 24px var(--font-px);color:var(--mg);margin:0 0 24px">CONTINUE?</p>
+    <h2 style="font-size:64px;line-height:1.4">エントリーは <em>12月5日</em> まで。</h2>
+    <div class="px y" style="padding:22px 36px;margin-top:8px"><p style="font-size:30px;color:#fff;margin:0">チャット「#sample-cup」に<br>チーム名と4人の名前を書くだけ</p></div>
+    <p class="blink" style="font:400 22px var(--font-px);color:var(--yel);margin-top:40px">INSERT COIN</p>
+    <aside class="notes">最後に「質問は同じチャンネルへ」。締切の3日前にもう一度告知する。</aside>
+  </section>
+
+</main>

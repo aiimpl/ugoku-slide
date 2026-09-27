@@ -1,0 +1,215 @@
+<!--meta
+{"title":"SAMPLE ONE 発表会","style":"基調講演（黒背景）","use":"新製品発表会","group":"テック・未来",
+ "aim":"ウェアラブル機器メーカーの発表者が、新製品発表会のステージで、新しい腕時計型端末の電池の持ちと軽さを大画面で印象づけるため。",
+ "desc":"真っ黒な舞台に巨大な数字と、CSSで描いた製品だけ。性能の数字はカウントアップし、使い方を動かすと電池が何時間もつかがその場で出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#000; --surface:#121214; --ink:#f5f5f7; --muted:#9a9aa1; --line:#2a2a2e; --accent:#ff8a3d; --accent-ink:#000;
+  --frame:#000; --radius:22px; --shadow:none; --good:#5fd38a; --bad:#ff6b5b;
+  --font:"Manrope","Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-num:"Manrope","Noto Sans JP",sans-serif; --head-weight:800; --head-track:-.02em;
+  --metal:linear-gradient(180deg,#ffffff 0%,#d9d9de 45%,#8e8e96 100%);
+}
+.deck .slide.active{transform:none;filter:none} /* エンジンの rise/zoom/blur で表示中のスライドがずれたままになるのを補正 */
+.slide>.bg{background:radial-gradient(ellipse 60% 55% at 50% 45%,rgb(255 255 255 / .07),transparent 70%)}
+.center h2,.center .lead{margin-left:auto;margin-right:auto}
+h2{font-size:56px;line-height:1.2;letter-spacing:-.03em}
+.eyebrow{font:700 20px var(--font);letter-spacing:.02em;color:var(--accent);margin-bottom:14px}
+.lead{color:var(--muted);font-size:26px;line-height:1.6}
+.metal{background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.giant{font:800 300px/0.86 var(--font-num);letter-spacing:-.07em;margin:0;white-space:nowrap}
+.giant small{font:700 72px var(--font);letter-spacing:-.02em;margin-left:10px;-webkit-text-fill-color:var(--ink)}
+.wordmark{font:300 30px var(--font);letter-spacing:.6em;margin-right:-.6em}
+.wordmark b{font-weight:800}
+
+/* ---- CSSで描いた製品 ---- */
+.watch{--s:1;position:relative;width:calc(250px*var(--s));height:calc(300px*var(--s));margin:0 auto}
+.watch .band{position:absolute;left:14%;right:14%;height:62%;border-radius:calc(28px*var(--s));
+  background:linear-gradient(90deg,#1b1b1f,#2e2e34 50%,#1b1b1f);box-shadow:inset 0 0 0 1px #3a3a40}
+.watch .band.top{bottom:70%;-webkit-mask:linear-gradient(to top,#000 55%,transparent);mask:linear-gradient(to top,#000 55%,transparent)}
+.watch .band.bot{top:70%;-webkit-mask:linear-gradient(to bottom,#000 55%,transparent);mask:linear-gradient(to bottom,#000 55%,transparent)}
+.watch .band::after{content:"";position:absolute;left:18%;right:18%;top:22%;bottom:22%;border-radius:8px;
+  background:repeating-linear-gradient(180deg,transparent 0 calc(16px*var(--s)),rgb(255 255 255 / .05) calc(16px*var(--s)) calc(18px*var(--s)))}
+.watch .case{position:absolute;inset:0;border-radius:calc(72px*var(--s));
+  background:linear-gradient(145deg,#f3f3f5 0%,#9d9da4 30%,#4b4b52 60%,#c9c9cf 100%);
+  box-shadow:0 calc(40px*var(--s)) calc(80px*var(--s)) rgb(0 0 0 / .8),0 0 calc(120px*var(--s)) rgb(255 138 61 / .12)}
+.watch .case::before{content:"";position:absolute;right:calc(-12px*var(--s));top:24%;width:calc(16px*var(--s));height:18%;border-radius:6px;
+  background:linear-gradient(90deg,#8d8d94,#e6e6ea,#6d6d74);box-shadow:inset 0 0 0 1px #55555c}
+.watch .case::after{content:"";position:absolute;right:calc(-7px*var(--s));top:50%;width:calc(8px*var(--s));height:22%;border-radius:4px;background:linear-gradient(90deg,#77777e,#cfcfd4)}
+.watch .screen{position:absolute;inset:calc(12px*var(--s));border-radius:calc(62px*var(--s));background:#000;overflow:hidden;
+  display:grid;place-items:center;box-shadow:inset 0 0 0 calc(3px*var(--s)) #0c0c0e}
+.watch .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgb(255 255 255 / .16),transparent 38%)}
+.watch .ring{width:calc(150px*var(--s));height:calc(150px*var(--s));border-radius:50%;
+  background:conic-gradient(var(--accent) 0 78%,#3a2414 78%);
+  -webkit-mask:radial-gradient(closest-side,transparent 78%,#000 79%);mask:radial-gradient(closest-side,transparent 78%,#000 79%)}
+.watch .time{position:absolute;font:700 calc(46px*var(--s)) var(--font-num);letter-spacing:-.03em;color:#fff}
+.watch .time small{display:block;text-align:center;font:500 calc(14px*var(--s)) var(--font);letter-spacing:.1em;color:var(--accent)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.floaty{animation:float 6s ease-in-out infinite}
+
+/* 表紙 */
+.cover-stage{display:grid;place-items:center;flex:1;gap:0}
+.cover-stage{padding-top:40px}
+.cover-stage .tag{font:500 24px var(--font);color:var(--muted);margin-top:44px;letter-spacing:.04em}
+
+/* 3つの数字 */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:auto;margin-bottom:auto}
+.trio>div{padding:0 34px;border-left:1px solid var(--line)}
+.trio>div:first-child{border-left:0;padding-left:0}
+.trio .v{font:800 150px/0.9 var(--font-num);letter-spacing:-.06em;white-space:nowrap}
+.trio .v small{font:700 40px var(--font);letter-spacing:0;margin-left:6px;-webkit-text-fill-color:var(--ink)}
+.trio .k{font-size:22px;color:var(--ink);margin-top:18px;font-weight:700}
+.trio .d{font-size:19px;color:var(--muted);margin-top:6px;line-height:1.6}
+
+/* 部品の説明 */
+.anatomy{display:grid;grid-template-columns:1fr 440px 1fr;align-items:center;flex:1;min-height:0}
+.callouts{display:grid;gap:52px}
+.callout{position:relative}
+.callout b{display:block;font-size:26px;line-height:1.35;margin-bottom:6px}
+.callout span{font-size:19px;color:var(--muted);line-height:1.6}
+.callouts.l .callout{text-align:right;padding-right:34px}
+.callouts.r .callout{padding-left:34px}
+.callouts.l .callout::after,.callouts.r .callout::after{content:"";position:absolute;top:18px;width:60px;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}
+.callouts.l .callout::after{right:-40px;transform:scaleX(-1)}
+.callouts.r .callout::after{left:-40px}
+.callout i{font-style:normal;color:var(--accent);font:700 16px var(--font);letter-spacing:.1em;display:block;margin-bottom:6px}
+
+/* 電池の計算 */
+.bat{display:grid;grid-template-columns:420px 1fr;gap:72px;flex:1;min-height:0;align-items:center}
+.field>label{font-size:20px;color:var(--ink)}
+.field>label b{font:800 30px var(--font-num);color:var(--ink)}
+.field{margin-bottom:26px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:34px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#2c2c31}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;margin-top:-11px;box-shadow:0 2px 10px rgb(0 0 0 / .6)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#2c2c31}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:0}
+.toggle{display:flex;align-items:center;justify-content:space-between;font-size:20px;padding:14px 0;border-top:1px solid var(--line)}
+.toggle input{-webkit-appearance:none;appearance:none;width:58px;height:34px;border-radius:17px;background:#3a3a40;position:relative;cursor:pointer;transition:background .3s}
+.toggle input::after{content:"";position:absolute;left:3px;top:3px;width:28px;height:28px;border-radius:50%;background:#fff;transition:transform .3s}
+.toggle input:checked{background:var(--good)}
+.toggle input:checked::after{transform:translateX(24px)}
+.readout .big-h{font:800 230px/0.85 var(--font-num);letter-spacing:-.07em;white-space:nowrap}
+.readout .big-h small{font:700 60px var(--font);letter-spacing:0;margin-left:10px;-webkit-text-fill-color:var(--ink)}
+.cell{height:74px;border-radius:20px;border:3px solid #6a6a70;padding:6px;position:relative;margin:34px 16px 18px 0}
+.cell::after{content:"";position:absolute;right:-14px;top:22px;width:8px;height:24px;border-radius:0 4px 4px 0;background:#6a6a70}
+.cell.meter{background:none;overflow:visible}
+.cell.meter>i{border-radius:12px;background:linear-gradient(90deg,#39d27a,#9ef0a8)}
+.readout .sub{display:flex;gap:40px;font-size:20px;color:var(--muted)}
+.readout .sub b{font:800 34px var(--font-num);color:var(--ink);margin-left:8px}
+details.why{background:var(--surface);border:0;border-radius:14px}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:#2c2c31}
+details.why>.body{color:var(--muted);font-size:17px}
+details.why.float[open]>.body{background:#1c1c1f;border:0}
+
+/* 価格 */
+.price{font:800 190px/0.9 var(--font-num);letter-spacing:-.06em;white-space:nowrap}
+.price small{font:700 44px var(--font);letter-spacing:0;-webkit-text-fill-color:var(--muted)}
+.when{display:flex;gap:70px;justify-content:center;margin-top:36px}
+.when>div{text-align:left;border-top:2px solid var(--accent);padding-top:14px;min-width:230px}
+.when span{display:block;font-size:19px;color:var(--muted)}
+.when b{font:800 36px var(--font-num);letter-spacing:-.02em}
+.foot{text-align:center;font-size:14px;color:#7c7c83}
+.colors{display:flex;gap:18px;justify-content:center;margin-top:34px}
+.colors i{width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 2px rgb(255 255 255 / .3)}
+
+@media (prefers-reduced-motion:reduce){.floaty{animation:none}}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide center" data-title="表紙">
+    <div class="bg"></div>
+    <div class="cover-stage">
+      <div class="floaty"><div class="watch" style="--s:1.05"><div class="band top"></div><div class="band bot"></div><div class="case"></div><div class="screen"><div class="ring"></div><div class="time">10:09<small>WED 24</small></div></div></div></div>
+    </div>
+    <p class="wordmark" style="margin-top:-8px"><b>SAMPLE</b> ONE</p>
+    <p class="lead" style="font-size:24px;margin:6px 0 0">もっと長く。もっと軽く。</p>
+    <aside class="notes">暗転から始める。音が鳴り終わってから1拍おいて、製品名だけを言う。</aside>
+  </section>
+
+  <section class="slide center" data-title="電池">
+    <div class="bg"></div>
+    <div class="eyebrow">電池</div>
+    <h2 style="margin-bottom:20px">1回の充電で、まる1日半。</h2>
+    <p class="giant metal"><span data-count="36"></span><small>時間</small></p>
+    <p class="lead" style="margin-top:26px">前のモデルの <b style="color:var(--ink)">2倍</b>。週末の旅行も、充電器を持たずに。</p>
+    <details class="why float" style="width:440px;margin:14px auto 0;text-align:left"><summary>36時間の測り方</summary><div class="body">通知を1時間に12回受け、画面を1日60分見て、運動を30分記録した場合（社内試験・サンプル）。使い方で変わるので、3枚あとのページで試せます。</div></details>
+    <aside class="notes">数字が上がりきるまで黙る。「36時間」と言うのは止まってから。</aside>
+  </section>
+
+  <section class="slide" data-title="3つの数字">
+    <div class="bg"></div>
+    <div class="eyebrow">Performance</div>
+    <h2>軽く、明るく、濡れても平気。</h2>
+    <div class="trio">
+      <div class="step"><div class="v metal"><span data-count="28"></span><small>g</small></div><div class="k">ベルトを外した重さ</div><div class="d">チタンの枠で、前のモデルより 9g 軽く。</div></div>
+      <div class="step"><div class="v metal"><span data-count="2000"></span></div><div class="k">最大の明るさ（nit）</div><div class="d">真夏の屋外でも、時刻がひと目で読める。</div></div>
+      <div class="step"><div class="v metal"><span data-count="5"></span><small>気圧</small></div><div class="k">防水</div><div class="d">雨の日のランニングも、プールでの計測も。</div></div>
+    </div>
+    <p class="foot">数字は架空のサンプルです。</p>
+    <aside class="notes">→で1つずつ。3つ目を出したら、会場に腕を上げて見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="つくり">
+    <div class="bg" style="background:radial-gradient(circle at 50% 55%,rgb(255 138 61 / .12),transparent 40%)"></div>
+    <div class="eyebrow" style="text-align:center">Design</div>
+    <h2 style="text-align:center;margin-bottom:10px">小さな枠に、4つの新しい部品。</h2>
+    <div class="anatomy">
+      <div class="callouts l">
+        <div class="callout step"><i>01</i><b>チタンの枠</b><span>削り出しで、軽くて傷に強い。</span></div>
+        <div class="callout step"><i>02</i><b>サファイアのガラス</b><span>鍵と同じポケットでも平気。</span></div>
+      </div>
+      <div><div class="watch" style="--s:1.15"><div class="band top"></div><div class="band bot"></div><div class="case"></div><div class="screen"><div class="ring"></div><div class="time">10:09<small>WED 24</small></div></div></div></div>
+      <div class="callouts r">
+        <div class="callout step"><i>03</i><b>回る竜頭</b><span>手袋のままでも、画面を送れる。</span></div>
+        <div class="callout step"><i>04</i><b>新しい省電力チップ</b><span>同じ仕事を、半分の電気で。</span></div>
+      </div>
+    </div>
+    <aside class="notes">左の2つ、右の2つの順で出す。チップの話は長くしない。</aside>
+  </section>
+
+  <section class="slide" data-title="あなたの使い方では">
+    <div class="bg"></div>
+    <div class="eyebrow">Try it · 動かせます</div>
+    <h2>あなたの使い方なら、何時間もつか。</h2>
+    <div class="bat" data-calc data-let="use = 2.0*24 + screen*0.12 + gps*0.35 + aod*22; hours = 100/use*24">
+      <div>
+        <div class="field"><label>画面を見る時間（1日） <b data-show="screen" data-unit="分"></b></label><input type="range" name="screen" min="10" max="240" step="5" value="60"></div>
+        <div class="field"><label>GPSで運動を記録（1日） <b data-show="gps" data-unit="分"></b></label><input type="range" name="gps" min="0" max="180" step="5" value="30"></div>
+        <label class="toggle">画面をつけっぱなしにする<input type="checkbox" name="aod"></label>
+        <details class="why"><summary>計算のしかた</summary><div class="body">待っているだけで1時間に 2.0%、画面1分で 0.12%、GPS 1分で 0.35%、つけっぱなしは1日 22% 使う（サンプル）。<br>もつ時間 ＝ 100 ÷ 1日に使う量 × 24。</div></details>
+      </div>
+      <div class="readout">
+        <div class="big-h metal"><span data-out="hours"></span><small>時間</small></div>
+        <div class="cell meter" data-bar="hours" data-max="48"><i></i></div>
+        <div class="sub"><span>日数で<b data-out="hours/24" data-format="dec1" data-unit="日"></b></span><span>1日に使う電池<b data-out="use" data-unit="%"></b></span></div>
+      </div>
+    </div>
+    <aside class="notes">会場で「毎日1時間走る人」を例に、GPSを60分にして見せる。つけっぱなしをオンにすると、ぐっと減るのも正直に見せる。</aside>
+  </section>
+
+  <section class="slide center" data-title="価格と発売日">
+    <div class="bg"></div>
+    <div class="eyebrow">Price</div>
+    <p class="price metal">¥39,800<small>から</small></p>
+    <div class="when">
+      <div class="step"><span>予約開始</span><b>今日 20:00</b></div>
+      <div class="step"><span>発売日</span><b>10月24日</b></div>
+      <div class="step"><span>カラー</span><b>3色</b></div>
+    </div>
+    <div class="colors"><i style="background:linear-gradient(145deg,#f3f3f5,#8e8e96)"></i><i style="background:linear-gradient(145deg,#4a4a52,#141417)"></i><i style="background:linear-gradient(145deg,#ffc39a,#b5602b)"></i></div>
+    <p class="foot">価格は税込・ベルト1本付き。数字・製品名はすべて架空のサンプルです。</p>
+  </section>
+
+  <section class="slide center" data-title="締め">
+    <div class="bg" style="background:radial-gradient(ellipse 50% 60% at 50% 40%,rgb(255 138 61 / .14),transparent 70%)"></div>
+    <div class="floaty"><div class="watch" style="--s:.8"><div class="band top"></div><div class="band bot"></div><div class="case"></div><div class="screen"><div class="ring"></div><div class="time">10:09<small>WED 24</small></div></div></div></div>
+    <p class="giant" style="font-size:120px;margin-top:40px;letter-spacing:-.04em">One more <span class="metal">day.</span></p>
+    <p class="lead" style="margin-top:30px">SAMPLE ONE ── 今夜 20:00 から、サンプル精機のオンラインストアで予約受付。</p>
+  </section>
+
+</main>

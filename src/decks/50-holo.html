@@ -1,0 +1,224 @@
+<!--meta
+{"title":"SAMPLE PRISM SS27 ローンチ","style":"ホログラフィック","use":"アパレル新ブランドの発表","group":"テック・未来",
+ "aim":"アパレルの新ブランド担当が、プレスとバイヤー向けの発表会で、ブランドの考え方・3つのライン・初回ドロップの計画を見せ、予約と取材につなげるための資料。",
+ "desc":"見る角度で色が変わる虹色の箔。マウスを動かすと箔の光が追いかける。コレクションはタブで切り替え、生産数と価格・消化率を動かすと初回ドロップの売上が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=IBM+Plex+Sans+JP:wght@400;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#e9e8ee; --surface:#f6f5f9; --ink:#0d0c14; --muted:#3f3d4d; --line:rgb(13 12 20 / .14); --accent:#0d0c14; --accent-ink:#fff;
+  --good:#10745a; --bad:#b0305a; --frame:#d9d8e0; --radius:22px; --shadow:0 24px 50px -24px rgb(40 30 80 / .45);
+  --font:"IBM Plex Sans JP","Hiragino Sans","Yu Gothic",sans-serif; --font-head:"Unbounded","IBM Plex Sans JP","Hiragino Sans",sans-serif; --font-num:"Unbounded",sans-serif;
+  --head-weight:900; --head-track:-.03em; --pad-y:60px; --pad-x:80px; --mx:50%; --my:40%;
+  --foil:linear-gradient(115deg,#ffd6f0 0%,#c2f0ff 14%,#e4ffcf 26%,#fff2b8 36%,#ffc9e4 48%,#c9c4ff 60%,#b6f4ff 72%,#f8d0ff 86%,#ffe9c4 100%);
+}
+.deck[data-transition=zoom] .slide.active{transform:none}
+.slide>.bg{background:radial-gradient(900px 600px at var(--mx) var(--my),#ffffff,transparent 70%),linear-gradient(160deg,#f1f0f5,#dedde6)}
+.slide{color:var(--ink)}
+h1,h2{font-family:var(--font-head);font-weight:900;letter-spacing:-.035em}
+h2{font-size:46px;line-height:1.3}
+.jp{font-family:var(--font);font-weight:700;letter-spacing:-.01em}
+.kicker{font-family:var(--font-head);font-weight:700;color:var(--ink);letter-spacing:.24em;font-size:14px}
+/* 箔：虹の帯＋光の反射。--mx/--my でマウスを追う */
+.foil{position:relative;overflow:hidden;border-radius:var(--radius);
+  background:radial-gradient(420px 320px at var(--mx) var(--my),rgb(255 255 255 / .85),transparent 60%),
+    repeating-linear-gradient(115deg,rgb(255 255 255 / .0) 0 26px,rgb(255 255 255 / .35) 26px 30px),var(--foil);
+  background-size:100% 100%,100% 100%,300% 300%;background-position:0 0,0 0,var(--mx) var(--my);
+  box-shadow:inset 0 0 0 1px rgb(255 255 255 / .8),var(--shadow);transition:background-position .25s linear}
+.foil::after{content:"";position:absolute;inset:0;background:conic-gradient(from 200deg at var(--mx) var(--my),rgb(255 255 255 / 0),rgb(120 200 255 / .18),rgb(255 150 220 / .18),rgb(255 255 255 / 0));mix-blend-mode:overlay;pointer-events:none}
+.foil-t{background:linear-gradient(100deg,#6b4cff,#e0419b 30%,#f2a43a 50%,#2bb8c9 70%,#6b4cff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 8s linear infinite}
+@keyframes sheen{to{background-position:250% 0}}
+@media (prefers-reduced-motion:reduce){.foil-t{animation:none}.foil{transition:none}}
+.chip{display:inline-block;font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:.2em;border:1.5px solid var(--ink);border-radius:999px;padding:6px 14px}
+.card{background:rgb(255 255 255 / .6);border:1px solid rgb(255 255 255 / .9);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card p{color:var(--muted);font-size:19px}
+.card p.lbl{font-size:13px;color:var(--muted)}
+.card p.n:not([data-sign]){color:var(--ink)}
+.n{font-family:var(--font-num);font-weight:900;letter-spacing:-.04em;line-height:1}
+.lbl{font-family:var(--font-head);font-size:13px;letter-spacing:.2em;font-weight:700;color:var(--muted);margin:0 0 10px}
+/* 部品 */
+.tabs{background:rgb(255 255 255 / .6);box-shadow:inset 0 0 0 1px rgb(13 12 20 / .1)}
+.tabs>[data-tab]{font-family:var(--font-head);font-weight:700;font-size:16px;letter-spacing:.1em;padding:10px 24px;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--ink);color:#fff;box-shadow:none}
+.field>label{color:var(--ink);font-size:18px;font-weight:700}
+.field>label b{font-family:var(--font-num);font-size:22px}
+input[type=range]{accent-color:var(--ink)}
+.meter{height:12px;background:rgb(13 12 20 / .1)}
+.meter>i{background:var(--foil);background-size:200% 100%;box-shadow:inset 0 0 0 1px rgb(13 12 20 / .15)}
+details.why{background:rgb(255 255 255 / .6);border:1px solid rgb(255 255 255 / .9);border-radius:16px}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:var(--foil);color:var(--ink)}
+details.why>.body{color:var(--muted);font-size:18px}
+ol.list{font-size:24px;gap:0}
+ol.list>li{padding:18px 0 18px 70px;border-top:1px solid var(--line)}
+ol.list>li::before{background:var(--foil);color:var(--ink);font-family:var(--font-num);font-size:16px;top:16px;width:44px;height:44px;box-shadow:inset 0 0 0 1px rgb(13 12 20 / .2)}
+ol.list>li small{display:block;font-size:18px;color:var(--muted)}
+.foot{color:var(--muted);font-size:14px}
+.tag{position:relative;width:210px;height:300px;padding:58px 22px 22px;border-radius:14px 14px 10px 10px;background:rgb(255 255 255 / .82);
+  box-shadow:0 24px 40px -18px rgb(20 10 40 / .35),0 0 0 1px rgb(13 12 20 / .08);display:flex;flex-direction:column;gap:6px;transform:rotate(-4deg)}
+.tag::before{content:"";position:absolute;left:50%;top:-70px;width:1.5px;height:84px;background:#0d0c14;opacity:.55}
+.tag .hole{position:absolute;left:50%;top:18px;width:16px;height:16px;margin-left:-8px;border-radius:50%;box-shadow:inset 0 0 0 2px rgb(13 12 20 / .5)}
+.tag .lbl{white-space:nowrap;margin:0}
+.tag b.n{font-size:64px;line-height:1;margin-top:auto}
+.tag .tname{font-size:26px;letter-spacing:.02em}
+.tag .bars{height:26px;margin-top:10px;background:repeating-linear-gradient(90deg,#0d0c14 0 2px,transparent 2px 5px,#0d0c14 5px 6px,transparent 6px 9px);opacity:.75}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide" data-title="表紙">
+    <div class="bg"></div>
+    <div style="display:grid;grid-template-columns:1fr 420px;gap:50px;flex:1;align-items:center">
+      <div>
+        <span class="chip">SS27 · FIRST COLLECTION</span>
+        <h1 style="font-size:112px;line-height:1.02;margin:28px 0 26px">SAMPLE<br><span class="foil-t">PRISM</span></h1>
+        <p class="jp" style="font-size:40px;line-height:1.4;margin:0">光で、色が変わる服。</p>
+        <p style="font-size:20px;color:var(--muted);margin-top:22px;line-height:1.7">2027年3月1日 ローンチ　／　発表会 2026年11月12日</p>
+      </div>
+      <div class="foil" style="height:540px;padding:34px 30px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;justify-content:space-between"><span class="kicker">SAMPLE PRISM</span><span class="kicker">No.001</span></div>
+        <svg viewBox="0 0 200 200" style="width:220px;height:220px;align-self:center" aria-hidden="true"><path d="M100 18 L178 160 H22Z" fill="none" stroke="#0d0c14" stroke-width="3"/><path d="M100 18 L126 160 M100 18 L74 160" stroke="#0d0c14" stroke-width="1.2" opacity=".5"/></svg>
+        <div><p class="n" style="font-size:40px;margin:0">SS27</p><p class="jp" style="margin:6px 0 0;font-size:17px;color:#23212e">Tokyo · Seoul · Taipei</p></div>
+      </div>
+    </div>
+    <aside class="notes">画面の上でマウスを動かすと、右のタグの箔の光が追いかける。発表の最初の10秒は何も言わず、ゆっくりマウスを動かしてから話し始める。</aside>
+  </section>
+
+  <section class="slide" data-title="考え方">
+    <div class="bg"></div>
+    <p class="kicker">CONCEPT</p>
+    <h2 class="jp" style="font-size:54px;margin:20px 0 30px">見る角度で、1着が3色になる。</h2>
+    <div class="grid cols-3" style="gap:26px;flex:1">
+      <div class="step" style="display:flex;flex-direction:column"><div class="foil" style="flex:1;--mx:10%;--my:20%"></div><p class="lbl" style="margin-top:16px">FRONT · 0°</p><p class="jp" style="font-size:24px;margin:0">正面は、ほぼ白。</p></div>
+      <div class="step" style="display:flex;flex-direction:column"><div class="foil" style="flex:1;--mx:55%;--my:60%"></div><p class="lbl" style="margin-top:16px">SIDE · 45°</p><p class="jp" style="font-size:24px;margin:0">横からは、水色と桃色。</p></div>
+      <div class="step" style="display:flex;flex-direction:column"><div class="foil" style="flex:1;--mx:95%;--my:95%"></div><p class="lbl" style="margin-top:16px">NIGHT · 街灯の下</p><p class="jp" style="font-size:24px;margin:0">夜は、金色に光る。</p></div>
+    </div>
+    <aside class="notes">→キーで3つの見え方が1枚ずつ出る。実物の生地を会場で回しながら話すと伝わる。</aside>
+  </section>
+
+  <section class="slide" data-title="コレクション">
+    <div class="bg"></div>
+    <p class="kicker">COLLECTION</p>
+    <h2 class="jp" style="margin:18px 0 20px">3つのラインで、32型。</h2>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">01 AURORA</button><button data-tab="b">02 MIRAGE</button><button data-tab="c">03 HALO</button></div>
+      <div data-panel="a" style="display:grid;grid-template-columns:380px 1fr;gap:48px;flex:1">
+        <div class="foil" style="display:grid;place-items:center">
+          <div class="tag" role="img" aria-label="AURORA の下げ札"><i class="hole"></i><span class="lbl">SS27</span><b class="n">01</b><span class="n tname">AURORA</span><span class="lbl">12 STYLES</span><span class="bars"></span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <p class="lbl">LINE 01 · OUTER</p>
+          <p class="n" style="font-size:72px;margin:0 0 12px">AURORA</p>
+          <p class="jp" style="font-size:28px;margin:0 0 18px">雨をはじく、光る薄手のコート。</p>
+          <p style="font-size:20px;color:var(--muted);line-height:1.8;margin:0">12型　／　¥38,000〜¥64,000<br>撥水の箔プリント・洗濯機で洗える</p>
+        </div>
+      </div>
+      <div data-panel="b" style="display:grid;grid-template-columns:380px 1fr;gap:48px;flex:1">
+        <div class="foil" style="display:grid;place-items:center;--mx:80%;--my:30%">
+          <div class="tag" role="img" aria-label="MIRAGE の下げ札"><i class="hole"></i><span class="lbl">SS27</span><b class="n">02</b><span class="n tname">MIRAGE</span><span class="lbl">14 STYLES</span><span class="bars"></span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <p class="lbl">LINE 02 · KNIT</p>
+          <p class="n" style="font-size:72px;margin:0 0 12px">MIRAGE</p>
+          <p class="jp" style="font-size:28px;margin:0 0 18px">光る糸を1割だけ編みこんだニット。</p>
+          <p style="font-size:20px;color:var(--muted);line-height:1.8;margin:0">14型　／　¥22,000〜¥36,000<br>ウール 90%・光る再生糸 10%</p>
+        </div>
+      </div>
+      <div data-panel="c" style="display:grid;grid-template-columns:380px 1fr;gap:48px;flex:1">
+        <div class="foil" style="display:grid;place-items:center;--mx:20%;--my:85%">
+          <div class="tag" role="img" aria-label="HALO の下げ札"><i class="hole"></i><span class="lbl">SS27</span><b class="n">03</b><span class="n tname">HALO</span><span class="lbl">6 STYLES</span><span class="bars"></span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <p class="lbl">LINE 03 · ACCESSORY</p>
+          <p class="n" style="font-size:72px;margin:0 0 12px">HALO</p>
+          <p class="jp" style="font-size:28px;margin:0 0 18px">夜道で光る、バッグと帽子。</p>
+          <p style="font-size:20px;color:var(--muted);line-height:1.8;margin:0">6型　／　¥9,800〜¥24,000<br>車のライトを返す反射の箔</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">バイヤーには AURORA を、雑誌の方には HALO を先に見せる。価格はすべて税込。</aside>
+  </section>
+
+  <section class="slide" data-title="数字">
+    <div class="bg"></div>
+    <p class="kicker">NUMBERS</p>
+    <h2 class="jp" style="margin:18px 0 30px">つくりすぎない。初回は 1,200着だけ。</h2>
+    <div class="grid cols-3" style="gap:26px;flex:1">
+      <div class="card" style="padding:34px;display:flex;flex-direction:column;justify-content:space-between"><p class="lbl">STYLES</p><p class="n" style="font-size:76px;margin:0"><span data-count="32">32</span></p><p class="jp" style="font-size:22px;margin:0;color:var(--ink)">型（3ライン）</p></div>
+      <div class="foil" style="padding:34px;display:flex;flex-direction:column;justify-content:space-between"><p class="lbl" style="color:#23212e">FIRST DROP</p><p class="n" style="font-size:76px;margin:0"><span data-count="1200">1,200</span></p><p class="jp" style="font-size:22px;margin:0">着（すべて番号入り）</p></div>
+      <div class="card" style="padding:34px;display:flex;flex-direction:column;justify-content:space-between"><p class="lbl">POP-UP</p><p class="n" style="font-size:76px;margin:0"><span data-count="5">5</span></p><p class="jp" style="font-size:22px;margin:0;color:var(--ink)">都市（3〜5月）</p></div>
+    </div>
+    <aside class="notes">数字は開くたびに数え上がる。「売れ残りを出さない」がブランドの約束、と言い切る。</aside>
+  </section>
+
+  <section class="slide" data-title="初回ドロップ">
+    <div class="bg"></div>
+    <p class="kicker">FIRST DROP · 動かせます</p>
+    <h2 class="jp" style="margin:18px 0 22px">8割売れれば、初回で開発費を取り戻せる。</h2>
+    <div data-calc class="fill" data-let="sold = round(qty*rate/100); rev = sold*price; gp = rev - qty*price*0.38; left = qty - sold" style="display:grid;grid-template-columns:1fr 1fr;gap:34px">
+      <div class="card" style="padding:28px 32px">
+        <div class="field"><label>つくる数 <b data-show="qty" data-unit=" 着"></b></label><input type="range" name="qty" min="300" max="3000" step="100" value="1200"></div>
+        <div class="field"><label>平均の価格 <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="9800" max="60000" step="200" value="31000"></div>
+        <div class="field" style="margin-bottom:6px"><label>売れる割合 <b data-show="rate" data-unit=" %"></b></label><input type="range" name="rate" min="30" max="100" step="5" value="80"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">売上 ＝ つくる数 × 売れる割合 × 平均の価格。<br>粗利 ＝ 売上 − つくった全部の原価（価格の 38%）。開発費は 1,400万円。</div></details>
+      </div>
+      <div style="display:grid;gap:20px;align-content:start">
+        <div class="foil" style="padding:26px 30px"><p class="lbl" style="color:#23212e">REVENUE</p><p class="n" style="font-size:76px;margin:0;white-space:nowrap" data-out="rev" data-format="man"></p></div>
+        <div class="grid cols-2" style="gap:20px">
+          <div class="card" style="padding:22px 26px"><p class="lbl">PROFIT</p><p class="n" style="font-size:34px;margin:0;white-space:nowrap" data-out="gp" data-format="man" data-sign></p></div>
+          <div class="card" style="padding:22px 26px"><p class="lbl">LEFT</p><p class="n" style="font-size:34px;margin:0" data-out="left" data-unit=" 着"></p></div>
+        </div>
+        <div><p class="lbl" style="margin-bottom:8px">開発費 1,400万円 に対して</p><div class="meter" data-bar="gp" data-max="14000000"><i></i></div></div>
+      </div>
+    </div>
+    <aside class="notes">バイヤーから「数を増やさないの？」と聞かれたら、3000着・60% にして見せる。売上は増えるが、残りが1,200着になる。</aside>
+  </section>
+
+  <section class="slide" data-title="スケジュール">
+    <div class="bg"></div>
+    <p class="kicker">SCHEDULE</p>
+    <div style="display:grid;grid-template-columns:420px 1fr;gap:60px;flex:1">
+      <div>
+        <h2 class="jp" style="font-size:50px;margin:18px 0 20px">発表から、<br>4か月で届ける。</h2>
+        <p style="font-size:20px;color:var(--muted);line-height:1.8">予約の順に、番号の若い服から届きます。取材用の貸し出しは12月から。</p>
+        <details class="why" style="margin-top:20px"><summary>なぜ予約制にするのか</summary><div class="body">つくる数を先に決め、売れ残りと値下げをなくすため。予約の数を見て、2回目のドロップの量を決めます。</div></details>
+      </div>
+      <ol class="list">
+        <li class="step">発表会・プレス向け内覧<small>2026年11月12日　表参道のギャラリー</small></li>
+        <li class="step">オンライン予約<small>2027年1月15日 0:00〜　1人3着まで</small></li>
+        <li class="step">ファーストドロップ<small>2027年3月1日　予約分から順に発送</small></li>
+        <li class="step">ポップアップ<small>3〜5月　5都市を巡回</small></li>
+      </ol>
+    </div>
+    <aside class="notes">→キーで1つずつ。日付はここだけ覚えてもらえばいい。</aside>
+  </section>
+
+  <section class="slide" data-title="お問い合わせ">
+    <div class="bg"></div>
+    <div class="foil" style="position:absolute;inset:60px 80px;display:flex;flex-direction:column;justify-content:center;padding:60px 70px">
+      <p class="kicker" style="color:#23212e">PRESS &amp; BUYERS</p>
+      <h2 style="font-size:92px;line-height:1.02;margin:20px 0 26px">SEE IT<br>IN THE LIGHT.</h2>
+      <p class="jp" style="font-size:28px;margin:0 0 10px">サンプルの貸し出し・取材のご相談を受けつけています。</p>
+      <p style="font-size:20px;margin:0;color:#23212e">press@sample-prism.example　／　サンプルアパレル株式会社</p>
+      <p style="font-size:15px;margin:22px 0 0;color:#23212e">ブランド名・価格・数字はすべて架空のサンプルです。</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* マウスの位置で箔の光を動かす（任意の飾り。動きを減らす設定のときは動かさない） */
+(() => {
+  const deck = document.querySelector(".deck");
+  if (!deck || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let raf = 0;
+  addEventListener("pointermove", e => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = deck.getBoundingClientRect();
+      deck.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
+      deck.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
+    });
+  });
+})();
+</script>

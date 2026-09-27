@@ -1,0 +1,208 @@
+<!--meta
+{"title":"MIRAGE GLOSS 新作発表 ／ サンプル・コスメティクス","style":"Y2K クローム","use":"コスメ新商品の発表","group":"レトロ・ポップ",
+ "aim":"コスメブランドの商品企画担当が、取引先バイヤー向けの新作発表会で、色展開を見せて初月の仕入れ数を決めてもらうため。",
+ "desc":"真珠色の地に銀の立体文字、虹色の箔と泡。4色の色展開をタブで切り替え、店舗数と1日の販売数を動かすと初月の販売本数と売上が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap"}
+-->
+<style>
+/* エンジンの rise/zoom/blur は表示中のスライドにも変形が残るので打ち消す */
+.deck[data-transition] .slide.active{transform:none;filter:none}
+:root{
+  --bg:#eceef6; --surface:rgb(255 255 255 / .72); --ink:#1b1f3b; --muted:#454b6b; --line:#c3c7da; --accent:#5a3fd6; --accent-ink:#fff;
+  --frame:#cfd3e2; --radius:28px; --shadow:0 1px 0 #fff inset,0 18px 40px rgb(40 44 90 / .14); --good:#3a4ed0; --bad:#c2336a;
+  --font:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+  --font-head:"Unbounded","M PLUS Rounded 1c","Hiragino Sans",sans-serif; --font-num:"Unbounded","M PLUS Rounded 1c",sans-serif;
+  --head-weight:800; --head-track:-.01em;
+  --holo:conic-gradient(from 210deg at 55% 45%,#ffd3f1,#c9f1ff,#dcd2ff,#fff2c4,#c8ffe9,#ffd3f1);
+}
+.slide{isolation:isolate;padding:62px 80px}
+/* 真珠色の地：ゆがんだ虹色の箔を、ぼかして敷く */
+.slide>.bg{overflow:hidden;background:radial-gradient(120% 90% at 50% 0,#ffffff 0,#eceef6 55%,#dfe2ef 100%)}
+.foil{position:absolute;border-radius:46% 54% 60% 40% / 52% 44% 56% 48%;background:var(--holo);filter:blur(2px) saturate(1.2);opacity:.9}
+.foil::after{content:"";position:absolute;inset:0;border-radius:inherit;background:
+  repeating-linear-gradient(115deg,rgb(255 255 255 / .0) 0 18px,rgb(255 255 255 / .55) 22px,rgb(255 255 255 / 0) 30px);mix-blend-mode:soft-light}
+.bub{position:absolute;border-radius:50%;background:
+  radial-gradient(circle at 32% 28%,#fff 0 7%,rgb(255 255 255 / .55) 12%,transparent 22%),
+  radial-gradient(circle at 70% 78%,rgb(255 255 255 / .8) 0 4%,transparent 10%),
+  radial-gradient(circle,rgb(220 235 255 / .12) 0 55%,rgb(190 170 255 / .45) 68%,rgb(255 200 240 / .6) 72%,rgb(255 255 255 / .9) 73.5%,transparent 75%)}
+.spark{position:absolute;width:44px;height:44px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 0C21 13 27 19 40 20C27 21 21 27 20 40C19 27 13 21 0 20C13 19 19 13 20 0Z' fill='%23ffffff' stroke='%239aa0c0' stroke-width='.8'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 6px #fff)}
+/* 銀の立体文字 */
+.chrome{font-family:var(--font-head);font-weight:900;letter-spacing:-.02em;line-height:.95;
+  background:linear-gradient(180deg,#ffffff 0%,#dfe3f0 30%,#7e86a8 48%,#2a2f4d 52%,#9aa3c4 70%,#f4f6ff 88%,#b9bfd8 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(1.5px 0 0 #2a2f4d) drop-shadow(-1.5px 0 0 #2a2f4d) drop-shadow(0 1.5px 0 #2a2f4d) drop-shadow(0 -1.5px 0 #2a2f4d) drop-shadow(0 3px 0 #fff) drop-shadow(0 12px 14px rgb(40 44 90 / .3))}
+.kicker{font:700 16px var(--font-head);letter-spacing:.22em;color:var(--ink);display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:99px;align-self:flex-start;
+  background:linear-gradient(#fff,#dde1ee);box-shadow:0 1px 0 #fff inset,0 0 0 1.5px #9aa0c0,0 6px 14px rgb(40 44 90 / .12)}
+.kicker::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--holo);box-shadow:0 0 0 1px #9aa0c0}
+h2{font:800 44px/1.3 var(--font);color:var(--ink);letter-spacing:-.01em;margin:22px 0 22px}
+.lead{color:var(--muted);font-weight:500}
+.foot{font-size:16px;color:var(--muted)}
+.glass{background:linear-gradient(160deg,rgb(255 255 255 / .9),rgb(255 255 255 / .55));border-radius:28px;box-shadow:var(--shadow),0 0 0 1.5px rgb(154 160 192 / .55);backdrop-filter:blur(6px)}
+/* グロスのボトル */
+.tube{position:absolute;width:118px;border-radius:26px 26px 40px 40px;overflow:hidden;box-shadow:0 0 0 2px #2a2f4d,0 24px 40px rgb(40 44 90 / .3)}
+.tube .cap{height:44%;background:linear-gradient(90deg,#5b6283,#f7f8ff 30%,#9aa2c0 48%,#2a2f4d 60%,#c7cce0 80%,#6b7294)}
+.tube .body{height:56%;background:linear-gradient(90deg,rgb(255 255 255 / .55),transparent 30%,transparent 70%,rgb(255 255 255 / .4)),var(--liq,var(--holo))}
+.tube .body::after{content:"";position:absolute;left:18px;bottom:18px;width:12px;height:40%;border-radius:8px;background:rgb(255 255 255 / .75)}
+/* タブ：銀のピル */
+.tabs{background:linear-gradient(#e3e6f1,#f7f8fc);box-shadow:inset 0 2px 5px rgb(40 44 90 / .16),0 0 0 1.5px #b3b8d0;padding:6px;gap:6px}
+.tabs>[data-tab]{font:700 17px var(--font-head);letter-spacing:.04em;color:var(--muted);padding:11px 22px}
+.tabs>[data-tab][aria-selected=true]{background:var(--holo);color:var(--ink);box-shadow:0 1px 0 #fff inset,0 0 0 1.5px #2a2f4d,0 6px 12px rgb(40 44 90 / .18)}
+.shade{display:grid;grid-template-columns:420px 1fr;gap:56px;align-items:center;flex:1}
+.drop{width:350px;height:350px;border-radius:50% 50% 50% 50% / 58% 58% 42% 42%;position:relative;justify-self:center;
+  background:radial-gradient(circle at 34% 28%,#fff 0 6%,rgb(255 255 255 / .7) 10%,transparent 26%),radial-gradient(circle at 70% 82%,rgb(255 255 255 / .6) 0 5%,transparent 14%),var(--c);
+  box-shadow:inset -24px -30px 60px rgb(0 0 0 / .22),inset 20px 20px 40px rgb(255 255 255 / .45),0 30px 50px rgb(40 44 90 / .25),0 0 0 2px #2a2f4d}
+.shade .no{font:900 22px var(--font-head);letter-spacing:.2em;color:var(--muted)}
+.shade h3{font:900 64px/1 var(--font-head);letter-spacing:-.02em;margin:10px 0 18px;color:var(--ink)}
+.shade p{font-size:25px;line-height:1.75;color:var(--muted);margin:0 0 20px}
+.shade .tags{display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:linear-gradient(#fff,#e6e9f3);color:var(--ink);box-shadow:0 0 0 1.5px #9aa0c0;font-size:18px;padding:6px 16px}
+/* 数字 */
+.kpi .label{font-size:19px;color:var(--muted);font-weight:700}
+.kpi .value{font:900 128px/1 var(--font-num);color:var(--ink);letter-spacing:-.03em}
+.kpi .value small{font:800 40px var(--font);margin-left:0}
+details.why{border:0;border-radius:18px;background:rgb(255 255 255 / .8);box-shadow:0 0 0 1.5px #b3b8d0}
+details.why>summary{color:var(--ink);font-size:18px}
+details.why>summary::before{background:var(--holo);box-shadow:0 0 0 1px #9aa0c0;color:var(--ink)}
+details.why>.body{color:var(--muted);font-size:18px}
+.field>label{color:var(--muted);font-size:19px;font-weight:700}
+.field>label b{font:800 26px var(--font-num);color:var(--ink)}
+input[type=range]{accent-color:#5a3fd6}
+.res{padding:20px 28px;margin-bottom:16px}
+.res .label{font-size:19px;color:var(--muted);font-weight:700}
+.res .v{font:900 60px/1.15 var(--font-num);color:var(--ink);letter-spacing:-.03em;white-space:nowrap}
+.meter{height:18px;background:#dfe2ee;box-shadow:inset 0 2px 4px rgb(40 44 90 / .15)}
+.meter>i{background:linear-gradient(90deg,#ff5fb4,#9a7bff 55%,#4fd6e8);box-shadow:0 1px 0 rgb(255 255 255 / .6) inset}
+.dates{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;flex:1;align-items:stretch}
+.dates>div{padding:26px 24px;display:flex;flex-direction:column}
+.dates b{font:900 44px/1 var(--font-num);color:var(--ink);letter-spacing:-.03em}
+.dates h3{font:800 26px/1.4 var(--font);margin:18px 0 8px}
+.dates p{font-size:19px;line-height:1.7;color:var(--muted);margin:0}
+.dates .dot{width:54px;height:54px;border-radius:50%;background:var(--holo);box-shadow:0 0 0 2px #2a2f4d,inset -6px -8px 12px rgb(0 0 0 / .15),inset 6px 6px 10px #fff;margin-bottom:22px}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .bub{animation:y2k-float 6s ease-in-out infinite alternate}
+  .slide.active .bub:nth-child(2n){animation-duration:8s;animation-delay:-2s}
+  .slide.active .spark{animation:y2k-tw 2.4s ease-in-out infinite}
+  @keyframes y2k-float{to{transform:translateY(-18px)}}
+  @keyframes y2k-tw{50%{transform:scale(.55) rotate(20deg);opacity:.5}}
+}
+</style>
+
+<main class="deck" data-transition="zoom">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg">
+      <div class="foil" style="width:760px;height:620px;right:-160px;top:-90px"></div>
+      <div class="bub" style="width:190px;height:190px;left:560px;top:40px"></div>
+      <div class="bub" style="width:90px;height:90px;left:700px;top:520px"></div>
+      <div class="bub" style="width:130px;height:130px;right:40px;bottom:30px"></div>
+      <div class="spark" style="right:420px;top:120px"></div>
+      <div class="spark" style="right:90px;top:380px;width:30px;height:30px"></div>
+      <div class="tube" style="right:250px;top:170px;height:360px;transform:rotate(14deg)"><div class="cap"></div><div class="body"></div></div>
+      <div class="tube" style="right:120px;top:210px;height:300px;transform:rotate(-8deg);--liq:linear-gradient(160deg,#ff8fcf,#ffd1ec)"><div class="cap"></div><div class="body"></div></div>
+    </div>
+    <div class="kicker">SAMPLE COSMETICS ・ 2027 SS</div>
+    <h1 class="chrome" style="font-size:150px;margin:30px 0 26px">MIRAGE<br>GLOSS</h1>
+    <p class="lead" style="font-size:28px;font-weight:700;color:var(--ink);margin:0">見る角度で、色が変わるグロス。</p>
+    <p class="lead" style="font-size:20px;margin-top:8px">新作発表会 ／ お取引先さま向け</p>
+    <aside class="notes">照明を少し落として始める。実物の見本を手に持ち、角度を変えて見せながら商品名を言う。</aside>
+  </section>
+
+  <section class="slide" data-title="コンセプト">
+    <div class="bg"><div class="foil" style="width:520px;height:460px;left:-160px;bottom:-200px;opacity:.75"></div><div class="bub" style="width:120px;height:120px;right:120px;top:60px"></div></div>
+    <div class="kicker">CONCEPT</div>
+    <h2>3層のパールで、<br>ひと塗りに「光の揺らぎ」を。</h2>
+    <div class="grid cols-3" style="gap:26px;flex:1">
+      <div class="glass step" style="padding:28px 30px"><div class="chrome" style="font-size:96px">01</div><h3 style="font:800 30px/1.4 var(--font);margin:16px 0 8px">偏光パール</h3><p style="font-size:21px;line-height:1.7;color:var(--muted);margin:0">光の入る角度で、ピンク ⇄ 青に色が転ぶ。</p></div>
+      <div class="glass step" style="padding:28px 30px"><div class="chrome" style="font-size:96px">02</div><h3 style="font:800 30px/1.4 var(--font);margin:16px 0 8px">水膜ベース</h3><p style="font-size:21px;line-height:1.7;color:var(--muted);margin:0">塗った直後の「濡れたつや」が、長く続く。</p></div>
+      <div class="glass step" style="padding:28px 30px"><div class="chrome" style="font-size:96px">03</div><h3 style="font:800 30px/1.4 var(--font);margin:16px 0 8px">べたつかない</h3><p style="font-size:21px;line-height:1.7;color:var(--muted);margin:0">髪が付きにくい軽い質感。マスクにも移りにくい。</p></div>
+    </div>
+    <aside class="notes">→ で1つずつ出す。02 の「水膜」は、手の甲に塗った見本で見せると伝わる。</aside>
+  </section>
+
+  <section class="slide" data-title="色展開">
+    <div class="bg"><div class="bub" style="width:160px;height:160px;right:60px;top:40px"></div><div class="spark" style="right:250px;top:70px"></div></div>
+    <div class="kicker">4 SHADES</div>
+    <h2 style="margin-bottom:18px">4色とも、色が「転ぶ」方向がちがう。</h2>
+    <div data-tabs class="fill" style="display:flex;flex-direction:column">
+      <div class="tabs"><button data-tab="a">01 PRISM PINK</button><button data-tab="b">02 AQUA HALO</button><button data-tab="c">03 LILAC BYTE</button><button data-tab="d">04 CLEAR CHROME</button></div>
+      <div data-panel="a" class="shade">
+        <div class="drop" style="--c:linear-gradient(155deg,#ffb3dc 5%,#ff5fb4 45%,#b88cff 95%)"></div>
+        <div><div class="no">SHADE 01</div><h3>PRISM PINK</h3><p>ピンクから、光を受けると青紫へ。<br>いちばん色の変化が大きい、看板の1色。</p><div class="tags"><span class="pill">ピンク → 青紫</span><span class="pill">初回 40%</span></div></div>
+      </div>
+      <div data-panel="b" class="shade">
+        <div class="drop" style="--c:linear-gradient(155deg,#b8f4ff 5%,#4fd6e8 45%,#8cb4ff 95%)"></div>
+        <div><div class="no">SHADE 02</div><h3>AQUA HALO</h3><p>透明な水色に、緑のきらめき。<br>手持ちの口紅に重ねて使う人向け。</p><div class="tags"><span class="pill">水色 → 緑</span><span class="pill">初回 20%</span></div></div>
+      </div>
+      <div data-panel="c" class="shade">
+        <div class="drop" style="--c:linear-gradient(155deg,#dccfff 5%,#9a7bff 45%,#ff9ad9 95%)"></div>
+        <div><div class="no">SHADE 03</div><h3>LILAC BYTE</h3><p>淡い紫が、角度でピンクに転ぶ。<br>肌の色を選ばず、試しやすい。</p><div class="tags"><span class="pill">紫 → ピンク</span><span class="pill">初回 25%</span></div></div>
+      </div>
+      <div data-panel="d" class="shade">
+        <div class="drop" style="--c:linear-gradient(155deg,#ffffff 5%,#dfe3f0 45%,#b8bfd8 95%)"></div>
+        <div><div class="no">SHADE 04</div><h3>CLEAR CHROME</h3><p>色はつかず、銀の光だけ。<br>男性客・トップコートの需要も見込む。</p><div class="tags"><span class="pill">透明 → 銀</span><span class="pill">初回 15%</span></div></div>
+      </div>
+    </div>
+    <aside class="notes">タブで4色を順に見せる。「初回 ◯%」は仕入れの色の配分の目安。PRISM PINK を厚めに、と伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="モニター結果">
+    <div class="bg"><div class="foil" style="width:600px;height:520px;right:-200px;top:-160px;opacity:.7"></div><div class="bub" style="width:100px;height:100px;right:60px;top:170px"></div></div>
+    <div class="kicker">MONITOR TEST</div>
+    <h2>300人のうち、<br>9割が「色が変わって見えた」。</h2>
+    <div class="grid cols-3" style="gap:26px;flex:1;align-items:stretch;margin-bottom:6px">
+      <div class="glass kpi" style="padding:30px;display:flex;flex-direction:column;justify-content:space-between"><div class="label">色が変わって見えた</div><div class="value"><span data-count="94"></span><small>%</small></div><div class="meter" style="margin-top:22px"><i style="width:94%"></i></div></div>
+      <div class="glass kpi" style="padding:30px;display:flex;flex-direction:column;justify-content:space-between"><div class="label">つやが4時間続いた</div><div class="value"><span data-count="87"></span><small>%</small></div><div class="meter" style="margin-top:22px"><i style="width:87%"></i></div></div>
+      <div class="glass kpi" style="padding:30px;display:flex;flex-direction:column;justify-content:space-between"><div class="label">また買いたい</div><div class="value"><span data-count="81"></span><small>%</small></div><div class="meter" style="margin-top:22px"><i style="width:81%"></i></div></div>
+    </div>
+    <details class="why float" style="margin-bottom:26px"><summary>根拠：モニター調査の方法</summary><div class="body">2026年10月、18〜34歳の女性 260人・男性 40人（計300人、サンプル）が2週間使用。4色からランダムに1色を配布し、使用後にアンケート。</div></details>
+    <p class="foot">数字・社名は架空のサンプルです。</p>
+    <aside class="notes">数字は開くとカウントアップ。「また買いたい 81%」を最後に強調して、次の仕入れの話につなぐ。</aside>
+  </section>
+
+  <section class="slide" data-title="初月の販売計画">
+    <div class="bg"><div class="bub" style="width:140px;height:140px;left:-40px;bottom:-30px"></div><div class="spark" style="right:90px;top:70px"></div></div>
+    <div class="kicker">FIRST MONTH</div>
+    <h2>800店で1日3本なら、初月 <span style="color:var(--accent)">7.2万本</span>。</h2>
+    <div class="grid fill" style="grid-template-columns:1fr 1fr;gap:52px" data-calc data-let="units = shops*perday*30; sales = units*price">
+      <div class="glass" style="padding:28px 32px">
+        <div class="field"><label>取り扱い店舗 <b data-show="shops" data-unit=" 店"></b></label><input type="range" name="shops" min="100" max="1500" step="50" value="800"></div>
+        <div class="field"><label>1店・1日の販売数 <b data-show="perday" data-unit=" 本"></b></label><input type="range" name="perday" min="1" max="10" value="3"></div>
+        <div class="field"><label>店頭価格（税込） <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="1650" max="3300" step="110" value="2420"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">初月の販売本数 ＝ 店舗数 × 1日の販売数 × 30日。<br>店頭売上 ＝ 販売本数 × 店頭価格。</div></details>
+      </div>
+      <div>
+        <div class="glass res"><div class="label">初月の販売本数</div><div class="v" data-out="units" data-unit=" 本"></div><div class="meter" style="margin-top:10px" data-bar="units" data-max="450000"><i></i></div></div>
+        <div class="glass res"><div class="label">初月の店頭売上</div><div class="v" data-out="sales" data-format="man"></div></div>
+        <div class="glass res"><div class="label">1色あたり（PRISM PINK は 40%）</div><div class="v" style="font-size:44px" data-out="units*0.4" data-unit=" 本"></div></div>
+      </div>
+    </div>
+    <aside class="notes">バイヤーごとに自社の店舗数に合わせて動かしてもらう。1日の販売数は、前作の実績（2.6本）を目安に。</aside>
+  </section>
+
+  <section class="slide" data-title="発売スケジュール">
+    <div class="bg"><div class="foil" style="width:480px;height:420px;left:-150px;top:-200px;opacity:.6"></div></div>
+    <div class="kicker">SCHEDULE</div>
+    <h2>発注は12月20日まで。<br>2月1日に、全店いっせいに並べる。</h2>
+    <div class="dates">
+      <div class="glass step"><div class="dot"></div><b>12.20</b><h3>初回発注の締切</h3><p>色ごとの本数を担当へ。</p></div>
+      <div class="glass step"><div class="dot"></div><b>01.15</b><h3>店頭什器の到着</h3><p>銀の回転ミラー什器を1店1台。</p></div>
+      <div class="glass step"><div class="dot"></div><b>01.24</b><h3>予約開始</h3><p>公式サイトとSNSで告知。</p></div>
+      <div class="glass step"><div class="dot"></div><b>02.01</b><h3>全国で発売</h3><p>初週は試し塗りの販売員を派遣。</p></div>
+    </div>
+  </section>
+
+  <section class="slide cover" data-title="お願い">
+    <div class="bg">
+      <div class="foil" style="width:820px;height:640px;left:220px;top:40px;opacity:.85"></div>
+      <div class="bub" style="width:200px;height:200px;right:70px;top:50px"></div>
+      <div class="bub" style="width:110px;height:110px;left:90px;bottom:60px"></div>
+      <div class="spark" style="left:640px;top:90px"></div>
+    </div>
+    <div class="kicker">ORDER</div>
+    <h2 class="chrome" style="font-size:108px;line-height:1.02;margin:28px 0 22px">SEE YOU<br>ON 02.01</h2>
+    <p style="font:800 30px/1.5 var(--font);color:var(--ink);margin:0">初回の発注は、12月20日までに担当へ。</p>
+    <p class="lead" style="font-size:21px;margin-top:6px">サンプル・コスメティクス 営業部　sales@example.com</p>
+    <aside class="notes">最後に見本セットを配る。発注書は色ごとの配分（40・20・25・15%）を記入済みで渡す。</aside>
+  </section>
+
+</main>

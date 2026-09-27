@@ -1,0 +1,259 @@
+<!--meta
+{"title":"一杯のために、十年。｜サンプル珈琲焙煎所","style":"雑誌エディトリアル","use":"ブランドストーリー・会社紹介","group":"ミニマル・タイポ",
+ "aim":"焙煎所の代表が、卸先候補のカフェやホテルへの会社説明の場で、ブランドの考え方と定期便の強さを伝えるため。",
+ "desc":"生成りの紙に明朝の大見出し、段組と引用で読ませる会社紹介。章をタブでめくり、継続率と単価を動かすと顧客1人の生涯売上が変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Shippori+Mincho+B1:wght@500;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f3eee4; --surface:#fbf8f1; --ink:#1d1a16; --muted:#564f45; --line:#cbbfab; --accent:#8a1f2c; --accent-ink:#fff;
+  --frame:#d9d0c1; --radius:0px; --shadow:none; --good:#2f6b3e; --bad:#8a1f2c;
+  --font:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-num:"Cormorant Garamond","Shippori Mincho B1","Hiragino Mincho ProN",serif; --head-weight:800; --head-track:.01em;
+  --pad-y:70px; --pad-x:84px;
+}
+/* 紙の質感と、柱（ランニングヘッド） */
+.slide>.bg{background:
+  radial-gradient(circle at 20% 10%,rgb(255 255 255 / .55),transparent 55%),
+  radial-gradient(circle at 90% 100%,rgb(138 31 44 / .05),transparent 45%),
+  repeating-linear-gradient(0deg,rgb(0 0 0 / .012) 0 1px,transparent 1px 3px)}
+.slide::before{content:"SAMPLE JOURNAL  —  No.12  Autumn 2026";position:absolute;left:84px;right:84px;top:30px;padding-bottom:8px;
+  border-bottom:1px solid var(--ink);font:italic 500 17px var(--font-num);letter-spacing:.08em;color:var(--ink)}
+.slide::after{content:"p. " attr(data-no);position:absolute;right:84px;top:30px;font:500 17px var(--font-num);letter-spacing:.2em;color:var(--muted)}
+.slide.cover::before,.slide.cover::after{display:none}
+
+.kicker{font:italic 600 22px var(--font-num);letter-spacing:.06em;text-transform:none;color:var(--accent);margin-bottom:6px}
+h2{font-size:50px;line-height:1.3;letter-spacing:.02em;margin-bottom:24px}
+h2 .rule{display:block;width:72px;height:3px;background:var(--accent);margin-top:18px}
+p,.body-text{font-size:19px;line-height:2}
+.lead{color:var(--ink);font-size:24px;line-height:1.9}
+
+/* 表紙 */
+.cv-top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;
+  font:italic 500 19px var(--font-num);letter-spacing:.1em}
+.masthead{font:italic 600 168px/0.9 var(--font-num);letter-spacing:-.02em;margin:18px 0 0;color:var(--ink)}
+.masthead em{color:var(--accent)}
+.coverlines{display:flex;flex-direction:column;gap:20px;width:440px;margin-top:auto}
+.coverlines .cl{border-top:1px solid var(--ink);padding-top:12px}
+.coverlines .cl small{display:block;font:italic 600 18px var(--font-num);color:var(--accent);letter-spacing:.1em}
+.coverlines .cl b{font-size:25px;line-height:1.5}
+.cup{position:absolute;right:190px;top:176px;width:470px;height:470px;border-radius:50%;
+  background:radial-gradient(circle,#efe7d8 0 52%,#e2d6c1 53% 56%,#f7f1e6 57% 70%,#d8ccb6 71% 72%,#efe7da 73%);
+  box-shadow:0 30px 50px -20px rgb(60 40 20 / .35)}
+.cup::after{content:"";position:absolute;inset:100px;border-radius:50%;
+  background:radial-gradient(circle at 40% 36%,rgb(190 120 70 / .45),transparent 34%),
+    radial-gradient(closest-side,#3a1a0c 0 58%,#2a1208 70%,#e7d8bf 71% 73%,#fbf7ef 74% 97%,#dccdb4 98%);
+  box-shadow:0 14px 24px -8px rgb(60 40 20 / .35)}
+.cup::before{content:"";position:absolute;right:28px;top:calc(50% - 20px);width:120px;height:40px;border-radius:20px;
+  background:#f8f3ea;box-shadow:0 8px 14px -6px rgb(60 40 20 / .35),inset 0 0 0 1px #dccdb4}
+.vtitle{position:absolute;right:80px;top:138px;writing-mode:vertical-rl;font:800 56px/1.35 var(--font);letter-spacing:.1em;color:var(--ink);margin:0}
+.vtitle em{font-style:normal;color:var(--accent)}
+.masthead{position:relative;z-index:1}
+
+/* 段組 */
+.letter{display:grid;grid-template-columns:390px 1fr;gap:52px;flex:1;min-height:0}
+.columns{column-count:2;column-gap:44px;column-rule:1px solid var(--line);text-align:justify}
+.columns p{font-size:21px;line-height:2.05;margin:0 0 .7em}
+.dropcap::first-letter{float:left;font:800 92px/0.9 var(--font);color:var(--accent);margin:8px 12px 0 0}
+.pull{border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);padding:10px 0 22px;margin:0;align-self:start}
+.pull q{display:block;font:800 40px/1.6 var(--font);quotes:none}
+.pull::before{content:"“";display:block;font:600 120px/0.6 var(--font-num);color:var(--accent);margin:34px 0 14px}
+.pull cite{display:block;margin-top:18px;font:italic 500 20px var(--font-num);color:var(--muted)}
+
+/* 章（タブ） */
+.tabs{background:none;border-radius:0;padding:0;gap:0;border-bottom:1px solid var(--ink);width:100%;margin-bottom:26px}
+.tabs>[data-tab]{border-radius:0;padding:10px 26px 12px 0;margin-right:22px;font:700 21px var(--font);color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs>[data-tab] i{font:italic 600 21px var(--font-num);color:var(--accent);margin-right:10px}
+.tabs>[data-tab][aria-selected=true]{background:none;box-shadow:none;color:var(--ink);border-bottom-color:var(--accent)}
+.chap{display:grid;grid-template-columns:360px 1.15fr 1fr;gap:48px;align-items:start}
+.chap .yr{font:italic 600 176px/0.8 var(--font-num);color:var(--accent);letter-spacing:-.02em}
+.chap p{font-size:20px}
+.tl{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);margin-top:6px;font:italic 500 20px var(--font-num);color:var(--muted)}
+.tl span{padding-top:10px;position:relative}
+.tl span::before{content:"";position:absolute;left:0;top:-5px;width:9px;height:9px;border-radius:50%;background:var(--line)}
+.tl span.on{color:var(--accent);font-weight:600}.tl span.on::before{background:var(--accent);width:13px;height:13px;top:-7px}
+.chap .yr small{display:block;font:700 22px/1.6 var(--font);color:var(--ink);letter-spacing:.1em;margin-top:22px}
+.chap h3{font-size:32px;line-height:1.5;margin-bottom:14px;white-space:nowrap}
+.chap .fact{border-left:3px solid var(--accent);padding:6px 0 6px 18px;margin-top:14px;font-size:19px;line-height:1.8}
+.chap .fact b{font:600 44px/1 var(--font-num);color:var(--accent);display:block;margin-bottom:4px}
+
+/* 数字の見開き */
+.toc{display:grid;grid-template-columns:repeat(4,1fr);border-top:3px solid var(--ink);flex:1;min-height:0}
+.toc>div{padding:22px 24px 0;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.toc>div:last-child{border-right:0}
+.toc .n{font:italic 600 104px/0.9 var(--font-num);color:var(--ink);letter-spacing:-.03em;white-space:nowrap}
+.toc .n small{font:700 24px var(--font);margin-left:6px;letter-spacing:0}
+.toc .t{font-size:24px;font-weight:800;margin:auto 0 8px;border-top:1px solid var(--ink);padding-top:12px}
+.toc p{font-size:19px;line-height:1.9;color:var(--muted);min-height:5.7em;margin-bottom:34px}
+.toc .step{padding-top:26px}
+.toc>div:nth-child(2) .n{color:var(--accent)}
+
+/* 計算 */
+.ltv{display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;min-height:0}
+.field>label{font-size:19px;color:var(--ink)}
+.field>label b{font:600 34px var(--font-num);color:var(--accent)}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);margin-top:-11px;border:4px solid var(--bg);box-shadow:0 0 0 1px var(--accent)}
+input[type=range]::-moz-range-track{height:1px;background:var(--ink)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:4px solid var(--bg)}
+.answer{border-left:1px solid var(--ink);padding-left:52px;display:flex;flex-direction:column;justify-content:center}
+.answer .cap{font:italic 600 22px var(--font-num);color:var(--accent);letter-spacing:.06em}
+.answer .huge{font:600 118px/1 var(--font-num);letter-spacing:-.02em;color:var(--ink);margin:6px 0 10px;white-space:nowrap}
+.answer .sub{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink);margin-top:14px}
+.answer .sub>div{padding:14px 0 0}
+.answer .sub>div+div{border-left:1px solid var(--line);padding-left:22px}
+.answer .sub span{font-size:18px;color:var(--muted)}
+.answer .sub b{display:block;font:600 46px/1.1 var(--font-num)}
+details.why{border:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);background:none;border-radius:0;margin-top:22px}
+details.why>summary{color:var(--accent);font-size:19px;padding:12px 0}
+details.why>summary::before{border-radius:0;background:none;border:1px solid var(--accent);width:20px;height:20px}
+details.why>.body{padding:0 0 14px;font-size:18px;color:var(--ink)}
+
+/* 引用 */
+.quote-wrap{display:grid;grid-template-columns:1fr 270px;gap:60px;flex:1;min-height:0;align-items:center}
+.bigquote{font:800 64px/1.5 var(--font);letter-spacing:.02em;position:relative;margin:0;padding-left:8px}
+.bigquote::before{content:"“";position:absolute;left:-74px;top:-78px;font:600 230px/1 var(--font-num);color:var(--accent);opacity:.9}
+.bigquote em{font-style:normal;background:linear-gradient(transparent 70%,rgb(138 31 44 / .18) 70%)}
+.byline{border-top:3px solid var(--ink);padding-top:16px}
+.byline b{display:block;font-size:24px}
+.byline span{font:italic 500 20px var(--font-num);color:var(--muted)}
+.byline p{font-size:18px;line-height:1.9;margin-top:14px;color:var(--muted)}
+
+/* 締め */
+.end{display:grid;grid-template-columns:1.5fr 1fr;gap:60px;flex:1;min-height:0;align-items:center}
+.end .mega{font:800 88px/1.3 var(--font);white-space:nowrap;margin:0;letter-spacing:.02em}
+.end .mega em{font-style:normal;color:var(--accent)}
+.end ol.list{font-size:24px;gap:0}
+.end ol.list>li{border-top:1px solid var(--ink);padding:18px 0 18px 64px}
+.end ol.list>li::before{background:none;color:var(--accent);font:italic 600 34px var(--font-num);top:12px;width:auto;height:auto;content:counter(n,upper-roman)}
+.end ol.list>li small{display:block;font-size:18px;color:var(--muted)}
+.colophon{font:italic 500 18px var(--font-num);color:var(--muted);border-top:1px solid var(--ink);padding-top:10px;margin-top:6px}
+.foot{font-size:15px}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-no="01" data-title="表紙">
+    <div class="cv-top"><span>No.12 — Autumn 2026</span><span>Brand Story / サンプル珈琲焙煎所</span></div>
+    <div class="bg"><div class="cup"></div></div>
+    <p class="masthead">The <em>Roastery</em></p>
+      <div class="coverlines">
+        <div class="cl"><small>Feature</small><b>焙煎所が、豆より先に<br>人を選ぶ理由。</b></div>
+        <div class="cl"><small>Numbers</small><b>十年で、定期便 4,200 軒。</b></div>
+        <div class="cl"><small>Interview</small><b>焙煎長が語る「焦がさない勇気」</b></div>
+      </div>
+    <p class="vtitle">一杯のために、<br><em>十年</em>。</p>
+    <aside class="notes">雑誌の表紙のつもりで、最初の10秒は何も言わずに見せる。「十年」という言葉だけ残れば成功。</aside>
+  </section>
+
+  <section class="slide" data-no="02" data-title="私たちについて">
+    <div class="bg"></div>
+    <div class="kicker">Editor's letter</div>
+    <h2>私たちは、豆より先に人を選ぶ。</h2>
+    <div class="letter">
+      <blockquote class="pull"><q>いい豆は、<br>いい関係からしか<br>生まれない。</q><cite>— 代表　サンプル 一郎</cite></blockquote>
+      <div class="columns">
+        <p class="dropcap">港町の古い倉庫で、小さな焙煎機が一台だけ動きはじめたのは、二〇一六年の春でした。最初の一年、お客様は一日に七人。それでも私たちは、店を広げるより先に、豆をつくる人に会いに行くことを選びました。</p>
+        <p>いまでは七か国・三十八の農園と、顔の見える取引を続けています。値段で相手を替えないこと。収穫が悪い年こそ、買う量を減らさないこと。</p>
+        <p>その約束が、十年たって、四千二百軒の食卓に毎月届く一杯になりました。このページは、その十年の記録と、これからの十年の話です。</p>
+      </div>
+    </div>
+    <p class="foot">登場する会社名・人名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">段組はゆっくり読ませるページ。声に出して読むのは太字の引用だけでいい。</aside>
+  </section>
+
+  <section class="slide" data-no="03" data-title="十年の三章">
+    <div class="bg"></div>
+    <div class="kicker">Chapters</div>
+    <h2>十年は、三つの章でできている。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="a"><i>I</i>倉庫の一台</button><button data-tab="b"><i>II</i>焦がさない焙煎</button><button data-tab="c"><i>III</i>三十八の農園</button></div>
+      <div data-panel="a" class="chap">
+        <div class="yr">2016<small>第一章　はじまり</small></div>
+        <div><h3>一日七人から、はじめた。</h3><p>港の倉庫を借り、中古の焙煎機を一台。焼いた豆はその日のうちに、歩いて届けられる距離だけに売った。</p></div>
+        <div><p>「鮮度がいちばんの味」。この考えは、いまの定期便の仕組みにそのまま残っている。</p><div class="fact"><b>48時間</b>焙煎から発送までの上限</div></div>
+        <div class="tl"><span class="on">2016 倉庫の一台</span><span>2019 焙煎の記録</span><span>2023 直接取引</span><span>2026 いま</span></div>
+      </div>
+      <div data-panel="b" class="chap">
+        <div class="yr">2019<small>第二章　焙煎</small></div>
+        <div><h3>深く焼かず、甘さを残す。</h3><p>火を強めれば、豆の違いは消えてしまう。私たちは中煎りを基本に、豆ごとに温度の上げ方を記録してきた。</p></div>
+        <div><p>焙煎の記録は、いまでは一万二千回分。新しい焙煎士は、まずこの記録を読むところから始める。</p><div class="fact"><b>12,000回</b>残してきた焙煎の記録</div></div>
+        <div class="tl"><span>2016 倉庫の一台</span><span class="on">2019 焙煎の記録</span><span>2023 直接取引</span><span>2026 いま</span></div>
+      </div>
+      <div data-panel="c" class="chap">
+        <div class="yr">2023<small>第三章　産地</small></div>
+        <div><h3>値段で、相手を替えない。</h3><p>七か国・三十八の農園と、五年以上の約束で取引している。不作の年も、買う量は減らさない。</p></div>
+        <div><p>その代わり、農園には翌年の苗と、乾燥場の屋根を一緒に考える時間を出してもらう。</p><div class="fact"><b>38農園</b>直接取引を続ける生産者</div></div>
+        <div class="tl"><span>2016 倉庫の一台</span><span>2019 焙煎の記録</span><span class="on">2023 直接取引</span><span>2026 いま</span></div>
+      </div>
+    </div>
+    <aside class="notes">タブを順にクリックして、章をめくるように話す。年号が大きく変わるのが見せどころ。</aside>
+  </section>
+
+  <section class="slide" data-no="04" data-title="数字で見る十年">
+    <div class="bg"></div>
+    <div class="kicker">By the numbers</div>
+    <h2>数字で見る、この十年。</h2>
+    <div class="toc">
+      <div class="step"><div class="n">10<small>年</small></div><div class="t">港町の倉庫から</div><p>焙煎機は一台から四台へ。場所は、いまも同じ倉庫。</p></div>
+      <div class="step"><div class="n">4,200<small>軒</small></div><div class="t">定期便のお客様</div><p>月に一度、焼いて二日以内の豆が届く。</p></div>
+      <div class="step"><div class="n">38</div><div class="t">直接取引の農園</div><p>七か国。平均の付き合いは六年。</p></div>
+      <div class="step"><div class="n">91<small>%</small></div><div class="t">月の継続率</div><p>やめる理由の一位は「飲みきれない」。量を選べる便を用意した。</p></div>
+    </div>
+    <p class="foot">数字は架空のサンプルです。</p>
+    <aside class="notes">→キーで一つずつ。二つ目の「4,200軒」で止めて、次のページの計算につなぐ。</aside>
+  </section>
+
+  <section class="slide" data-no="05" data-title="定期便の価値">
+    <div class="bg"></div>
+    <div class="kicker">The economics of a cup</div>
+    <h2>続くほど、一軒の価値は大きくなる。</h2>
+    <div class="ltv" data-calc data-let="r = keep/100; months = 1/(1-r); life = price*months; gross = life*margin/100">
+      <div>
+        <p class="lead" style="font-size:21px;margin-bottom:22px">継続率がわずかに上がるだけで、定期便を続ける月数は大きく伸びる。</p>
+        <div class="field"><label>月の継続率 <b data-show="keep" data-unit="%"></b></label><input type="range" name="keep" min="70" max="97" value="91"></div>
+        <div class="field"><label>1回の定期便の単価 <b data-show="price" data-format="yen"></b></label><input type="range" name="price" min="1500" max="6000" step="100" value="3200"></div>
+        <div class="field"><label>粗利率 <b data-show="margin" data-unit="%"></b></label><input type="range" name="margin" min="20" max="70" value="48"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">平均の継続月数 ＝ 1 ÷（1 − 継続率）。<br>生涯売上 ＝ 単価 × 平均の継続月数。生涯の粗利 ＝ 生涯売上 × 粗利率。</div></details>
+      </div>
+      <div class="answer">
+        <div class="cap">Lifetime value — 顧客1人の生涯売上</div>
+        <div class="huge" data-out="life" data-format="yen"></div>
+        <div class="sub">
+          <div><span>平均の継続月数</span><b data-out="months" data-format="dec1" data-unit="か月"></b></div>
+          <div><span>生涯の粗利</span><b data-out="gross" data-format="yen"></b></div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">継続率を 91% から 94% に上げると、生涯売上がおよそ1.5倍になる。「量を選べる便」に投資した理由はここ。</aside>
+  </section>
+
+  <section class="slide" data-no="06" data-title="焙煎長の言葉">
+    <div class="bg"></div>
+    <div class="kicker">Interview</div>
+    <div class="quote-wrap">
+      <p class="bigquote">強い火は、<br>失敗を隠してくれる。<br>だから私たちは、<br><em>焦がさない勇気</em>を選ぶ。</p>
+      <div class="byline"><b>焙煎長　サンプル 花子</b><span>Head Roaster, since 2017</span>
+        <p>入社八年目。一万二千回分の焙煎記録をつけはじめた人。好きな豆は、酸味の明るいもの。</p></div>
+    </div>
+    <aside class="notes">引用は最後まで読み切ってから、一拍おく。人の言葉で会社を語るページ。</aside>
+  </section>
+
+  <section class="slide" data-no="07" data-title="次の十年を一緒に">
+    <div class="bg"></div>
+    <div class="kicker">Next chapter</div>
+    <div class="end">
+      <p class="mega">次の十年を、<br><em>一緒に</em><br>淹れませんか。</p>
+      <div>
+        <ol class="list">
+          <li class="step">卸・お取り扱いのご相談<small>カフェ・ホテル・オフィス向け</small></li>
+          <li class="step">取材・撮影のお申し込み<small>倉庫の見学も受け付けています</small></li>
+          <li class="step">焙煎士の募集<small>未経験から、記録を読むところから</small></li>
+        </ol>
+        <div class="colophon">hello@sample-roastery.example　／　サンプル珈琲焙煎所</div>
+      </div>
+    </div>
+  </section>
+
+</main>

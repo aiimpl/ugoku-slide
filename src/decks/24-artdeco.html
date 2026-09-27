@@ -1,0 +1,217 @@
+<!--meta
+{"title":"ウエディングプラン 2027 ／ ホテル・サンプル グランド","style":"アールデコ","use":"ホテルのウエディングプラン","group":"ビジネス定番",
+ "aim":"ホテルのウエディング担当が、ブライダルフェアの個別相談で、ふたりにプランを選んでもらい、その場で概算の見積もりを出すため。",
+ "desc":"黒と金、扇形の放射線と細い二重線、左右対称の構図。人数と料理・ドリンクの単価を動かすと、見積もり総額とご祝儀を引いた自己負担の目安が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Poiret+One&family=Shippori+Mincho:wght@500;600;700;800&display=swap"}
+-->
+<style>
+:root{
+  --gold:#cfae62; --gold-2:#e8d39a;
+  --bg:#0e0d0b; --surface:#16140f; --ink:#f0e7d3; --muted:#c9bea5; --line:rgb(207 174 98 / .45); --accent:#cfae62; --accent-ink:#0e0d0b;
+  --frame:#050504; --radius:0px; --shadow:none; --good:#cfae62; --bad:#e08a6e;
+  --font:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-deco:"Poiret One","Shippori Mincho","Hiragino Mincho ProN",serif;
+  --font-num:"Poiret One","Shippori Mincho",serif; --head-weight:700; --head-track:.06em;
+}
+.slide{isolation:isolate;padding:80px 110px;text-align:center;align-items:center}
+/* 二重の額縁と四隅の扇 */
+.slide>.bg{background:radial-gradient(ellipse at 50% 110%,#231d11 0,transparent 60%),var(--bg)}
+.slide>.bg::before{content:"";position:absolute;inset:26px;border:1px solid var(--gold);outline:1px solid var(--line);outline-offset:-9px}
+.slide>.bg::after{content:"";position:absolute;inset:0;background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' fill='none' stroke='%23cfae62' stroke-width='1.2'%3E%3Cpath d='M0 0h90M0 0v90M0 0L64 64'/%3E%3Cpath d='M0 60A60 60 0 0 0 60 0M0 42A42 42 0 0 0 42 0M0 24A24 24 0 0 0 24 0'/%3E%3Cpath d='M0 60L10 24M60 0L24 10M0 42L21 21'/%3E%3C/svg%3E") 26px 26px/90px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' fill='none' stroke='%23cfae62' stroke-width='1.2'%3E%3Cg transform='translate(90 0) scale(-1 1)'%3E%3Cpath d='M0 0h90M0 0v90M0 0L64 64'/%3E%3Cpath d='M0 60A60 60 0 0 0 60 0M0 42A42 42 0 0 0 42 0M0 24A24 24 0 0 0 24 0'/%3E%3Cpath d='M0 60L10 24M60 0L24 10M0 42L21 21'/%3E%3C/g%3E%3C/svg%3E") calc(100% - 26px) 26px/90px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' fill='none' stroke='%23cfae62' stroke-width='1.2'%3E%3Cg transform='translate(0 90) scale(1 -1)'%3E%3Cpath d='M0 0h90M0 0v90M0 0L64 64'/%3E%3Cpath d='M0 60A60 60 0 0 0 60 0M0 42A42 42 0 0 0 42 0M0 24A24 24 0 0 0 24 0'/%3E%3Cpath d='M0 60L10 24M60 0L24 10M0 42L21 21'/%3E%3C/g%3E%3C/svg%3E") 26px calc(100% - 26px)/90px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' fill='none' stroke='%23cfae62' stroke-width='1.2'%3E%3Cg transform='translate(90 90) scale(-1 -1)'%3E%3Cpath d='M0 0h90M0 0v90M0 0L64 64'/%3E%3Cpath d='M0 60A60 60 0 0 0 60 0M0 42A42 42 0 0 0 42 0M0 24A24 24 0 0 0 24 0'/%3E%3Cpath d='M0 60L10 24M60 0L24 10M0 42L21 21'/%3E%3C/g%3E%3C/svg%3E") calc(100% - 26px) calc(100% - 26px)/90px no-repeat}
+/* 放射線の扇 */
+.fan{position:absolute;left:50%;bottom:26px;width:1100px;height:550px;transform:translateX(-50%);border-radius:550px 550px 0 0;
+  background:repeating-conic-gradient(from -90deg at 50% 100%,rgb(207 174 98 / .34) 0 .3deg,transparent .3deg 5deg);
+  -webkit-mask:radial-gradient(circle at 50% 100%,transparent 0 120px,#000 121px 62%,transparent 80%);mask:radial-gradient(circle at 50% 100%,transparent 0 120px,#000 121px 62%,transparent 80%)}
+.fan.top{bottom:auto;top:26px;transform:translateX(-50%) scaleY(-1);height:360px;width:900px;opacity:.55}
+.arch{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);width:240px;height:120px;border:1px solid var(--gold);border-bottom:0;border-radius:120px 120px 0 0}
+.arch::after{content:"";position:absolute;inset:10px 10px 0;border:1px solid var(--line);border-bottom:0;border-radius:110px 110px 0 0}
+.kicker{font:400 20px var(--font-deco);letter-spacing:.5em;color:var(--gold);margin:0 0 18px;text-transform:uppercase;padding-left:.5em}
+h1,h2{color:var(--gold-2)}
+h2{font-size:46px;line-height:1.45;letter-spacing:.08em;margin-bottom:18px}
+.lead{color:var(--muted);font-size:22px;line-height:1.9;letter-spacing:.06em;text-shadow:0 0 6px var(--bg),0 0 14px var(--bg),0 0 24px var(--bg)}
+h1,h2,.day h3,.day p,.day b{text-shadow:0 0 8px var(--bg),0 0 18px var(--bg)}
+.foot{color:var(--muted);font-size:16px;text-align:center;letter-spacing:.1em}
+/* 飾り罫：線・菱形・線 */
+.orn{display:flex;align-items:center;gap:14px;justify-content:center;margin:6px auto 26px;width:420px}
+.orn::before,.orn::after{content:"";flex:1;height:5px;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold)}
+.orn i{width:12px;height:12px;border:1px solid var(--gold);transform:rotate(45deg);position:relative}
+.orn i::after{content:"";position:absolute;inset:3px;background:var(--gold)}
+.big3{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:0 36px;width:100%;align-items:stretch;margin-top:10px}
+.big3 .sep{background:linear-gradient(transparent,var(--gold),transparent)}
+.big3 .v{font:400 140px/1 var(--font-num);color:var(--gold-2);letter-spacing:.02em}
+.big3 .v small{font:600 30px var(--font);margin-left:4px}
+.big3 h3{font:700 28px/1.5 var(--font);color:var(--ink);letter-spacing:.12em;margin:18px 0 10px}
+.big3 p{font-size:20px;color:var(--muted);line-height:1.8;margin:0}
+/* タブ：金の細枠、中央揃え */
+[data-tabs]{width:100%}
+.tabs{margin:0 auto 26px;background:none;padding:0;gap:0;border:1px solid var(--gold);border-radius:0}
+.tabs>[data-tab]{border-radius:0;padding:12px 34px;font:600 20px var(--font);letter-spacing:.14em;color:var(--muted);border-right:1px solid var(--line)}
+.tabs>[data-tab]:last-child{border-right:0}
+.tabs>[data-tab][aria-selected=true]{background:var(--gold);color:#0e0d0b;box-shadow:none}
+.plan{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 48px;align-items:center;text-align:left}
+.plan .sep{align-self:stretch;background:linear-gradient(transparent,var(--gold),transparent)}
+.plan .name{font:400 26px var(--font-deco);letter-spacing:.4em;color:var(--gold)}
+.plan h3{font:700 46px/1.45 var(--font);color:var(--gold-2);letter-spacing:.1em;margin:8px 0 18px}
+.plan .price{font:400 112px/1 var(--font-num);color:var(--ink)}
+.plan .price small{font:600 22px var(--font);color:var(--muted);margin-left:8px;letter-spacing:.08em}
+ul.list{font-size:25px;gap:24px;letter-spacing:.04em}
+ul.list>li{padding-left:36px}
+ul.list>li::before{border-radius:0;width:9px;height:9px;transform:rotate(45deg);background:none;border:1px solid var(--gold);top:.65em;box-shadow:inset 0 0 0 2px var(--bg),inset 0 0 0 9px var(--gold)}
+/* 一日の流れ */
+.day{display:grid;grid-template-columns:repeat(5,1fr);width:100%;position:relative;margin-top:28px}
+.day::before{content:"";position:absolute;left:10%;right:10%;top:70px;height:5px;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold)}
+.day>div{display:flex;flex-direction:column;align-items:center;gap:0}
+.day b{font:400 54px/1 var(--font-num);color:var(--gold-2);height:50px}
+.day i{display:block;width:22px;height:22px;transform:rotate(45deg);background:var(--bg);border:1px solid var(--gold);margin:4px 0 22px;position:relative}
+.day i::after{content:"";position:absolute;inset:4px;background:var(--gold)}
+.day h3{font:700 30px var(--font);letter-spacing:.14em;color:var(--ink);margin:0 0 8px}
+.day p{font-size:20px;color:var(--muted);line-height:1.7;margin:0 8px}
+/* 見積もり */
+.est{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 52px;width:100%;text-align:left;flex:1}
+.est .sep{background:linear-gradient(transparent,var(--gold),transparent)}
+.field>label{color:var(--muted);font-size:19px;letter-spacing:.06em}
+.field>label b{font:400 30px var(--font-num);color:var(--gold-2)}
+input[type=range]{accent-color:var(--gold)}
+.row2{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding:12px 0;font-size:20px;color:var(--muted);letter-spacing:.06em}
+.row2 b{font:400 38px var(--font-num);color:var(--ink);letter-spacing:.02em}
+.total{margin-top:14px;padding:18px 0 6px;border-top:5px double var(--gold);text-align:center}
+.total .label{font-size:19px;letter-spacing:.3em;color:var(--gold)}
+.total .v{font:400 78px/1.1 var(--font-num);color:var(--gold-2)}
+details.why{border:1px solid var(--line);border-radius:0;background:transparent;text-align:left}
+details.why>summary{color:var(--gold);font-size:18px;letter-spacing:.08em}
+details.why>summary::before{border-radius:0;transform:rotate(45deg);background:none;border:1px solid var(--gold);width:14px;height:14px;font-size:0;margin:0 4px}
+details.why[open]>summary::before{transform:rotate(45deg);background:var(--gold)}
+details.why>.body{color:var(--muted);font-size:18px}
+.gifts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;width:100%;margin-top:10px}
+.gift{position:relative;background:var(--bg);padding:48px 26px 44px;border:1px solid var(--gold);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px)}
+.gift::before{content:"";position:absolute;inset:8px;border:1px solid var(--line);clip-path:inherit}
+.gift .n{font:400 80px/1 var(--font-num);color:var(--gold)}
+.gift h3{font:700 32px/1.5 var(--font);color:var(--ink);letter-spacing:.1em;margin:14px 0 10px}
+.gift p{font-size:21px;color:var(--muted);line-height:1.8;margin:0}
+@media (prefers-reduced-motion:no-preference){
+  .slide.active .fan{animation:deco-fan 1.6s var(--ease) both}
+  @keyframes deco-fan{from{opacity:0;clip-path:circle(0 at 50% 100%)}to{opacity:1;clip-path:circle(75% at 50% 100%)}}
+}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide cover" data-title="表紙">
+    <div class="bg"><div class="fan"></div><div class="arch"></div></div>
+    <div class="kicker">Hotel Sample Grand ・ Wedding 2027</div>
+    <div class="orn"><i></i></div>
+    <h1 style="font:700 76px/1.4 var(--font);letter-spacing:.14em;padding-left:.14em">ふたりの一日を、<br>光の広間で。</h1>
+    <div class="orn" style="margin-top:26px"><i></i></div>
+    <p class="lead" style="margin:0">創業九十余年のボールルームで挙げる、三つのウエディングプラン</p>
+    <aside class="notes">着席したら表紙のまま「今日は3つのプランから、おふたりに合うものを一緒に選びます」と伝える。</aside>
+  </section>
+
+  <section class="slide" data-title="会場">
+    <div class="bg"><div class="fan top"></div></div>
+    <div class="kicker">The Ballroom</div>
+    <h2>天井まで九メートル。<br>街でいちばん高い広間です。</h2>
+    <div class="orn"><i></i></div>
+    <div class="big3">
+      <div><div class="v"><span data-count="9"></span><small>m</small></div><h3>天井の高さ</h3><p>吹き抜けに、真鍮のシャンデリアが七灯。</p></div>
+      <div class="sep"></div>
+      <div><div class="v"><span data-count="180"></span><small>名</small></div><h3>着席の最大人数</h3><p>三十名なら、半分に仕切って使えます。</p></div>
+      <div class="sep"></div>
+      <div><div class="v"><span data-count="1931"></span></div><h3>開業の年</h3><p>当時の床と階段を、そのまま残しています。</p></div>
+    </div>
+    <p class="foot">ホテル名・数字は架空のサンプルです。</p>
+    <aside class="notes">数字は開くと動く。天井の話のあとに「階段で写真を撮るのが人気です」と添える。</aside>
+  </section>
+
+  <section class="slide" data-title="プラン">
+    <div class="bg"></div>
+    <div class="kicker">Three Plans</div>
+    <h2>人数と雰囲気で、三つから選べます。</h2>
+    <div data-tabs>
+      <div class="tabs"><button data-tab="a">クラシック</button><button data-tab="b">グラン</button><button data-tab="c">プライベート</button></div>
+      <div data-panel="a" class="plan">
+        <div><div class="name">CLASSIC</div><h3>広間を半分に、<br>六十名から</h3><div class="price">2.4<small>万円 ／ 1名</small></div></div>
+        <div class="sep"></div>
+        <ul class="list"><li>フランス料理のフルコース</li><li>生花の装花（テーブル・高砂）</li><li>ウエディングケーキ</li><li>チャペルでの挙式</li><li>控え室と着付け室</li></ul>
+      </div>
+      <div data-panel="b" class="plan">
+        <div><div class="name">GRAND</div><h3>広間をまるごと、<br>百名から</h3><div class="price">2.9<small>万円 ／ 1名</small></div></div>
+        <div class="sep"></div>
+        <ul class="list"><li>クラシックの内容すべて</li><li>大階段での入場と写真撮影</li><li>弦楽四重奏の生演奏</li><li>スイートルームに一泊</li><li>記念日ディナーの招待（一年後）</li></ul>
+      </div>
+      <div data-panel="c" class="plan">
+        <div><div class="name">PRIVATE</div><h3>家族だけで、<br>三十名まで</h3><div class="price">3.2<small>万円 ／ 1名</small></div></div>
+        <div class="sep"></div>
+        <ul class="list"><li>最上階の個室「黒の間」</li><li>シェフが目の前で仕上げる一皿</li><li>両家の顔合わせ食事会つき</li><li>ブーケとブートニア</li><li>アルバム 30ページ</li></ul>
+      </div>
+    </div>
+    <aside class="notes">最初に人数を聞いてからタブを押す。80名なら「クラシックかグラン」の2つに絞って話す。</aside>
+  </section>
+
+  <section class="slide" data-title="当日の流れ">
+    <div class="bg"><div class="fan" style="opacity:.5;height:420px;width:900px"></div></div>
+    <div class="kicker">The Day</div>
+    <h2>お支度から送賓まで、七時間。</h2>
+    <div class="orn"><i></i></div>
+    <div class="day">
+      <div class="step"><b>9:00</b><i></i><h3>お支度</h3><p>ヘアメイクと着付け</p></div>
+      <div class="step"><b>11:30</b><i></i><h3>挙式</h3><p>チャペルで二十分</p></div>
+      <div class="step"><b>12:30</b><i></i><h3>写真</h3><p>大階段と中庭</p></div>
+      <div class="step"><b>13:00</b><i></i><h3>披露宴</h3><p>二時間半のコース</p></div>
+      <div class="step"><b>16:00</b><i></i><h3>送賓</h3><p>回転扉の前で</p></div>
+    </div>
+    <div class="orn" style="margin-top:44px;width:560px"><i></i></div>
+    <p class="lead" style="font-size:24px;margin:0">挙式は 11:30 と 16:30 の二回。<br>夜の部は、シャンデリアに灯をともして。</p>
+    <aside class="notes">→ で時刻が1つずつ出る。挙式の開始時刻は 11:30 と 16:30 の2つから選べると補足する。</aside>
+  </section>
+
+  <section class="slide" data-title="お見積もり">
+    <div class="bg"></div>
+    <div class="kicker">Estimate</div>
+    <h2 style="font-size:40px">八十名なら、自己負担の目安は <span style="color:var(--gold)">約九十万円</span>。</h2>
+    <div class="est" data-calc data-let="food = guests*(dish+drink); total = food + 850000 + dress; gift = guests*30000; own = total-gift">
+      <div>
+        <div class="field"><label>ご招待の人数 <b data-show="guests" data-unit=" 名"></b></label><input type="range" name="guests" min="30" max="180" step="5" value="80"></div>
+        <div class="field"><label>お料理（1名） <b data-show="dish" data-format="yen"></b></label><input type="range" name="dish" min="12000" max="30000" step="1000" value="18000"></div>
+        <div class="field"><label>お飲み物（1名） <b data-show="drink" data-format="yen"></b></label><input type="range" name="drink" min="3000" max="9000" step="500" value="5000"></div>
+        <div class="field"><label>衣装・写真 <b data-show="dress" data-format="man"></b></label><input type="range" name="dress" min="200000" max="1200000" step="50000" value="600000"></div>
+      </div>
+      <div class="sep"></div>
+      <div>
+        <div class="row2"><span>お料理とお飲み物</span><b data-out="food" data-format="yen"></b></div>
+        <div class="row2"><span>会場・装花・演出</span><b>¥850,000</b></div>
+        <div class="row2"><span>ご祝儀の見込み</span><b><span style="font-family:var(--font)">− </span><span data-out="gift" data-format="yen"></span></b></div>
+        <div class="total"><div class="label">自己負担の目安</div><div class="v" data-out="own" data-format="yen" data-sign></div></div>
+        <details class="why float"><summary>見積もりの内訳について</summary><div class="body">総額 ＝ 人数 ×（料理＋飲み物）＋ 会場・装花・演出 85万円 ＋ 衣装・写真。<br>ご祝儀は1名3万円で計算した目安です。税・サービス料込み。</div></details>
+      </div>
+    </div>
+    <aside class="notes">ふたりに人数のスライダーを触ってもらう。料理の単価を上げても自己負担が思ったほど増えないことを見せる。</aside>
+  </section>
+
+  <section class="slide" data-title="フェア特典">
+    <div class="bg"><div class="fan top"></div></div>
+    <div class="kicker">Fair Privileges</div>
+    <h2>三月末までのご成約で、三つの特典。</h2>
+    <div class="gifts">
+      <div class="gift step"><div class="n">I</div><h3>ドレス一着</h3><p>提携サロンの<br>ウエディングドレスを贈呈</p></div>
+      <div class="gift step"><div class="n">II</div><h3>料理の格上げ</h3><p>1名 3,000円分、<br>コースを上のランクに</p></div>
+      <div class="gift step"><div class="n">III</div><h3>前夜の一泊</h3><p>ご両家の親御さまに<br>デラックスツインを二室</p></div>
+    </div>
+    <p class="lead" style="margin-top:30px">特典は、どのプランにも付きます。</p>
+  </section>
+
+  <section class="slide cover" data-title="ご見学のご予約">
+    <div class="bg"><div class="fan"></div><div class="arch"></div></div>
+    <div class="kicker">Next Step</div>
+    <div class="orn"><i></i></div>
+    <h2 style="font-size:60px;line-height:1.5;letter-spacing:.12em">まずは、広間を<br>歩いてみませんか。</h2>
+    <div class="orn"><i></i></div>
+    <p class="lead" style="margin:0">ご見学は毎日 10:00〜18:00 ／ ウエディングサロン 03-0000-0000</p>
+    <p class="foot">ホテル名・金額は架空のサンプルです。</p>
+    <aside class="notes">最後は日付の候補を2つ出して、見学の予約を取る。</aside>
+  </section>
+
+</main>
