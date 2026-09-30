@@ -253,6 +253,8 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
       <tr><td><kbd>F</kbd></td><td>全画面</td><td><kbd>O</kbd></td><td>一覧（押すとそのページへ）</td></tr>
       <tr><td><kbd>N</kbd></td><td>発表者メモを重ねて表示</td><td><kbd>P</kbd></td><td>発表者画面（メモ・次のページ・経過時間）</td></tr>
       <tr><td><kbd>B</kbd></td><td>画面を暗くする</td><td><kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>PDF に保存（1ページ1枚・補足は開いた状態）</td></tr>
+      <tr><td><kbd>D</kbd></td><td>自動デモ（ページを送りながら操作を見せる）</td><td><kbd>E</kbd></td><td>直したい所を囲むと、Claude への直しの指示ができる</td></tr>
+      <tr><td>数字</td><td>そのページへ（<kbd>1</kbd><kbd>2</kbd> で12枚目）</td><td><code>?static</code></td><td>ファイル名のあとに付けると、動きを止めて全部を出す</td></tr>
     </table>
   </section>
 
@@ -264,6 +266,7 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <details class="faq"><summary>相手のパソコンやスマホでも見られる？</summary><p>Chrome・Edge・Safari・Firefox の最近の版で動きます。画面の大きさに合わせて 16:9 のまま拡大縮小するので、レイアウトは崩れません。スマホは横向きで、左右にスワイプするとページが送れます。</p></details>
     <details class="faq"><summary>第1弾で作ったスライドにも、変形する動きを足せる？</summary><p>足せます。第2弾の雛形を1本 Claude に一緒に渡して「この雛形の data-morph の使い方をまねて、〇枚目から〇枚目の図形を変形でつなげて」と頼んでください。仕組みは全部の雛形で共通なので、今回のダウンロードからは第1弾の50本にも入っています。</p></details>
     <details class="faq"><summary>スキルと、ファイルを渡すのは何がちがう？</summary><p>できるスライドは同じです。スキルを入れると、毎回ファイルを添付しなくても、Claude が {{COUNT}} 種の説明を読んで場面に合う雛形を選び、作り終えたら崩れを確かめるところまでやります。</p></details>
+    <details class="faq"><summary>直したい所を、どう Claude に伝えればいい？</summary><p>スライドを開いて <kbd>E</kbd> を押し、直したい所をドラッグで囲んで「文字を大きく」のように書きます。「指示をコピー」を押すと、何枚目のどの範囲か（座標と、中に入っている文字）つきの指示ができるので、Claude に貼るだけです。</p></details>
     <details class="faq"><summary>HTML が分からなくても直せる？</summary><p>Claude に頼めば直せます。各ファイルの先頭に「使える部品と書き方」の説明が入っているので、Claude はそれを読んで同じ作りのまま中身を書き換えます。</p></details>
   </section>
 
