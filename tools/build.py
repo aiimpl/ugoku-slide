@@ -57,7 +57,18 @@ def parse(path):
     meta["file"] = f"slides/{path.stem}.html"
     meta["slides"] = len(re.findall(r'<section class="slide', body))
     meta["features"] = [k for k, pat in FEATURES.items() if re.search(pat, body)]
+    meta["carry"] = carry(body)
     return meta, STYLE_RE.findall(text), body, SCRIPT_RE.findall(text[main.end():])
+
+
+def carry(body):
+    """変形のつながり：(つながる境目の数, 境目の数)。変形の雛形でなければ None"""
+    if 'data-transition="morph"' not in body:
+        return None
+    pages = re.split(r'<section class="slide', body)[1:]
+    names = [set(re.findall(r'data-morph="([^"]+)"', p)) for p in pages]
+    joins = [bool(a & b) for a, b in zip(names, names[1:])]
+    return sum(joins), len(joins)
 
 
 def assemble(meta, styles, body, scripts, engine):
@@ -88,6 +99,8 @@ def assemble(meta, styles, body, scripts, engine):
 def card(meta):
     feats = sorted(meta["features"], key=lambda f: f not in NEW)  # 第2弾の部品を先に
     chips = "".join(f'<span class="{"new" if f in NEW else ""}">{LABELS[f]}</span>' for f in feats if f in LABELS)
+    if meta.get("carry"):
+        chips = f'<span class="new">つながり {meta["carry"][0]}/{meta["carry"][1]}</span>' + chips
     e = html.escape
     return (
         f'<article class="tpl" data-id="{e(meta["id"])}" data-group="{e(meta.get("group", ""))}">'
@@ -147,7 +160,7 @@ def build():
 def skill_zip(files, metas):
     """Claude のスキル一式（SKILL.md・雛形・部品の説明・確かめるスクリプト）を zip にする"""
     guide = (ROOT / "engine" / "guide.txt").read_text()
-    index = [{k: m.get(k) for k in ("id", "style", "use", "group", "aim", "desc", "slides", "features")} | {"file": m["id"] + ".html"}
+    index = [{k: m.get(k) for k in ("id", "style", "use", "group", "aim", "desc", "slides", "features", "carry")} | {"file": m["id"] + ".html"}
              for m in metas]
     entries = {
         "SKILL.md": (ROOT / "skill" / "SKILL.md").read_text(),
@@ -155,6 +168,8 @@ def skill_zip(files, metas):
         "reference/parts.md": "# 使える部品\n\n各雛形の先頭コメントと同じもの。\n\n```text\n" + guide.strip() + "\n```\n",
         "reference/rules.md": (ROOT / "skill" / "reference" / "rules.md").read_text(),
         "scripts/check.py": (ROOT / "skill" / "scripts" / "check.py").read_text(),
+        "scripts/checks.js": (ROOT / "skill" / "scripts" / "checks.js").read_text(),
+        "reference/review.md": (ROOT / "skill" / "reference" / "review.md").read_text(),
         "LICENSE.txt": (ROOT / "LICENSE").read_text(),
     }
     for m in metas:

@@ -1,141 +1,124 @@
 """動くスライドを1本、ブラウザで開いて確かめる。
 
-  python3 check.py スライド.html            問題の一覧と、各ページの画像
+  python3 check.py スライド.html            確かめて、各ページの画像を撮る
   python3 check.py スライド.html --morph    ページ送りの途中のコマ（0.1・0.25・0.45 秒）も撮る
+  python3 check.py スライド.html --final    仕上がり用。雛形の架空の社名や注記の消し忘れも見る
 
-  画像はスライドと同じフォルダの check/<名前>/ に出る。
-    NN.png          → で出す部分を全部出した状態
-    NN-0.png        そのページを開いた直後（→ で出す部分がまだ隠れている状態。ある時だけ）
-    NN-t100.png など 前のページから送った途中のコマ（--morph のとき）
-    NN-why.png      根拠（details.why）を全部開いた状態（ある時だけ）
-    NN-sheet.png    表（data-sheet）に、1.4倍の数字で3行多い表を貼った状態（ある時だけ）
+結果は3段で出る。「問題」は直す。「要確認」は画像を見て判断する。「情報」は参考。
+問題が1つでもあれば終了コード 1。
 
-  確かめること
-    ・JavaScript のエラー
-    ・1280×720 の枠からはみ出した文字
-    ・スライダーを動かしても変わらない数字、計算できない式（— と出る）
-    ・根拠を開いたとき・表を貼り替えたときのはみ出しと、表の集計が計算できない所
-    ・枠の中で文字どうしが重なっている所（要確認。字間を詰めた見出しなど、見た目では重なっていないこともある）
-  枠の中の重なりや、図と文字の重なりは、最後は画像を見て確かめること。
+画像はスライドと同じフォルダの check/<名前>/ に出る。
+  NN.png       → で出す部分を全部出した状態
+  NN-0.png     開いた直後（→ で出す部分がまだ隠れている）
+  NN-why.png   根拠（details.why）を全部開いた状態
+  NN-sheet.png 表（data-sheet）に、1.4倍の数字で3行多い表を貼った状態
+  NN-t100.png  前のページから送った途中のコマ（--morph のとき）
 
-  要 playwright：pip install playwright のあと、Chrome が無ければ playwright install chromium
+要 playwright：pip install playwright のあと、Chrome が無ければ playwright install chromium
 """
+import re
 import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-OVERFLOW_JS = """(i) => {
-  const s = document.querySelectorAll('.deck > .slide')[i];
-  const box = s.getBoundingClientRect();
-  const k = box.width / 1280;
-  const bad = [];
-  s.querySelectorAll('*').forEach(el => {
-    if (el.closest('.bg,.notes,details:not([open]) > .body,[hidden]')) return;
-    const st = getComputedStyle(el);
-    if (st.position === 'fixed' || st.visibility === 'hidden' || st.display === 'none') return;
-    const r = el.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    const over = Math.max(r.right - box.right, r.bottom - box.bottom, box.left - r.left, box.top - r.top) / k;
-    if (over > 4 && el.children.length === 0 && el.textContent.trim()) bad.push(el.tagName.toLowerCase() + '.' + el.className + ' 「' + el.textContent.trim().slice(0, 20) + '」 +' + Math.round(over) + 'px');
-  });
-  return bad.slice(0, 5);
-}"""
+CHECKS_JS = (Path(__file__).with_name("checks.js")).read_text()
 
-CALC_JS = """() => {
-  const res = [];
-  document.querySelectorAll('[data-calc]').forEach((box, bi) => {
-    const outs = [...box.querySelectorAll('[data-out]')];
-    box.querySelectorAll('input[type=range],input[type=checkbox]').forEach(inp => {
-      const before = outs.map(o => o.textContent);
-      const old = inp.type === 'checkbox' ? inp.checked : inp.value;
-      if (inp.type === 'checkbox') inp.checked = !inp.checked;
-      const read = v => {
-        if (inp.type === 'checkbox') inp.checked = v; else inp.value = v;
-        outs.forEach(o => { o._v = NaN; });
-        inp.dispatchEvent(new Event('input', {bubbles: true}));
-        return outs.map(o => o.textContent);
-      };
-      // 最大と最小の両方で試す（しきい値のある式は片方だけ変わることがある）
-      const tries = inp.type === 'checkbox' ? [read(!old)] : [read(inp.max), read(inp.min)];
-      const after = tries[tries.length - 1];
-      if (outs.length && tries.every(a => before.every((t, i) => t === a[i]))) res.push('calc#' + bi + ' ' + inp.name + ' を動かしても数字が変わらない');
-      if (tries.some(a => a.some(t => t.includes('NaN') || t === '—'))) res.push('calc#' + bi + ' ' + inp.name + ' で計算できない式がある');
-      if (inp.type === 'checkbox') inp.checked = old; else inp.value = old;
-      outs.forEach(o => { o._v = NaN; });
-      inp.dispatchEvent(new Event('input', {bubbles: true}));
-    });
-  });
-  return res;
-}"""
+# 文章の点検
+PLACEHOLDER = re.compile(r"◯◯|〇〇|○○|ＸＸ|(?<![A-Za-z])xx(?![A-Za-z])|YYYY|Text \d|TODO|TBD|【|】")
+SAMPLE = re.compile(r"サンプル|架空|SAMPLE|Sample")
+AI_WORDS = ["まさに", "非常に", "シナジー", "シームレス", "ソリューション", "革新的", "画期的", "包括的", "多角的", "抜本的"]
+COUNT = re.compile(r"([2-9２-９]|[二三四五六七八九])(つ|点|個|段階|項目|ステップ|案)")
+KANJI_NUM = {"二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+DESU = re.compile(r"(です|ます|ました|でした|ません)[。！？]?$")
+
+# はみ出した量ごとの直し方
+def fix_hint(px):
+    if px <= 40:
+        return "間隔を少し詰める"
+    if px <= 90:
+        return "余白を詰める"
+    if px <= 160:
+        return "見出しか文字を少し小さくする"
+    return "文を減らすか、ページを分ける"
 
 
-OVERLAP_JS = """(i) => {
-  const s = document.querySelectorAll('.deck > .slide')[i];
-  const k = s.getBoundingClientRect().width / 1280;
-  const leaves = [];
-  s.querySelectorAll('*').forEach(el => {
-    if (el.closest('.bg,.notes,details:not([open]) > .body,[hidden],[aria-hidden=true],svg,.ugk-ghost')) return;
-    if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
-    if (el.checkVisibility && !el.checkVisibility({opacityProperty: true, visibilityProperty: true})) return;
-    let op = 1; for (let e = el; e && e !== s; e = e.parentElement) op *= parseFloat(getComputedStyle(e).opacity);
-    if (op < .5) return;
-    const r = document.createRange(); r.selectNodeContents(el);
-    // 行ごとの箱を、文字の大きさの範囲（上下の行間を除く）に縮める
-    const fs = parseFloat(getComputedStyle(el).fontSize);
-    [...r.getClientRects()].forEach(b => {
-      if (b.width < 2 || b.height < 2) return;
-      const pad = Math.max(0, (b.height - fs * 0.78) / 2);
-      leaves.push([el, { left: b.left, right: b.right, top: b.top + pad, bottom: b.bottom - pad, width: b.width, height: b.height - 2 * pad }]);
-    });
-  });
-  const bad = [];
-  for (let a = 0; a < leaves.length; a++) for (let c = a + 1; c < leaves.length; c++) {
-    const [e1, r1] = leaves[a], [e2, r2] = leaves[c];
-    if (e1 === e2 || e1.contains(e2) || e2.contains(e1)) continue;
-    const w = Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left), h = Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top);
-    if (w <= 0 || h <= 0) continue;
-    const area = w * h, m = Math.min(r1.width * r1.height, r2.width * r2.height);
-    if (h > Math.min(r1.height, r2.height) * 0.35 && w > Math.min(r1.width, r2.width) * 0.2 && w / k > 6 && h / k > 4) bad.push('「' + e1.textContent.trim().slice(0, 12) + '」と「' + e2.textContent.trim().slice(0, 12) + '」');
-  }
-  return bad.slice(0, 5);
-}"""
-
-# そのページで → を押す回数（.step の数と、コードの強調の段数）
-STEPS_JS = """(i) => { const s = document.querySelectorAll('.deck > .slide')[i];
-  return s.querySelectorAll('.step').length + [...s.querySelectorAll('pre.code[data-highlight]')].reduce((a, p) => a + p.dataset.highlight.split('|').length, 0); }"""
-
-OPEN_WHY_JS = "(i) => { const d = [...document.querySelectorAll('.deck > .slide')[i].querySelectorAll('details.why')]; d.forEach(x => { x.open = true; x.dispatchEvent(new Event('toggle')); }); return d.length; }"
-
-# 表（data-sheet）に、今の表の1.4倍の数字と3行多い表を貼る。集計が「—」になる所を返す
-SHEET_JS = r"""(i) => {
-  const s = document.querySelectorAll('.deck > .slide')[i], bad = [];
-  s.querySelectorAll('[data-sheet]').forEach((fig, k) => {
-    const t = fig.querySelector('table');
-    const head = [...t.querySelectorAll('thead th')].map(x => x.textContent.trim());
-    const rows = [...t.querySelectorAll('tbody tr')].map(tr => [...tr.children].map(x => x.textContent.trim()));
-    const num = v => parseFloat(String(v).replace(/[,，]/g, ''));
-    const more = rows.concat(rows.slice(0, 3).map((r, j) => [r[0] + '（追加' + (j + 1) + '）', ...r.slice(1)]));
-    const tsv = [head, ...more.map(r => [r[0], ...r.slice(1).map(v => isFinite(num(v)) ? String(Math.round(num(v) * 1.4 * 10) / 10) : v)])].map(r => r.join('\t')).join('\n');
-    const dt = new DataTransfer(); dt.setData('text/plain', tsv);
-    fig.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
-    fig.querySelectorAll('[data-sheet-out]').forEach(o => { if (/NaN|—|undefined/.test(o.textContent)) bad.push('表' + (k + 1) + ' の集計「' + o.dataset.sheetOut + '」が計算できない'); });
-  });
-  return bad;
-}"""
+def lum(c):
+    f = lambda v: v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+    return 0.2126 * f(c[0] / 255) + 0.7152 * f(c[1] / 255) + 0.0722 * f(c[2] / 255)
 
 
-def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    if not args:
-        raise SystemExit(__doc__)
-    morph = "--morph" in sys.argv
-    f = Path(args[0]).resolve()
-    out = f.parent / "check" / f.stem
+def contrast(png, inks):
+    """撮った画像から、文字の後ろの色（文字の色に近い画素を除いた、いちばん多い色）を拾って比べる"""
+    try:
+        from PIL import Image
+    except ImportError:
+        return []
+    im = Image.open(png).convert("RGB")
+    out = []
+    for ink in inks:
+        l, t, w, h = ink["box"]
+        crop = im.crop((max(0, int(l)), max(0, int(t)), min(1280, int(l + w)), min(720, int(t + h))))
+        fg = ink["fg"]
+        # 色ごとの画素数（8段ずつにまとめる）。文字の色に近い色は除いて、いちばん多い色を背景とみなす
+        colors = crop.point(lambda v: v // 8 * 8 + 4).getcolors(1 << 16) or []
+        colors = [(n, c) for n, c in colors if abs(c[0] - fg[0]) + abs(c[1] - fg[1]) + abs(c[2] - fg[2]) >= 90]
+        if sum(n for n, _ in colors) < 8:
+            continue
+        bg = max(colors)[1]
+        a = fg[3]
+        text = [fg[j] * a + bg[j] * (1 - a) for j in range(3)]
+        L1, L2 = lum(text), lum(bg)
+        ratio = (max(L1, L2) + 0.05) / (min(L1, L2) + 0.05)
+        need = 3 if ink["large"] else 4.5
+        if ratio < need:
+            out.append({"text": ink["text"], "ratio": round(ratio, 2), "need": need})
+    return out[:5]
+
+
+def lint_text(texts, final):
+    """texts：ページごとの {heads, body, counts}。問題と要確認の一覧を返す"""
+    problems, warns = [], []
+    ends = []
+    for i, t in enumerate(texts):
+        page = f"{i + 1}枚目"
+        allt = "\n".join(t["heads"]) + "\n" + t["body"]
+        m = PLACEHOLDER.search(allt)
+        if m:
+            problems.append(f"{page} 仮の文字が残っている：「{m.group(0)}」")
+        if final:
+            m = SAMPLE.search(allt)
+            if m:
+                problems.append(f"{page} 雛形の架空の社名・注記が残っている：「{m.group(0)}」")
+        words = [w for w in AI_WORDS if w in allt]
+        if words:
+            warns.append(f"{page} ありがちな言い回し：{'・'.join(words)}（具体的な言葉に言い換えると伝わる）")
+        for h in t["heads"]:
+            if len(h) > 60:
+                warns.append(f"{page} 見出しが長い（{len(h)}字）。60字までに")
+            m = COUNT.search(h)
+            if m:
+                n = KANJI_NUM.get(m.group(1)) or int(m.group(1).translate(str.maketrans("２３４５６７８９", "23456789")))
+                if n not in t["counts"]:
+                    warns.append(f"{page} 見出しは「{m.group(0)}」だが、同じ形で並ぶ要素が{n}個ない")
+        ends.append(re.sub(r"[。、！？!?」』）)]+$", "", t["heads"][-1])[-2:] if t["heads"] else None)
+    for i in range(len(ends) - 2):
+        if ends[i] and ends[i] == ends[i + 1] == ends[i + 2]:
+            warns.append(f"{i + 1}〜{i + 3}枚目 見出しの終わりが3枚続けて「{ends[i]}」")
+    heads = [h for t in texts for h in t["heads"]]
+    if len(heads) >= 4 and sum(bool(DESU.search(h)) for h in heads) * 2 > len(heads):
+        warns.append("見出しの半分以上が です・ます で終わる。言い切りにすると締まる")
+    return problems, warns
+
+
+def run(html, out=None, morph=False, final=False):
+    """1本を確かめて {"n", "problems", "warns", "infos", "out"} を返す"""
+    f = Path(html).resolve()
+    out = Path(out) if out else f.parent / "check" / f.stem
     out.mkdir(parents=True, exist_ok=True)
     for old in out.glob("*.png"):
         old.unlink()
-    report, notes = [], []
+    P, Wn, I = [], [], []
     with sync_playwright() as pw:
         try:
             browser = pw.chromium.launch(channel="chrome", headless=True)
@@ -147,12 +130,16 @@ def main():
         page.on("pageerror", lambda e: errors.append(str(e)))
         page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
         page.goto(f.as_uri(), wait_until="domcontentloaded")
+        page.add_script_tag(content=CHECKS_JS)
         page.wait_for_timeout(1500)
-        n = page.evaluate("document.querySelectorAll('.deck > .slide').length")
+        C = lambda name, *a: page.evaluate(f"(a) => UGK_CHECK.{name}(...a)", list(a))
+        n = C("count")
         if not n:
             raise SystemExit("スライド（.deck > .slide）が見つかりません")
+        texts, still = [], []
         for i in range(n):
-            # 開いた直後（前のページから → で入る。#番号で開くと → で出す部分が全部出た状態になるため）
+            pg = f"{i + 1}枚目"
+            # 開いた直後。#番号で開くと → で出す部分が全部出るので、前のページから → で入る
             if i:
                 page.evaluate(f"location.hash = '#{i}'")
                 page.wait_for_timeout(1100)
@@ -163,40 +150,82 @@ def main():
                         page.wait_for_timeout(t - t0)
                         t0 = t
                         page.screenshot(path=str(out / f"{i + 1:02d}-t{t}.png"))
+                        if t == 250:
+                            gone = C("offscreen")
+                            if gone:
+                                Wn.append(f"{i}→{i + 1}枚目 変形の途中で画面の外へ出る：{'・'.join(gone)}")
             page.wait_for_timeout(1100)
-            steps = page.evaluate(STEPS_JS, i)
+            steps = C("steps", i)
             if steps:
                 page.screenshot(path=str(out / f"{i + 1:02d}-0.png"))
-                # → を押し切って、全部出した状態にする
                 for _ in range(steps):
                     page.keyboard.press("ArrowRight")
                     page.wait_for_timeout(150)
                 page.wait_for_timeout(900)
             page.screenshot(path=str(out / f"{i + 1:02d}.png"))
-            report += [f"{i + 1}枚目 はみ出し: {b}" for b in page.evaluate(OVERFLOW_JS, i)]
-            notes += [f"{i + 1}枚目 重なり（要確認）: {b}" for b in page.evaluate(OVERLAP_JS, i)]
-        # 根拠（details.why）を全部開いた状態・表を貼り替えた状態
+            # 全部出した状態で測る
+            P += [f"{pg} はみ出し {o['px']}px「{o['text']}」→ {fix_hint(o['px'])}" for o in C("overflow", i)]
+            Wn += [f"{pg} 文字が重なる：{o}" for o in C("overlap", i)]
+            P += [f"{pg} 文字が背景に沈む「{o['text']}」{o['ratio']}:1（{o['need']}:1 以上に）"
+                  for o in contrast(out / f"{i + 1:02d}.png", C("inks", i))]
+            lay = C("layout", i)
+            if i and lay["gap"] > 240:  # 下の3分の1が空いている
+                Wn.append(f"{pg} 下が {lay['gap']}px 空いている（中身は画面の {round(lay['fill'] * 100)}%）")
+            sizes = C("fonts", i)
+            if len(sizes) > 8:
+                Wn.append(f"{pg} 文字の大きさが {len(sizes)} 種類（{'・'.join(map(str, sizes))}px）。近い大きさをまとめると揃って見える")
+            ops = C("ops", i)
+            if len(ops["kinds"]) > 1:
+                Wn.append(f"{pg} 操作が {'・'.join(ops['kinds'])} の {len(ops['kinds'])} つ。1ページ1つにすると伝わりやすい")
+            still.append(not ops["moves"])
+            texts.append(C("text", i))
+        # 根拠を全部開いた状態・表を貼り替えた状態
         for i in range(n):
+            pg = f"{i + 1}枚目"
             page.evaluate(f"location.hash = '#{i + 1}'")
             page.wait_for_timeout(900)
-            if page.evaluate(OPEN_WHY_JS, i):
+            if C("openWhy", i):
                 page.wait_for_timeout(600)
                 page.screenshot(path=str(out / f"{i + 1:02d}-why.png"))
-                report += [f"{i + 1}枚目 根拠を開くとはみ出す: {b}" for b in page.evaluate(OVERFLOW_JS, i)]
-                notes += [f"{i + 1}枚目 根拠を開くと重なる（要確認）: {b}" for b in page.evaluate(OVERLAP_JS, i)]
-            if page.evaluate(f"document.querySelectorAll('.deck > .slide')[{i}].querySelector('[data-sheet]') !== null"):
-                report += [f"{i + 1}枚目 {b}" for b in page.evaluate(SHEET_JS, i)]
+                P += [f"{pg} 根拠を開くとはみ出す {o['px']}px「{o['text']}」→ {fix_hint(o['px'])}" for o in C("overflow", i)]
+                Wn += [f"{pg} 根拠を開くと文字が重なる：{o}" for o in C("overlap", i)]
+            if C("hasSheet", i):
+                P += [f"{pg} {b}" for b in C("sheet", i)]
                 page.wait_for_timeout(900)
                 page.screenshot(path=str(out / f"{i + 1:02d}-sheet.png"))
-                report += [f"{i + 1}枚目 表を貼り替えるとはみ出す: {b}" for b in page.evaluate(OVERFLOW_JS, i)]
-        report += page.evaluate(CALC_JS)
-        report += ["エラー: " + e for e in errors if "fonts.g" not in e]
+                P += [f"{pg} 表を貼り替えるとはみ出す {o['px']}px「{o['text']}」" for o in C("overflow", i)]
+        P += C("calc")
+        P += ["エラー: " + e for e in errors if "fonts.g" not in e]
+        cr = C("carry")
         browser.close()
-    print(f"{f.name}（{n}枚）: " + ("問題なし" if not report else f"{len(report)} 件"))
-    for r in report + notes:
-        print("  " + r)
-    print(f"画像: {out}/（重なり・変形の途中は画像を見て確かめる）")
-    sys.exit(1 if report else 0)
+    p2, w2 = lint_text(texts, final)
+    P += p2
+    Wn += w2
+    if sum(still) * 2 > n:
+        Wn.append(f"動きのないページが {sum(still)} / {n} 枚。根拠・順に出す・スライダーのどれかを足すと「動くスライド」らしくなる")
+    if cr["morph"]:
+        joins = cr["joins"]
+        bare = [f"{j + 1}→{j + 2}" for j, ok in enumerate(joins) if not ok]
+        I.append(f"つながり {sum(joins)}/{len(joins)}" + (f"（{'・'.join(bare)} はつながらない）" if bare else "（全部の境目がつながる）"))
+    return {"n": n, "problems": P, "warns": Wn, "infos": I, "out": out}
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if not args:
+        raise SystemExit(__doc__)
+    r = run(args[0], morph="--morph" in sys.argv, final="--final" in sys.argv)
+    name = Path(args[0]).name
+    print(f"{name}（{r['n']}枚）: " + (f"問題 {len(r['problems'])} 件" if r["problems"] else "問題なし") +
+          (f"・要確認 {len(r['warns'])} 件" if r["warns"] else ""))
+    for x in r["problems"]:
+        print("  問題　" + x)
+    for x in r["warns"]:
+        print("  要確認 " + x)
+    for x in r["infos"]:
+        print("  情報　" + x)
+    print(f"画像: {r['out']}/（「問題なし」でも画像は必ず見る）")
+    sys.exit(1 if r["problems"] else 0)
 
 
 if __name__ == "__main__":
