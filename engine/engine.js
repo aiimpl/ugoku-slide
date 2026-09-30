@@ -6,9 +6,11 @@
   const slides = [...deck.querySelectorAll(":scope > .slide")];
   const params = new URLSearchParams(location.search);
   const embed = params.has("embed");
+  const still = params.has("static"); // ?static：動きを止め、全部を出す
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const body = document.body;
   if (embed) body.classList.add("embed");
+  if (still) body.classList.add("static");
 
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -36,7 +38,7 @@
     const from = isFinite(el._v) ? el._v : to;
     el._v = to;
     if (el.hasAttribute("data-sign")) {
-      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev" はマイナスを良いこと（緑）として色を付ける
+      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev"：マイナスを緑にする
       el.classList.toggle("neg", to * k < 0);
       el.classList.toggle("pos", to * k > 0);
     }
@@ -56,7 +58,7 @@
     try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
     catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
   };
-  // data-calc="global" の値は、ほかのページの data-global-out="式" と、.deck の CSS 変数でも使える
+  // data-calc="global" の値は、ほかのページ（data-global-out）でも使える
   const G = {};
   const globalOuts = [...deck.querySelectorAll("[data-global-out]")].map(el => [el, compile(el.dataset.globalOut)]);
   const updateGlobal = () => globalOuts.forEach(([el, f]) => {
@@ -82,7 +84,7 @@
       const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
       outs.forEach(([el, f]) => {
         let x; try { x = f(v); } catch (e) { x = NaN; }
-        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら、その文字を出す
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら文字を出す
       });
       bars.forEach(([el, f, m]) => {
         const r = Math.max(0, Math.min(1, run(f) / run(m)));
@@ -90,7 +92,7 @@
         fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
       });
       shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
-      // 入力と途中の計算は CSS 変数（--名前）にも入る。図形の大きさや位置を式で動かせる
+      // 値は CSS 変数 --名前 にも入る（図形を動かせる）
       Object.keys(v).forEach(k => { if (isFinite(v[k])) box.style.setProperty("--" + k, v[k]); });
       if (box.dataset.calc === "global") {
         Object.assign(G, v);
@@ -103,7 +105,7 @@
     update();
   });
   deck.addEventListener("change", e => { if (e.target.matches("select")) e.target.blur(); });
-  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  // 入力を触ったあとも、矢印キーでページを送れるようにする
   deck.addEventListener("pointerup", e => {
     if (e.target.matches("input[type=range],input[type=checkbox],input[type=radio]")) setTimeout(() => e.target.blur(), 0);
     else if (e.target.closest("label") && e.target.closest("label").querySelector("input[type=checkbox],input[type=radio]")) setTimeout(() => document.activeElement && document.activeElement.blur && document.activeElement.blur(), 0);
@@ -167,8 +169,8 @@
     requestAnimationFrame(loop);
   }
 
-  /* ---------- data-sheet：表の数字を直す・Excel から貼ると、グラフと集計が作り直される ---------- */
-  // 「1,200」「▲300」「1.2億」「45件」のように、数字のうしろの単位は読み飛ばす（単位の換算はしない）
+  /* ---------- data-sheet：表を直す・貼ると、グラフと集計を作り直す ---------- */
+  // 「1,200」「▲300」「1.2億」を数にする（単位は読み飛ばす）
   const parseNum = s => {
     const t = String(s).trim().replace(/[−－―]/g, "-").replace(/^[▲△]/, "-").replace(/[,，¥￥\s]/g, "")
       .replace(/[０-９．]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
@@ -218,6 +220,7 @@
     })()]);
     let prevVals = null, shape = "";
     const render = () => {
+    if (body.classList.contains("marking")) setTimeout(() => drawMarks());
       const d = read();
       const S = d.head.length, R = d.rows.length;
       const val = (r, s) => { const x = d.rows[r].vals[s]; return isFinite(x) ? x : 0; };
@@ -226,7 +229,7 @@
         if (kind === "stack") { let t = 0; for (let s = 0; s < S; s++) t += Math.max(0, val(r, s)); max = Math.max(max, t); }
         else for (let s = 0; s < S; s++) { max = Math.max(max, val(r, s)); min = Math.min(min, val(r, s)); }
       }
-      // data-min で目盛りの下限を決められる（客単価のように、0から描くと平らに見えるとき）
+      // data-min：目盛りの下限
       if (kind !== "stack" && fig.dataset.min !== undefined && isFinite(Number(fig.dataset.min))) min = Math.min(Number(fig.dataset.min), ...d.rows.flatMap(r => r.vals.filter(isFinite)));
       const sc = niceScale(max * 1.02, min);
       max = sc.max; const lo = sc.min, span = max - lo, base = Math.max(lo, Math.min(0, max));
@@ -345,7 +348,7 @@
     if (s) s.onPaste(e);
   });
 
-  /* ---------- 上に重ねて開く補足（details.why.float）：下にはみ出すなら上へ開く ---------- */
+  /* ---------- details.why.float：下にはみ出すなら上へ開く ---------- */
   deck.querySelectorAll("details.why.float").forEach(d => d.addEventListener("toggle", () => {
     if (!d.open) return;
     d.classList.remove("up");
@@ -492,12 +495,15 @@
     <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
     <span class="count"></span><span class="sp"></span>
     <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="demo" title="自動で見せる (D)">デモ</button><button data-a="mark" title="囲んで直す指示を作る (E)">直す</button>
     <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
   const notesBox = el("div", "ugk-notes");
   const help = el("div", "ugk-help", `<div>
     <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
     <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
     <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>D</kbd>自動で見せる（何か押すと止まる）</div><div><kbd>E</kbd>囲んで直す指示を作る</div>
+    <div><kbd>3</kbd><kbd>↵</kbd>数字でそのページへ</div>
     <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
   const toast = el("div", "ugk-toast");
   body.append(hud, notesBox, help, toast);
@@ -507,6 +513,7 @@
   let cur = -1, overview = false, presenter = null;
   const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
   const render = () => {
+    if (body.classList.contains("marking")) setTimeout(() => drawMarks());
     slides.forEach((s, i) => {
       s.classList.toggle("active", i === cur);
       s.classList.toggle("past", i < cur);
@@ -518,7 +525,7 @@
     notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
     drawPresenter();
   };
-  /* ---------- data-morph：同じ名前の要素が、前のページの位置・大きさ・色から、次のページへ変形してつながる ---------- */
+  /* ---------- data-morph：前後のページで同じ名前の要素を変形させてつなぐ ---------- */
   const morphMode = deck.dataset.transition === "morph";
   const MORPH_MS = 900, MORPH_EASE = "cubic-bezier(.65,0,.25,1)";
   const shownIn = (el, slide) => { for (let e = el; e && e !== slide; e = e.parentElement) if (e.classList.contains("step") && !e.classList.contains("shown")) return false; return true; };
@@ -527,13 +534,13 @@
     const r = el.getBoundingClientRect(), s = slide.getBoundingClientRect(), k = s.width / W || 1;
     return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
   };
-  // 動きを止めたときの位置（まだ表示していないページ用。transform を無視して、置かれた場所だけを測る）
+  // 置かれた場所（transform を無視。まだ出ていないページ用）
   const layoutRect = (el, slide) => {
     let x = 0, y = 0, e = el;
     while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; const p = e.offsetParent; if (p && p !== slide && !slide.contains(p)) break; e = p; }
     return { x, y, w: el.offsetWidth, h: el.offsetHeight };
   };
-  // 見えているままの写しを作る（class に頼らず、計算済みの見た目を全部書き込む）
+  // 見えているままの写し（計算済みの見た目を書き込む）
   const snapshot = (el, a) => {
     const c = el.cloneNode(true);
     const copy = (src, dst) => {
@@ -566,7 +573,7 @@
       const cs = getComputedStyle(o);
       const a = seenRect(o, from);
       const counting = o.hasAttribute("data-count") && el.hasAttribute("data-count");
-      // 数え直す数字は、写しを重ねず新しい方だけを動かす（二重に見えない）
+      // 数え直す数字は写しを作らない（二重に見えるため）
       const same = counting || (o.innerHTML === el.innerHTML && cs.backgroundImage === getComputedStyle(el).backgroundImage);
       pairs.push({ o, n: el, a, look: LOOK.reduce((m, k) => (m[k] = cs[k], m), {}), same,
         ghost: same ? null : snapshot(o, a), count: counting ? o._v : null });
@@ -591,9 +598,9 @@
         if (start[k] === undefined) { start[k] = p.look[k]; end[k] = cs[k]; }
       });
       const delay = Number(p.n.dataset.morphDelay || 0);
-      p.n.style.visibility = ""; // すばやく戻ったとき、前の変形で隠したままにしない
+      p.n.style.visibility = ""; // すばやく戻ったときの隠れっぱなしを防ぐ
       p.n.getAnimations().forEach(x => x.id === "ugk-morph" && x.cancel());
-      // 後片付けは実時間ではなく、アニメーションの終わりに合わせる（ゆっくり再生しても崩れない）
+      // 後片付けはアニメーションの終わりで（ゆっくり再生でも崩れない）
       const after = (anim, fn) => anim.finished.then(fn, fn);
       if (p.same) {
         const an = p.n.animate([start, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
@@ -601,7 +608,7 @@
         p.o.style.visibility = "hidden";
         after(an, () => { p.o.style.visibility = ""; });
       } else {
-        // 中身や模様がちがう：前の形の写しを下に敷き、新しい方が浮かび上がってから写しを消す
+        // 中身がちがう：前の形の写しを下に敷き、新しい方が出てから消す
         const g = p.ghost;
         g.style.left = a.x + "px"; g.style.top = a.y + "px";
         to.insertBefore(g, to.firstChild);
@@ -622,11 +629,11 @@
     i = Math.max(0, Math.min(slides.length - 1, i));
     if (i === cur) return;
     const prev = cur;
-    const canMorph = morphMode && prev !== -1 && !reduce && !overview;
+    const canMorph = morphMode && prev !== -1 && !reduce && !overview && !still;
     const pairs = canMorph ? measureMorph(slides[prev], slides[i]) : [];
     cur = i;
-    setSteps(i, atEnd ? plans[i].length : 0);
-    const skip = pairs.length ? runMorph(pairs, slides[i]) : null;
+    setSteps(i, atEnd || still ? plans[i].length : 0);
+    const skip = pairs.length && !still ? runMorph(pairs, slides[i]) : null;
     render();
     if (prev !== -1) countUp(slides[i], skip);
     const h = "#" + (i + 1);
@@ -711,6 +718,158 @@
     d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
   }
 
+
+  /* ---------- 数字でページへ（3 → 3枚目、12 → 12枚目。Enter ですぐ） ---------- */
+  let digits = "", digitT;
+  const jump = () => { const n = parseInt(digits, 10); digits = ""; if (n) go(n - 1); };
+  const typeDigit = d => {
+    digits += d; say(`${digits} 枚目へ`);
+    clearTimeout(digitT); digitT = setTimeout(jump, 700);
+  };
+
+  /* ---------- 自動デモ（D）：各ページで操作を1つ見せ、最後は一覧 ---------- */
+  // 見せる操作：data-demo の番号順。無ければ スライダー→タブ→クイズ→立体→根拠 から1つ
+  const cursor = el("div", "ugk-cursor", `<svg viewBox="0 0 24 24" width="30" height="30"><path d="M4 2v17l4.6-4.2 3 6.6 3-1.4-2.9-6.4H18z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`);
+  deck.appendChild(cursor);
+  let demoOn = false;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const place = (x, y) => { cursor.style.transform = `translate(${x}px,${y}px)`; };
+  const aim = async target => { // 要素の真ん中へカーソルを動かす
+    const r = target.getBoundingClientRect(), d = deck.getBoundingClientRect(), k = d.width / W;
+    place((r.left + r.width / 2 - d.left) / k, (r.top + r.height / 2 - d.top) / k);
+    await sleep(520);
+  };
+  const tap = async target => { await aim(target); cursor.classList.add("tap"); await sleep(160); cursor.classList.remove("tap"); target.click(); };
+  const sweep = async (inp, to, ms) => { // スライダーを to まで動かす
+    const from = Number(inp.value), t0 = performance.now();
+    await aim(inp);
+    while (demoOn) {
+      const k = Math.min(1, (performance.now() - t0) / ms);
+      const v = from + (to - from) * (1 - Math.pow(1 - k, 3)), step = Number(inp.step) || 1;
+      inp.value = Math.round(v / step) * step;
+      inp.dispatchEvent(new Event("input", { bubbles: true }));
+      if (k >= 1) break;
+      await sleep(16);
+    }
+  };
+  const demoPick = s => {
+    const marked = [...s.querySelectorAll("[data-demo]")].sort((a, b) => a.dataset.demo - b.dataset.demo);
+    if (marked.length) return marked;
+    const q = sel => s.querySelector(sel);
+    return [q("[data-calc] input[type=range], .rank input[type=range]") || q("[data-tabs] [data-tab]:nth-of-type(2)") ||
+      q(".quiz .choices > button[data-correct]") || q("[data-orbit]") || q("details.why > summary")].filter(Boolean);
+  };
+  const demoAct = async t => {
+    if (t.matches("input[type=range]")) {
+      const v0 = Number(t.value), hi = Number(t.max), lo = Number(t.min);
+      await sweep(t, v0 + (hi - v0) * 0.8, 1100); await sleep(500);
+      await sweep(t, v0 - (v0 - lo) * 0.5, 900); await sleep(400); await sweep(t, v0, 600);
+    } else if (t.matches("[data-orbit]")) {
+      await aim(t);
+      const o = orbits.find(x => x.box === t), ry = o.ry;
+      for (let k = 0; k <= 60 && demoOn; k++) { o.ry = ry + 90 * Math.sin(k / 60 * Math.PI); o.set(); await sleep(22); }
+    } else if (t.matches("summary")) {
+      await tap(t); await sleep(1600); if (demoOn) t.click();
+    } else { await tap(t); }
+    await sleep(900);
+  };
+  const demo = async () => {
+    if (demoOn) return stopDemo();
+    demoOn = true; body.classList.add("demo"); toggleOverview(false);
+    place(W - 80, H - 60); go(0);
+    for (let i = 0; i < slides.length && demoOn; i++) {
+      if (i) { go(i); }
+      await sleep(1300);
+      while (demoOn && done[cur] < plans[cur].length) { next(); await sleep(750); }
+      for (const t of demoPick(slides[cur])) { if (!demoOn) break; await demoAct(t); }
+    }
+    if (demoOn) toggleOverview(true);
+    stopDemo();
+  };
+  const stopDemo = () => { demoOn = false; body.classList.remove("demo"); };
+  ["keydown", "pointerdown", "wheel"].forEach(ev => addEventListener(ev, e => {
+    if (demoOn && e.isTrusted && !(ev === "keydown" && e.key.toLowerCase() === "d")) stopDemo();
+  }, true));
+
+  /* ---------- 囲んで直す（E）：スライドの上を囲むと、Claude に渡す直しの指示が作れる ---------- */
+  const markLayer = el("div", "ugk-mark");
+  const markPanel = el("div", "ugk-markpanel", `<b>直したい所をドラッグで囲む</b><ol></ol>
+    <form class="ask" hidden><input placeholder="どう直す？（例：文字を大きく）" aria-label="どう直すか"><button>追加</button></form>
+    <div class="row"><button data-m="copy">指示をコピー</button><button data-m="clear">全部消す</button><button data-m="close">閉じる</button></div>`);
+  const askForm = markPanel.querySelector(".ask"), askInput = askForm.querySelector("input");
+  let pending = null; // 囲んだけれど、まだ指示を書いていない範囲
+  deck.appendChild(markLayer); body.appendChild(markPanel);
+  const marks = [];
+  const slideXY = e => { const d = deck.getBoundingClientRect(), k = d.width / W; return [(e.clientX - d.left) / k, (e.clientY - d.top) / k]; };
+  const textsIn = (s, r) => { // 囲んだ中にある文字（先頭2つ）
+    const d = deck.getBoundingClientRect(), k = d.width / W, out = [];
+    s.querySelectorAll("*").forEach(e => {
+      if (out.length >= 2 || e.closest(".notes")) return;
+      if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
+      const b = e.getBoundingClientRect(), cx = (b.left + b.width / 2 - d.left) / k, cy = (b.top + b.height / 2 - d.top) / k;
+      if (b.width && cx >= r.x && cx <= r.x + r.w && cy >= r.y && cy <= r.y + r.h) out.push(e.textContent.trim().replace(/\s+/g, " ").slice(0, 24));
+    });
+    return out;
+  };
+  const drawMarks = () => {
+    markLayer.querySelectorAll(".box:not(.pending)").forEach(b => b.remove());
+    if (!pending) markLayer.querySelectorAll(".box.pending").forEach(b => b.remove());
+    marks.forEach((m, j) => {
+      if (m.page !== cur) return;
+      const b = el("div", "box", `<i>${j + 1}</i>`);
+      Object.assign(b.style, { left: m.x + "px", top: m.y + "px", width: m.w + "px", height: m.h + "px" });
+      markLayer.appendChild(b);
+    });
+    markPanel.querySelector("ol").innerHTML = marks.map(m => `<li><span>${m.page + 1}枚目</span>${esc(m.say || "（指示なし）")}</li>`).join("");
+  };
+  const markText = () => ["次の直しをお願いします（動くスライド。座標は 1280×720 のスライドの中の px）", ...marks.map((m, j) =>
+    `${j + 1}. ${m.page + 1}枚目「${titleOf(slides[m.page]).slice(0, 30)}」の x=${m.x} y=${m.y} 幅${m.w} 高さ${m.h}` +
+    (m.texts.length ? `（中の文字：「${m.texts.join("」「")}」）` : "") + `：${m.say || "（ここを直して）"}`)].join("\n");
+  const copyText = async t => {
+    try { await navigator.clipboard.writeText(t); }
+    catch (err) { const a = document.createElement("textarea"); a.value = t; body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); }
+    say("コピーしました。Claude に貼ってください");
+  };
+  const toggleMark = on => {
+    const v = on === undefined ? !body.classList.contains("marking") : on;
+    body.classList.toggle("marking", v);
+    if (v) { toggleOverview(false); drawMarks(); say("直したい所をドラッグで囲んでください（Esc で終わる）"); }
+  };
+  let drag0 = null, live = null;
+  markLayer.addEventListener("pointerdown", e => {
+    drag0 = slideXY(e);
+    live = el("div", "box live"); markLayer.appendChild(live);
+    markLayer.setPointerCapture(e.pointerId);
+  });
+  markLayer.addEventListener("pointermove", e => {
+    if (!drag0) return;
+    const [x, y] = slideXY(e);
+    Object.assign(live.style, { left: Math.min(x, drag0[0]) + "px", top: Math.min(y, drag0[1]) + "px",
+      width: Math.abs(x - drag0[0]) + "px", height: Math.abs(y - drag0[1]) + "px" });
+  });
+  markLayer.addEventListener("pointerup", e => {
+    if (!drag0) return;
+    const [x, y] = slideXY(e), r = { x: Math.round(Math.min(x, drag0[0])), y: Math.round(Math.min(y, drag0[1])), w: Math.round(Math.abs(x - drag0[0])), h: Math.round(Math.abs(y - drag0[1])) };
+    drag0 = null;
+    if (r.w < 8 || r.h < 8) { live.remove(); return; }
+    live.classList.remove("live"); live.classList.add("pending");
+    pending = { page: cur, ...r, texts: textsIn(slides[cur], r) };
+    askForm.hidden = false; askInput.value = ""; askInput.focus();
+  });
+  askForm.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!pending) return;
+    marks.push({ ...pending, say: askInput.value.trim() });
+    pending = null; askForm.hidden = true; askInput.blur();
+    drawMarks();
+  });
+  markPanel.addEventListener("click", e => {
+    const m = e.target.closest("button")?.dataset.m;
+    if (m === "copy") copyText(markText());
+    if (m === "clear") { marks.length = 0; drawMarks(); }
+    if (m === "close") toggleMark(false);
+  });
+
   /* ---------- キーボード・スワイプ・マウス ---------- */
   function onKey(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -727,15 +886,22 @@
       Home: () => go(0), End: () => go(slides.length - 1, true),
       f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
       b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
-      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+      d: demo, e: () => toggleMark(),
+      Escape: () => {
+        if (body.classList.contains("help")) body.classList.remove("help");
+        else if (body.classList.contains("marking")) toggleMark(false);
+        else toggleOverview(false);
+      },
     }[k];
+    if (/^[0-9]$/.test(k)) { e.preventDefault(); typeDigit(k); return; }
+    if (k === "Enter" && digits) { e.preventDefault(); clearTimeout(digitT); jump(); return; }
     if (act) { e.preventDefault(); act(); }
   }
   document.addEventListener("keydown", onKey);
   hud.addEventListener("click", e => {
     const a = e.target.closest("button")?.dataset.a;
     ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
-       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+       presenter: openPresenter, full, help: () => body.classList.toggle("help"), demo, mark: () => toggleMark() }[a] || (() => {}))();
   });
   help.addEventListener("click", () => body.classList.remove("help"));
   let tx = 0, ty = 0, tOk = false;
