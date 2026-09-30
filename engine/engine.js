@@ -740,7 +740,7 @@
     place((r.left + r.width / 2 - d.left) / k, (r.top + r.height / 2 - d.top) / k);
     await sleep(520);
   };
-  const tap = async target => { await aim(target); cursor.classList.add("tap"); await sleep(160); cursor.classList.remove("tap"); target.click(); };
+  const tap = async target => { await aim(target); cursor.classList.add("ugk-tap"); await sleep(160); cursor.classList.remove("ugk-tap"); target.click(); };
   const sweep = async (inp, to, ms) => { // スライダーを to まで動かす
     const from = Number(inp.value), t0 = performance.now();
     await aim(inp);
@@ -795,9 +795,9 @@
   /* ---------- 囲んで直す（E）：スライドの上を囲むと、Claude に渡す直しの指示が作れる ---------- */
   const markLayer = el("div", "ugk-mark");
   const markPanel = el("div", "ugk-markpanel", `<b>直したい所をドラッグで囲む</b><ol></ol>
-    <form class="ask" hidden><input placeholder="どう直す？（例：文字を大きく）" aria-label="どう直すか"><button>追加</button></form>
-    <div class="row"><button data-m="copy">指示をコピー</button><button data-m="clear">全部消す</button><button data-m="close">閉じる</button></div>`);
-  const askForm = markPanel.querySelector(".ask"), askInput = askForm.querySelector("input");
+    <form class="ugk-ask" hidden><input placeholder="どう直す？（例：文字を大きく）" aria-label="どう直すか"><button>追加</button></form>
+    <div class="ugk-row"><button data-m="copy">指示をコピー</button><button data-m="clear">全部消す</button><button data-m="close">閉じる</button></div>`);
+  const askForm = markPanel.querySelector(".ugk-ask"), askInput = askForm.querySelector("input");
   let pending = null; // 囲んだけれど、まだ指示を書いていない範囲
   deck.appendChild(markLayer); body.appendChild(markPanel);
   const marks = [];
@@ -813,11 +813,11 @@
     return out;
   };
   const drawMarks = () => {
-    markLayer.querySelectorAll(".box:not(.pending)").forEach(b => b.remove());
-    if (!pending) markLayer.querySelectorAll(".box.pending").forEach(b => b.remove());
+    markLayer.querySelectorAll(".ugk-box:not(.ugk-pending)").forEach(b => b.remove());
+    if (!pending) markLayer.querySelectorAll(".ugk-box.ugk-pending").forEach(b => b.remove());
     marks.forEach((m, j) => {
       if (m.page !== cur) return;
-      const b = el("div", "box", `<i>${j + 1}</i>`);
+      const b = el("div", "ugk-box", `<i>${j + 1}</i>`);
       Object.assign(b.style, { left: m.x + "px", top: m.y + "px", width: m.w + "px", height: m.h + "px" });
       markLayer.appendChild(b);
     });
@@ -839,7 +839,7 @@
   let drag0 = null, live = null;
   markLayer.addEventListener("pointerdown", e => {
     drag0 = slideXY(e);
-    live = el("div", "box live"); markLayer.appendChild(live);
+    live = el("div", "ugk-box ugk-live"); markLayer.appendChild(live);
     try { markLayer.setPointerCapture(e.pointerId); } catch (err) { /* 合成した操作など */ }
   });
   markLayer.addEventListener("pointermove", e => {
@@ -853,7 +853,7 @@
     const [x, y] = slideXY(e), r = { x: Math.round(Math.min(x, drag0[0])), y: Math.round(Math.min(y, drag0[1])), w: Math.round(Math.abs(x - drag0[0])), h: Math.round(Math.abs(y - drag0[1])) };
     drag0 = null;
     if (r.w < 8 || r.h < 8) { live.remove(); return; }
-    live.classList.remove("live"); live.classList.add("pending");
+    live.classList.remove("ugk-live"); live.classList.add("ugk-pending");
     pending = { page: cur, ...r, texts: textsIn(slides[cur], r) };
     askForm.hidden = false; askInput.value = ""; askInput.focus();
   });

@@ -267,25 +267,25 @@ body.black .deck{opacity:0}
 .ugk-cursor{position:absolute;left:0;top:0;z-index:15;pointer-events:none;opacity:0;margin:-4px 0 0 -4px;
   transition:transform .5s cubic-bezier(.3,.7,.2,1),opacity .3s;filter:drop-shadow(0 3px 6px rgb(0 0 0 / .35))}
 body.demo .ugk-cursor{opacity:1}
-.ugk-cursor.tap svg{transform:scale(.85)}
+.ugk-cursor.ugk-tap svg{transform:scale(.85)}
 body.demo .ugk-hud{opacity:0!important}
 
 /* ---------- 囲んで直す（E） ---------- */
 .ugk-mark{position:absolute;inset:0;z-index:14;display:none;cursor:crosshair;background:rgb(255 90 54 / .04)}
 body.marking .ugk-mark{display:block}
-.ugk-mark .box{position:absolute;border:3px solid #ff5a36;border-radius:4px;background:rgb(255 90 54 / .08)}
-.ugk-mark .box i{position:absolute;left:-3px;top:-28px;padding:2px 9px;border-radius:6px;background:#ff5a36;color:#fff;font:700 14px/1.5 system-ui,sans-serif;font-style:normal}
-.ugk-mark .box.live,.ugk-mark .box.pending{border-style:dashed}
+.ugk-mark .ugk-box{position:absolute;border:3px solid #ff5a36;border-radius:4px;background:rgb(255 90 54 / .08)}
+.ugk-mark .ugk-box i{position:absolute;left:-3px;top:-28px;padding:2px 9px;border-radius:6px;background:#ff5a36;color:#fff;font:700 14px/1.5 system-ui,sans-serif;font-style:normal}
+.ugk-mark .ugk-live,.ugk-mark .ugk-pending{border-style:dashed}
 .ugk-markpanel{position:fixed;right:16px;top:16px;z-index:25;width:320px;max-height:70vh;overflow:auto;display:none;padding:14px 16px;border-radius:12px;
   background:rgb(20 20 24 / .94);color:#f2f2f2;font:14px/1.6 system-ui,sans-serif}
 body.marking .ugk-markpanel{display:block}
 .ugk-markpanel ol{margin:8px 0;padding-left:1.4em}
 .ugk-markpanel li span{color:#ff8a6a;margin-right:6px}
-.ugk-markpanel .ask{display:flex;gap:6px;margin:8px 0}
+.ugk-markpanel .ugk-ask{display:flex;gap:6px;margin:8px 0}
 .ugk-markpanel input{flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid #444;background:#111;color:#fff}
-.ugk-markpanel .row{display:flex;gap:6px;flex-wrap:wrap}
+.ugk-markpanel .ugk-row{display:flex;gap:6px;flex-wrap:wrap}
 .ugk-markpanel button{border:0;border-radius:6px;padding:5px 10px;background:#33353c;color:#fff;cursor:pointer;font:inherit}
-.ugk-markpanel button[data-m=copy],.ugk-markpanel .ask button{background:#ff5a36}
+.ugk-markpanel button[data-m=copy],.ugk-markpanel .ugk-ask button{background:#ff5a36}
 
 /* ---------- 静止表示（?static）：動きを止める ---------- */
 body.static *,body.static *::before,body.static *::after{animation:none!important;transition:none!important}

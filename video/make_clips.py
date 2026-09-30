@@ -60,7 +60,7 @@ def scenes(names, ids):
         return p, 6.0, [(0, "V.cap('直したい所を、<em>囲むだけ。</em>')"), (0.05, "V.from(1700,1000)"),
                         (0.5, "V.key('e')"), (1.0, "V.box(846, 196, 1206, 304, 0.9)"),
                         (2.3, "V.fill('.ugk-markpanel input', '数字をもっと大きく', 1.1)"),
-                        (3.6, "document.querySelector('.ugk-markpanel .ask').requestSubmit()"),
+                        (3.6, "document.querySelector('.ugk-ask').requestSubmit()"),
                         (4.2, "V.move('.ugk-markpanel [data-m=copy]', 0.5)"), (4.8, "V.click('.ugk-markpanel [data-m=copy]')")]
     S["mark1"] = mark1
 

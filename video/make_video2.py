@@ -131,11 +131,11 @@ def hook_page(browser):
     return p
 
 
-def slide(browser, name, n):
+def slide(browser, name, n, chip=CHIP):
     p = open_page(browser)
     prepare(p, deck(name, n), chip=False)
     p.add_style_tag(content=STAGE_CSS)
-    p.evaluate(CHIP)
+    p.evaluate(chip)
     p.wait_for_timeout(300)
     return p
 
