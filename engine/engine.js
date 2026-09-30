@@ -732,7 +732,8 @@
   const cursor = el("div", "ugk-cursor", `<svg viewBox="0 0 24 24" width="30" height="30"><path d="M4 2v17l4.6-4.2 3 6.6 3-1.4-2.9-6.4H18z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`);
   deck.appendChild(cursor);
   let demoOn = false;
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  // 待つ時間はページの時計で測る（裏のタブでは止まる。撮影でゆっくり再生しても合う）
+  const sleep = ms => new Promise(r => { const end = performance.now() + ms; const f = () => performance.now() >= end ? r() : requestAnimationFrame(f); f(); });
   const place = (x, y) => { cursor.style.transform = `translate(${x}px,${y}px)`; };
   const aim = async target => { // 要素の真ん中へカーソルを動かす
     const r = target.getBoundingClientRect(), d = deck.getBoundingClientRect(), k = d.width / W;
@@ -839,7 +840,7 @@
   markLayer.addEventListener("pointerdown", e => {
     drag0 = slideXY(e);
     live = el("div", "box live"); markLayer.appendChild(live);
-    markLayer.setPointerCapture(e.pointerId);
+    try { markLayer.setPointerCapture(e.pointerId); } catch (err) { /* 合成した操作など */ }
   });
   markLayer.addEventListener("pointermove", e => {
     if (!drag0) return;

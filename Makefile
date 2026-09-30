@@ -5,11 +5,12 @@
 #   make og      共有用の画像 docs/og.png を作り直す（要 playwright）
 #   make video   紹介動画 build/video/ugoku-slide_26s.mp4（要 playwright・NumPy・ffmpeg、約10分）
 #   make video2  第2弾の紹介動画 build/video/ugoku-slide-vol2_26s.mp4（約10分）
+#   make clips   操作を見せる短い動画 build/video/clip_mark.mp4・clip_demo.mp4
 #   make serve   http://localhost:8000 で一覧ページを見る
 
 PYTHON ?= python3
 
-.PHONY: build check qa og video video2 serve clean
+.PHONY: build check qa og video video2 clips serve clean
 
 build:
 	$(PYTHON) tools/build.py
@@ -29,6 +30,9 @@ video: build
 
 video2: build
 	$(PYTHON) video/make_video2.py
+
+clips: build
+	$(PYTHON) video/make_clips.py
 
 serve: build
 	cd docs && $(PYTHON) -m http.server 8000

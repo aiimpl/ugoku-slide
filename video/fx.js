@@ -86,6 +86,22 @@
     await tween(dur, e => { cx = x0 + dx * e; cy = y0 + dy * e; place(); ev("pointermove", cx, cy); });
     ev("pointerup", cx, cy);
   };
+  // スライドの座標 (x0,y0)→(x1,y1) をドラッグで囲む（E の「囲んで直す」用）
+  V.box = async (x0, y0, x1, y1, dur = 0.8) => {
+    const layer = document.querySelector(".ugk-mark"), d = document.querySelector(".deck").getBoundingClientRect(), k = d.width / 1280;
+    const at = (x, y) => [d.left + x * k, d.top + y * k];
+    const ev = (type, x, y) => layer.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: y, bubbles: true, pointerId: 1, isPrimary: true }));
+    const [ax, ay] = at(x0, y0), [bx, by] = at(x1, y1);
+    await V.move([ax, ay], 0.35);
+    ev("pointerdown", ax, ay);
+    await tween(dur, e => { cx = ax + (bx - ax) * e; cy = ay + (by - ay) * e; place(); ev("pointermove", cx, cy); });
+    ev("pointerup", bx, by);
+  };
+  // 入力欄に1文字ずつ打つ
+  V.fill = async (sel, text, dur) => {
+    const el = document.querySelector(sel);
+    await tween(dur, (e, k) => { el.value = text.slice(0, Math.round(text.length * k)); });
+  };
   V.key = k => document.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
   V.type = async (sel, text, dur) => {
     const el = document.querySelector(sel);

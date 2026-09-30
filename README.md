@@ -78,12 +78,14 @@ python3 tools/morphqa.py 51             # build/morph/51_board.png
 ```sh
 make video2   # 第2弾（26.5秒）→ build/video/ugoku-slide-vol2_26s.mp4
 make video    # 第1弾（26秒）  → build/video/ugoku-slide_26s.mp4
+make clips    # 「囲んで直す」「自動デモ」の短い動画 → build/video/clip_mark.mp4・clip_demo.mp4
 ```
 
 実際のスライドを開き、台本どおりに操作しながら1コマずつ撮ります。BGM は NumPy で合成し、場面の切り替わりを拍にそろえています。
 
 ```
 video/make_video2.py  第2弾の台本（場面の順番と操作）
+video/make_clips.py   操作を見せる短い動画の台本
 video/stages2.py      スライド以外の場面（62本の壁・スキルに頼む・締め）
 video/music2.py       第2弾の BGM
 video/record.py       ページの時計を遅くして撮る
