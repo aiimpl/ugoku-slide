@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>動くスライド {{COUNT}}選</title>
-<meta name="description" content="クリックで根拠が開き、数字を動かすと再計算。第2弾はめくっても図形が途切れず変形してつながる。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類と Claude 用スキル。全部無料・MIT ライセンス。">
+<meta name="description" content="囲むだけで Claude への直しの指示ができ、D を押すと勝手にプレゼンする。めくると図形が変形してつながる、1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類と Claude 用スキル。全部無料・MIT ライセンス。">
 <meta property="og:title" content="動くスライド {{COUNT}}選">
-<meta property="og:description" content="めくっても、途切れない。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類と Claude 用スキル。全部無料。">
+<meta property="og:description" content="囲んで直す。勝手にプレゼンする。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類と Claude 用スキル。全部無料。">
 <meta property="og:image" content="https://aiimpl.github.io/ugoku-slide/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='6' width='28' height='20' rx='4' fill='%23ff5a36'/%3E%3Cpath d='M13 11l8 5-8 5z' fill='white'/%3E%3C/svg%3E">
@@ -87,6 +87,7 @@ h2.sec{font-size:32px;letter-spacing:-.02em;margin:0 0 8px;font-weight:900;word-
 .new-head h2{font-size:clamp(30px,4vw,46px);line-height:1.2;letter-spacing:-.03em;margin:0;font-weight:900}
 .new-head p{color:var(--muted);margin:0;font-size:16px}
 .parts{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:34px}
+.parts .btn{margin-top:10px;padding:6px 12px;font-size:13px}
 .parts>div{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;background:var(--surface)}
 .parts b{display:block;font-size:15px;margin-bottom:4px}
 .parts code{font:600 11.5px ui-monospace,"SF Mono",Menlo,monospace;color:var(--accent)}
@@ -127,15 +128,15 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="#"><i></i>動くスライド</a>
-  <nav><a href="#new">第2弾</a><a href="#how">使い方</a><a href="#skill">スキル</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
+  <nav><a href="#v3">第3弾</a><a href="#new">第2弾</a><a href="#how">使い方</a><a href="#skill">スキル</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
 </div></header>
 
 <main class="wrap">
   <div class="hero">
     <div>
-      <div class="vol">VOL.2 — {{COUNT2}} DESIGNS ADDED</div>
-      <h1><span class="ln"><span class="ph">めくっても、</span></span><span class="ln"><span class="ph"><em>途切れない</em>。</span></span></h1>
-      <p class="lede"><span class="ln"><span class="ph">前のページの図形が、</span><span class="ph">次のページの形へ</span><span class="ph">変形してつながる。</span></span><span class="ln"><span class="ph">押すと根拠が開き、</span><span class="ph">動かすと再計算される</span><span class="ph">「動くスライド」の</span><span class="ph">雛形を {{COUNT}} 種類。</span></span><span class="ln"><span class="ph">どれも無料で、</span><span class="ph">何本でも</span><span class="ph">ダウンロードできます。</span></span><span class="ln"><span class="ph">Claude に渡して</span><span class="ph">「この内容に作り替えて」と</span><span class="ph">頼むだけで、</span><span class="ph">自分の資料になります。</span></span></p>
+      <div class="vol">VOL.3 — 囲んで直す・自動デモ・全{{COUNT}}本を点検</div>
+      <h1><span class="ln"><span class="ph">囲んで、直す。</span></span><span class="ln"><span class="ph"><em>勝手に</em>、</span><span class="ph">プレゼン。</span></span></h1>
+      <p class="lede"><span class="ln"><span class="ph">直したい所を囲むと、</span><span class="ph">Claude への指示ができる。</span><span class="ph">D を押すと、</span><span class="ph">スライドが自分で動いて見せる。</span></span><span class="ln"><span class="ph">めくると図形が</span><span class="ph">次のページへ変形してつながる。</span></span><span class="ln"><span class="ph">押すと根拠が開き、</span><span class="ph">動かすと再計算される</span><span class="ph">「動くスライド」の</span><span class="ph">雛形を {{COUNT}} 種類。</span></span><span class="ln"><span class="ph">どれも無料で、</span><span class="ph">何本でも</span><span class="ph">ダウンロードできます。</span></span><span class="ln"><span class="ph">Claude に渡して</span><span class="ph">「この内容に作り替えて」と</span><span class="ph">頼むだけで、</span><span class="ph">自分の資料になります。</span></span></p>
       <div class="stats"><div><b>{{COUNT}}</b><span>デザイン</span></div><div><b>{{SLIDES}}</b><span>枚のスライド</span></div><div><b>0円</b><span>MIT ライセンス</span></div></div>
       <div class="row" style="display:flex;gap:10px;flex-wrap:wrap">
         <a class="btn primary big" href="ugoku-slide-all.zip" download>全部まとめてダウンロード（zip）</a>
@@ -143,10 +144,24 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
       </div>
     </div>
     <div>
-      <div class="stage"><iframe id="feature" title="見本" src="slides/51-onetake.html"></iframe><span class="hint">クリックして → キーでめくってください</span></div>
+      <div class="stage"><iframe id="feature" title="見本" src="slides/51-onetake.html"></iframe><span class="hint">クリックして → でめくる／E で囲む／D で自動デモ</span></div>
       <div class="pick" id="pick"></div>
     </div>
   </div>
+
+  <section id="v3" class="new-sec">
+    <div class="new-head">
+      <div><div class="vol">第3弾 ｜ 全{{COUNT}}本に</div><h2>囲んで直す。<br>勝手にプレゼンする。</h2></div>
+      <p>AI で作ったスライドを「どこをどう直すか」まで短くしました。新しい操作は全部の雛形に入っていて、今あるファイルも、ダウンロードし直せば使えます。</p>
+    </div>
+    <div class="parts v3">
+      <div><b>E で囲んで直す</b><code>E</code><p>直したい所をドラッグで囲んで一言。何枚目のどの範囲か、中の文字まで入った指示をコピーして、Claude に貼るだけ。</p><button class="btn" type="button" data-try="e">上の見本で試す</button></div>
+      <div><b>D で自動デモ</b><code>D</code><p>ページを送りながら、つまみを動かし、立体を回し、根拠を開いて見せる。展示会のモニターや録画に。</p><button class="btn" type="button" data-try="d">上の見本で試す</button></div>
+      <div><b>全{{COUNT}}本を点検</b><code>check.py</code><p>はみ出し・重なり・文字の見えにくさ・根拠を開いたときの崩れまで機械で確かめ、問題0に直しました。スキルにも同じ点検が入っています。</p></div>
+      <div><b>数字でページへ</b><code>1 2 ↵</code><p>12 と打つと12枚目へ。質問を受けてすぐ戻りたいときに。</p></div>
+      <div><b>静止表示</b><code>?static</code><p>ファイル名のあとに付けて開くと、動きを止めて全部を出す。確認や印刷に。</p></div>
+    </div>
+  </section>
 
   <section id="new" class="new-sec">
     <div class="new-head">
@@ -324,6 +339,14 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
   fbtns.forEach(b => b.addEventListener("click", () => {
     fbtns.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     document.querySelectorAll("#list .tpl").forEach(c => { c.hidden = !!b.dataset.filter && c.dataset.group !== b.dataset.filter; });
+  }));
+
+  // 第3弾の「上の見本で試す」：見本へ移ってキーを送る
+  document.querySelectorAll("[data-try]").forEach(b => b.addEventListener("click", () => {
+    const f = document.getElementById("feature"), k = b.dataset.try;
+    f.scrollIntoView({ behavior: "smooth", block: "center" });
+    const send = () => { try { f.contentWindow.focus(); f.contentWindow.document.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true })); } catch (e) { say("見本をクリックしてから " + k.toUpperCase() + " を押してください"); } };
+    setTimeout(send, 500);
   }));
 
   // 上の大きな見本を切り替える
