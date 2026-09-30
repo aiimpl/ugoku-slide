@@ -77,7 +77,7 @@ python3 tools/morphqa.py 51   # build/morph/51_board.png に、ページ送り�
 
 ## 紹介動画
 
-第2弾の紹介動画（24秒）は `make video2` で `build/video/ugoku-slide-vol2_24s.mp4` に作ります（台本は `video/make_video2.py`、場面は `video/stages2.py`、BGM は `video/music2.py`）。
+第2弾の紹介動画（26.5秒）は `make video2` で `build/video/ugoku-slide-vol2_26s.mp4` に作ります（台本は `video/make_video2.py`、場面は `video/stages2.py`、BGM は `video/music2.py`）。
 以下は第1弾の動画の作り方です。
 
 `make video` で、紹介動画（1920×1080・30fps・26秒・BGM つき）を `build/video/ugoku-slide_26s.mp4` に作ります。

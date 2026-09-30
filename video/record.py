@@ -19,6 +19,7 @@ CLOCK_JS = """(() => {
   let last = real(), virt = last, rate = 1;
   performance.now = () => { const r = real(); virt += (r - last) * rate; last = r; return virt; };
   window.__setRate = x => { performance.now(); rate = x; };
+  window.__setVirt = v => { last = real(); virt = v; rate = 0; };  // 時計を止めて、時刻を直接決める
 })();"""
 
 

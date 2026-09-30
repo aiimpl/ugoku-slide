@@ -1,13 +1,12 @@
-"""第2弾の紹介動画の BGM（24秒・120BPM）。音の部品は music.py と同じものを使う。
+"""第2弾の紹介動画の BGM（26.5秒・120BPM）。音の部品は music.py と同じものを使う。
 
 場面の切り替わりはすべて拍の上（0.5秒刻み）にそろえてある。
-  0.0–1.0  静かな和音と時計の音
-  0.9 / 2.0 / 3.3 / 5.4  ページをめくる → 変形の「すっ」という音
-  1.0–7.0  ビート（丸が形を変えていく）
-  7.0–13.0 ハイハットを細かく（立体・表を貼る）
-  13.0–18.0 ビート。15.5 で小さな一撃（62本の壁）
-  18.0–21.0 キックを抜いて、打鍵の音（スキルに頼む）
-  21.0– 締め、最後の1秒で消える
+  0.0–2.5  冒頭の比べっこ：静かな和音。1.0 で左は「カチッ」と切り替わり、右は「すっ」と変形する音
+  2.5–9.5  ビート（丸が形を変えていく）。2.9 / 5.8 / 7.9 のページ送りに「すっ」
+  9.5–15.5 ハイハットを細かく（立体・表を貼る）
+  15.5–20.5 ビート。18.0 で小さな一撃（62本の壁）
+  20.5–23.5 キックを抜いて、打鍵の音（スキルに頼む）
+  23.5– 締め、最後の1秒で消える
 """
 import wave
 
@@ -16,7 +15,7 @@ import numpy as np
 import music
 from music import BEAT, SR, add, bass, clap, click, env, hat, impact, kick, lowpass, noise, pad, riser
 
-LEN = 24.0
+LEN = 26.5
 rng = np.random.default_rng(20261002)
 ROOTS = [55.0, 43.65, 65.41, 49.0]
 CHORDS = [[220, 261.6, 329.6], [174.6, 220, 261.6], [196, 261.6, 329.6], [196, 246.9, 293.7]]
@@ -35,12 +34,15 @@ def build():
     R = np.zeros(int(LEN * SR))
     both = lambda t, x, g=1.0, pan=0.0: (add(L, t, x, g * (1 - pan)), add(R, t, x, g * (1 + pan)))
 
-    both(0, pad([110, 164.8, 220], 1.1, 0.02), 0.3)
-    for b in range(2):
-        both(b * BEAT, hat(0.015), 0.5)
-    for t in (0.9, 2.0, 3.3, 5.4):
-        both(t, swoosh(), 0.55, -0.2 if t < 3 else 0.2)
-    both(1.0, impact(), 0.6)
+    both(0, pad([110, 164.8, 220], 2.5, 0.02), 0.3)
+    for b in range(5):
+        both(b * BEAT, hat(0.015), 0.45)
+    both(1.0, click(), 1.2, -0.5)       # 左：パッと切り替わる
+    both(1.0, swoosh(0.6), 0.6, 0.4)    # 右：変形する
+    both(2.0, riser(0.5), 0.35)
+    both(2.5, impact(), 0.6)
+    for t in (2.9, 5.8, 7.9):
+        both(t, swoosh(), 0.55, 0.2 if t > 5 else -0.2)
 
     def groove(t0, t1, fine=False, drums=True):
         b = t0
@@ -60,21 +62,21 @@ def build():
                 both(b, pad(CHORDS[bar], BEAT * 4, 0.05), 0.16)
             b += BEAT
 
-    groove(1.0, 7.0)
-    both(6.0, riser(1.0), 0.3)
-    both(7.0, impact(), 0.5)
-    groove(7.0, 13.0, fine=True)
-    groove(13.0, 18.0)
-    both(15.0, riser(0.5), 0.3)
-    both(15.5, impact(), 0.45)
-    groove(18.0, 21.0, drums=False)
-    for t in np.sort(18.4 + rng.uniform(0, 1.5, 34)):
+    groove(2.5, 9.5)
+    both(8.5, riser(1.0), 0.3)
+    both(9.5, impact(), 0.5)
+    groove(9.5, 15.5, fine=True)
+    groove(15.5, 20.5)
+    both(17.5, riser(0.5), 0.3)
+    both(18.0, impact(), 0.45)
+    groove(20.5, 23.5, drums=False)
+    for t in np.sort(20.9 + rng.uniform(0, 1.5, 34)):
         both(float(t), click(), 0.6, float(rng.uniform(-0.3, 0.3)))
-    both(20.1, clap(), 0.4)
-    both(20.5, riser(0.5), 0.35)
-    both(21.0, impact(), 0.9)
-    groove(21.0, 23.5)
-    both(23.5, pad(CHORDS[0], 0.5, 0.05), 0.2)
+    both(22.6, clap(), 0.4)
+    both(23.0, riser(0.5), 0.35)
+    both(23.5, impact(), 0.9)
+    groove(23.5, 26.0)
+    both(26.0, pad(CHORDS[0], 0.5, 0.05), 0.2)
 
     st = np.stack([L, R], 1)
     fade = np.ones(len(st))

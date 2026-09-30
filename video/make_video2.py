@@ -1,6 +1,6 @@
-"""第2弾の紹介動画（1920×1080・30fps・24秒・音つき）を作る。
+"""第2弾の紹介動画（1920×1080・30fps・26.5秒・音つき）を作る。
 
-  python3 video/make_video2.py            全部作って build/video/ugoku-slide-vol2_24s.mp4 に
+  python3 video/make_video2.py            全部作って build/video/ugoku-slide-vol2_26s.mp4 に
   python3 video/make_video2.py v3 v4      指定した場面だけ撮り直して、つなぎ直す
 
 先に make build で docs/ を書き出しておくこと。要 playwright・Pillow・NumPy・ffmpeg。
@@ -15,11 +15,13 @@ from playwright.sync_api import sync_playwright
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import music2  # noqa: E402
 import stages2  # noqa: E402
-from make_video import OUT, covers, deck, ffmpeg, stage_page  # noqa: E402
-from record import open_page, prepare, shoot  # noqa: E402
+from make_video import OUT, covers, deck, ffmpeg  # noqa: E402
+from make_video import stage_page as _stage_page  # noqa: E402
+from record import FPS, open_page, prepare, shoot  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-MP4 = OUT / "ugoku-slide-vol2_24s.mp4"
+MP4 = OUT / "ugoku-slide-vol2_26s.mp4"
+HOOK = OUT / "hook"  # 冒頭の「いつものスライド」側の2枚（51 の1・2枚目の画像）
 CHIP = "V.chip('<i></i>動くスライド 第2弾<b>無料</b>')"
 NEW = [f"{n}-" for n in range(51, 63)]
 
@@ -38,6 +40,97 @@ body.embed{background:radial-gradient(1500px 900px at 50% 38%,#1d1e23 0%,#0b0b0d
 """
 
 
+# 冒頭：左に「いつものスライド」（画像がパッと切り替わる）、右に本物のスライド（変形してつながる）
+HOOK_CSS = """
+body.embed{background:#0d0e11!important}
+.deck{left:1410px!important;top:596px!important;transform:translate(-50%,-50%) scale(.65625)!important;border-radius:6px;
+  box-shadow:0 0 0 3px #ff5a36,0 40px 90px -30px rgb(0 0 0 / .8)}
+#hook{position:fixed;inset:0;z-index:5;pointer-events:none;font-family:"Noto Sans JP","Hiragino Sans",sans-serif;font-feature-settings:"palt" 1}
+#hook .pane{position:absolute;left:90px;top:360px;width:840px;height:472.5px;border-radius:6px;overflow:hidden;box-shadow:0 0 0 1px rgb(255 255 255 / .12)}
+#hook .pane img{position:absolute;inset:0;width:100%;height:100%;filter:saturate(.55) brightness(.8)}
+#hook .pane .b{opacity:0;animation:cut .01s linear 1s forwards}
+@keyframes cut{to{opacity:1}}
+#hook h1{position:absolute;left:90px;top:64px;margin:0;color:#fff;font-weight:900;font-size:84px;letter-spacing:-.02em;line-height:1.2}
+#hook h1 em{font-style:normal;color:#ff5a36}
+#hook .lab{position:absolute;top:296px;font-weight:900;font-size:40px;color:#9a9ea7}
+#hook .lab.r{left:990px;color:#ff5a36}
+#hook .sub{position:absolute;top:862px;font-weight:700;font-size:34px;color:rgb(255 255 255 / .75);opacity:0;animation:up .4s cubic-bezier(.2,.9,.2,1) 1.35s forwards}
+#hook .sub.r{left:990px;color:#fff}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+"""
+
+
+# 1コマずつ時刻を決めて撮る（動きを止めたまま、アニメーションと時計をその時刻に合わせる）。
+# 背景に画像が多い場面では、時計をゆっくり進める撮り方だと動きが止まることがあったため。
+SEEK_JS = """(t) => {
+  window.__setVirt(window.__v0 + t * 1000);
+  document.getAnimations().forEach(a => {
+    if (a.__t0 === undefined) { a.__t0 = t; a.pause(); }
+    a.currentTime = (t - a.__t0) * 1000;
+  });
+}"""
+
+
+def shoot_seek(page, out_dir, duration, actions=()):
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for p in out_dir.rglob("*.png"):
+        p.unlink()
+    page.evaluate("window.__v0 = performance.now(); document.getAnimations().forEach(a => { a.pause(); a.__t0 = 0; })")
+    acts = sorted(actions, key=lambda a: a[0])
+    n = int(round(duration * FPS))
+    for k in range(n):
+        t = k / FPS
+        while acts and acts[0][0] <= t + 1e-9:
+            page.evaluate("() => { " + acts.pop(0)[1] + "; }")
+        page.evaluate(SEEK_JS, t)
+        page.evaluate("new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
+        page.screenshot(path=str(out_dir / f"{k:05d}.png"))
+    return n
+
+
+def stage_page(browser, name, html):
+    """場面の HTML を開き、画像の読み込みと文字の準備を待ってから、動きを頭で止めておく
+    （読み込み中に撮り始めると、動きが遅れて始まったり止まったりする）"""
+    p = _stage_page(browser, name, html)
+    p.evaluate("Promise.all([...document.images].map(i => i.decode().catch(() => {})))")
+    p.evaluate("document.fonts.ready")
+    p.wait_for_timeout(500)
+    p.evaluate("document.getAnimations().forEach(a => { a.pause(); a.currentTime = 0; })")
+    return p
+
+
+def hook_shots(browser):
+    """冒頭の左側に使う、51 の1・2枚目の画像を撮る"""
+    HOOK.mkdir(parents=True, exist_ok=True)
+    p = browser.new_page(viewport={"width": 1280, "height": 720})
+    p.goto(deck("51-onetake", 1), wait_until="domcontentloaded")
+    p.evaluate("document.fonts.ready")
+    p.wait_for_timeout(2500)
+    p.screenshot(path=str(HOOK / "s1.png"))
+    # 2枚目は右と同じく「めくった直後」（→ で出す行はまだ出ていない）
+    p.keyboard.press("ArrowRight")
+    p.wait_for_timeout(2500)
+    p.screenshot(path=str(HOOK / "s2.png"))
+    p.close()
+
+
+def hook_page(browser):
+    p = open_page(browser)
+    prepare(p, deck("51-onetake", 1), chip=False)
+    p.add_style_tag(content=HOOK_CSS)
+    a, b = (HOOK / "s1.png").as_uri(), (HOOK / "s2.png").as_uri()
+    p.evaluate(f"""() => {{ const h = document.createElement('div'); h.id = 'hook';
+      h.innerHTML = `<h1>同じ2枚でも、<br>めくった瞬間が<em>ちがう。</em></h1>
+        <div class="lab" style="left:90px">いつものスライド</div><div class="lab r">動くスライド</div>
+        <div class="pane"><img src="{a}"><img class="b" src="{b}"></div>
+        <div class="sub" style="left:90px">パッと切り替わるだけ</div><div class="sub r">丸が、次の図へつながる</div>`;
+      document.body.appendChild(h); }}""")
+    p.evaluate(CHIP)
+    p.wait_for_timeout(800)
+    return p
+
+
 def slide(browser, name, n):
     p = open_page(browser)
     prepare(p, deck(name, n), chip=False)
@@ -51,11 +144,15 @@ def scenes(names, all_ids):
     rel = lambda n, ext="png": f"covers/{n}.{ext}"
     S = {}
 
+    def v0(b):  # 同じ2枚でも、めくった瞬間がちがう
+        return hook_page(b), 2.5, [(0, "document.getAnimations().forEach(a => { a.currentTime = 0; a.play(); })"),
+                                   (1.0, "V.key('ArrowRight')")]
+    S["v0"] = v0
+
     def v1(b):  # めくっても、途切れない
-        p = slide(b, "51-onetake", 1)
-        return p, 3.0, [(0, "V.cap('めくっても、')"),
-                        (0.9, "V.key('ArrowRight')"), (1.0, "V.cap('めくっても、<em>途切れない。</em>')"),
-                        (2.0, "V.key('ArrowRight')")]
+        p = slide(b, "51-onetake", 2)
+        return p, 3.0, [(0, "V.cap('めくっても、<em>途切れない。</em>')"), (0.4, "V.key('ArrowRight')"),
+                        (1.4, "V.key('ArrowRight')"), (1.9, "V.key('ArrowRight')"), (2.4, "V.key('ArrowRight')")]
     S["v1"] = v1
 
     def v2(b):  # 同じ丸が、最後まで形を変える
@@ -117,7 +214,8 @@ def scenes(names, all_ids):
     return [(n, S[n]) for n in names]
 
 
-ORDER = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8"]
+ORDER = ["v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8"]
+SEEK = {"v6", "v7", "v8"}  # 画像を並べた場面は、1コマずつ時刻を決めて撮る
 
 
 def main():
@@ -129,9 +227,15 @@ def main():
         except Exception:
             browser = pw.chromium.launch(headless=True)
         ids = covers(browser)
+        if "v0" in only:
+            hook_shots(browser)
         for name, make in scenes([n for n in ORDER if n in only], ids):
             page, dur, acts = make(browser)
-            n = shoot(page, OUT / "scenes" / name, dur, acts)
+            if name in SEEK:
+                acts = [x for x in acts if "getAnimations" not in x[1]]  # 頭出しは shoot_seek がする
+                n = shoot_seek(page, OUT / "scenes" / name, dur, acts)
+            else:
+                n = shoot(page, OUT / "scenes" / name, dur, acts)
             page.close()
             print(f"{name}: {dur}s・{n} コマ")
         browser.close()
