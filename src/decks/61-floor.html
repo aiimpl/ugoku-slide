@@ -1,0 +1,641 @@
+<!--meta
+{"title":"駅前店 改装案｜サンプルマート 店舗開発部","style":"建築模型","use":"店舗改装・売場レイアウトの決定","group":"触れる・立体",
+ "aim":"小売チェーンの店舗開発部が店長会議で、駅前店の改装案を白い模型と図面で見せ、売場の配置を決めてもらう。",
+ "desc":"白い模型の売場をドラッグで回せる。「レジを入口側へ」「通路の幅」「セルフレジの台数」を変えると、棚とレジが動き、通れる客数と品目数が出し直される。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#edece8; --surface:#f7f6f3; --ink:#232427; --muted:#5a5c61; --line:#c9c7c1;
+  --accent:#b9502b; --accent-ink:#ffffff; --accent-text:#a2431f; --good:#2e6b4f; --bad:#a2431f; --frame:#d8d6d0;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  --font-num:"Jost","Noto Sans JP","Hiragino Sans",sans-serif;
+  --head-weight:500; --head-track:.04em; --radius:0px; --shadow:none;
+  --pad-y:64px; --pad-x:72px;
+  --paper:#fbfaf7;
+}
+.deck{background:radial-gradient(1300px 820px at 62% 38%,#f5f4f1 0%,#ecebe7 58%,#e2e0db 100%)}
+h1{font-size:56px;line-height:1.32;font-weight:500;letter-spacing:.06em}
+h2{font-size:34px;line-height:1.5;font-weight:500;letter-spacing:.05em;margin-bottom:0}
+h1 em,h2 em{font-style:normal;color:var(--accent-text);font-weight:500}
+.kicker{font-family:var(--font-num);font-weight:400;font-size:15px;letter-spacing:.32em;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:14px;text-transform:uppercase}
+.kicker b{font-weight:500;color:var(--ink)}
+.kicker::after{content:"";flex:0 0 60px;height:1px;background:var(--ink)}
+.lead{font-size:19px;line-height:1.9;color:var(--muted);font-weight:400}
+.num{font-family:var(--font-num);font-weight:300}
+.foot{font-size:14px;color:var(--muted);display:flex;justify-content:space-between;bottom:22px}
+.foot .sheet{font-family:var(--font-num);letter-spacing:.2em;font-size:13px}
+/* 図面の枠（右下の表題欄） */
+.tb{position:absolute;right:36px;bottom:20px;display:flex;border:1px solid var(--ink);font:400 12px/1 var(--font-num);letter-spacing:.14em;color:var(--ink);background:var(--surface)}
+.tb span{padding:6px 10px}
+.tb span+span{border-left:1px solid var(--ink)}
+
+/* ---------- 3D の模型（data-orbit）。床は .plan3d を倒して作り、箱は上へ伸ばす ---------- */
+.model{position:absolute;inset:0;--persp:2400px}
+.model .orbit{position:absolute;left:50%;top:50%;width:calc(38 * var(--u));height:calc(24 * var(--u));margin:calc(-12 * var(--u)) 0 0 calc(-19 * var(--u))}
+.plan3d{position:absolute;inset:0;transform:rotateX(90deg)}
+.bx{position:absolute;left:calc(var(--bx) * var(--u));top:calc(var(--by) * var(--u));width:calc(var(--bw) * var(--u));height:calc(var(--bd) * var(--u));
+  --hh:calc(var(--bh) * var(--u) * var(--on,1));
+  transition:left .9s var(--ease),top .9s var(--ease),width .9s var(--ease),height .9s var(--ease)}
+[data-orbit] .orbit .face{position:absolute;transform-style:flat;background:var(--paper);
+  opacity:clamp(0, calc(var(--on,1) * 5), 1);transition:transform .9s var(--ease),width .9s var(--ease),height .9s var(--ease),opacity .5s}
+[data-orbit] .orbit .face *{transform-style:flat}
+.fz{inset:0;transform:translateZ(var(--hh))}
+.rx{left:100%;top:0;height:100%;width:var(--hh);transform-origin:0 50%;transform:rotateY(-90deg)}
+.lx{right:100%;top:0;height:100%;width:var(--hh);transform-origin:100% 50%;transform:rotateY(90deg)}
+.ty{bottom:100%;left:0;width:100%;height:var(--hh);transform-origin:50% 100%;transform:rotateX(-90deg)}
+.by{top:100%;left:0;width:100%;height:var(--hh);transform-origin:50% 0;transform:rotateX(90deg)}
+/* 光は左手前の上から。向きを変えると、壁の明るさが変わる */
+.face::after{content:"";position:absolute;inset:0;background:#4f4a42;opacity:var(--sh,0);pointer-events:none}
+.by{--sh:calc(.05 + .2 * (1 - max(0, cos((var(--ry) + 40) * 1deg))))}
+.ty{--sh:calc(.08 + .2 * (1 - max(0, -1 * cos((var(--ry) + 40) * 1deg))))}
+.rx{--sh:calc(.07 + .2 * (1 - max(0, -1 * sin((var(--ry) + 40) * 1deg))))}
+.lx{--sh:calc(.07 + .2 * (1 - max(0, sin((var(--ry) + 40) * 1deg))))}
+/* 柔らかい影：光と反対の奥・右へ落ちる */
+.bx>.sh{position:absolute;inset:0;transform:translateZ(1.5px);pointer-events:none;
+  box-shadow:calc(var(--hh) * .5) calc(var(--hh) * -.32) calc(var(--hh) * .9 + 3px) rgb(72 64 54 / calc(.3 * var(--on,1))),0 0 2px rgb(72 64 54 / calc(.25 * var(--on,1)))}
+.fl{position:absolute;left:calc(var(--bx) * var(--u));top:calc(var(--by) * var(--u));width:calc(var(--bw) * var(--u));height:calc(var(--bd) * var(--u));
+  transform:translateZ(1px);transition:left .9s var(--ease),top .9s var(--ease),width .9s var(--ease),height .9s var(--ease)}
+.fl .lbl{position:absolute;left:8px;top:6px;font:500 14px/1.2 var(--font);letter-spacing:.12em;color:var(--muted);white-space:nowrap}
+/* 台座 */
+.bx.base{transform:translateZ(calc(-.8 * var(--u)))}
+.bx.base .face{background:#f4f2ee}
+.bx.base .fz{background:var(--paper)}
+.bx.base .by,.bx.base .rx,.bx.base .lx,.bx.base .ty{background:linear-gradient(180deg,#efece6,#e4e1da);box-shadow:inset 0 1px 0 #fff}
+.bx.base>.sh{box-shadow:30px -18px 60px rgb(60 52 42 / .22),0 0 14px rgb(60 52 42 / .16)}
+.fl.floor{background:
+  linear-gradient(90deg,rgb(35 36 39 / .1) 1px,transparent 1px) 0 0/calc(var(--u) * 5) calc(var(--u) * 5),
+  linear-gradient(180deg,rgb(35 36 39 / .1) 1px,transparent 1px) 0 0/calc(var(--u) * 5) calc(var(--u) * 5),
+  linear-gradient(90deg,rgb(35 36 39 / .04) 1px,transparent 1px) 0 0/var(--u) var(--u),
+  linear-gradient(180deg,rgb(35 36 39 / .04) 1px,transparent 1px) 0 0/var(--u) var(--u)}
+.fl.byard{background:repeating-linear-gradient(135deg,rgb(35 36 39 / .1) 0 1px,transparent 1px 7px);transform:translateZ(1.2px)}
+.fl.deli{background:repeating-linear-gradient(45deg,rgb(35 36 39 / .14) 0 1px,transparent 1px 6px),#f1ede5;border:1px solid #8f8a80;transform:translateZ(1.2px)}
+.fl.queue{background:repeating-linear-gradient(45deg,rgb(185 80 43 / .45) 0 1.5px,transparent 1.5px 7px);border:1.5px dashed var(--accent);transform:translateZ(1.4px)}
+.fl.queue .lbl{color:var(--accent-text);left:auto;right:8px}
+.fl.entr{border-top:0}
+.fl.entr .lbl{left:50%;top:auto;bottom:4px;transform:translateX(-50%);color:var(--ink);font-weight:700}
+.fl.entr::before{content:"";position:absolute;left:50%;bottom:26px;margin-left:-7px;border:7px solid transparent;border-bottom:11px solid var(--ink);border-top:0}
+.fl.dimS,.fl.dimA{border-top:1px solid var(--ink)}
+.fl.dimS::before,.fl.dimS::after,.fl.dimA::before,.fl.dimA::after{content:"";position:absolute;top:-6px;width:1px;height:11px;background:var(--ink);transform:rotate(45deg)}
+.fl.dimS::before,.fl.dimA::before{left:0}.fl.dimS::after,.fl.dimA::after{right:0}
+.fl.dimS span,.fl.dimW span{position:absolute;font:400 15px/1 var(--font-num);letter-spacing:.1em;color:var(--ink)}
+.fl.dimS span{left:50%;top:5px;transform:translateX(-50%)}
+.fl.dimW{border-right:1px solid var(--ink)}
+.fl.dimW span{left:-8px;top:50%;transform:translate(-50%,-50%) rotate(-90deg)}
+.fl.dimA{border-top-color:var(--accent);transform:translateZ(2px)}
+.fl.dimA::before,.fl.dimA::after{background:var(--accent)}
+/* 通路幅の札：いつも正面を向いて立つ */
+.sign{position:absolute;left:calc(var(--bx) * var(--u));top:calc(var(--by) * var(--u));width:0;height:0;transition:left .9s var(--ease),top .9s var(--ease);
+  transform:translateZ(calc(2.2 * var(--u))) rotateX(-90deg) rotateY(calc(var(--ry) * -1deg)) rotateX(calc(var(--rx) * -1deg))}
+.sign span{position:absolute;left:0;bottom:0;transform:translateX(-50%);white-space:nowrap;background:var(--paper);border:1px solid var(--accent);padding:4px 8px 3px;font:400 14px/1 var(--font);color:var(--accent-text);letter-spacing:.06em}
+.sign span b{font:500 16px/1 var(--font-num)}
+.sign b.aw::after{counter-reset:aw calc(var(--aw) * 1000);content:counter(aw)}
+/* 箱の種類 */
+.bx.wall .face{background:#f6f4f0}
+.bx.cut .fz{background:#2a2b2e}
+.bx.case .fz{background:#f7f5f1;box-shadow:inset 0 0 0 1px rgb(0 0 0 / .08)}
+.bx .tt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:500 13px/1.2 var(--font);letter-spacing:.14em;color:var(--muted);white-space:nowrap}
+.bx .tt.v{writing-mode:vertical-rl}
+.bx.gon .fz b{position:absolute;left:50%;top:3px;bottom:3px;width:1px;background:rgb(35 36 39 / .22)}
+.bx.gon::before{content:"";position:absolute;inset:0;border:1px dashed rgb(35 36 39 / .45);opacity:calc(1 - var(--on,1));transform:translateZ(1.6px);transition:opacity .5s}
+.bx.gon.x7::before{display:none}
+.bx.reg .fz b{position:absolute;right:4px;top:3px;width:9px;height:6px;background:#2a2b2e}
+.bx.self .face{background:#e9e6e0}
+.bx.self .fz{background:#2a2b2e}
+.bx.fig .face{background:var(--accent)}
+.bx.fig .fz{background:#d2714e}
+.bx.isl .fz{box-shadow:inset 0 0 0 1px rgb(0 0 0 / .08)}
+.orbit-hint{position:absolute;font-size:15px;color:var(--muted);letter-spacing:.06em}
+
+/* ---------- 2D の平面図（data-morph で、今の配置 → 改装案へ変形） ---------- */
+.plan2d{position:absolute;left:548px;top:206px;width:684px;height:432px;background:var(--paper);box-shadow:0 1px 0 rgb(0 0 0 / .06),0 22px 50px -18px rgb(60 52 42 / .28)}
+.plan2d>div{position:absolute}
+.pz.byard{background:repeating-linear-gradient(135deg,rgb(35 36 39 / .13) 0 1px,transparent 1px 7px)}
+.pz span{position:absolute;left:8px;top:6px;font-size:14px;letter-spacing:.12em;color:var(--muted);white-space:nowrap;font-weight:500}
+.pz.deli{background:repeating-linear-gradient(45deg,rgb(35 36 39 / .16) 0 1px,transparent 1px 6px),#f1ede5;border:1px solid #6f6a61}
+.pz.deli span b{display:block;font:500 20px/1.2 var(--font-num);color:var(--accent-text);letter-spacing:.02em;margin-top:4px}
+.pz.queue{background:repeating-linear-gradient(45deg,rgb(185 80 43 / .5) 0 1.5px,transparent 1.5px 6px);border:1.5px dashed var(--accent)}
+.pw{background:#232427}
+.pd{border-left:1.5px solid var(--ink);border-right:1.5px solid var(--ink)}
+.pd span{position:absolute;left:50%;top:-26px;transform:translateX(-50%);font-size:14px;font-weight:700;letter-spacing:.2em;white-space:nowrap}
+.pc{background:#fff;border:1px solid var(--ink)}
+.pc span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:13px;letter-spacing:.14em;color:var(--muted);white-space:nowrap}
+.pc.v span{writing-mode:vertical-rl}
+.pg{background:#fff;border:1px solid var(--ink)}
+.pg::after{content:"";position:absolute;left:50%;top:2px;bottom:2px;border-left:1px solid #b9b6af}
+.pi{background:#fff;border:1px solid var(--ink);border-radius:3px}
+.pr{background:#dcd9d2;border:1px solid var(--ink)}
+.pr::after{content:"";position:absolute;right:3px;top:3px;width:8px;height:5px;background:var(--ink)}
+.ps{background:var(--ink)}
+.pf{background:var(--accent);border-radius:50%}
+.dim{border-color:var(--ink)!important}
+.dim.h{height:0;border-top:1px solid}
+.dim.v{width:0;border-left:1px solid}
+.dim.h::before,.dim.h::after,.dim.a::before,.dim.a::after{content:"";position:absolute;top:-6px;width:1px;height:11px;background:var(--ink);transform:rotate(45deg)}
+.dim.h::before,.dim.a::before{left:0}.dim.h::after,.dim.a::after{right:0}
+.dim.v::before,.dim.v::after{content:"";position:absolute;left:-6px;width:11px;height:1px;background:var(--ink);transform:rotate(45deg)}
+.dim.v::before{top:0}.dim.v::after{bottom:0}
+.dim span{position:absolute;font:400 14px/1 var(--font-num);letter-spacing:.12em;color:var(--ink);background:var(--bg);padding:0 6px}
+.dim.h span{left:50%;top:-8px;transform:translateX(-50%)}
+.dim.v span{top:50%;left:-8px;transform:translate(-50%,-50%) rotate(-90deg)}
+.dim.a{height:0;border-top:1px solid var(--accent)!important}
+.dim.a::before,.dim.a::after{background:var(--accent)}
+.dimt{width:60px;margin-left:-30px;text-align:center;font:500 14px/1 var(--font-num);color:var(--accent-text);letter-spacing:.04em}
+.call{width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:var(--ink);color:#fff;font:500 14px/24px var(--font-num);text-align:center}
+.s-now .call{background:var(--accent)}
+.north{position:absolute;right:52px;top:128px;width:40px;height:40px;border:1px solid var(--ink);border-radius:50%;font:400 12px/1 var(--font-num);letter-spacing:.1em;display:grid;place-items:center}
+.north::before{content:"";position:absolute;left:50%;top:-8px;margin-left:-5px;border:5px solid transparent;border-bottom:10px solid var(--ink);border-top:0}
+.scale{position:absolute;left:548px;top:656px;display:flex;align-items:flex-end;gap:0;font:400 12px/1 var(--font-num);letter-spacing:.1em;color:var(--muted)}
+.scale i{display:block;width:45px;height:6px;border:1px solid var(--ink)}
+.scale i:nth-child(odd){background:var(--ink)}
+.scale span{margin-left:10px}
+
+/* 左の本文（2・3枚目） */
+.side{width:420px;margin-top:26px}
+.facts{display:grid;gap:0;border-top:1px solid var(--ink)}
+.facts>div{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line)}
+.facts span{font-size:18px}
+.facts b{font:300 44px/1 var(--font-num);letter-spacing:-.01em}
+.facts b small{font:400 17px/1 var(--font);margin-left:3px}
+.facts .hot b{color:var(--accent-text)}
+details.why{border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;margin-top:12px}
+details.why>summary{color:var(--ink);font-weight:500;font-size:17px;padding:10px 0;letter-spacing:.04em}
+details.why>summary::before{background:transparent;border:1px solid var(--ink);color:var(--ink);font-size:16px;width:20px;height:20px}
+details.why>.body{padding:0 0 12px;font-size:16px}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--ink);border-radius:0;padding:14px 16px;box-shadow:0 18px 40px -16px rgb(60 52 42 / .35)}
+.chg{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.chg li{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.chg li i{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font:500 15px/26px var(--font-num);font-style:normal;text-align:center;margin-top:2px}
+.chg li b{display:block;font-size:19px;font-weight:500;margin-bottom:3px}
+.chg li span{font-size:16px;color:var(--muted);line-height:1.6}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover .cm{position:absolute;left:450px;top:60px;width:830px;height:640px}
+.s-cover h1{margin-top:8px}
+.s-cover .lead{max-width:430px;margin-top:22px}
+.s-cover .meta{position:absolute;left:var(--pad-x);bottom:64px;display:grid;gap:10px;font-size:16px;color:var(--muted)}
+.s-cover .meta div{display:grid;grid-template-columns:120px 1fr;border-top:1px solid var(--line);padding-top:10px}
+.s-cover .meta b{font:400 13px/1.6 var(--font-num);letter-spacing:.22em;color:var(--ink)}
+.s-cover .orbit-hint{right:52px;bottom:60px}
+
+/* ---------- 4 模型で確かめる ---------- */
+.lab{position:absolute;inset:0}
+.lab .mstage{position:absolute;left:20px;top:30px;width:780px;height:680px}
+.lab .orbit-hint{left:72px;bottom:28px}
+.lab .ctl{position:absolute;left:800px;right:56px;top:60px;bottom:40px;display:flex;flex-direction:column}
+.lab h2{font-size:27px;line-height:1.55}
+.sw{display:flex;align-items:center;gap:14px;margin:18px 0 12px;padding:10px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);cursor:pointer;font-size:18px;font-weight:500}
+.sw input{appearance:none;-webkit-appearance:none;width:46px;height:26px;border:1px solid var(--ink);border-radius:13px;position:relative;margin:0;cursor:pointer;background:var(--surface);transition:background .3s}
+.sw input::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:var(--ink);transition:transform .3s var(--ease)}
+.sw input:checked{background:var(--accent);border-color:var(--accent)}
+.sw input:checked::after{transform:translateX(20px);background:#fff}
+.lab .field{margin-bottom:8px}
+.lab .field>label{font-size:17px;color:var(--ink)}
+.lab .field>label b{font:400 24px/1 var(--font-num)}
+input[type=range]{accent-color:var(--ink)}
+.out{border-top:1px solid var(--ink);margin-top:8px;padding-top:10px}
+.out .l{font-size:16px;color:var(--muted)}
+.out .big{font:300 72px/1 var(--font-num);letter-spacing:-.02em;margin:2px 0 0;display:flex;align-items:baseline;gap:10px}
+.out .big small{font:400 18px/1 var(--font)}
+.out .big .gap{font:400 22px/1 var(--font-num);margin-left:auto}.out .big .gap small{font:400 14px/1 var(--font);color:var(--muted);margin-right:4px}
+.cap{display:grid;grid-template-columns:62px 1fr 44px;gap:6px 10px;align-items:center;margin-top:10px;font-size:15px;color:var(--muted)}
+.cap .meter{height:8px;border-radius:0;background:#dcd9d2;position:relative;overflow:visible}
+.cap .meter>i{border-radius:0;background:var(--ink)}
+.cap .meter::after{content:"";position:absolute;left:60%;top:-5px;bottom:-5px;border-left:1.5px solid var(--accent)}
+.cap b{font:400 18px/1 var(--font-num);color:var(--ink);text-align:right}
+.cap .t{grid-column:2/4;font-size:13px;color:var(--accent-text);padding-left:calc(60% - 30px)}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:12px}
+.trio>div{padding:8px 0 0}
+.trio>div+div{border-left:1px solid var(--line);padding-left:12px}
+.trio>div>span{display:block;font-size:14px;color:var(--muted)}
+.trio b{font:300 30px/1.1 var(--font-num)}
+.trio b small{font:400 14px/1 var(--font);margin-left:2px}
+.lab details.why{margin-top:auto}
+.lab details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
+
+/* ---------- 5 3案の比較（タブ） ---------- */
+.opts{margin-top:26px}
+.tabs{border-radius:0;background:transparent;padding:0;gap:0;border-bottom:1px solid var(--ink);width:100%;margin-bottom:0}
+.tabs>[data-tab]{border-radius:0;padding:12px 26px 11px;font-size:18px;font-weight:500;color:var(--muted);border:1px solid transparent;border-bottom:0;margin-bottom:-1px;letter-spacing:.04em}
+.tabs>[data-tab] b{font:400 15px/1 var(--font-num);letter-spacing:.2em;margin-right:10px}
+.tabs>[data-tab][aria-selected=true]{background:var(--paper);color:var(--ink);border-color:var(--ink);box-shadow:none}
+.tabs>[data-tab] .rec{font-size:12px;color:#fff;background:var(--accent);padding:2px 7px;margin-left:10px;vertical-align:2px;letter-spacing:.1em}
+.opt{display:grid;grid-template-columns:auto 1fr;gap:44px;background:var(--paper);border:1px solid var(--ink);border-top:0;padding:34px 36px;box-shadow:0 22px 50px -24px rgb(60 52 42 / .3)}
+.mini{position:relative;width:342px;height:216px;border:1.5px solid var(--ink);background:#fff}
+.mini i{position:absolute}
+.mini .mz.deli{background:repeating-linear-gradient(45deg,rgb(35 36 39 / .2) 0 1px,transparent 1px 4px)}
+.mini .mz.queue{background:rgb(185 80 43 / .28);outline:1px dashed var(--accent)}
+.mini .mw{background:var(--ink)}
+.mini .mg{border:1px solid var(--ink);background:#fff}
+.mini .mr{background:#bcb8b0;border:1px solid var(--ink)}
+.mini .mr.s{background:var(--ink)}
+.opt .cap2{font-size:15px;color:var(--muted);margin-top:12px;letter-spacing:.04em;width:342px}
+.opt h3{font-size:27px;line-height:1.45;font-weight:500;margin:0 0 6px;letter-spacing:.04em}
+.opt p{font-size:18px;color:var(--muted);line-height:1.75;margin:0 0 22px}
+.opt .kv{display:grid;grid-template-columns:1.25fr 1fr 1fr .6fr;border-top:1px solid var(--ink)}
+.opt .kv>div{padding:10px 0 0}
+.opt .kv>div+div{border-left:1px solid var(--line);padding-left:16px}
+.opt .kv span{display:block;font-size:14px;color:var(--muted)}
+.opt .kv b{font:300 46px/1.1 var(--font-num)}
+.opt .kv b small{font:400 15px/1 var(--font);margin-left:2px}
+.opt .kv .ok{color:var(--good)}.opt .kv .ng{color:var(--accent-text)}
+.opt .kv em{display:block;font-style:normal;font-size:13px;color:var(--muted)}
+.s-opt .note{margin-top:10px;font-size:15px;color:var(--muted)}
+.base0{display:flex;gap:34px;align-items:baseline;margin-top:22px;padding:12px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);font-size:16px;color:var(--muted)}
+.base0 .t{color:var(--ink);font-weight:500;letter-spacing:.06em}
+.base0 b{font:300 28px/1 var(--font-num);color:var(--ink);margin:0 2px}
+
+/* ---------- 6 工事とクイズ ---------- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:34px}
+.quiz .q{font-size:25px;font-weight:500;line-height:1.6;margin-bottom:22px}
+.quiz .choices>button{border-radius:0;border:1px solid var(--ink);background:var(--paper);font-size:21px;padding:20px 22px}
+.quiz .choices>button:hover{transform:none;background:#fff}
+.quiz.answered .choices>button[data-correct]{border-color:var(--ink);background:var(--ink);color:#fff}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--accent);background:transparent;color:var(--accent-text)}
+.quiz .explain{font-size:17px;border-left:2px solid var(--accent);padding-left:14px}
+.sched{border-top:1px solid var(--ink)}
+.sched .r{display:grid;grid-template-columns:108px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+.sched .d{font:300 40px/1 var(--font-num);letter-spacing:-.01em}
+.sched .d small{display:block;font:400 13px/1.4 var(--font-num);letter-spacing:.2em;color:var(--muted);margin-top:4px}
+.sched h3{font-size:21px;font-weight:500;margin:0 0 3px}
+.sched p{font-size:17px;color:var(--muted);margin:0;line-height:1.6}
+.sched .zero{display:flex;align-items:baseline;gap:14px;padding:14px 0;font-size:17px}
+.sched .zero b{font:300 48px/1 var(--font-num);color:var(--accent-text)}
+
+/* ---------- 7 決めてほしいこと ---------- */
+.s-end .em{position:absolute;right:10px;top:20px;width:640px;height:440px}
+.s-end h2{max-width:640px;font-size:38px}
+.asks{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:86px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}
+.asks>div{padding:16px 24px 0 0}
+.asks>div+div{border-left:1px solid var(--line);padding-left:24px}
+.asks .no{font:400 13px/1 var(--font-num);letter-spacing:.24em;color:var(--muted)}
+.asks .v{font:300 50px/1.1 var(--font-num);margin:10px 0 4px;letter-spacing:-.01em}
+.asks .v small{font:400 18px/1 var(--font);margin-left:4px}
+.asks h3{font-size:20px;font-weight:500;margin:0 0 4px}
+.asks p{font-size:16px;color:var(--muted);margin:0;line-height:1.6}
+.s-end .lead{max-width:600px;margin-top:16px}
+.s-end .contact{position:absolute;left:var(--pad-x);bottom:36px;font-size:15px;color:var(--muted)}
+.s-end .contact b{color:var(--ink);font-weight:500;margin-right:12px}
+
+@media (prefers-reduced-motion:reduce){.bx,.fl,[data-orbit] .orbit .face{transition:none}}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <section class="slide s-cover" data-title="表紙">
+    <div class="cm">
+      <div class="model" data-orbit data-rx="-50" data-ry="-24" data-spin style="--reg:1;--aw:1.8;--rows:6;--glen:9.5;--self:4;--q:1.5"><div class="orbit" style="--u:15px"><div class="plan3d">
+          <div class="bx base" style="--bx:-1.4;--by:-1.4;--bw:40.8;--bd:26.8;--bh:0.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="fl floor" style="--bx:0;--by:0;--bw:38;--bd:24"></div>
+          <div class="fl byard" style="--bx:0;--by:0;--bw:38;--bd:3.8"><span class="lbl">バックヤード</span></div>
+          <div class="fl deli" style="--bx:29;--by:5.6;--bw:7.4;--bd:calc(6 + var(--reg) * 9.4)"><span class="lbl">惣菜・<br>イートイン</span></div>
+          <div class="fl queue" style="--bx:calc(25 + var(--reg) * -16);--by:calc(19.2 + var(--reg) * -2.2);--bw:calc(6 + var(--reg) * 12);--bd:calc(3.3 + var(--reg) * -0.3)"><span class="lbl">レジ待ち</span></div>
+          <div class="fl entr" style="--bx:1.5;--by:22.6;--bw:6;--bd:1.4"><span class="lbl">入口</span></div>
+          <div class="fl dimS" style="--bx:0;--by:25.1;--bw:38;--bd:0.8"><span>38,000</span></div>
+          <div class="fl dimW" style="--bx:-1.3;--by:0;--bw:0.8;--bd:24"><span>24,000</span></div>
+          <div class="fl dimA" style="--bx:10.2;--by:calc(7.35 + var(--glen));--bw:var(--aw);--bd:0.6"></div>
+          <div class="sign" style="--bx:calc(10.2 + var(--aw) / 2);--by:calc(7.6 + var(--glen))"><span>通路 <b class="aw"></b></span></div>
+          <div class="bx wall" style="--bx:0;--by:3.8;--bw:38;--bd:0.2;--bh:2.6"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall" style="--bx:37.8;--by:3.8;--bw:0.2;--bd:20.2;--bh:2.6"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:0;--by:0;--bw:0.25;--bd:24;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:0;--by:23.75;--bw:1.5;--bd:0.25;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:7.5;--by:23.75;--bw:30.5;--bd:0.25;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case" style="--bx:8;--by:4.0;--bw:20;--bd:1.2;--bh:1.8"><i class="sh"></i><div class="face fz"><span class="tt">精肉・鮮魚</span></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case" style="--bx:36.4;--by:5.0;--bw:1.4;--bd:7;--bh:1.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case low" style="--bx:1.2;--by:6;--bw:2.2;--bd:11;--bh:0.8"><i class="sh"></i><div class="face fz"><span class="tt v">青果</span></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 0 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 0), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 1 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 1), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 2 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 2), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 3 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 3), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 4 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 4), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 5 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 5), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon x7" style="--bx:calc(9 + 6 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 6), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx isl" style="--bx:30.1;--by:10.4;--bw:2.2;--bd:8;--bh:0.9;--on:var(--reg)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx isl" style="--bx:33.4;--by:10.4;--bw:2.2;--bd:8;--bh:0.9;--on:var(--reg)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -22.2);--by:calc(12.4 + var(--reg) * 8.0);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -19.0);--by:calc(14.8 + var(--reg) * 5.6);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -15.8);--by:calc(17.2 + var(--reg) * 3.2);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -15.6);--by:calc(12.2 + var(--reg) * 8.35);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 0), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -14.15);--by:calc(13.5 + var(--reg) * 7.05);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 1), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -12.7);--by:calc(14.8 + var(--reg) * 5.75);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 2), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -11.25);--by:calc(16.1 + var(--reg) * 4.45);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 3), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -9.8);--by:calc(17.4 + var(--reg) * 3.15);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 4), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -8.35);--by:calc(18.7 + var(--reg) * 1.85);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 5), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(30.0 + var(--reg) * -19.8);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 0), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(28.95 + var(--reg) * -17.55);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 1), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(27.9 + var(--reg) * -15.3);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 2), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(26.85 + var(--reg) * -13.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 3), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(25.8 + var(--reg) * -10.8);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 4), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(24.75 + var(--reg) * -8.55);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 5), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(23.7 + var(--reg) * -6.3);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 6), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(22.65 + var(--reg) * -4.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 7), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+      </div></div></div>
+    </div>
+    <div class="kicker"><b>SAMPLE MART</b> 駅前店 改装計画</div>
+    <h1>駅前店は、<br>レジを<em>入口へ</em><br>寄せる。</h1>
+    <p class="lead">夕方の行列をなくし、空いた奥を惣菜売場に。<br>改装案を、模型と図面でご覧ください。</p>
+    <div class="meta">
+      <div><b>MEETING</b>2026.11.18 店長会議</div>
+      <div><b>FROM</b>店舗開発部 売場設計課</div>
+      <div><b>ASK</b>A案で進めるかのご判断</div>
+    </div>
+    <div class="orbit-hint">ドラッグで回せます</div>
+    <aside class="notes">模型はゆっくり回っています。最初に「今日はレジの位置を決めたい」と言い切る。次のページで、今の配置の何が困っているかを図面で見せます。</aside>
+  </section>
+
+  <section class="slide s-now" data-title="今の配置">
+    <div class="kicker"><b>01</b> 今の配置</div>
+    <h2>夕方18時、レジの列が<br><em>主通路をふさいでいる</em>。</h2>
+    <div class="side">
+      <div class="facts">
+        <div><span>18時台の来店</span><b class="num"><span data-count="210"></span><small>人/時</small></b></div>
+        <div class="hot"><span>レジの待ち時間</span><b class="num"><span data-count="7.5" data-format="dec1"></span><small>分</small></b></div>
+        <div class="hot"><span>通路にはみ出す列</span><b class="num"><span data-count="14"></span><small>人</small></b></div>
+      </div>
+      <details class="why"><summary>数え方</summary><div class="body">2026年10月の平日10日間、18〜19時に防犯カメラの映像で列の長さを5分ごとに数えた。来店はドアの通過数（数字は架空のサンプルです）。</div></details>
+    </div>
+      <div class="plan2d">
+        <div class="pz byard" style="left:0px;top:0px;width:684px;height:68.4px"><span>バックヤード</span></div>
+        <div class="pz deli" data-morph="deli" style="left:522px;top:100.8px;width:133.2px;height:108px"><span data-morph-enter>惣菜</span></div>
+        <div class="pz queue" data-morph="queue" style="left:450px;top:345.6px;width:108px;height:59.4px"></div>
+        <div class="pw" style="left:0px;top:68.4px;width:684px;height:4.0px"></div>
+        <div class="pw" style="left:680.0px;top:0px;width:4.0px;height:432px"></div>
+        <div class="pw" style="left:0px;top:0px;width:684px;height:4.0px"></div>
+        <div class="pw" style="left:0px;top:0px;width:4.0px;height:432px"></div>
+        <div class="pw" style="left:0px;top:428.0px;width:27.0px;height:4.0px"></div>
+        <div class="pw" style="left:135.0px;top:428.0px;width:549.0px;height:4.0px"></div>
+        <div class="pd" style="left:27.0px;top:424.8px;width:108px;height:10.8px"><span>入口</span></div>
+        <div class="pc" style="left:144px;top:72.0px;width:360px;height:21.6px"><span>精肉・鮮魚</span></div>
+        <div class="pc" style="left:655.2px;top:90.0px;width:25.2px;height:126px"></div>
+        <div class="pc v" style="left:21.6px;top:108px;width:39.6px;height:198px"><span>青果</span></div>
+        <div class="pg" data-morph="g0" style="left:162.0px;top:126px;width:21.6px;height:216.0px"></div>
+        <div class="pg" data-morph="g1" style="left:210.6px;top:126px;width:21.6px;height:216.0px"></div>
+        <div class="pg" data-morph="g2" style="left:259.2px;top:126px;width:21.6px;height:216.0px"></div>
+        <div class="pg" data-morph="g3" style="left:307.8px;top:126px;width:21.6px;height:216.0px"></div>
+        <div class="pg" data-morph="g4" style="left:356.4px;top:126px;width:21.6px;height:216.0px"></div>
+        <div class="pg" data-morph="g5" style="left:405.0px;top:126px;width:21.6px;height:216.0px"></div>
+        <div class="pr" data-morph="c0" style="left:561.6px;top:223.2px;width:46.8px;height:21.6px"></div>
+        <div class="pr" data-morph="c1" style="left:561.6px;top:266.4px;width:46.8px;height:21.6px"></div>
+        <div class="pr" data-morph="c2" style="left:561.6px;top:309.6px;width:46.8px;height:21.6px"></div>
+        <div class="pf" data-morph="f0" style="left:540.0px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f1" style="left:521.1px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f2" style="left:502.2px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f3" style="left:483.3px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f4" style="left:464.4px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f5" style="left:445.5px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f6" style="left:426.6px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f7" style="left:407.7px;top:376.2px;width:10.8px;height:10.8px"></div>
+        <div class="dim h" style="left:0;top:-30px;width:684px"><span>38,000</span></div>
+        <div class="dim v" style="left:-30px;top:0;height:432px"><span>24,000</span></div>
+        <div class="dim a" data-morph="dimA" style="left:183.6px;top:115.2px;width:27.0px"></div>
+        <div class="dimt" data-morph="dimAt" style="left:197.1px;top:97.6px">1,500</div>
+        <div class="call" data-morph-enter style="left:471.6px;top:370.8px">!</div>
+      </div>
+    <div class="north">N</div>
+    <div class="scale"><i></i><i></i><i></i><i></i><span>0　　5　　10m</span></div>
+    <div class="tb"><span>A-01</span><span>現況平面図</span><span>S=1:200</span></div>
+    <aside class="notes">右の図の赤い帯が18時のレジ待ち。奥のレジから入口へ戻る列が、主通路（入口から奥へ行く道）を横切っている。「ここを直したい」と指でなぞる。</aside>
+  </section>
+
+  <section class="slide s-new" data-title="改装案">
+    <div class="kicker"><b>02</b> 改装案（A案）</div>
+    <h2>レジを入口側へ。空いた奥を<br><em>惣菜売場</em>に広げる。</h2>
+    <div class="side">
+      <ol class="chg">
+        <li class="step"><i>1</i><div><b>レジ3台＋セルフ4台を入口側に</b><span>列はレジ前の専用の帯に並び、主通路をふさがない。</span></div></li>
+        <li class="step"><i>2</i><div><b>通路を1.5m → 1.8mに</b><span>カート同士がすれ違える幅。棚は6列のまま。</span></div></li>
+        <li class="step"><i>3</i><div><b>空いた右奥を惣菜・イートインに</b><span>夕方に売れる惣菜を、帰り道の目の前に置く。</span></div></li>
+      </ol>
+    </div>
+      <div class="plan2d">
+        <div class="pz byard" style="left:0px;top:0px;width:684px;height:68.4px"><span>バックヤード</span></div>
+        <div class="pz deli" data-morph="deli" style="left:522px;top:100.8px;width:133.2px;height:277.2px"><span data-morph-enter>惣菜・イートイン <b>+18㎡</b></span></div>
+        <div class="pz queue" data-morph="queue" style="left:162px;top:306px;width:324px;height:54px"></div>
+        <div class="pw" style="left:0px;top:68.4px;width:684px;height:4.0px"></div>
+        <div class="pw" style="left:680.0px;top:0px;width:4.0px;height:432px"></div>
+        <div class="pw" style="left:0px;top:0px;width:684px;height:4.0px"></div>
+        <div class="pw" style="left:0px;top:0px;width:4.0px;height:432px"></div>
+        <div class="pw" style="left:0px;top:428.0px;width:27.0px;height:4.0px"></div>
+        <div class="pw" style="left:135.0px;top:428.0px;width:549.0px;height:4.0px"></div>
+        <div class="pd" style="left:27.0px;top:424.8px;width:108px;height:10.8px"><span>入口</span></div>
+        <div class="pc" style="left:144px;top:72.0px;width:360px;height:21.6px"><span>精肉・鮮魚</span></div>
+        <div class="pc" style="left:655.2px;top:90.0px;width:25.2px;height:126px"></div>
+        <div class="pc v" style="left:21.6px;top:108px;width:39.6px;height:198px"><span>青果</span></div>
+        <div class="pg" data-morph="g0" style="left:162.0px;top:126px;width:21.6px;height:171.0px"></div>
+        <div class="pg" data-morph="g1" style="left:216.0px;top:126px;width:21.6px;height:171.0px"></div>
+        <div class="pg" data-morph="g2" style="left:270.0px;top:126px;width:21.6px;height:171.0px"></div>
+        <div class="pg" data-morph="g3" style="left:324.0px;top:126px;width:21.6px;height:171.0px"></div>
+        <div class="pg" data-morph="g4" style="left:378.0px;top:126px;width:21.6px;height:171.0px"></div>
+        <div class="pg" data-morph="g5" style="left:432.0px;top:126px;width:21.6px;height:171.0px"></div>
+        <div class="pi" data-morph="i0" style="left:541.8px;top:187.2px;width:39.6px;height:144px"></div>
+        <div class="pi" data-morph="i1" style="left:601.2px;top:187.2px;width:39.6px;height:144px"></div>
+        <div class="pr" data-morph="c0" style="left:162.0px;top:367.2px;width:46.8px;height:21.6px"></div>
+        <div class="pr" data-morph="c1" style="left:219.6px;top:367.2px;width:46.8px;height:21.6px"></div>
+        <div class="pr" data-morph="c2" style="left:277.2px;top:367.2px;width:46.8px;height:21.6px"></div>
+        <div class="ps" data-morph="s0" style="left:342.0px;top:369.9px;width:16.2px;height:16.2px"></div>
+        <div class="ps" data-morph="s1" style="left:368.1px;top:369.9px;width:16.2px;height:16.2px"></div>
+        <div class="ps" data-morph="s2" style="left:394.2px;top:369.9px;width:16.2px;height:16.2px"></div>
+        <div class="ps" data-morph="s3" style="left:420.3px;top:369.9px;width:16.2px;height:16.2px"></div>
+        <div class="pf" data-morph="f0" style="left:183.6px;top:329.4px;width:10.8px;height:10.8px"></div>
+        <div class="pf" data-morph="f1" style="left:205.2px;top:329.4px;width:10.8px;height:10.8px"></div>
+        <div class="dim h" style="left:0;top:-30px;width:684px"><span>38,000</span></div>
+        <div class="dim v" style="left:-30px;top:0;height:432px"><span>24,000</span></div>
+        <div class="dim a" data-morph="dimA" style="left:183.6px;top:115.2px;width:32.4px"></div>
+        <div class="dimt" data-morph="dimAt" style="left:199.8px;top:97.6px">1,800</div>
+        <div class="call" data-morph-enter style="left:136.8px;top:363.6px">1</div>
+        <div class="call" data-morph-enter style="left:185.4px;top:244.8px">2</div>
+        <div class="call" data-morph-enter style="left:633.6px;top:360px">3</div>
+      </div>
+    <div class="north">N</div>
+    <div class="scale"><i></i><i></i><i></i><i></i><span>0　　5　　10m</span></div>
+    <div class="tb"><span>A-02</span><span>改装案平面図</span><span>S=1:200</span></div>
+    <aside class="notes">前のページから、レジと棚がそのまま動いて変わる。→で変えた点を1つずつ出す。通路の寸法（赤い数字）が1,500から1,800に変わったことも見せる。</aside>
+  </section>
+
+  <section class="slide s-lab" data-title="模型で確かめる">
+    <div class="lab" data-calc data-let="rows = floor((20 - aw) / (1.2 + aw)); glen = 12 - reg * 2.5; items = (rows * glen + reg * 16) * 2 * 55; area = 704 + reg * 20; ac = round(150 * aw - 30 - (1 - reg) * 60); rc = 120 + self * 24; thr = min(ac, rc); gap = thr - 210; q = max(1, min(8, (210 - thr) / 11 + 2))">
+      <div class="mstage">
+      <div class="model" data-orbit data-rx="-54" data-ry="-18"><div class="orbit" style="--u:15px"><div class="plan3d">
+          <div class="bx base" style="--bx:-1.4;--by:-1.4;--bw:40.8;--bd:26.8;--bh:0.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="fl floor" style="--bx:0;--by:0;--bw:38;--bd:24"></div>
+          <div class="fl byard" style="--bx:0;--by:0;--bw:38;--bd:3.8"><span class="lbl">バックヤード</span></div>
+          <div class="fl deli" style="--bx:29;--by:5.6;--bw:7.4;--bd:calc(6 + var(--reg) * 9.4)"><span class="lbl">惣菜・<br>イートイン</span></div>
+          <div class="fl queue" style="--bx:calc(25 + var(--reg) * -16);--by:calc(19.2 + var(--reg) * -2.2);--bw:calc(6 + var(--reg) * 12);--bd:calc(3.3 + var(--reg) * -0.3)"><span class="lbl">レジ待ち</span></div>
+          <div class="fl entr" style="--bx:1.5;--by:22.6;--bw:6;--bd:1.4"><span class="lbl">入口</span></div>
+          <div class="fl dimS" style="--bx:0;--by:25.1;--bw:38;--bd:0.8"><span>38,000</span></div>
+          <div class="fl dimW" style="--bx:-1.3;--by:0;--bw:0.8;--bd:24"><span>24,000</span></div>
+          <div class="fl dimA" style="--bx:10.2;--by:calc(7.35 + var(--glen));--bw:var(--aw);--bd:0.6"></div>
+          <div class="sign" style="--bx:calc(10.2 + var(--aw) / 2);--by:calc(7.6 + var(--glen))"><span>通路 <b class="aw"></b></span></div>
+          <div class="bx wall" style="--bx:0;--by:3.8;--bw:38;--bd:0.2;--bh:2.6"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall" style="--bx:37.8;--by:3.8;--bw:0.2;--bd:20.2;--bh:2.6"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:0;--by:0;--bw:0.25;--bd:24;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:0;--by:23.75;--bw:1.5;--bd:0.25;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:7.5;--by:23.75;--bw:30.5;--bd:0.25;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case" style="--bx:8;--by:4.0;--bw:20;--bd:1.2;--bh:1.8"><i class="sh"></i><div class="face fz"><span class="tt">精肉・鮮魚</span></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case" style="--bx:36.4;--by:5.0;--bw:1.4;--bd:7;--bh:1.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case low" style="--bx:1.2;--by:6;--bw:2.2;--bd:11;--bh:0.8"><i class="sh"></i><div class="face fz"><span class="tt v">青果</span></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 0 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 0), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 1 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 1), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 2 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 2), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 3 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 3), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 4 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 4), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 5 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 5), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon x7" style="--bx:calc(9 + 6 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 6), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx isl" style="--bx:30.1;--by:10.4;--bw:2.2;--bd:8;--bh:0.9;--on:var(--reg)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx isl" style="--bx:33.4;--by:10.4;--bw:2.2;--bd:8;--bh:0.9;--on:var(--reg)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -22.2);--by:calc(12.4 + var(--reg) * 8.0);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -19.0);--by:calc(14.8 + var(--reg) * 5.6);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -15.8);--by:calc(17.2 + var(--reg) * 3.2);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -15.6);--by:calc(12.2 + var(--reg) * 8.35);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 0), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -14.15);--by:calc(13.5 + var(--reg) * 7.05);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 1), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -12.7);--by:calc(14.8 + var(--reg) * 5.75);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 2), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -11.25);--by:calc(16.1 + var(--reg) * 4.45);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 3), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -9.8);--by:calc(17.4 + var(--reg) * 3.15);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 4), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -8.35);--by:calc(18.7 + var(--reg) * 1.85);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 5), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(30.0 + var(--reg) * -19.8);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 0), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(28.95 + var(--reg) * -17.55);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 1), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(27.9 + var(--reg) * -15.3);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 2), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(26.85 + var(--reg) * -13.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 3), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(25.8 + var(--reg) * -10.8);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 4), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(24.75 + var(--reg) * -8.55);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 5), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(23.7 + var(--reg) * -6.3);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 6), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(22.65 + var(--reg) * -4.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 7), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+      </div></div></div>
+      </div>
+      <div class="orbit-hint">ドラッグで回す ／ ダブルクリックで元の向き</div>
+      <div class="ctl">
+        <div class="kicker"><b>03</b> 模型で確かめる</div>
+        <h2><span data-out="'通路' + aw.toFixed(1) + 'm・セルフ' + self + (thr >= 210 ? '台なら、' : '台では、')">通路1.8m・セルフ4台なら、</span><br><em data-out="thr >= 210 ? '夕方の210人をさばける。' : 'あと' + (210 - thr) + '人さばけない。'">夕方の210人をさばける。</em></h2>
+        <label class="sw"><input type="checkbox" name="reg">レジを入口側へ寄せる</label>
+        <div class="field"><label>通路の幅 <b data-show="aw" data-format="dec1" data-unit=" m"></b></label><input type="range" name="aw" min="1.2" max="2.4" step="0.1" value="1.5"></div>
+        <div class="field"><label>セルフレジ <b data-show="self" data-unit=" 台"></b></label><input type="range" name="self" min="0" max="6" step="1" value="0"></div>
+        <div class="out">
+          <div class="l">1時間に通れる客数</div>
+          <div class="big"><span data-out="thr"></span><small>人</small><span class="gap"><small>210人との差</small> <span data-out="gap" data-sign data-unit=" 人"></span></span></div>
+          <div class="cap">
+            <span>通路</span><div class="meter" data-bar="ac" data-max="350"><i></i></div><b data-out="ac"></b>
+            <span>レジ</span><div class="meter" data-bar="rc" data-max="350"><i></i></div><b data-out="rc"></b>
+            <span></span><span class="t">↑ 夕方18時の210人</span>
+          </div>
+        </div>
+        <div class="trio">
+          <div><span>品目数</span><b data-out="items"></b></div>
+          <div><span>売場面積</span><b><span data-out="area"></span><small>㎡</small></b></div>
+          <div><span>棚の列</span><b><span data-out="rows"></span><small>列</small></b></div>
+        </div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">通れる客数＝通路とレジの少ないほう。通路は幅1mあたり150人/時（列が主通路にかかると−60人）。レジは有人1台40人・セルフ1台24人。品目数は棚の長さ1mあたり55品目。</div></details>
+      </div>
+    </div>
+    <aside class="notes">最初は今の配置のまま。①スイッチでレジを入口へ動かす ②通路を1.8mに ③セルフを4台に、の順で動かすと、並んでいる人（赤い人形）が減っていく。2.1m以上にすると棚が1列沈み、品目が減ることも見せる。</aside>
+  </section>
+
+  <section class="slide s-opt" data-title="3案の比較">
+    <div class="kicker"><b>04</b> 3案の比較</div>
+    <h2>品目を減らさずに流れるのは、<em>A案</em>だけ。</h2>
+    <div class="opts" data-tabs>
+      <div class="tabs"><button data-tab="a"><b>A</b>入口レジ・通路1.8m<span class="rec">推奨</span></button><button data-tab="b"><b>B</b>入口レジ・通路2.4m</button><button data-tab="c"><b>C</b>レジはそのまま・セルフ増設</button></div>
+      <div class="opt" data-panel="a">
+        <div><div class="mini"><i class="mz deli" style="left:261.0px;top:50.4px;width:66.6px;height:138.6px"></i><i class="mz queue" style="left:81.0px;top:153.0px;width:162.0px;height:27.0px"></i><i class="mw" style="left:0.0px;top:34.2px;width:342.0px;height:2.7px"></i><i class="mg" style="left:81.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:108.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:135.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:162.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:189.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:216.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mr" style="left:81.0px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:109.8px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:138.6px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr s" style="left:171.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:184.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:197.1px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:210.2px;top:185.0px;width:8.1px;height:8.1px"></i></div><div class="cap2">レジ3台＋セルフ4台／棚6列</div></div>
+        <div><h3>夕方の210人をさばけて、品目は今と同じ。</h3><p>列はレジ前の帯に収まり、主通路は空く。空いた右奥の18㎡を惣菜に回す。</p>
+          <div class="kv"><div><span>通れる客数</span><b class="ok">216<small>人/時</small></b></div><div><span>品目数</span><b>8,030</b><em>今 7,920</em></div><div><span>工事費</span><b>1,480<small>万円</small></b></div><div><span>休業</span><b>0<small>日</small></b></div></div></div>
+      </div>
+      <div class="opt" data-panel="b">
+        <div><div class="mini"><i class="mz deli" style="left:261.0px;top:50.4px;width:66.6px;height:138.6px"></i><i class="mz queue" style="left:81.0px;top:153.0px;width:162.0px;height:27.0px"></i><i class="mw" style="left:0.0px;top:34.2px;width:342.0px;height:2.7px"></i><i class="mg" style="left:81.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:113.4px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:145.8px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:178.2px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mr" style="left:81.0px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:109.8px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:138.6px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr s" style="left:171.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:184.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:197.1px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:210.2px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:223.2px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:236.2px;top:185.0px;width:8.1px;height:8.1px"></i></div><div class="cap2">レジ3台＋セルフ6台／棚4列</div></div>
+        <div><h3>いちばん流れるが、品目が4分の3に減る。</h3><p>通路は広く快適。そのぶん棚が2列減り、日用品の一部を置けなくなる。</p>
+          <div class="kv"><div><span>通れる客数</span><b class="ok">264<small>人/時</small></b></div><div><span>品目数</span><b class="ng">5,940</b><em>今より −25%</em></div><div><span>工事費</span><b>1,720<small>万円</small></b></div><div><span>休業</span><b>0<small>日</small></b></div></div></div>
+      </div>
+      <div class="opt" data-panel="c">
+        <div><div class="mini"><i class="mz deli" style="left:261.0px;top:50.4px;width:66.6px;height:54.0px"></i><i class="mz queue" style="left:225.0px;top:172.8px;width:54.0px;height:29.7px"></i><i class="mw" style="left:0.0px;top:34.2px;width:342.0px;height:2.7px"></i><i class="mg" style="left:81.0px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:105.3px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:129.6px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:153.9px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:178.2px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:202.5px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mr" style="left:280.8px;top:111.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:280.8px;top:133.2px;width:23.4px;height:10.8px"></i><i class="mr" style="left:280.8px;top:154.8px;width:23.4px;height:10.8px"></i><i class="mr s" style="left:311.4px;top:109.8px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:121.5px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:133.2px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:144.9px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:156.6px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:168.3px;width:8.1px;height:8.1px"></i></div><div class="cap2">レジ3台＋セルフ6台（奥のまま）</div></div>
+        <div><h3>安いが、列が主通路をふさぐのは変わらない。</h3><p>レジは速くなるが、通路の詰まりが先に来る。夕方の待ちは半分にしかならない。</p>
+          <div class="kv"><div><span>通れる客数</span><b class="ng">135<small>人/時</small></b></div><div><span>品目数</span><b>7,920</b><em>今と同じ</em></div><div><span>工事費</span><b>620<small>万円</small></b></div><div><span>休業</span><b>0<small>日</small></b></div></div></div>
+      </div>
+    </div>
+    <div class="base0"><span class="t">比べる相手：今の配置</span><span>通れる客数 <b>120</b>人/時</span><span>品目数 <b>7,920</b></span><span>夕方のレジ待ち <b>7.5</b>分</span><span>必要な客数 <b>210</b>人/時</span></div>
+    <p class="note">通れる客数は、前のページの模型と同じ計算（数字は架空のサンプルです）。</p>
+    <aside class="notes">タブを A→B→C と押して見比べる。店長からは「B案の広い通路」を推す声が出やすいので、品目が25%減ることを先に言っておく。</aside>
+  </section>
+
+  <section class="slide s-work" data-title="工事と売場">
+    <div class="kicker"><b>05</b> 工事の進め方</div>
+    <h2>工事は2月の夜3回。<em>店を閉めずに</em>売場を替える。</h2>
+    <div class="two">
+      <div class="quiz">
+        <div class="q">改装のあと、夕方にいちばん売上が伸びる見込みの売場はどこ？</div>
+        <div class="choices">
+          <button>青果（入口の左）</button>
+          <button data-correct>惣菜（右奥・レジへの帰り道）</button>
+          <button>日用品（中央の棚）</button>
+        </div>
+        <div class="explain">同じ配置に替えた北口店では、18時台の惣菜売上が <b>+23%</b>。レジへ向かう帰り道の正面に置いたことが効いた。</div>
+      </div>
+      <div class="sched">
+        <div class="r step"><div class="d">2.03<small>TUE NIGHT</small></div><div><h3>レジを入口側へ移す</h3><p>22時閉店後〜翌7時。配線は1月中に先行して床下へ。</p></div></div>
+        <div class="r step"><div class="d">2.10<small>TUE NIGHT</small></div><div><h3>棚を組み替える（6列・1.8m）</h3><p>商品は台車ごと移すので、並べ直しは2時間。</p></div></div>
+        <div class="r step"><div class="d">2.17<small>TUE NIGHT</small></div><div><h3>惣菜・イートインをつくる</h3><p>ケース2台とカウンター8席。翌朝から販売。</p></div></div>
+        <div class="zero"><b>0</b><span>日の休業。昼の売場はいつもどおり。</span></div>
+      </div>
+    </div>
+    <aside class="notes">クイズは店長に手を挙げてもらってから押す。工事は火曜の夜3回で、右は→で1行ずつ出す。「休業0日」を最後に強調。</aside>
+  </section>
+
+  <section class="slide s-end" data-title="決めてほしいこと">
+    <div class="kicker"><b>06</b> 本日のお願い</div>
+    <h2>今日決めていただきたいのは、<br><em>A案で進めるか</em>です。</h2>
+    <p class="lead">決まれば、11月中に図面を確定し、<br>1月に配線、2月に夜間工事へ入ります。</p>
+    <div class="em">
+      <div class="model" data-orbit data-rx="-48" data-ry="-30" style="--reg:1;--aw:1.8;--rows:6;--glen:9.5;--self:4;--q:1.5"><div class="orbit" style="--u:12.5px"><div class="plan3d">
+          <div class="bx base" style="--bx:-1.4;--by:-1.4;--bw:40.8;--bd:26.8;--bh:0.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="fl floor" style="--bx:0;--by:0;--bw:38;--bd:24"></div>
+          <div class="fl byard" style="--bx:0;--by:0;--bw:38;--bd:3.8"><span class="lbl">バックヤード</span></div>
+          <div class="fl deli" style="--bx:29;--by:5.6;--bw:7.4;--bd:calc(6 + var(--reg) * 9.4)"><span class="lbl">惣菜・<br>イートイン</span></div>
+          <div class="fl queue" style="--bx:calc(25 + var(--reg) * -16);--by:calc(19.2 + var(--reg) * -2.2);--bw:calc(6 + var(--reg) * 12);--bd:calc(3.3 + var(--reg) * -0.3)"><span class="lbl">レジ待ち</span></div>
+          <div class="fl entr" style="--bx:1.5;--by:22.6;--bw:6;--bd:1.4"><span class="lbl">入口</span></div>
+          <div class="fl dimS" style="--bx:0;--by:25.1;--bw:38;--bd:0.8"><span>38,000</span></div>
+          <div class="fl dimW" style="--bx:-1.3;--by:0;--bw:0.8;--bd:24"><span>24,000</span></div>
+          <div class="fl dimA" style="--bx:10.2;--by:calc(7.35 + var(--glen));--bw:var(--aw);--bd:0.6"></div>
+          <div class="sign" style="--bx:calc(10.2 + var(--aw) / 2);--by:calc(7.6 + var(--glen))"><span>通路 <b class="aw"></b></span></div>
+          <div class="bx wall" style="--bx:0;--by:3.8;--bw:38;--bd:0.2;--bh:2.6"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall" style="--bx:37.8;--by:3.8;--bw:0.2;--bd:20.2;--bh:2.6"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:0;--by:0;--bw:0.25;--bd:24;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:0;--by:23.75;--bw:1.5;--bd:0.25;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx wall cut" style="--bx:7.5;--by:23.75;--bw:30.5;--bd:0.25;--bh:0.4"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case" style="--bx:8;--by:4.0;--bw:20;--bd:1.2;--bh:1.8"><i class="sh"></i><div class="face fz"><span class="tt">精肉・鮮魚</span></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case" style="--bx:36.4;--by:5.0;--bw:1.4;--bd:7;--bh:1.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx case low" style="--bx:1.2;--by:6;--bw:2.2;--bd:11;--bh:0.8"><i class="sh"></i><div class="face fz"><span class="tt v">青果</span></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 0 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 0), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 1 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 1), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 2 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 2), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 3 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 3), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 4 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 4), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon" style="--bx:calc(9 + 5 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 5), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx gon x7" style="--bx:calc(9 + 6 * (1.2 + var(--aw)));--by:7;--bw:1.2;--bd:var(--glen);--bh:1.5;--on:clamp(0, calc(var(--rows) - 6), 1)"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx isl" style="--bx:30.1;--by:10.4;--bw:2.2;--bd:8;--bh:0.9;--on:var(--reg)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx isl" style="--bx:33.4;--by:10.4;--bw:2.2;--bd:8;--bh:0.9;--on:var(--reg)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -22.2);--by:calc(12.4 + var(--reg) * 8.0);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -19.0);--by:calc(14.8 + var(--reg) * 5.6);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx reg" style="--bx:calc(31.2 + var(--reg) * -15.8);--by:calc(17.2 + var(--reg) * 3.2);--bw:2.6;--bd:1.2;--bh:1.0"><i class="sh"></i><div class="face fz"><b></b></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -15.6);--by:calc(12.2 + var(--reg) * 8.35);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 0), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -14.15);--by:calc(13.5 + var(--reg) * 7.05);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 1), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -12.7);--by:calc(14.8 + var(--reg) * 5.75);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 2), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -11.25);--by:calc(16.1 + var(--reg) * 4.45);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 3), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -9.8);--by:calc(17.4 + var(--reg) * 3.15);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 4), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx self" style="--bx:calc(34.6 + var(--reg) * -8.35);--by:calc(18.7 + var(--reg) * 1.85);--bw:0.9;--bd:0.9;--bh:1.3;--on:clamp(0, calc(var(--self) - 5), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(30.0 + var(--reg) * -19.8);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 0), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(28.95 + var(--reg) * -17.55);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 1), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(27.9 + var(--reg) * -15.3);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 2), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(26.85 + var(--reg) * -13.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 3), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(25.8 + var(--reg) * -10.8);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 4), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(24.75 + var(--reg) * -8.55);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 5), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(23.7 + var(--reg) * -6.3);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 6), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+          <div class="bx fig" style="--bx:calc(22.65 + var(--reg) * -4.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 7), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
+      </div></div></div>
+    </div>
+    <div class="asks">
+      <div><div class="no">DECISION 01</div><div class="v">1,480<small>万円</small></div><h3>A案の工事費の承認</h3><p>レジ移設・棚の組み替え・惣菜売場。回収は2年4か月の見込み。</p></div>
+      <div><div class="no">DECISION 02</div><div class="v">2月<small>の火曜夜 3回</small></div><h3>工事日の確定</h3><p>2月3日・10日・17日。夜のシフトは本部から2名応援。</p></div>
+      <div><div class="no">REQUEST</div><div class="v">11.25<small>まで</small></div><h3>店長からのご意見</h3><p>棚の並び・惣菜の品ぞろえへの意見を、売場設計課へ。</p></div>
+    </div>
+    <div class="contact"><b>店舗開発部 売場設計課</b>内線 0000 ／ 社名・店名・数字はすべて架空のサンプルです</div>
+  </section>
+
+</main>

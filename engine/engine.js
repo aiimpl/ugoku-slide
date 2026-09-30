@@ -10,6 +10,8 @@
   const body = document.body;
   if (embed) body.classList.add("embed");
 
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
   /* ---------- 数字の見せ方 ---------- */
   const FORMAT = {
     int: v => Math.round(v).toLocaleString("ja-JP"),
@@ -22,6 +24,8 @@
     },
     pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
     x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+    pad2: v => String(Math.round(v)).padStart(2, "0"),
+    year: v => String(Math.round(v)),
   };
   const format = (el, v) => {
     if (!isFinite(v)) return "—";
@@ -32,8 +36,9 @@
     const from = isFinite(el._v) ? el._v : to;
     el._v = to;
     if (el.hasAttribute("data-sign")) {
-      el.classList.toggle("neg", to < 0);
-      el.classList.toggle("pos", to > 0);
+      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev" はマイナスを良いこと（緑）として色を付ける
+      el.classList.toggle("neg", to * k < 0);
+      el.classList.toggle("pos", to * k > 0);
     }
     if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
     const t0 = performance.now(), d = 450;
@@ -51,6 +56,13 @@
     try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
     catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
   };
+  // data-calc="global" の値は、ほかのページの data-global-out="式" と、.deck の CSS 変数でも使える
+  const G = {};
+  const globalOuts = [...deck.querySelectorAll("[data-global-out]")].map(el => [el, compile(el.dataset.globalOut)]);
+  const updateGlobal = () => globalOuts.forEach(([el, f]) => {
+    let x; try { x = f(G); } catch (e) { x = NaN; }
+    if (typeof x === "string") el.textContent = x; else tween(el, Number(x));
+  });
   deck.querySelectorAll("[data-calc]").forEach(box => {
     const inputs = [...box.querySelectorAll("input[name],select[name]")];
     const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
@@ -62,32 +74,286 @@
     const shows = [...box.querySelectorAll("[data-show]")];
     const update = () => {
       const v = {};
-      inputs.forEach(i => { v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value); });
+      inputs.forEach(i => {
+        if (i.type === "radio") { if (i.checked) v[i.name] = Number(i.value); else if (!(i.name in v)) v[i.name] = NaN; return; }
+        v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value);
+      });
       lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
       const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
-      outs.forEach(([el, f]) => tween(el, run(f)));
+      outs.forEach(([el, f]) => {
+        let x; try { x = f(v); } catch (e) { x = NaN; }
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら、その文字を出す
+      });
       bars.forEach(([el, f, m]) => {
         const r = Math.max(0, Math.min(1, run(f) / run(m)));
         const fill = el.querySelector("i") || el;
         fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
       });
       shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+      // 入力と途中の計算は CSS 変数（--名前）にも入る。図形の大きさや位置を式で動かせる
+      Object.keys(v).forEach(k => { if (isFinite(v[k])) box.style.setProperty("--" + k, v[k]); });
+      if (box.dataset.calc === "global") {
+        Object.assign(G, v);
+        Object.keys(v).forEach(k => { if (isFinite(v[k])) deck.style.setProperty("--" + k, v[k]); });
+        updateGlobal();
+      }
     };
     box.addEventListener("input", update);
     box.addEventListener("change", update);
     update();
   });
+  deck.addEventListener("change", e => { if (e.target.matches("select")) e.target.blur(); });
   // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
   deck.addEventListener("pointerup", e => {
-    if (e.target.matches("input[type=range]")) setTimeout(() => e.target.blur(), 0);
+    if (e.target.matches("input[type=range],input[type=checkbox],input[type=radio]")) setTimeout(() => e.target.blur(), 0);
+    else if (e.target.closest("label") && e.target.closest("label").querySelector("input[type=checkbox],input[type=radio]")) setTimeout(() => document.activeElement && document.activeElement.blur && document.activeElement.blur(), 0);
   });
 
   /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
   const counters = [...deck.querySelectorAll("[data-count]")];
   counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
-  const countUp = slide => slide.querySelectorAll("[data-count]").forEach(el => {
-    el._v = 0; tween(el, Number(el.dataset.count));
+  const countUp = (slide, skip) => {
+    slide.querySelectorAll("[data-count]").forEach(el => {
+      if (skip && skip.has(el)) return;
+      el._v = 0; tween(el, Number(el.dataset.count));
+    });
+    // ほかのページで決まった数字（data-global-out）も、開いたときに数え上がる
+    let any = false;
+    globalOuts.forEach(([el]) => { if (slide.contains(el) && !(skip && skip.has(el))) { el._v = 0; any = true; } });
+    if (any) updateGlobal();
+  };
+
+  /* ---------- .draw：SVG の線が、表示されたときに描かれていく ---------- */
+  deck.querySelectorAll(".draw").forEach(p => { if (p instanceof SVGGeometryElement) p.setAttribute("pathLength", "1"); });
+
+  /* ---------- data-orbit：ドラッグで回せる立体（CSS の 3D） ---------- */
+  const orbits = [];
+  deck.querySelectorAll("[data-orbit]").forEach(box => {
+    const rx0 = Number(box.dataset.rx || -22), ry0 = Number(box.dataset.ry || 32);
+    const o = { box, rx: rx0, ry: ry0, spin: box.hasAttribute("data-spin") && !reduce };
+    const set = () => { box.style.setProperty("--rx", o.rx.toFixed(2)); box.style.setProperty("--ry", o.ry.toFixed(2)); };
+    let drag = null;
+    box.addEventListener("pointerdown", e => {
+      if (e.target.closest("input,button,summary,select,a")) return;
+      drag = { x: e.clientX, y: e.clientY, rx: o.rx, ry: o.ry };
+      o.spin = false;
+      try { box.setPointerCapture(e.pointerId); } catch (err) { /* 合成した操作など */ }
+      box.classList.add("grabbing");
+    });
+    box.addEventListener("pointermove", e => {
+      if (!drag) return;
+      const k = Number(deck.style.getPropertyValue("--scale")) || 1;
+      o.ry = drag.ry + (e.clientX - drag.x) / k * 0.45;
+      o.rx = Math.max(-85, Math.min(85, drag.rx - (e.clientY - drag.y) / k * 0.45));
+      set();
+    });
+    const end = () => { drag = null; box.classList.remove("grabbing"); };
+    box.addEventListener("pointerup", end);
+    box.addEventListener("pointercancel", end);
+    box.addEventListener("dblclick", () => { o.rx = rx0; o.ry = ry0; set(); });
+    o.set = set;
+    set();
+    orbits.push(o);
   });
+  if (orbits.some(o => o.spin)) {
+    let last = performance.now();
+    const loop = now => {
+      const dt = Math.min(64, now - last); last = now;
+      orbits.forEach(o => {
+        if (o.spin && o.box.closest(".slide.active")) { o.ry += dt * 0.012; o.set(); }
+      });
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------- data-sheet：表の数字を直す・Excel から貼ると、グラフと集計が作り直される ---------- */
+  // 「1,200」「▲300」「1.2億」「45件」のように、数字のうしろの単位は読み飛ばす（単位の換算はしない）
+  const parseNum = s => {
+    const t = String(s).trim().replace(/[−－―]/g, "-").replace(/^[▲△]/, "-").replace(/[,，¥￥\s]/g, "")
+      .replace(/[０-９．]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+    const m = t.match(/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i);
+    return m ? Number(m[0]) : NaN;
+  };
+  // 目盛りは 1・2・2.5・5 の区切りで、3〜5本
+  const niceScale = (m, lo = 0) => {
+    if (!(m > lo)) m = lo + 1;
+    const raw = (m - lo) / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+    const a = Math.floor(lo / step + 1e-9) * step, b = Math.max(a + 2 * step, Math.ceil(m / step - 1e-9) * step);
+    const n = Math.round((b - a) / step);
+    return { min: a, max: b, ticks: Array.from({ length: n + 1 }, (_, i) => i / n) };
+  };
+  const sheets = [];
+  deck.querySelectorAll("[data-sheet]").forEach(fig => {
+    const table = fig.querySelector("table");
+    if (!table) return;
+    const initial = table.innerHTML;
+    const kind = fig.dataset.chart || "bar";
+    let chart = fig.querySelector(".sheet-chart");
+    if (!chart) { chart = document.createElement("div"); chart.className = "sheet-chart"; fig.appendChild(chart); }
+    const axisFmt = { dataset: { format: fig.dataset.format || "int", unit: "" } };
+    const read = () => {
+      const head = [...table.querySelectorAll("thead th")].slice(1).map(th => th.textContent.trim());
+      const rows = [...table.querySelectorAll("tbody tr")].map(tr => {
+        const c = [...tr.children];
+        return { label: c[0] ? c[0].textContent.trim() : "", vals: c.slice(1).map(td => parseNum(td.textContent)) };
+      });
+      const n = Math.max(head.length, ...rows.map(r => r.vals.length), 0);
+      while (head.length < n) head.push("系列" + (head.length + 1));
+      return { head, rows };
+    };
+    const prep = () => {
+      table.querySelectorAll("tbody td").forEach((td, i) => {
+        if (td.cellIndex === 0) return;
+        try { td.contentEditable = "plaintext-only"; } catch (e) { /* 古いブラウザ */ }
+        if (td.contentEditable !== "plaintext-only") td.contentEditable = "true";
+        td.classList.add("n");
+        td.spellcheck = false;
+      });
+    };
+    const outs = [...fig.querySelectorAll("[data-sheet-out]")].map(el => [el, (() => {
+      try { return new Function("h", "with(Math){with(h){return (" + el.dataset.sheetOut + ");}}"); }
+      catch (e) { console.warn("式が読めません:", el.dataset.sheetOut); return () => NaN; }
+    })()]);
+    let prevVals = null, shape = "";
+    const render = () => {
+      const d = read();
+      const S = d.head.length, R = d.rows.length;
+      const val = (r, s) => { const x = d.rows[r].vals[s]; return isFinite(x) ? x : 0; };
+      let max = 0, min = 0;
+      for (let r = 0; r < R; r++) {
+        if (kind === "stack") { let t = 0; for (let s = 0; s < S; s++) t += Math.max(0, val(r, s)); max = Math.max(max, t); }
+        else for (let s = 0; s < S; s++) { max = Math.max(max, val(r, s)); min = Math.min(min, val(r, s)); }
+      }
+      // data-min で目盛りの下限を決められる（客単価のように、0から描くと平らに見えるとき）
+      if (kind !== "stack" && fig.dataset.min !== undefined && isFinite(Number(fig.dataset.min))) min = Math.min(Number(fig.dataset.min), ...d.rows.flatMap(r => r.vals.filter(isFinite)));
+      const sc = niceScale(max * 1.02, min);
+      max = sc.max; const lo = sc.min, span = max - lo, base = Math.max(lo, Math.min(0, max));
+      const yOf = v => (v - lo) / span;
+      const sh = kind + R + "x" + S + "/" + sc.ticks.length + d.rows.map(r => r.label).join("|") + d.head.join("|");
+      if (sh !== shape) {
+        shape = sh;
+        const grid = sc.ticks.map(k => `<div class="sc-gl" style="bottom:${k * 100}%"><span></span></div>`).join("") +
+          (lo < 0 ? `<div class="sc-zero" style="bottom:${yOf(0) * 100}%"></div>` : "");
+        const legend = S > 1 ? `<div class="sc-legend">${d.head.map((h, s) => `<span style="--c:var(--s${s + 1})"><i></i>${esc(h)}</span>`).join("")}</div>` : "";
+        let plot = "";
+        if (kind === "line") {
+          plot = `<svg class="sc-lines" viewBox="0 0 1000 1000" preserveAspectRatio="none">${d.head.map((_, s) => `<polyline style="--c:var(--s${s + 1})" vector-effect="non-scaling-stroke"/>`).join("")}</svg>` +
+            d.head.map((_, s) => d.rows.map(() => `<b class="sc-dot" style="--c:var(--s${s + 1})"></b>`).join("")).join("");
+        }
+        const groups = d.rows.map(r => `<div class="sc-g">${kind === "line" ? "" : `<div class="sc-bars">${d.head.map((_, s) => `<i style="--c:var(--s${s + 1})"><em></em></i>`).join("")}</div>`}<span class="sc-l">${esc(r.label)}</span></div>`).join("");
+        chart.className = "sheet-chart sc-" + kind + (S > 1 ? " multi" : "");
+        chart.innerHTML = `${legend}<div class="sc-plot">${grid}<div class="sc-groups">${groups}</div>${plot}</div>`;
+        prevVals = null;
+      }
+      chart.querySelectorAll(".sc-gl span").forEach((sp, i) => { sp.textContent = format(axisFmt, lo + span * sc.ticks[i]); });
+      if (kind === "line") {
+        const from = prevVals, to = d.rows.map((_, r) => d.head.map((_, s) => val(r, s)));
+        prevVals = to;
+        const draw = k => {
+          const pl = chart.querySelectorAll(".sc-lines polyline"), dots = chart.querySelectorAll(".sc-dot");
+          d.head.forEach((_, s) => {
+            const pts = to.map((row, r) => {
+              const v = from ? from[r][s] + (row[s] - from[r][s]) * k : row[s];
+              const x = R > 1 ? (r + .5) / R : .5, y = 1 - yOf(v);
+              const dot = dots[s * R + r];
+              if (dot) { dot.style.left = x * 100 + "%"; dot.style.top = y * 100 + "%"; dot.title = format(axisFmt, row[s]); }
+              return (x * 1000).toFixed(1) + "," + (y * 1000).toFixed(1);
+            });
+            if (pl[s]) pl[s].setAttribute("points", pts.join(" "));
+          });
+        };
+        if (!from || reduce) draw(1);
+        else { const t0 = performance.now(); const tick = now => { const k = Math.min(1, (now - t0) / 500); draw(1 - Math.pow(1 - k, 3)); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+      } else {
+        chart.querySelectorAll(".sc-g").forEach((g, r) => {
+          let acc = 0;
+          g.querySelectorAll(".sc-bars > i").forEach((b, s) => {
+            const raw = val(r, s);
+            let from, to;
+            if (kind === "stack") { const v = Math.max(0, raw); from = acc; to = acc + v; acc = to; }
+            else { from = Math.min(raw, base); to = Math.max(raw, base); }
+            b.style.setProperty("--b", (yOf(from) * 100).toFixed(3));
+            b.style.setProperty("--h", ((to - from) / span * 100).toFixed(3));
+            b.style.setProperty("--x", kind === "stack" ? 0 : (s / S * 100).toFixed(3));
+            b.style.setProperty("--w", kind === "stack" ? 100 : (100 / S).toFixed(3));
+            b.classList.toggle("neg", kind !== "stack" && raw < base);
+            b.querySelector("em").textContent = format(axisFmt, raw);
+          });
+        });
+      }
+      const col = name => { const s = typeof name === "number" ? name : d.head.indexOf(name); return s < 0 ? [] : d.rows.map(r => r.vals[s]).filter(isFinite); };
+      const h = {
+        col, n: R,
+        sum: c => col(c).reduce((a, b) => a + b, 0),
+        avg: c => { const a = col(c); return a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN; },
+        first: c => col(c)[0], last: c => { const a = col(c); return a[a.length - 1]; },
+        max: c => Math.max(...col(c)), min: c => Math.min(...col(c)),
+        growth: c => { const a = col(c); return a.length > 1 && a[0] ? (a[a.length - 1] / a[0] - 1) * 100 : NaN; },
+        total: () => d.rows.reduce((a, r) => a + r.vals.filter(isFinite).reduce((x, y) => x + y, 0), 0),
+        label: i => (d.rows[i < 0 ? R + i : i] || {}).label || "",
+      };
+      outs.forEach(([el, f]) => {
+        let x; try { x = f(h); } catch (e) { x = NaN; }
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x));
+      });
+    };
+    const fromText = text => {
+      const lines = text.replace(/\r/g, "").split("\n").filter(l => l.trim() !== "");
+      if (!lines.length) return false;
+      const sep = lines.some(l => l.includes("\t")) ? "\t" : ",";
+      const cells = lines.map(l => l.split(sep).map(c => c.trim().replace(/^"(.*)"$/, "$1")));
+      if (cells[0].length < 2) return false;
+      const hasHead = cells[0].slice(1).some(c => !isFinite(parseNum(c)));
+      const head = hasHead ? cells.shift() : ["", ...read().head];
+      if (!cells.length) return false;
+      const cols = Math.max(...cells.map(r => r.length));
+      table.innerHTML = `<thead><tr>${Array.from({ length: cols }, (_, i) => `<th>${esc(head[i] || (i ? "系列" + i : ""))}</th>`).join("")}</tr></thead>` +
+        `<tbody>${cells.map(r => `<tr>${Array.from({ length: cols }, (_, i) => {
+          const x = parseNum(r[i] || "");
+          return `<td>${i && isFinite(x) ? x.toLocaleString("ja-JP") : esc(r[i] || "")}</td>`;
+        }).join("")}</tr>`).join("")}</tbody>`;
+      prep(); render();
+      return true;
+    };
+    let tm;
+    table.addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(render, 120); });
+    table.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
+    const onPaste = e => {
+      const text = (e.clipboardData || window.clipboardData).getData("text");
+      if (!/[\t,\n]/.test(text.trim())) return; // 数字1つだけならそのセルに貼る
+      e.preventDefault();
+      if (fromText(text)) say("貼った表で、グラフと集計を作り直しました");
+      else say("表として読めませんでした（1列目に項目名、2列目から数字）");
+    };
+    fig.addEventListener("paste", onPaste);
+    const pad = document.createElement("textarea");
+    pad.className = "sheet-pad"; pad.setAttribute("aria-label", "ここに表を貼る");
+    fig.appendChild(pad);
+    fig.querySelectorAll("[data-sheet-paste]").forEach(b => b.addEventListener("click", () => { pad.value = ""; pad.focus(); say("Excel やスプレッドシートでコピーした表を ⌘V / Ctrl+V で貼ってください"); }));
+    pad.addEventListener("blur", () => { pad.value = ""; });
+    fig.querySelectorAll("[data-sheet-reset]").forEach(b => b.addEventListener("click", () => { table.innerHTML = initial; prep(); render(); }));
+    prep(); render();
+    sheets.push({ fig, onPaste });
+  });
+  // どこにもフォーカスがないときの貼り付けは、表示中のスライドの表へ
+  document.addEventListener("paste", e => {
+    const t = e.target;
+    if (t.closest && t.closest("[data-sheet],input,textarea,[contenteditable]")) return;
+    const s = sheets.find(x => x.fig.closest(".slide.active"));
+    if (s) s.onPaste(e);
+  });
+
+  /* ---------- 上に重ねて開く補足（details.why.float）：下にはみ出すなら上へ開く ---------- */
+  deck.querySelectorAll("details.why.float").forEach(d => d.addEventListener("toggle", () => {
+    if (!d.open) return;
+    d.classList.remove("up");
+    const s = d.closest(".slide"), b = d.querySelector(".body");
+    if (!s || !b) return;
+    const k = s.getBoundingClientRect().height / H || 1;
+    if ((b.getBoundingClientRect().bottom - s.getBoundingClientRect().top) / k > H - 12) d.classList.add("up");
+  }));
 
   /* ---------- data-tabs：切り替え ---------- */
   deck.querySelectorAll("[data-tabs]").forEach(g => {
@@ -166,7 +432,6 @@
   });
 
   /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
-  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
   const paint = (line, py) => {
     const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
@@ -253,14 +518,117 @@
     notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
     drawPresenter();
   };
+  /* ---------- data-morph：同じ名前の要素が、前のページの位置・大きさ・色から、次のページへ変形してつながる ---------- */
+  const morphMode = deck.dataset.transition === "morph";
+  const MORPH_MS = 900, MORPH_EASE = "cubic-bezier(.65,0,.25,1)";
+  const shownIn = (el, slide) => { for (let e = el; e && e !== slide; e = e.parentElement) if (e.classList.contains("step") && !e.classList.contains("shown")) return false; return true; };
+  // 見えている位置（アニメーション中なら途中の位置）
+  const seenRect = (el, slide) => {
+    const r = el.getBoundingClientRect(), s = slide.getBoundingClientRect(), k = s.width / W || 1;
+    return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
+  };
+  // 動きを止めたときの位置（まだ表示していないページ用。transform を無視して、置かれた場所だけを測る）
+  const layoutRect = (el, slide) => {
+    let x = 0, y = 0, e = el;
+    while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; const p = e.offsetParent; if (p && p !== slide && !slide.contains(p)) break; e = p; }
+    return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+  };
+  // 見えているままの写しを作る（class に頼らず、計算済みの見た目を全部書き込む）
+  const snapshot = (el, a) => {
+    const c = el.cloneNode(true);
+    const copy = (src, dst) => {
+      if (!(src instanceof Element)) return;
+      const cs = getComputedStyle(src);
+      for (let i = 0; i < cs.length; i++) dst.style.setProperty(cs[i], cs.getPropertyValue(cs[i]));
+      dst.style.animation = "none"; dst.style.transition = "none";
+      ["data-morph", "data-count", "data-out", "data-show", "id", "data-morph-enter"].forEach(k => dst.removeAttribute && dst.removeAttribute(k));
+      for (let i = 0; i < src.children.length; i++) copy(src.children[i], dst.children[i]);
+    };
+    copy(el, c);
+    Object.assign(c.style, { position: "absolute", margin: "0", right: "auto", bottom: "auto", width: a.w + "px", height: a.h + "px",
+      transform: "none", transformOrigin: "50% 50%", pointerEvents: "none", zIndex: "0", visibility: "visible", opacity: "1" });
+    c.classList.add("ugk-ghost");
+    c.setAttribute("aria-hidden", "true");
+    return c;
+  };
+  const LOOK = ["backgroundColor", "color", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "opacity", "borderColor"];
+  const measureMorph = (from, to) => {
+    const pairs = [];
+    const olds = new Map();
+    from.querySelectorAll("[data-morph]").forEach(el => {
+      if (!shownIn(el, from) || !el.offsetWidth) return;
+      if (parseFloat(getComputedStyle(el).opacity) < .05) return;
+      olds.set(el.dataset.morph, el);
+    });
+    to.querySelectorAll("[data-morph]").forEach(el => {
+      const o = olds.get(el.dataset.morph);
+      if (!o || !(el instanceof HTMLElement) || !el.offsetWidth) return;
+      const cs = getComputedStyle(o);
+      const a = seenRect(o, from);
+      const counting = o.hasAttribute("data-count") && el.hasAttribute("data-count");
+      // 数え直す数字は、写しを重ねず新しい方だけを動かす（二重に見えない）
+      const same = counting || (o.innerHTML === el.innerHTML && cs.backgroundImage === getComputedStyle(el).backgroundImage);
+      pairs.push({ o, n: el, a, look: LOOK.reduce((m, k) => (m[k] = cs[k], m), {}), same,
+        ghost: same ? null : snapshot(o, a), count: counting ? o._v : null });
+    });
+    return pairs;
+  };
+  const runMorph = (pairs, to) => {
+    const skip = new Set();
+    pairs.forEach(p => {
+      if (!shownIn(p.n, to)) return;
+      const b = layoutRect(p.n, to), a = p.a;
+      if (!b.w || !b.h) return;
+      const leaf = !p.n.firstElementChild && p.n.textContent.trim() !== "";
+      let sx = a.w / b.w, sy = a.h / b.h;
+      if (leaf) sx = sy = a.h / b.h; // 文字は縦横比を保って拡大縮小する
+      const dx = (a.x + a.w / 2) - (b.x + b.w / 2), dy = (a.y + a.h / 2) - (b.y + b.h / 2);
+      const cs = getComputedStyle(p.n);
+      const own = cs.transform === "none" ? "" : " " + cs.transform;
+      const start = { transform: `translate(${dx}px,${dy}px) scale(${sx},${sy})${own}` }, end = { transform: own.trim() || "none" };
+      LOOK.forEach(k => { if (k !== "opacity" && p.look[k] !== cs[k]) { start[k] = p.look[k]; end[k] = cs[k]; } });
+      if (/Radius/.test(Object.keys(start).join())) ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"].forEach(k => {
+        if (start[k] === undefined) { start[k] = p.look[k]; end[k] = cs[k]; }
+      });
+      const delay = Number(p.n.dataset.morphDelay || 0);
+      p.n.style.visibility = ""; // すばやく戻ったとき、前の変形で隠したままにしない
+      p.n.getAnimations().forEach(x => x.id === "ugk-morph" && x.cancel());
+      // 後片付けは実時間ではなく、アニメーションの終わりに合わせる（ゆっくり再生しても崩れない）
+      const after = (anim, fn) => anim.finished.then(fn, fn);
+      if (p.same) {
+        const an = p.n.animate([start, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
+        an.id = "ugk-morph";
+        p.o.style.visibility = "hidden";
+        after(an, () => { p.o.style.visibility = ""; });
+      } else {
+        // 中身や模様がちがう：前の形の写しを下に敷き、新しい方が浮かび上がってから写しを消す
+        const g = p.ghost;
+        g.style.left = a.x + "px"; g.style.top = a.y + "px";
+        to.insertBefore(g, to.firstChild);
+        const gsy = b.h / a.h, gsx = leaf ? gsy : b.w / a.w;
+        const toB = `translate(${-dx}px,${-dy}px) scale(${gsx},${gsy})`;
+        after(g.animate([{ transform: "none", opacity: 1 }, { opacity: 1, offset: .4 }, { transform: toB, opacity: 0 }], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "both" }), () => g.remove());
+        const an = p.n.animate([{ ...start, opacity: 0 }, { opacity: 1, offset: .45 }, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
+        an.id = "ugk-morph";
+        p.o.style.visibility = "hidden";
+        after(an, () => { p.o.style.visibility = ""; });
+      }
+      if (p.count !== null && isFinite(p.count)) { p.n._v = p.count; tween(p.n, Number(p.n.dataset.count)); skip.add(p.n); }
+    });
+    return skip;
+  };
+
   const go = (i, atEnd) => {
     i = Math.max(0, Math.min(slides.length - 1, i));
     if (i === cur) return;
     const prev = cur;
+    const canMorph = morphMode && prev !== -1 && !reduce && !overview;
+    const pairs = canMorph ? measureMorph(slides[prev], slides[i]) : [];
     cur = i;
     setSteps(i, atEnd ? plans[i].length : 0);
+    const skip = pairs.length ? runMorph(pairs, slides[i]) : null;
     render();
-    if (prev !== -1) countUp(slides[i]);
+    if (prev !== -1) countUp(slides[i], skip);
     const h = "#" + (i + 1);
     if (location.hash !== h) history.replaceState(null, "", h);
   };
@@ -372,7 +740,7 @@
   help.addEventListener("click", () => body.classList.remove("help"));
   let tx = 0, ty = 0, tOk = false;
   deck.addEventListener("touchstart", e => {
-    tOk = !e.target.closest("input,button,summary,select,a,[data-tab]");
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab],[data-orbit],[data-sheet]");
     tx = e.touches[0].clientX; ty = e.touches[0].clientY;
   }, { passive: true });
   deck.addEventListener("touchend", e => {

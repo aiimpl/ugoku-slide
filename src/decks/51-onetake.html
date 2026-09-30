@@ -1,0 +1,269 @@
+<!--meta
+{"title":"定期便事業 3か年計画｜サンプル食品","style":"ワンテイク","use":"新規事業の計画・役員会","group":"一続きに動く",
+ "aim":"新規事業の担当者が役員会で、市場から収支までを「1つの丸が形を変えていく」一続きの流れで見せ、投資の承認をもらう。",
+ "desc":"表紙の丸が、市場の円→顧客の帯→会員数の円→3年目の棒→リスクのカードへと、ページをまたいで変形していく。会員数と単価を動かすと年間売上が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#0f1013; --surface:#17181c; --ink:#f1ede4; --muted:#a29e95; --line:#2b2c31;
+  --accent:#f0a23b; --accent-ink:#1b1206; --good:#7fc79a; --bad:#ef7a64; --frame:#060607;
+  --font:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Inter Tight","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --head-weight:900; --head-track:.005em; --radius:14px; --shadow:none;
+  --pad-y:60px; --pad-x:80px;
+}
+.deck{background:radial-gradient(1200px 700px at 78% 40%,#16171b 0%,var(--bg) 62%)}
+.kicker{font-family:var(--font-num);font-size:14px;letter-spacing:.22em;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:14px}
+.kicker::before{content:"";width:28px;height:2px;background:var(--accent)}
+h1{font-size:74px;line-height:1.18;letter-spacing:.01em}
+h2{font-size:40px;line-height:1.35;max-width:760px;margin-bottom:0}
+h2 em,h1 em{font-style:normal;color:var(--accent)}
+.lead{color:var(--muted);font-size:22px}
+.num{font-family:var(--font-num);letter-spacing:-.01em}
+.foot{font-size:13px;color:#7d7a73;display:flex;justify-content:space-between}
+
+/* 1つの丸（core）が、ページごとに形を変えて出てくる */
+.core{position:absolute;background:radial-gradient(circle at 34% 30%,#ffd08a 0%,var(--accent) 46%,#c96f1a 100%);border-radius:50%}
+
+/* 1 表紙 */
+.s-cover .core{left:790px;top:170px;width:380px;height:380px;box-shadow:0 0 120px rgb(240 162 59 / .22)}
+.s-cover .ring{position:absolute;border:1px solid #34332f;border-radius:50%}
+.s-cover .ring.r1{left:740px;top:120px;width:480px;height:480px}
+.s-cover .ring.r2{left:690px;top:70px;width:580px;height:580px;border-style:dashed;border-color:#26262a}
+.s-cover .title{max-width:640px;margin-top:40px}
+.s-cover .lead{margin-top:30px;max-width:560px}
+.s-cover .meta{position:absolute;left:80px;bottom:60px;display:flex;gap:44px;font-size:15px;color:var(--muted)}
+.s-cover .meta b{display:block;font-family:var(--font-num);font-size:13px;letter-spacing:.2em;color:#77736b;font-weight:600;margin-bottom:4px}
+
+/* 2 市場 */
+.market{position:absolute;left:630px;top:84px;width:560px;height:560px}
+.market .c{position:absolute;border-radius:50%}
+.market .tam{left:0;top:0;width:560px;height:560px;background:radial-gradient(circle,#1b1c21 0%,#15161a 70%);border:1px solid #3a3934}
+.market .sam{left:115px;top:182px;width:330px;height:330px;background:#1f2025;border:1px solid #57544c}
+.market .core{left:220px;top:342px;width:120px;height:120px}
+.market .tag{position:absolute;font-size:15px;color:var(--muted);white-space:nowrap}
+.market .tag b{display:block;font-family:var(--font-num);font-size:30px;color:var(--ink);letter-spacing:-.01em}
+.market .tag.t1{left:220px;top:40px;text-align:center;width:120px;margin-left:0}
+.market .tag.t2{left:186px;top:212px;text-align:center;width:190px}
+.market .tag.t3{left:356px;top:382px}
+.market .tag.t3 b{color:var(--accent)}
+.rows{margin-top:40px;display:grid;gap:0;width:520px}
+.s-market .why{width:520px}
+.rows .r{display:grid;grid-template-columns:78px 1fr auto;align-items:baseline;gap:14px;padding:18px 0;border-top:1px solid var(--line)}
+.rows .r:last-child{border-bottom:1px solid var(--line)}
+.rows .r i{font-style:normal;font-family:var(--font-num);font-weight:700;font-size:15px;letter-spacing:.16em;color:#77736b}
+.rows .r span{font-size:19px}
+.rows .r b{font-family:var(--font-num);font-size:30px;font-weight:700}
+.rows .r.me b,.rows .r.me i{color:var(--accent)}
+
+/* 3 顧客 */
+.segbar{position:relative;margin-top:56px;height:112px;display:flex;border-radius:18px;overflow:hidden}
+.segbar.core{position:relative;background:none;border-radius:18px}
+.segbar>div{position:relative;height:100%;display:flex;align-items:flex-end;padding:14px 20px;font-family:var(--font-num);font-weight:700;font-size:40px;color:var(--accent-ink)}
+.segbar .a{flex:0 0 62%;background:radial-gradient(circle at 20% 20%,#ffd08a 0%,var(--accent) 60%,#d98424 100%)}
+.segbar .b{flex:0 0 24%;background:#c97a2c}
+.segbar .c3{flex:1;background:#7d5327;color:#f6e3c6}
+.segbar>div small{font-size:18px;margin-left:2px}
+.segs{display:grid;grid-template-columns:62% 24% 1fr;margin-top:26px}
+.segs>div{padding-right:28px;border-left:1px solid var(--line);padding-left:20px}
+.segs>div:first-child{border-left:0;padding-left:0}
+.segs>div:last-child{padding-right:0}
+.segs>div:not(:first-child) h3{font-size:21px}.segs>div:not(:first-child) p{font-size:16px}
+.trial{position:absolute;left:80px;right:80px;bottom:74px;display:grid;grid-template-columns:auto repeat(3,1fr);gap:40px;align-items:end;padding-top:22px;border-top:1px solid var(--line)}
+.trial .t{font-size:15px;color:var(--muted);line-height:1.6}
+.trial .t b{display:block;color:var(--ink);font-size:17px}
+.trial .k{font-size:15px;color:var(--muted)}
+.trial .k>span{display:block;font-family:var(--font-num);font-size:40px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:2px}
+.segs h3{font-size:24px;margin-bottom:10px}
+.segs p{font-size:18px;line-height:1.7;color:var(--muted);margin:0}
+.segs .why{margin-top:16px;max-width:520px}
+
+/* 4 収益モデル */
+.model{display:grid;grid-template-columns:380px 1fr;gap:56px;margin-top:40px;flex:1}
+.model .field>label{font-size:18px}
+.model .field>label b{font-family:var(--font-num);font-size:26px}
+.model input[type=range]{accent-color:var(--accent)}
+.model .stage{position:relative}
+.model .core{left:calc(130px - var(--m) / 80000 * 120px);top:calc(140px - var(--m) / 80000 * 120px);
+  width:calc(40px + var(--m) / 80000 * 240px);height:calc(40px + var(--m) / 80000 * 240px);transition:left .45s var(--ease),top .45s var(--ease),width .45s var(--ease),height .45s var(--ease)}
+.model .core-guide{position:absolute;left:10px;top:20px;width:280px;height:280px;border-radius:50%;border:1px dashed #3a3934}
+.model .readout{position:absolute;left:330px;top:6px;right:0}
+.model .readout .label{font-size:16px;color:var(--muted);letter-spacing:.06em}
+.model .readout .value{font-family:var(--font-num);font-size:76px;white-space:nowrap;font-weight:700;line-height:1.05;color:var(--ink);letter-spacing:-.03em;margin:4px 0 28px}
+.model .pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid var(--line);padding-top:20px}
+.model .pair .v{font-family:var(--font-num);font-size:40px;font-weight:700}
+.model .pair .v.accent{color:var(--accent)}
+.model .note{font-size:15px;color:var(--muted);margin-top:18px;line-height:1.7}
+
+/* 5 3年計画 */
+.plan{position:relative;flex:1;margin-top:26px}
+.plan .axis{position:absolute;left:0;right:0;bottom:84px;border-top:1px solid #3a3934}
+.plan .bar{position:absolute;bottom:84px;width:210px;border-radius:14px 14px 4px 4px}
+.plan .bar.b1{left:120px;height:52px;background:#5a4128}
+.plan .bar.b2{left:440px;height:161px;background:#a8672a}
+.plan .bar.core{left:760px;height:320px;border-radius:14px 14px 4px 4px;background:linear-gradient(180deg,#ffc978 0%,var(--accent) 45%,#c96f1a 100%)}
+.plan .val{position:absolute;width:210px;text-align:center;font-family:var(--font-num);font-weight:700;font-size:38px}
+.plan .val small{font-size:18px;font-family:var(--font);font-weight:700;margin-left:2px}
+.plan .yl{position:absolute;bottom:44px;width:210px;text-align:center;font-size:17px;color:var(--muted)}
+.plan .op{position:absolute;bottom:6px;width:210px;text-align:center;font-family:var(--font-num);font-size:17px}
+
+/* 6 リスク */
+.risks{position:relative;flex:1;margin-top:40px}
+.risk{position:absolute;top:0;width:356px;height:300px}
+.stress{position:absolute;left:0;right:0;top:330px;display:flex;align-items:baseline;gap:24px;padding-top:22px;border-top:1px solid var(--line);font-size:20px}
+.stress b{font-family:var(--font-num);font-size:44px;color:var(--good);font-weight:700}
+.stress span{color:var(--muted);font-size:16px}
+.risk .plate{position:absolute;inset:0;border-radius:18px;background:#1b1c21;border:1px solid #34332f}
+.risk.core-host .plate{background:linear-gradient(160deg,#2a2016 0%,#1b1c21 70%);border-color:#6a4a23}
+.risk .in{position:relative;padding:28px 28px}
+.risk .no{font-family:var(--font-num);font-size:14px;letter-spacing:.2em;color:#77736b;font-weight:700}
+.risk h3{font-size:26px;line-height:1.45;margin:14px 0 12px}
+.risk .hit{font-family:var(--font-num);font-size:44px;font-weight:700;color:var(--bad)}
+.risk .hit small{font-family:var(--font);font-size:17px;margin-left:4px;color:var(--muted);font-weight:500}
+.risk p{font-size:17px;line-height:1.7;color:var(--muted);margin:6px 0 0}
+.risk .why{background:transparent;border-color:#34332f;margin-top:16px}
+.risk .why>summary{color:var(--accent);font-size:16px}
+.risk .why>summary::before{background:rgb(240 162 59 / .16)}
+.risk .why .body{font-size:15px}
+
+/* 7 決めてほしいこと */
+.asks{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px}
+.ask{position:relative;height:290px}
+.ask .plate{position:absolute;inset:0;border-radius:18px;background:#1b1c21;border:1px solid #34332f}
+.ask .in{position:relative;padding:30px 34px}
+.ask .no{font-family:var(--font-num);font-size:14px;letter-spacing:.2em;color:var(--accent);font-weight:700}
+.ask h3{font-size:34px;line-height:1.45;margin:14px 0 12px}
+.ask p{font-size:19px;line-height:1.7;color:var(--muted);margin:0}
+.s-end .core{left:1100px;top:74px;width:84px;height:84px}
+.s-end .next{margin-top:34px;font-size:18px;color:var(--muted);padding-top:22px;border-top:1px solid var(--line)}
+.s-end .next b{color:var(--ink);margin-right:12px}
+
+@media (prefers-reduced-motion:reduce){.model .core{transition:none}}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <section class="slide s-cover" data-title="表紙">
+    <div class="ring r2"></div><div class="ring r1"></div>
+    <div class="core" data-morph="core"></div>
+    <div class="kicker">SAMPLE FOODS ｜ 新規事業 2027–2029</div>
+    <h1 class="title">3年で、定期便を<br><em>2本目の柱</em>に。</h1>
+    <p class="lead">店頭に頼らない売上を、3年目に年19億円。<br>市場・顧客・収支・リスクを、この順にお見せします。</p>
+    <div class="meta"><div><b>DATE</b>2026.11.12 経営会議</div><div><b>FROM</b>新規事業室</div><div><b>ASK</b>2年で11億円の投資承認</div></div>
+    <aside class="notes">最初の10秒で「3年目に年19億円」「今日は投資の承認がほしい」の2つを言い切る。丸はこのあと形を変えて、ずっとこの事業を表します。</aside>
+  </section>
+
+  <section class="slide s-market" data-title="市場">
+    <div class="kicker">01 ｜ 市場</div>
+    <h2>届く市場は620億円。<br>まず取りに行くのは<em>48億円</em>。</h2>
+    <div class="rows">
+      <div class="r step"><i>TAM</i><span>冷凍の食事・食材の宅配</span><b class="num">4,800億</b></div>
+      <div class="r step"><i>SAM</i><span>当社の配送網が届く首都圏・関西</span><b class="num">620億</b></div>
+      <div class="r step me"><i>SOM</i><span>3年で取れる見込み（SAMの8%）</span><b class="num">48億</b></div>
+    </div>
+    <details class="why"><summary>市場の出し方</summary><div class="body">TAM：業界団体の2025年推計（架空）。SAM：配送できる地域の世帯数 × 冷凍宅配の利用率 × 年間の平均支出。SOM：同じ規模の先行3社が3年目に取った割合（6〜10%）の中央値。</div></details>
+    <div class="market">
+      <div class="c tam" data-morph-enter style="--d:0"></div>
+      <div class="c sam" data-morph-enter style="--d:.12"></div>
+      <div class="core" data-morph="core"></div>
+      <div class="tag t1" data-morph-enter style="--d:.2"><b>4,800億</b>TAM</div>
+      <div class="tag t2" data-morph-enter style="--d:.28"><b>620億</b>SAM</div>
+      <div class="tag t3" data-morph-enter style="--d:.36"><b>48億</b>SOM・3年目の的</div>
+    </div>
+    <div class="foot"><span>出典：業界推計・当社配送エリア（数字は架空のサンプルです）</span><span>02</span></div>
+    <aside class="notes">外側から内側へ。「全部を取りに行くのではなく、配送網が届く620億のうち48億」と絞ったことを強調。→で左の行が1つずつ出ます。</aside>
+  </section>
+
+  <section class="slide s-seg" data-title="顧客">
+    <div class="kicker">02 ｜ 顧客</div>
+    <h2>48億円のうち6割は、<em>共働きの30〜40代</em>。</h2>
+    <div class="segbar core" data-morph="core">
+      <div class="a num">62<small>%</small></div><div class="b num">24<small>%</small></div><div class="c3 num">14<small>%</small></div>
+    </div>
+    <div class="segs">
+      <div class="step"><h3>共働きの30〜40代</h3><p>平日の夕食に使う。1回で届く量と、解凍20分以内を重く見る。最初に取りに行く相手。</p>
+        <details class="why"><summary>なぜここから</summary><div class="body">試験販売（2026年6〜8月・1,200世帯）で、3か月後も続けていた割合が他の層の1.6倍。広告1件あたりの獲得費も最も安かった。</div></details></div>
+      <div class="step"><h3>70代以上の世帯</h3><p>買い物の負担を減らしたい。家族が代わりに申し込む。</p></div>
+      <div class="step"><h3>単身ほか</h3><p>2年目から。小さい箱が要る。</p></div>
+    </div>
+    <div class="trial"><div class="t"><b>試験販売</b>2026年6〜8月</div><div class="k"><span class="num" data-count="1200">1,200</span>申し込んだ世帯</div><div class="k"><span class="num"><span data-count="71">71</span>%</span>3か月後も続けた割合</div><div class="k"><span class="num">¥<span data-count="9000">9,000</span></span>1世帯あたりの獲得費</div></div>
+    <div class="foot"><span>出典：試験販売の申込データ（数字は架空のサンプルです）</span><span>03</span></div>
+  </section>
+
+  <section class="slide s-model" data-title="収益モデル">
+    <div class="kicker">03 ｜ 収益モデル</div>
+    <h2>会員4万人・月3,980円で、<em>年19億円</em>。</h2>
+    <div class="model" data-calc data-let="rev = m * p * 12; ltv = p * 0.42 / (c / 100); roi = ltv / 9000">
+      <div data-morph-enter>
+        <div class="field"><label>3年目の会員数 <b data-show="m" data-unit="人"></b></label><input type="range" name="m" min="10000" max="80000" step="1000" value="40000"></div>
+        <div class="field"><label>月額（1箱・税抜） <b data-show="p" data-format="yen"></b></label><input type="range" name="p" min="2980" max="5980" step="100" value="3980"></div>
+        <div class="field"><label>1か月で解約する割合 <b data-show="c" data-format="dec1" data-unit="%"></b></label><input type="range" name="c" min="1" max="8" step="0.5" value="3.5"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">年間売上 ＝ 会員数 × 月額 × 12。<br>1人から得る粗利（LTV）＝ 月額 × 粗利率42% ÷ 解約率。<br>獲得費は1人9,000円（試験販売の実績）。3倍を超えれば広告を増やしてよい。</div></details>
+      </div>
+      <div class="stage">
+        <div class="core-guide" data-morph-enter></div>
+        <div class="core" data-morph="core"></div>
+        <div class="readout">
+          <div class="label">3年目の年間売上</div>
+          <div class="value" data-out="rev" data-format="man"></div>
+          <div class="pair">
+            <div><div class="label">LTV（1人の粗利）</div><div class="v" data-out="ltv" data-format="yen"></div></div>
+            <div><div class="label">獲得費の何倍か</div><div class="v accent" data-out="roi" data-format="x"></div></div>
+          </div>
+          <p class="note">丸の大きさ＝会員数（点線は8万人）。解約率が5%を超えると3倍を割り、広告を増やしても利益が出なくなる。</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">会場で解約率のつまみを5%まで動かして見せる。「ここがこの事業の急所です」と言ってから次のリスクのページへ。</aside>
+  </section>
+
+  <section class="slide s-plan" data-title="3年計画">
+    <div class="kicker">04 ｜ 3年計画</div>
+    <h2>3年目に年19億円。<em>営業黒字</em>に届く。</h2>
+    <div class="plan">
+      <div class="axis"></div>
+      <div class="bar b1" data-morph="b1"></div>
+      <div class="bar b2" data-morph="b2"></div>
+      <div class="bar core" data-morph="core"></div>
+      <div class="val" style="left:120px;bottom:148px"><span data-count="3.1" data-format="dec1"></span><small>億円</small></div>
+      <div class="val" style="left:440px;bottom:257px"><span data-count="9.6" data-format="dec1"></span><small>億円</small></div>
+      <div class="val" style="left:760px;bottom:416px;color:var(--accent)"><span data-count="19.1" data-format="dec1"></span><small>億円</small></div>
+      <div class="yl" style="left:120px">1年目（2027）</div><div class="yl" style="left:440px">2年目（2028）</div><div class="yl" style="left:760px">3年目（2029）</div>
+      <div class="op bad" style="left:120px">営業利益 −2.4億</div><div class="op bad" style="left:440px">−0.6億</div><div class="op good" style="left:760px">+1.8億</div>
+    </div>
+    <div class="foot"><span>会員数 0.6万 → 2.0万 → 4.0万人（数字は架空のサンプルです）</span><span>05</span></div>
+    <aside class="notes">1年目・2年目の赤字は、配送拠点と広告を先に置くため。3年目の棒が、さっきの丸（会員4万人）と同じものだと指でなぞって見せる。</aside>
+  </section>
+
+  <section class="slide s-risk" data-title="リスク">
+    <div class="kicker">05 ｜ リスク</div>
+    <h2>崩れるとしたら、この3つ。<em>手は先に決めてある</em>。</h2>
+    <div class="risks">
+      <div class="risk" style="left:0"><div class="plate" data-morph="b1"></div><div class="in" data-morph-enter style="--d:.25">
+        <div class="no">RISK 01</div><h3>解約率が<br>月5%を超える</h3><div class="hit num">−6.2<small>億円／3年目の売上</small></div>
+        <details class="why"><summary>起きたときの手</summary><div class="body">2か月続けて4.5%を超えたら、新規の広告を止めて、献立の入れ替えと「休む」ボタンを先に出す。</div></details></div></div>
+      <div class="risk" style="left:382px"><div class="plate" data-morph="b2"></div><div class="in" data-morph-enter style="--d:.32">
+        <div class="no">RISK 02</div><h3>物流費が<br>1箱150円上がる</h3><div class="hit num">−0.7<small>億円／年の利益</small></div>
+        <details class="why"><summary>起きたときの手</summary><div class="body">2箱まとめ配送の割引を先に用意しておき、平均の箱数を1.3→1.6に上げて吸収する。</div></details></div></div>
+      <div class="risk core-host" style="left:764px"><div class="plate" data-morph="core"></div><div class="in" data-morph-enter style="--d:.39">
+        <div class="no">RISK 03</div><h3>獲得費が<br>1.5倍になる</h3><div class="hit num">+14<small>か月／回収の遅れ</small></div>
+        <details class="why"><summary>起きたときの手</summary><div class="body">紹介割引（紹介した人・された人に1,000円）へ予算を移す。試験販売では獲得費が半分だった。</div></details></div></div>
+      <div class="stress step" data-morph-enter><div>3つが同時に起きても、3年目の営業利益は</div><b>+0.2億円</b><span>黒字は保てる（広告を半年止めた場合）</span></div>
+    </div>
+    <aside class="notes">3本の棒が、そのまま3つのリスクのカードに変わる。「どれも起きたときの手を先に決めてある」ことを伝えるのが目的。根拠は聞かれたら開く。</aside>
+  </section>
+
+  <section class="slide s-end" data-title="決めてほしいこと">
+    <div class="kicker">06 ｜ 本日のお願い</div>
+    <h2>今日、決めていただきたいのは<em>2つ</em>です。</h2>
+    <div class="core" data-morph="core"></div>
+    <div class="asks">
+      <div class="ask"><div class="plate" data-morph="b1"></div><div class="in" data-morph-enter style="--d:.25"><div class="no">DECISION 01</div><h3>2年で11億円の投資</h3><p>配送拠点2か所（6.5億）と、獲得の広告（4.5億）。半年ごとに解約率で続けるかを見直す。</p></div></div>
+      <div class="ask"><div class="plate" data-morph="b2"></div><div class="in" data-morph-enter style="--d:.32"><div class="no">DECISION 02</div><h3>専任チーム8名の立ち上げ</h3><p>1月から。商品2・物流2・マーケ2・システム2。うち4名は社内公募。</p></div></div>
+    </div>
+    <div class="next"><b>次回</b>2027年5月の経営会議で、最初の半年の解約率と獲得費をご報告します。</div>
+    <div class="foot"><span>社名・数字はすべて架空のサンプルです</span><span>07</span></div>
+  </section>
+
+</main>

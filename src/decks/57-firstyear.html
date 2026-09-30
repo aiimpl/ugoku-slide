@@ -1,0 +1,516 @@
+<!--meta
+{"title":"入社1年目の12か月｜サンプル工機 会社説明会","style":"フレンドリー・エディトリアル","use":"新卒採用の会社説明会","group":"一続きに動く",
+ "aim":"中堅メーカーの人事が学生向けの会社説明会で、新入社員ひとりの1年を月ごとに追いかけ、入社後に働く自分を想像してもらう。",
+ "desc":"新入社員の名札が、研修→配属→初担当→振り返りへとページをまたいで歩き、12か月の帯の現在地も動く。勤務地と家賃を選ぶと、手取りと家賃の負担が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=LINE+Seed+JP:wght@400;700;800&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f2ece1; --surface:#fbf8f2; --ink:#1f1c2c; --muted:#5d5867; --line:#d8cfbf;
+  --accent:#ef4f2c; --accent-ink:#1f1c2c; --accent-text:#c23b1c; --lilac:#c5b8f2; --lilac-deep:#a996ea; --lilac-ink:#d6cdf7;
+  --good:#1f1c2c; --bad:#c23b1c; --frame:#e4dccd;
+  --font:"LINE Seed JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Bricolage Grotesque","LINE Seed JP","Hiragino Sans",sans-serif;
+  --head-weight:800; --head-track:.01em; --radius:16px; --shadow:none;
+  --pad-y:60px; --pad-x:80px;
+}
+/* 紙の手ざわり：背景の粒はページではなく .deck に付ける（めくっても消えない） */
+.deck{background:var(--bg)}
+.deck::after{content:"";position:absolute;inset:0;z-index:40;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .1 0 0 0 0 .16 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.slide{padding:0}
+.slide > *{position:absolute}
+.slide > .notes{position:static}
+
+/* ---------- 共通：柱・ノンブル ---------- */
+.run{left:80px;right:80px;top:26px;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-num);font-size:13px;font-weight:600;letter-spacing:.16em;color:var(--ink)}
+.run span:first-child::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-right:10px;vertical-align:0}
+.foot{left:80px;right:80px;bottom:20px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.foot b{font-family:var(--font-num);font-weight:700;letter-spacing:.1em;color:var(--ink)}
+
+/* ---------- 共通：月の大きな数字 ---------- */
+.mohead{left:72px;top:62px;display:flex;align-items:flex-start;gap:16px}
+.mo{font-family:var(--font-num);font-weight:800;font-size:176px;line-height:.8;letter-spacing:-.045em;color:var(--accent);white-space:nowrap}
+.mo-lab{padding-top:14px;font-size:15px;color:var(--muted);line-height:1.5}
+.mo-lab .u{font-family:var(--font);font-size:26px;letter-spacing:.02em;font-weight:800;margin-bottom:8px}
+.mo-lab b{display:block;font-family:var(--font-num);font-size:15px;letter-spacing:.2em;color:var(--ink);font-weight:700}
+.mo-lab em{font-style:normal;display:inline-block;margin-top:8px;font-size:22px;font-weight:800;color:var(--ink)}
+h2{font-size:36px;line-height:1.4;letter-spacing:.01em;margin:0}
+h1 em,h2 em{font-style:normal;background:linear-gradient(transparent 60%,var(--lilac) 60%,var(--lilac) 94%,transparent 94%);padding:0 .06em}
+.hd2{left:80px;top:222px;width:580px}
+.body{font-size:19px;line-height:1.75;color:var(--ink)}
+.body .mute{color:var(--muted)}
+
+/* ---------- 共通：12か月の帯（全ページで同じ。上を現在地が動く） ---------- */
+.band{left:80px;top:604px;width:1120px;height:58px;display:flex;z-index:2;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.band .bc{flex:0 0 83.333px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-left:1px dashed #b9ae9c}
+.band .bc:nth-child(2){border-left:2px solid var(--ink)}
+.band .bc.pre{flex:0 0 120px;border-left:0}
+.band .bc b{font-family:var(--font-num);font-size:22px;font-weight:700;line-height:1;color:var(--ink)}
+.band .bc b small{font-family:var(--font);font-size:12px;font-weight:700;margin-left:1px}
+.band .bc.pre b{font-family:var(--font);font-size:15px;font-weight:800}
+.band .bc.pre i{display:none}
+.band .bc i{font-style:normal;font-size:12px;line-height:1.2;color:var(--ink);height:14px}
+.now{top:608px;height:50px;z-index:1;border-radius:14px;background:var(--accent);
+  left:calc(200px + 83.333px * var(--a,0) + 3px);width:calc(83.333px * var(--n,1) - 6px)}
+.now.pre{left:83px;width:114px}
+
+/* ---------- 共通：名札（1人の新入社員。ページをまたいで歩く） ---------- */
+.tag{--k:1;width:calc(220px * var(--k));height:calc(296px * var(--k));z-index:3}
+.tag .plate{position:absolute;inset:0;border-radius:calc(16px * var(--k));border:2px solid var(--ink);
+  background:linear-gradient(var(--accent) 0 12%,var(--ink) 12% calc(12% + 2px),var(--surface) calc(12% + 2px))}
+.tag .plate::before{content:"";position:absolute;left:40%;width:20%;top:3.6%;height:4.2%;border-radius:99px;background:var(--bg);border:2px solid var(--ink)}
+.ava{position:absolute;left:50%;top:calc(54px * var(--k));width:calc(108px * var(--k));height:calc(108px * var(--k));margin-left:calc(-54px * var(--k));
+  border-radius:50%;background:var(--lilac);overflow:hidden;border:2px solid var(--ink);isolation:isolate}
+.ava .h{position:absolute;left:32%;top:20%;width:36%;height:38%;border-radius:50%;background:var(--accent);border:2px solid var(--ink)}
+.ava .h::before{content:"";position:absolute;z-index:-1;left:-24%;top:-20%;width:148%;height:118%;border-radius:50% 50% 38% 38% / 56% 56% 44% 44%;background:var(--ink)}
+.ava .h::after{content:"";position:absolute;left:-4%;top:-6%;width:108%;height:46%;border-radius:0 100% 0 70% / 0 100% 0 100%;background:var(--ink)}
+.ava .b{position:absolute;left:14%;top:62%;width:72%;height:60%;border-radius:50% 50% 0 0;background:var(--ink)}
+.ava .b::before{content:"";position:absolute;left:42%;top:0;width:16%;height:22%;background:var(--surface);clip-path:polygon(0 0,100% 0,50% 100%)}
+.tin{position:absolute;inset:0;text-align:center;color:var(--ink)}
+.tin .org{position:absolute;left:0;right:0;top:0;height:12%;display:flex;align-items:center;justify-content:space-between;padding:0 calc(14px * var(--k));
+  font-family:var(--font-num);font-weight:700;font-size:calc(11px * var(--k));letter-spacing:.14em}
+.tin .org span:last-child{letter-spacing:.06em}
+.tin .who{position:absolute;left:0;right:0;top:calc(172px * var(--k))}
+.tin .yr{font-size:calc(13px * var(--k));color:var(--muted);font-weight:700;letter-spacing:.04em}
+.tin .nm{font-size:calc(25px * var(--k));font-weight:800;letter-spacing:.12em;line-height:1.3;margin-top:calc(2px * var(--k))}
+.tin .ro{display:inline-block;margin-top:calc(9px * var(--k));padding:calc(4px * var(--k)) calc(12px * var(--k));border-radius:99px;border:1.5px solid var(--ink);
+  background:var(--lilac);font-size:calc(14px * var(--k));font-weight:700;white-space:nowrap}
+.tag.L{--k:1.36}.tag.S{--k:.8}
+
+/* ---------- 共通：場所（紫の切り紙。形を変えながら名札と一緒に移る） ---------- */
+.place{z-index:0;background-color:var(--lilac);
+  background-image:radial-gradient(rgb(31 28 44 / .13) 1.2px,transparent 1.6px);background-size:9px 9px}
+.plab{z-index:1;font-size:16px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:10px;white-space:nowrap}
+.plab::before{content:"PLACE";font-family:var(--font-num);font-size:11px;letter-spacing:.2em;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--surface)}
+
+/* ---------- 共通：先輩の一言 ---------- */
+.voice{z-index:4}
+.voice .plate{position:absolute;inset:0;border-radius:22px;background:var(--ink)}
+.vin{position:relative;padding:20px 22px 18px;color:var(--surface)}
+.vin q{display:block;quotes:none;font-size:19px;line-height:1.62;font-weight:700}
+.vin q::before{content:"“";position:absolute;left:18px;top:-22px;font-family:var(--font-num);font-size:72px;line-height:1;color:var(--accent);font-weight:800;-webkit-text-stroke:2px var(--ink)}
+.vin .by{display:flex;align-items:center;gap:10px;margin-top:10px;line-height:1.35;font-size:14px;color:var(--lilac-ink)}
+.mini{position:relative;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--surface);overflow:hidden;border:1.5px solid var(--ink)}
+.mini::before{content:"";position:absolute;left:31%;top:18%;width:38%;height:38%;border-radius:50%;background:var(--ink)}
+.mini::after{content:"";position:absolute;left:15%;top:62%;width:70%;height:60%;border-radius:50% 50% 0 0;background:var(--lilac-deep)}
+.mini.o::before{background:var(--accent)}
+
+/* ---------- 共通：ゆいのメーター（前のページの数字から数え直す） ---------- */
+.stats{left:80px;top:494px;width:1120px;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.st{padding:12px 20px 0 0;border-top:2px solid var(--ink)}
+.st + .st{padding-left:20px;border-left:1px solid var(--line)}
+.st .lab{font-size:15px;color:var(--muted);font-weight:700}
+.st .val{font-family:var(--font-num);font-weight:700;font-size:50px;line-height:1.05;letter-spacing:-.02em;margin-top:4px;white-space:nowrap}
+.st .val small{font-family:var(--font);font-size:17px;font-weight:700;letter-spacing:0;margin-left:4px}
+.st.hot .val{color:var(--accent-text)}
+.deck[data-transition=morph] .slide.s-apr.active > .stats{animation:ugk-enter .7s var(--ease) both .3s!important}
+
+/* ---------- 補足 ---------- */
+details.why{background:var(--surface);border:1.5px solid var(--ink);border-radius:14px}
+details.why>summary{color:var(--ink);font-size:17px;padding:9px 16px}
+details.why>summary::before{background:var(--accent);color:var(--ink)}
+details.why>.body{font-size:16px;color:var(--ink)}
+details.why.float{z-index:20}
+details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 8px;background:var(--surface);border:1.5px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+
+/* ================= 1 表紙 ================= */
+.s-cover .mohead{left:62px;top:66px;gap:22px}
+.s-cover .mo{font-size:300px}
+.s-cover .mo-lab{padding-top:30px}
+.s-cover .kick{left:80px;top:326px;font-size:17px;font-weight:800;color:var(--accent-text);letter-spacing:.06em}
+.s-cover h1{left:80px;top:360px;font-size:62px;line-height:1.24;letter-spacing:.01em}
+.s-cover .lead{left:80px;top:522px;font-size:19px;line-height:1.7;color:var(--muted);margin:0}
+.s-cover .place{left:716px;top:64px;width:500px;height:500px;border-radius:46% 54% 42% 58% / 52% 44% 56% 48%}
+.s-cover .tag{left:816px;top:118px}
+.sticker{left:1086px;top:64px;z-index:5;width:124px;height:124px}
+.sticker .plate{position:absolute;inset:0;border-radius:50%;background:var(--ink)}
+.sticker .stk{position:absolute;inset:0;color:var(--surface);display:grid;place-items:center;text-align:center;font-size:14px;font-weight:700;line-height:1.35}
+.sticker .stk > span{display:block;transform:rotate(-10deg)}
+.sticker b{display:block;font-family:var(--font-num);font-size:40px;line-height:1;color:var(--accent);font-weight:800}
+
+/* ================= 2 クイズ ================= */
+.s-quiz .quiz{left:80px;top:344px;width:1120px;height:240px}
+.s-quiz .choices{grid-template-columns:1fr 1fr;width:580px;gap:12px}
+.s-quiz .choices>button{position:relative;display:flex;align-items:baseline;gap:14px;padding:14px 18px;border:2px solid var(--ink);border-radius:14px;background:var(--surface);font-size:20px;font-weight:700;color:var(--ink)}
+.s-quiz .choices>button span{font-family:var(--font-num);font-weight:800;font-size:22px;color:var(--accent-text);width:18px}
+.s-quiz .choices>button b{font-family:var(--font-num);font-size:30px;font-weight:700;line-height:1}
+.s-quiz .choices>button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.s-quiz.active .quiz.answered .choices>button{opacity:.45}
+.s-quiz .quiz.answered .choices>button[data-correct]{opacity:1;background:var(--lilac);border-color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.s-quiz .quiz.answered .choices>button[data-correct]::after{content:"正解";position:absolute;right:14px;top:50%;margin-top:-13px;padding:3px 10px;border-radius:99px;background:var(--ink);color:var(--surface);font-size:14px}
+.s-quiz .quiz.answered .choices>button.picked:not([data-correct]){opacity:1;background:var(--surface);border-color:var(--accent-text);text-decoration:line-through;text-decoration-color:var(--accent-text)}
+.s-quiz .hint,.s-quiz .explain{position:absolute;left:620px;top:-14px;width:500px;height:250px}
+.s-quiz .hint{border:2px dashed #a79c8a;border-radius:18px;text-align:center;font-size:18px;color:var(--muted);line-height:1.65;
+  background:repeating-linear-gradient(90deg,transparent 0 30px,rgb(31 28 44 / .06) 30px 62px) 18px 62px / calc(100% - 36px) 120px no-repeat}
+.s-quiz .hint .hq{position:absolute;left:0;right:0;top:40px}
+.s-quiz .hint b{display:block;font-family:var(--font-num);font-size:64px;color:var(--accent);line-height:1;font-weight:800;-webkit-text-stroke:2px var(--ink)}
+.s-quiz .hint .hx{position:absolute;left:18px;right:18px;bottom:18px;display:flex;justify-content:space-between;border-top:2px dashed #a79c8a;padding-top:6px}
+.s-quiz .hint .hx i{font-style:normal;font-family:var(--font-num);font-size:13px;font-weight:700;color:var(--muted);width:34px;text-align:center}
+.s-quiz .answered .hint{display:none}
+.s-quiz .quiz .explain{margin:0;color:var(--ink);font-size:17px;line-height:1.6}
+.s-quiz .explain .ans{font-size:18px;font-weight:700}
+.s-quiz .explain .ans b{font-family:var(--font-num);font-size:30px;color:var(--accent-text)}
+.s-quiz .chart{height:152px;gap:8px;padding-top:24px;margin:6px 0 0;border-bottom:2px solid var(--ink)}
+.s-quiz .chart>.col>i{background:var(--lilac);border:1.5px solid var(--ink);border-bottom:0;border-radius:6px 6px 0 0}
+.s-quiz .chart>.col.pk>i{background:var(--accent)}
+.s-quiz .chart>.col::before{font-family:var(--font-num);font-size:13px}
+.s-quiz .chart>.col::after{font-size:12px;margin-top:4px;color:var(--ink);left:-6px;right:-6px}
+.s-quiz .avg{position:absolute;left:0;right:0;border-top:2px dashed var(--ink);z-index:2}
+.s-quiz .avg span{position:absolute;left:0;top:-24px;font-size:13px;font-weight:700;background:var(--bg);padding:0 4px}
+.s-quiz .place{left:1000px;top:58px;width:220px;height:280px;border-radius:52% 48% 44% 56% / 40% 50% 50% 60%}
+.s-quiz .tag{left:1020px;top:76px}
+.s-quiz .voice{left:700px;top:96px;width:280px}
+
+/* ================= 3 4月 研修 ================= */
+.s-apr .place{left:690px;top:62px;width:520px;height:408px;border-radius:38% 62% 46% 54% / 44% 38% 62% 56%}
+.s-apr .plab{left:736px;top:92px}
+.s-apr .tag{left:748px;top:140px}
+.s-apr .voice{left:984px;top:196px;width:236px}
+.phases{left:80px;top:342px;width:580px;display:grid;gap:0}
+.ph{display:grid;grid-template-columns:96px 1fr;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
+.ph:last-child{border-bottom:1px solid var(--line)}
+.ph i{font-style:normal;font-family:var(--font-num);font-weight:700;font-size:18px;color:var(--accent-text)}
+.ph b{font-size:19px}
+.ph span{font-size:16px;color:var(--muted);margin-left:10px}
+
+/* ================= 4 6月 配属 ================= */
+.s-jun .place{left:692px;top:58px;width:518px;height:420px;border-radius:50% 50% 46% 54% / 56% 50% 50% 44%}
+.s-jun .plab{left:722px;top:88px}
+.s-jun .tag{left:972px;top:128px}
+.s-jun .voice{left:700px;top:352px;width:300px}
+.team{left:730px;top:130px;width:222px;display:grid;grid-template-columns:repeat(3,70px);gap:12px 6px;z-index:2}
+.team .p{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+.team .mini{width:56px;height:56px;border-width:2px}
+.team .p.me .mini{background:transparent;border:2px dashed var(--ink)}
+.team .p.me .mini::before,.team .p.me .mini::after{display:none}
+.team .p.ojt .mini{box-shadow:0 0 0 4px var(--accent)}
+.link{left:946px;top:238px;width:36px;height:24px;z-index:4}
+.s-jun .body{left:80px;top:342px;width:580px}
+.s-jun .why{left:80px;top:430px;width:360px}
+
+/* ================= 5 10月 初担当 ================= */
+.s-oct .place{left:690px;top:300px;width:524px;height:168px;border-radius:84px 84px 84px 84px / 84px 84px 84px 84px}
+.s-oct .plab{left:982px;top:308px}
+.s-oct .tag{left:752px;top:46px}
+.s-oct .voice{left:990px;top:78px;width:228px}
+.line{left:716px;top:360px;width:476px;height:96px;z-index:2;display:grid;grid-template-columns:repeat(4,1fr)}
+.line .sta{position:relative;text-align:center;font-size:15px;font-weight:700;line-height:1.35;padding-top:30px}
+.line .sta::before{content:"";position:absolute;left:50%;top:0;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
+.line .sta.on::before{background:var(--accent);width:26px;height:26px;margin-left:-13px;top:-3px}
+.line .sta small{display:block;font-family:var(--font-num);font-size:14px;font-weight:700;color:var(--muted)}
+.line .rail{position:absolute;left:12.5%;right:12.5%;top:9px;border-top:2px solid var(--ink)}
+.s-oct .body{left:80px;top:342px;width:580px}
+.s-oct .why{left:80px;top:430px;width:380px}
+
+/* ================= 6 3月 振り返り ================= */
+.s-mar .mohead{left:592px}
+.s-mar .hd2{left:600px;width:600px}
+.s-mar .place{left:70px;top:60px;width:476px;height:416px;border-radius:56% 44% 52% 48% / 46% 56% 44% 54%}
+.s-mar .plab{left:110px;top:88px}
+.s-mar .tag{left:112px;top:118px}
+.s-mar .voice{left:318px;top:262px;width:262px}
+.grow{left:600px;top:342px;width:600px}
+.gr{display:grid;grid-template-columns:70px 1fr 34px 1fr;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:19px}
+.gr:last-child{border-bottom:1px solid var(--line)}
+.gr i{font-style:normal;font-size:15px;font-weight:800;color:var(--muted)}
+.gr span{color:var(--muted)}
+.gr u{text-decoration:none;font-family:var(--font-num);font-weight:800;color:var(--accent-text);text-align:center}
+.gr b{font-weight:800}
+
+/* ================= 7 暮らしの計算 ================= */
+.s-life .kick{left:80px;top:70px;font-family:var(--font-num);font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--accent-text)}
+.s-life h2{left:80px;top:98px;width:900px}
+.s-life .calc{left:80px;top:226px;width:1120px;height:362px;z-index:5}
+.s-life .in{position:absolute;left:0;top:0;width:420px}
+.s-life .field{margin-bottom:14px}
+.s-life .field>label{font-size:17px;color:var(--ink);font-weight:700}
+.s-life .field>label b{font-size:24px}
+.s-life select{appearance:none;-webkit-appearance:none;width:100%;padding:10px 44px 10px 16px;border:2px solid var(--ink);border-radius:12px;background:var(--surface);font-size:19px;font-weight:700;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(-45deg,transparent 50%,var(--ink) 50%);background-size:7px 7px;background-position:calc(100% - 26px) 52%,calc(100% - 19px) 52%;background-repeat:no-repeat}
+.s-life .chk{display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid var(--ink);border-radius:12px;background:var(--surface);font-size:18px;font-weight:700;cursor:pointer;margin-bottom:14px}
+.s-life .chk input{accent-color:var(--accent);width:22px;height:22px;margin:0}
+.s-life .chk span{font-size:15px;color:var(--muted);font-weight:400;margin-left:auto}
+.s-life input[type=range]{-webkit-appearance:none;appearance:none;height:28px;background:transparent}
+.s-life input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:var(--ink)}
+.s-life input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:var(--accent);border:2px solid var(--ink)}
+.s-life input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:var(--ink)}
+.s-life input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--ink)}
+.s-life .why{width:420px}
+.s-life .place{left:560px;top:214px;width:650px;height:378px;border-radius:28px 36px 30px 40px / 34px 28px 40px 30px}
+.s-life .tag{left:1046px;top:52px}
+.res{position:absolute;left:520px;top:6px;width:560px;z-index:2}
+.res .lab{font-size:16px;font-weight:700}
+.res .net{font-family:var(--font-num);font-weight:800;font-size:80px;line-height:1;letter-spacing:-.035em;margin:4px 0 14px}
+.res .net small{font-family:var(--font);font-size:22px;letter-spacing:0;margin-left:6px}
+.wallet{position:relative;height:34px;border:2px solid var(--ink);border-radius:12px;background:var(--surface);overflow:hidden}
+.wallet .rent{position:absolute;left:0;top:0;bottom:0;width:calc(var(--share) * 1%);background:var(--accent);border-right:2px solid var(--ink);transition:width .45s var(--ease)}
+.wl{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:700;margin-bottom:8px}
+.wl b{font-family:var(--font-num);font-size:22px;margin-left:4px}
+.wl .sw{display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--accent);border:1.5px solid var(--ink);margin-right:8px;vertical-align:-1px}
+.res .three{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;border-top:2px solid var(--ink)}
+.res .three>div{padding:10px 14px 0 0}
+.res .three>div + div{padding-left:14px;border-left:1px solid rgb(31 28 44 / .3)}
+.res .three .lab{font-size:14px}
+.res .three .v{font-family:var(--font-num);font-weight:700;font-size:32px;letter-spacing:-.02em;white-space:nowrap}
+.res .three .v.hot{color:var(--accent-text)}
+
+/* ================= 8 締め ================= */
+.s-end .kick{left:80px;top:70px;font-family:var(--font-num);font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--accent-text)}
+.s-end h1{left:80px;top:100px;font-size:56px;line-height:1.3}
+.s-end .place{left:752px;top:58px;width:460px;height:500px;border-radius:44% 56% 50% 50% / 50% 46% 54% 50%}
+.s-end .tag{left:832px;top:102px}
+.s-end .tag .plate{background:linear-gradient(var(--accent) 0 12%,var(--ink) 12% calc(12% + 2px),var(--surface) calc(12% + 2px))}
+.s-end .ava{background:var(--surface);border-style:dashed}
+.s-end .ava .h,.s-end .ava .b{background:transparent;border:2px dashed var(--ink)}
+.s-end .ava .h::before,.s-end .ava .h::after,.s-end .ava .b::before{display:none}
+.s-end .tin .nm{display:block;margin:6px 34px 0;padding-bottom:4px;border-bottom:2px dotted var(--ink);color:var(--muted);font-size:26px;letter-spacing:.06em}
+.nexts{left:80px;top:334px;width:620px;display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.nx{padding:14px 18px 0 0;border-top:2px solid var(--ink)}
+.nx + .nx{padding-left:18px;border-left:1px solid var(--line)}
+.nx b{display:block;font-family:var(--font-num);font-size:34px;font-weight:800;line-height:1.05;color:var(--accent-text)}
+.nx b small{font-family:var(--font);font-size:15px;margin-left:2px}
+.nx p{font-size:18px;line-height:1.55;font-weight:700;margin:8px 0 4px}
+.nx span{font-size:15px;color:var(--muted);line-height:1.5;display:block}
+.contact{left:80px;top:500px;width:620px;display:flex;align-items:center;gap:18px;padding:16px 20px;border:2px solid var(--ink);border-radius:16px;background:var(--surface);font-size:18px}
+.contact b{font-family:var(--font-num);font-size:22px;font-weight:700}
+.contact span{font-size:15px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){.wallet .rent{transition:none}}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="12">12</div><div class="mo-lab" data-morph-enter><b class="u">か月</b><b>MONTHS</b>入社してから<br>2年目の春まで</div></div>
+    <div class="kick">新入社員ひとりを、12か月追いかけました。</div>
+    <h1>入社1年目を、<br><em>ぜんぶ</em>見せます。</h1>
+    <p class="lead">研修・配属・初めての担当・振り返り。<br>春日ゆいさん（仮名）の1年を、月ごとにたどります。</p>
+    <div class="place" data-morph="place"></div>
+    <div class="tag L"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">2028年度 新入社員</div><div class="nm">春日 ゆい</div><div class="ro">生産技術部</div></div></div></div>
+    <div class="sticker"><div class="plate" data-morph="voice"></div><div class="stk"><span>同期<b>42</b>人</span></div></div>
+
+    <div class="now" data-morph="now" style="--a:0;--n:12"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="1">1</span> / 8</b></div>
+    <aside class="notes">最初に「今日は、ひとりの新入社員の1年を見てもらいます」と言い切る。右の名札が春日ゆいさん（仮名）。このあとページをめくるたびに、名札が研修センター・配属先・試作ライン・振り返り会へと移っていきます。下の帯は12か月のカレンダーで、オレンジが「いまどこか」を示します。</aside>
+  </section>
+
+  <!-- 2 クイズ -->
+  <section class="slide s-quiz" data-title="クイズ">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="0">0</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>BEFORE APRIL</b>先に1問だけ。<br><em>入社前のあなたへ</em></div></div>
+    <h2 class="hd2">1年目の平均残業は、<br><em>月に何時間</em>だと思いますか。</h2>
+    <div class="quiz">
+      <div class="choices">
+        <button><span>A</span><b>3</b>時間</button>
+        <button data-correct><span>B</span><b>11</b>時間</button>
+        <button><span>C</span><b>25</b>時間</button>
+        <button><span>D</span><b>40</b>時間</button>
+      </div>
+      <div class="hint" data-morph-enter style="--d:.2"><div class="hq"><b>?</b>答えを選ぶと、ゆいさんの<br>12か月の残業が月ごとに出ます</div><div class="hx"><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i><i>10</i><i>11</i><i>12</i><i>1</i><i>2</i><i>3月</i></div></div>
+      <div class="explain">
+        <div class="ans">正解は <b>月11時間</b>（2027年度入社・42人の平均）</div>
+        研修中の4〜5月はほぼゼロ。多いのは初担当の秋。
+        <div class="chart" style="position:relative">
+          <div class="avg" style="bottom:calc((100% - 24px) * .545)"><span>平均 10.9</span></div>
+          <div class="col" style="--v:3" data-label="4" data-val=""><i></i></div>
+          <div class="col" style="--v:3" data-label="5" data-val=""><i></i></div>
+          <div class="col" style="--v:30" data-label="6" data-val="6"><i></i></div>
+          <div class="col" style="--v:50" data-label="7" data-val="10"><i></i></div>
+          <div class="col" style="--v:35" data-label="8" data-val="7"><i></i></div>
+          <div class="col" style="--v:65" data-label="9" data-val="13"><i></i></div>
+          <div class="col pk" style="--v:87.5" data-label="10" data-val="17.5"><i></i></div>
+          <div class="col pk" style="--v:90" data-label="11" data-val="18"><i></i></div>
+          <div class="col" style="--v:75" data-label="12" data-val="15"><i></i></div>
+          <div class="col" style="--v:70" data-label="1" data-val="14"><i></i></div>
+          <div class="col" style="--v:85" data-label="2" data-val="17"><i></i></div>
+          <div class="col" style="--v:60" data-label="3月" data-val="12"><i></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="place" data-morph="place"></div>
+    <div class="tag S"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">大学4年・3月</div><div class="nm">春日 ゆい</div><div class="ro">入社まで あと2週間</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>入社前は、月40時間くらいあると思っていました。</q><div class="by"><span class="mini o"></span>ゆい（入社前の3月）</div></div></div>
+    <div class="now pre" data-morph="now"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="2">2</span> / 8</b></div>
+    <aside class="notes">会場に手を挙げてもらう（A〜D）。いちばん多いのはたいてい C か D。答えを押すと右に月ごとのグラフが出るので、「研修中はほぼゼロ、増えるのは担当を持つ秋から」と指でなぞる。次のページから、この1年を月ごとに見ていきます。</aside>
+  </section>
+
+  <!-- 3 4月 研修 -->
+  <section class="slide s-apr" data-title="4月 研修">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="1">1</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>APRIL – MAY</b>入社式の翌日から<br><em>2か月の研修</em></div></div>
+    <h2 class="hd2">最初の2か月は、<em>研修だけ</em>。<br>現場に出るのは6月から。</h2>
+    <div class="phases">
+      <div class="ph step"><i>1–2週</i><div><b>ビジネスの基本</b><span>メール・会議・原価の考え方</span></div></div>
+      <div class="ph step"><i>3–6週</i><div><b>工場実習</b><span>岡山と名古屋で、ラインに入る</span></div></div>
+      <div class="ph step"><i>7–8週</i><div><b>製品と設計の基礎</b><span>最後に配属の希望を出す</span></div></div>
+    </div>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">横浜・研修センター</div>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">2028年度 新入社員</div><div class="nm">春日 ゆい</div><div class="ro">新入社員研修 中</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>研修で見ているのは、<br>正解よりも<br>「分かりません」と<br>言える早さです。</q><div class="by"><span class="mini"></span>人事部 佐伯さん<br>（入社7年目）</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="320">320</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="0.5" data-format="dec1">0.5</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="0">0</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="180">180</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:0;--n:2"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="3">3</span> / 8</b></div>
+    <aside class="notes">→ で研修の3つの段階が1つずつ出ます。工場実習では、岡山と名古屋の2つの工場で実際にラインに入ります。下のメーター（学んだ時間・残業・有給・質問の数）は、このあと月が進むたびに数え直されます。「質問180回」は笑いが取れるところ。</aside>
+  </section>
+
+  <!-- 4 6月 配属 -->
+  <section class="slide s-jun" data-title="6月 配属">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="3">3</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>JUNE</b>研修の最後の面談で<br><em>配属が決まる</em></div></div>
+    <h2 class="hd2">配属は、本人の希望から。<br>42人中<em>35人が第1希望</em>へ。</h2>
+    <p class="body" data-morph-enter style="--d:.1">ゆいは岡山工場の生産技術部 第2課へ。<br><span class="mute">6人の課に、OJTの先輩が1人つきます。</span></p>
+    <details class="why float" data-morph-enter style="--d:.15"><summary>配属の決め方</summary><div class="body">研修中に面談を2回。工場実習の評価と、本人の第1〜第3希望を合わせて人事と各部の部長で決める。第1希望に入れなかった7人も、2年目の秋の面談で異動の希望を出せる（2027年度は3人が異動）。</div></details>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">岡山工場・生産技術部 第2課</div>
+    <div class="team" data-morph-enter style="--d:.35">
+      <div class="p"><span class="mini"></span>石田 課長</div>
+      <div class="p ojt"><span class="mini"></span>森（OJT）</div>
+      <div class="p"><span class="mini"></span>大野</div>
+      <div class="p"><span class="mini"></span>林</div>
+      <div class="p"><span class="mini"></span>野口</div>
+      <div class="p me"><span class="mini"></span>6人目の席</div>
+    </div>
+    <svg class="link" viewBox="0 0 60 40" data-morph-enter style="--d:.45" aria-hidden="true"><path class="draw" d="M2 20 C 20 4, 36 36, 54 18" fill="none" stroke="#1f1c2c" stroke-width="2.5" stroke-linecap="round"/><path d="M46 14 L55 17 L50 25" fill="none" stroke="#1f1c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">生産技術部</div><div class="nm">春日 ゆい</div><div class="ro">第2課 に配属</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>最初の3か月は、ぼくの隣で同じ図面を見よう。</q><div class="by"><span class="mini o"></span>OJT担当 森さん（入社4年目）</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="368">368</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="6" data-format="dec1">6.0</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="1">1</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="420">420</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:2;--n:1"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="4">4</span> / 8</b></div>
+    <aside class="notes">「配属ガチャ」を気にする学生が多いので、決め方は聞かれる前に開いて見せてよい。名札が課の空いた席に入るところで「6人の課の、6人目になります」と言う。OJTの先輩は、1年間ずっと同じ人です。</aside>
+  </section>
+
+  <!-- 5 10月 初担当 -->
+  <section class="slide s-oct" data-title="10月 初担当">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="7">7</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>OCTOBER</b>入社して半年で<br><em>はじめての担当</em></div></div>
+    <h2 class="hd2">半年で、自分の担当を持つ。<br><em>ポンプの試作50台</em>。</h2>
+    <p class="body" data-morph-enter style="--d:.1">図面を直すのも、工場に頼むのも、ゆい。<br><span class="mute">森さんは隣の机のまま、確かめる役に回ります。</span></p>
+    <details class="why float" data-morph-enter style="--d:.15"><summary>なぜ半年で任せるのか</summary><div class="body">2019〜2024年度入社で比べると、1年目の秋までに担当を持った人は、3年目までに辞めた割合が半分だった。任せるのは、失敗しても量産に響かない「試作」から。</div></details>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">試作ライン（岡山）</div>
+    <div class="line" data-morph-enter style="--d:.35"><div class="rail"></div>
+      <div class="sta"><small>10月</small>図面の修正</div>
+      <div class="sta on"><small>11月</small>試作50台</div>
+      <div class="sta"><small>12月</small>評価</div>
+      <div class="sta"><small>1月</small>量産の判定</div>
+    </div>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">生産技術部 第2課</div><div class="nm">春日 ゆい</div><div class="ro">担当：試作50台</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>試作をひとつ、<br>任せます。<br>失敗していいから、<br>報告は毎週ね。</q><div class="by"><span class="mini"></span>石田 課長</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="436">436</span><small>時間</small></div></div>
+      <div class="st hot"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="17.5" data-format="dec1">17.5</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="4">4</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="760">760</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:6;--n:1"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="5">5</span> / 8</b></div>
+    <aside class="notes">残業のメーターがここで17.5時間まで上がる。クイズの答え（平均11時間）と合わせて、「忙しいのは担当を持った秋。それでも月20時間はこえない」と話す。名札が試作ラインの「試作50台」の駅の上に立っています。</aside>
+  </section>
+
+  <!-- 6 3月 振り返り -->
+  <section class="slide s-mar" data-title="3月 振り返り">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="12">12</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>MARCH</b>課の全員の前で<br><em>1年の振り返り</em></div></div>
+    <h2 class="hd2">12か月で、「手伝う人」から<br><em>「任される人」</em>になった。</h2>
+    <div class="grow" data-morph-enter style="--d:.1">
+      <div class="gr step"><i>図面</i><span>読める</span><u>→</u><b>自分で直せる</b></div>
+      <div class="gr step"><i>会議</i><span>聞いている</span><u>→</u><b>自分で開く</b></div>
+      <div class="gr step"><i>試作</i><span>手伝う</span><u>→</u><b>1人で任される</b></div>
+    </div>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">本社・振り返り会</div>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">生産技術部 第2課</div><div class="nm">春日 ゆい</div><div class="ro">4月から 2年目</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>1回目の試作は、<br>全部やり直し。<br>2回目で通ったとき、<br>やっと仕事になった。</q><div class="by"><span class="mini o"></span>ゆい（入社1年目の3月）</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="512">512</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="12" data-format="dec1">12.0</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="10">10</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="1020">1,020</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:11;--n:1"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="6">6</span> / 8</b></div>
+    <aside class="notes">名札が左へ、月の数字が右へ入れ替わる。→ で「できるようになったこと」が1行ずつ出ます。質問の数が1,020回まで数え上がったところで、「聞いた回数がいちばん多い人ほど、早く任されていた」と添える。</aside>
+  </section>
+
+  <!-- 7 暮らしの計算 -->
+  <section class="slide s-life" data-title="1年目の暮らし">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="kick" data-morph-enter>LIFE ─ 1年目の暮らしを計算する</div>
+    <h2>相場の家賃なら、どの勤務地でも<br>家賃の負担は<em>手取りの2割以下</em>。</h2>
+    <div class="place" data-morph="place"></div>
+    <div class="calc" data-calc data-let="area = loc == 0 ? 20000 : (loc == 1 ? 10000 : 0); cap = loc == 0 ? 30000 : (loc == 1 ? 22000 : 18000); base = 228000; ot = round((base + area) / 160 * 1.25 * h); sub = s ? min(rent * 0.5, cap) : 0; net = round((base + area + ot + sub) * 0.82); burden = rent - sub; share = min(100, burden / net * 100); rest = net - burden">
+      <div class="in" data-morph-enter style="--d:.1">
+        <div class="field"><label>勤務地</label>
+          <select name="loc"><option value="0">本社（東京・品川）</option><option value="1">名古屋工場</option><option value="2" selected>岡山工場（ゆいの配属先）</option></select></div>
+        <label class="chk"><input type="checkbox" name="s" checked>住宅補助を使う<span>家賃の半分まで</span></label>
+        <div class="field"><label>家賃（月） <b data-show="rent" data-format="yen"></b></label><input type="range" name="rent" min="30000" max="120000" step="1000" value="52000"></div>
+        <div class="field"><label>残業（月） <b data-show="h" data-unit="時間"></b></label><input type="range" name="h" min="0" max="30" step="1" value="11"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">基本給22.8万円＋地域手当（東京2万・名古屋1万）＋残業代（時給×1.25）＋住宅補助。住宅補助は家賃の半分で、上限は東京3万・名古屋2.2万・岡山1.8万円。手取りは額面の82%（1年目は住民税がかからない）で計算。ひとり暮らしの家賃の相場は、東京7万・名古屋5.5万・岡山5.2万円。</div></details>
+      </div>
+      <div class="res" data-morph-enter style="--d:.2">
+        <div class="lab">1年目の手取り（月の目安）</div>
+        <div class="net"><span data-out="net" data-format="yen"></span></div>
+        <div class="wl"><span><i class="sw"></i>手取りに占める家賃 <b data-out="share" data-format="pct"></b></span><span>家賃を払って残る <b data-out="rest" data-format="yen"></b></span></div><div class="wallet"><div class="rent"></div></div>
+        <div class="three">
+          <div><div class="lab">住宅補助</div><div class="v" data-out="sub" data-format="yen"></div></div>
+          <div><div class="lab">家賃の自己負担</div><div class="v hot" data-out="burden" data-format="yen"></div></div>
+          <div><div class="lab">残業代</div><div class="v" data-out="ot" data-format="yen"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tag S"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">ゆいの場合</div><div class="nm">春日 ゆい</div><div class="ro">岡山で ひとり暮らし</div></div></div></div>
+    <div class="now" data-morph="now" style="--a:0;--n:12"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="7">7</span> / 8</b></div>
+    <aside class="notes">最初はゆいの場合（岡山・家賃5.2万円）。会場で「東京で家賃9万円なら？」と聞いて、勤務地を本社に、家賃を9万円に動かす。住宅補助を外すと、家賃の帯が一気に伸びるのを見せる。寮（月1万円）もあるが、ここでは一人暮らしで計算しています。</aside>
+  </section>
+
+  <!-- 8 締め -->
+  <section class="slide s-end" data-title="次の一歩">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="kick" data-morph-enter>NEXT ─ 次は、あなたの1年目</div>
+    <h1>2029年4月、<br>この名札に<br><em>あなたの名前</em>を。</h1>
+    <div class="nexts" data-morph-enter style="--d:.15">
+      <div class="nx"><b>11<small>月</small></b><p>工場見学ツアー</p><span>岡山・名古屋。ゆいの試作ラインも回ります</span></div>
+      <div class="nx"><b>12<small>月</small></b><p>1日仕事体験</p><span>生産技術・設計・品質の3コースから</span></div>
+      <div class="nx"><b>1<small>月〜</small></b><p>エントリー受付</p><span>面接は3回。すべてオンラインでも可</span></div>
+    </div>
+    <div class="contact" data-morph-enter style="--d:.25"><div><b>saiyo@example.com</b><br><span>人事部 採用チーム ／ 今日のアンケートで工場見学の優先枠</span></div></div>
+    <div class="place" data-morph="place"></div>
+    <div class="tag L"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.3"><div class="org"><span>S/K</span><span>2029</span></div><div class="who"><div class="yr">2029年度 新入社員</div><div class="nm">あなたの名前</div><div class="ro">配属は、面談で一緒に</div></div></div></div>
+    <div class="now pre" data-morph="now"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="8">8</span> / 8</b></div>
+    <aside class="notes">ゆいの名札が、名前の空いた名札に変わる。「この帯の、いちばん左がいまのあなたです」と帯を指して締める。質問はこのあと個別ブースで。</aside>
+  </section>
+
+</main>

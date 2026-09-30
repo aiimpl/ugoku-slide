@@ -1,0 +1,486 @@
+<!--meta
+{"title":"新型空気清浄機 SK-AP560 製品説明会｜サンプル機工","style":"インダストリアル","use":"新製品説明会・代理店向け営業","group":"触れる・立体",
+ "aim":"業務用機器メーカーの営業が代理店向けの新製品説明会で、新型空気清浄機の中身を1層ずつ引き出して見せ、旧型との違いを納得してもらう。",
+ "desc":"本体をドラッグで回し、「分解」のつまみで5層が前後に離れる分解図に。部屋の広さと使う時間から、1年の電気代とフィルター交換までの月数が出る。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#e2ded6; --surface:#ebe8e2; --ink:#1b1a18; --muted:#524e47; --line:#b4ada1;
+  --accent:#c83f15; --accent-ink:#ffffff; --accent-text:#a3310c; --good:#2d6a3a; --bad:#a3310c; --frame:#1f1e1b;
+  --font:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Barlow Condensed","IBM Plex Sans JP","Hiragino Sans",sans-serif;
+  --head-weight:700; --head-track:.01em; --radius:2px; --shadow:none;
+  --pad-y:92px; --pad-x:72px;
+  --case:linear-gradient(180deg,#dcd7ce 0%,#cfc9be 100%);
+}
+.deck{background:
+  linear-gradient(90deg,rgb(27 26 24 / .045) 1px,transparent 1px) 0 0/40px 40px,
+  linear-gradient(180deg,rgb(27 26 24 / .045) 1px,transparent 1px) 0 0/40px 40px,
+  var(--bg)}
+.num{font-family:var(--font-num);font-weight:500;letter-spacing:.01em}
+.nw{white-space:nowrap}
+h1{font-size:50px;line-height:1.3;letter-spacing:.02em}
+h2{font-size:36px;line-height:1.42;letter-spacing:.02em;margin-bottom:0}
+h2 em,h1 em{font-style:normal;color:var(--accent-text)}
+.kicker{font-family:var(--font-num);font-weight:600;font-size:17px;letter-spacing:.2em;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.kicker::before{content:"";width:10px;height:10px;background:var(--accent)}
+.lead{font-size:20px;line-height:1.8;color:var(--muted)}
+
+/* 各ページの上の帯（カタログの柱） */
+.hd{position:absolute;left:var(--pad-x);right:var(--pad-x);top:28px;display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:9px;border-bottom:1.5px solid var(--ink);font-family:var(--font-num);font-size:15px;font-weight:500;letter-spacing:.18em;color:var(--ink)}
+.hd span:last-child{color:var(--muted)}
+.hd b{font-weight:600;margin-right:18px}
+.foot{font-size:14px;color:var(--muted);display:flex;justify-content:space-between;bottom:22px;font-family:var(--font)}
+.foot .pg{font-family:var(--font-num);letter-spacing:.16em;font-size:15px}
+
+/* ---------- 製品の立体（data-orbit）。板は6面の箱。--x（分解）で前後に離れる ---------- */
+.stage{position:absolute;--persp:1900px;--W:260px;--H:380px}
+.stage .orbit{position:absolute;left:50%;top:50%;width:260px;height:380px;margin:-190px 0 0 -130px}
+.stage .grp{position:absolute;inset:0;transform:translateZ(calc(var(--x,0) * -2.3px - 84px))}
+.L{position:absolute;left:0;top:0;width:260px;height:380px;
+  transform:translateZ(calc(var(--z0) * 1px + var(--k) * var(--x,0) * 1.15px));transition:transform .4s var(--ease)}
+[data-orbit] .orbit .face{position:absolute;transform-style:flat;overflow:hidden}
+[data-orbit] .orbit .face *{transform-style:flat}
+.fz{inset:0;transform:translateZ(calc(var(--t) * 1px))}
+.bz{inset:0;transform:rotateY(180deg)}
+.rx{left:100%;top:0;height:100%;width:calc(var(--t) * 1px);transform-origin:0 50%;transform:rotateY(-90deg)}
+.lx{right:100%;top:0;height:100%;width:calc(var(--t) * 1px);transform-origin:100% 50%;transform:rotateY(90deg)}
+.ty{bottom:100%;left:0;width:100%;height:calc(var(--t) * 1px);transform-origin:50% 100%;transform:rotateX(-90deg)}
+.by{top:100%;left:0;width:100%;height:calc(var(--t) * 1px);transform-origin:50% 0;transform:rotateX(90deg)}
+/* 光は左手前から。回した向き（--ry）に合わせて、面の暗さが変わる */
+.face::after{content:"";position:absolute;inset:0;background:#26241f;opacity:var(--sh,0);pointer-events:none}
+.fz{--sh:calc(.03 + .30 * (1 - max(0, cos((var(--ry) + 35) * 1deg))))}
+.bz{--sh:calc(.08 + .30 * (1 - max(0, -1 * cos((var(--ry) + 35) * 1deg))))}
+.rx{--sh:calc(.06 + .30 * (1 - max(0, -1 * sin((var(--ry) + 35) * 1deg))))}
+.lx{--sh:calc(.06 + .30 * (1 - max(0, sin((var(--ry) + 35) * 1deg))))}
+.ty{--sh:.0}
+.by{--sh:.42}
+/* 組んだ状態では、フィルターの側面はケースの外板に見える（分解すると素材が見えてくる） */
+.skin::before{content:"";position:absolute;inset:0;z-index:1;background:var(--case);opacity:clamp(0, calc(1 - var(--x,0) / 10), 1)}
+/* 1層ごとの床の影 */
+.L>.sh{position:absolute;left:-36px;top:calc(100% + 4px);width:332px;height:calc(var(--t) * 1px + 72px);transform-origin:50% 0;
+  transform:rotateX(90deg) translateY(-36px);background:radial-gradient(closest-side,rgb(40 32 22 / .34),rgb(40 32 22 / .12) 60%,transparent);pointer-events:none}
+
+/* 01 前面パネル：粉体塗装の鋼板、下に吸込口、上に表示部 */
+.L1 .face{background:var(--case)}
+.L1 .fz{box-shadow:inset 0 0 0 1px rgb(0 0 0 / .1),inset 0 2px 0 rgb(255 255 255 / .55)}
+.L1 .fz .disp{position:absolute;left:84px;top:34px;width:92px;height:30px;background:#1d1c1a;border-radius:3px;display:flex;align-items:center;gap:6px;padding:0 9px;
+  box-shadow:inset 0 1px 3px rgb(0 0 0 / .6),0 1px 0 rgb(255 255 255 / .5)}
+.L1 .fz .disp i{width:6px;height:6px;border-radius:50%;background:#ff6a2b;box-shadow:0 0 6px #ff6a2b}
+.L1 .fz .disp span{font:600 8px/1 var(--font-num);letter-spacing:.1em;color:#8f8a80}
+.L1 .fz .disp b{font:500 17px/1 var(--font-num);color:#f1ece2;margin-left:auto;letter-spacing:.06em}
+.L1 .fz .plate{position:absolute;left:24px;top:96px;font:600 11px/1 var(--font-num);letter-spacing:.24em;color:#6d685f}
+.L1 .fz::before{content:"";position:absolute;left:24px;right:24px;top:118px;height:1px;background:rgb(0 0 0 / .14);box-shadow:0 1px 0 rgb(255 255 255 / .5)}
+.L1 .fz .grille{position:absolute;left:24px;right:24px;bottom:26px;height:150px;border-radius:2px;
+  background:repeating-linear-gradient(180deg,#2c2a26 0 3px,#b9b3a8 3px 4px,transparent 4px 10px)}
+.L1 .bz{background:#b7b1a6}
+.L1 .bz .ribs{position:absolute;inset:18px;border:2px solid rgb(0 0 0 / .12);background:repeating-linear-gradient(90deg,transparent 0 40px,rgb(0 0 0 / .1) 40px 42px)}
+.L1 .slots{position:absolute;inset:14px 3px;background:repeating-linear-gradient(180deg,#2c2a26 0 2px,transparent 2px 7px)}
+.L1 .slots.h{inset:3px 20px;background:repeating-linear-gradient(90deg,#2c2a26 0 2px,transparent 2px 7px)}
+
+/* 02 プレフィルター：黒い枠に細かい網（奥が透けて見える） */
+.L2 .face{background:#3a3834}
+.L2 .fz,.L2 .bz{background:transparent;border:12px solid #3a3834}
+.L2 .fz .mesh{position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,rgb(45 43 39 / .78) 0 1px,transparent 1px 4px),
+  repeating-linear-gradient(90deg,rgb(45 43 39 / .78) 0 1px,transparent 1px 4px)}
+.L2 .fz::after,.L2 .bz::after{opacity:0}
+
+/* 03 HEPA：アルミの枠、白いプリーツ、仕様のラベル */
+.L3 .face{background:linear-gradient(90deg,#b9bcbd,#e6e8e8 40%,#a9adae)}
+.L3 .fz,.L3 .bz{background:linear-gradient(135deg,#c9cccd,#eef0f0 45%,#a7abac)}
+.L3 .pleat{position:absolute;inset:9px;background:repeating-linear-gradient(90deg,#f6f4ee 0 3px,#dcd7cc 3px 5px,#c7c0b2 5px 6px,#ece8df 6px 9px);
+  box-shadow:inset 0 0 0 1px rgb(0 0 0 / .12)}
+.L3 .ty,.L3 .by{background:#f1eee7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='40' preserveAspectRatio='none' viewBox='0 0 9 40'%3E%3Cpath d='M0 0 L4.5 40 L9 0' fill='none' stroke='%23b3ab9c' stroke-width='1.2'/%3E%3C/svg%3E") 0 0/9px 100%}
+.L3 .sticker{position:absolute;right:18px;bottom:20px;background:#fbfaf6;border:1px solid #cfc9bd;padding:6px 9px;font:500 10px/1.35 var(--font-num);letter-spacing:.08em;color:#46423b}
+.L3 .sticker b{display:block;font-size:13px;letter-spacing:.12em;color:#1b1a18}
+
+/* 04 脱臭：ハニカムの活性炭 */
+.L4 .face{background:#2b2a27}
+.L4 .comb{position:absolute;inset:10px;background:
+  radial-gradient(circle,#0c0c0b 0 2.1px,transparent 2.5px) 0 0/7px 6px,
+  radial-gradient(circle,#0c0c0b 0 2.1px,transparent 2.5px) 3.5px 3px/7px 6px,#34322e;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .06)}
+.L4 .ty,.L4 .by,.L4 .rx,.L4 .lx{background:repeating-linear-gradient(90deg,#2b2a27 0 2px,#1d1c1a 2px 3px)}
+
+/* 05 ファン・本体：ケースの奥に大径ファン */
+.L5 .face{background:var(--case)}
+.L5 .fz{background:radial-gradient(circle at 50% 58%,#8a847a 0,#a39d92 60%,#b3ada2 100%);box-shadow:inset 0 0 0 10px #c9c3b8}
+.L5 .shroud{position:absolute;left:25px;top:95px;width:210px;height:210px;border-radius:50%;
+  background:radial-gradient(circle,#2a2926 0 62%,#1a1917 68%,#6c675e 69%,#c2bcb1 72%,#8b857b 76%,transparent 77%)}
+.L5 .blades{position:absolute;inset:18px;border-radius:50%;background:
+  radial-gradient(circle,transparent 0 22%,rgb(0 0 0 / .35) 70%,transparent 71%),
+  repeating-conic-gradient(from 10deg,#5b5852 0 22deg,#3c3a36 22deg 36deg,#23221f 36deg 51.43deg);animation:fan 5s linear infinite}
+.L5 .hub{position:absolute;left:83px;top:83px;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#d9d4ca,#8e887d 70%,#6b665d);box-shadow:0 2px 6px rgb(0 0 0 / .5)}
+.L5 .screw{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#e0dbd1,#7e786e);box-shadow:0 1px 1px rgb(0 0 0 / .35)}
+.L5 .screw.a{left:20px;top:20px}.L5 .screw.b{right:20px;top:20px}.L5 .screw.c{left:20px;bottom:20px}.L5 .screw.d{right:20px;bottom:20px}
+.L5 .rear{position:absolute;inset:0}
+.L5 .rear .vent{position:absolute;left:30px;right:30px;top:40px;height:170px;background:repeating-linear-gradient(90deg,#2c2a26 0 3px,transparent 3px 11px);border-radius:2px}
+.L5 .rear .rating{position:absolute;left:30px;bottom:34px;width:130px;padding:8px 10px;background:#c4bfb4;border:1px solid #a49e92;font:500 10px/1.5 var(--font-num);letter-spacing:.08em;color:#3a3732}
+.L5 .rear .rating b{display:block;font-size:12px;letter-spacing:.16em;color:#1b1a18}
+.L5 .grip{position:absolute;left:26px;right:26px;top:48px;height:40px;border-radius:6px;background:linear-gradient(180deg,#9f998e,#c6c0b5);box-shadow:inset 0 3px 5px rgb(0 0 0 / .35)}
+.L5 .ty .louver{position:absolute;inset:12px 22px;background:repeating-linear-gradient(90deg,#2c2a26 0 4px,#d4cec4 4px 5px,transparent 5px 12px)}
+@keyframes fan{to{transform:rotate(360deg)}}
+
+/* 層の名札（いつも正面を向く） */
+.tag{position:absolute;left:130px;top:calc(var(--ty) * 1px);white-space:nowrap;
+  transform:translate3d(-50%,0,calc(var(--t) * .5px)) rotateY(calc(var(--ry) * -1deg)) rotateX(calc(var(--rx) * -1deg)) translateZ(170px);
+  opacity:clamp(0, calc((var(--x,0) - 18) / 18), 1);transition:opacity .3s;
+  font:500 15px/1 var(--font);color:var(--ink);background:var(--bg);border:1px solid var(--ink);padding:5px 9px 5px 7px;display:flex;gap:7px;align-items:center}
+.tag b{font:600 14px/1 var(--font-num);letter-spacing:.08em;background:var(--ink);color:var(--bg);padding:3px 5px}
+.tag::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:calc(var(--ty) * -1px - 27px);background:var(--ink)}
+.tag.dn::after{top:auto;bottom:100%;height:calc(var(--ty) * 1px - 380px)}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover .model{font-family:var(--font-num);font-weight:600;font-size:150px;line-height:.86;letter-spacing:-.005em;margin:6px 0 26px;display:flex;align-items:flex-start;gap:16px}
+.s-cover .model sup{font-size:20px;letter-spacing:.2em;background:var(--accent);color:var(--accent-ink);padding:6px 9px 5px;line-height:1;margin-top:10px;font-weight:600}
+.s-cover .cat{font-size:19px;color:var(--muted);letter-spacing:.06em;margin-top:6px}
+.s-cover h1{max-width:600px}
+.s-cover .lead{max-width:560px;margin-top:18px}
+.s-cover .cstage{position:absolute;left:660px;top:78px;width:560px;height:560px}
+.s-cover .cstage .stage{inset:0}
+.s-cover .figlbl{position:absolute;left:676px;top:92px;font:500 14px/1.5 var(--font-num);letter-spacing:.18em;color:var(--muted)}
+.specs{position:absolute;left:var(--pad-x);bottom:58px;width:590px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1.5px solid var(--ink)}
+.specs>div{padding:12px 14px 0 0;border-right:1px solid var(--line);margin-right:14px}
+.specs>div:last-child{border-right:0;margin-right:0}
+.specs dt{font-size:14px;color:var(--muted);margin-bottom:4px}
+.specs dd{margin:0;font-family:var(--font-num);font-weight:500;font-size:30px;line-height:1.05}
+.specs dd small{font-size:16px;margin-left:2px;font-family:var(--font);font-weight:500}
+
+/* ---------- 2 分解図 ---------- */
+.exp{position:absolute;inset:0}
+.exp .fig{position:absolute;left:40px;top:80px;width:720px;height:620px}
+.exp .fig .stage{inset:0}
+.exp .figlbl{position:absolute;left:32px;top:16px;font:500 14px/1.5 var(--font-num);letter-spacing:.18em;color:var(--muted);pointer-events:none}
+.exp .figlbl b{color:var(--ink);font-weight:600}
+.exp .hint{position:absolute;right:20px;top:16px;font-size:15px;color:var(--muted);pointer-events:none}
+.exp .side{position:absolute;left:790px;top:92px;right:var(--pad-x);bottom:52px;display:flex;flex-direction:column}
+.exp h2{font-size:32px;line-height:1.45}
+.exp .field{margin:22px 0 14px}
+.exp .field>label{font-size:18px;color:var(--ink);font-weight:500}
+.exp .field>label b{font-size:26px;font-weight:500}
+input[type=range]{accent-color:var(--ink)}
+.tabs{border-radius:0;background:transparent;padding:0;gap:0;border:1.5px solid var(--ink);width:100%;margin-bottom:14px;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabs>[data-tab]{border-radius:0;padding:8px 0 7px;font-size:15px;font-weight:500;color:var(--ink);border-left:1px solid var(--ink);display:grid;gap:1px;line-height:1.25}
+.tabs>[data-tab]:first-child{border-left:0}
+.tabs>[data-tab] b{font:600 14px/1 var(--font-num);letter-spacing:.1em;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--ink);color:var(--bg);box-shadow:none}
+.tabs>[data-tab][aria-selected=true] b{color:#ff8a5c}
+.lp{min-height:0}
+.lp h3{font-size:24px;margin:0 0 6px}
+.lp p{font-size:18px;line-height:1.65;color:var(--muted);margin:0 0 12px}
+.lp .kv{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink)}
+.lp .kv>div{padding:8px 0 0}
+.lp .kv>div+div{border-left:1px solid var(--line);padding-left:14px}
+.lp .kv span{display:block;font-size:14px;color:var(--muted)}
+.lp .kv b{font-family:var(--font-num);font-weight:500;font-size:34px;line-height:1.1}
+.lp .kv b small{font-size:16px;font-family:var(--font);margin-left:2px}
+.lp .kv .up{color:var(--accent-text)}
+/* 選んだ層に、立体の中でも印を付ける */
+.exp:has([data-panel=p1]:not([hidden])) .L1 .fz,
+.exp:has([data-panel=p2]:not([hidden])) .L2 .fz,
+.exp:has([data-panel=p3]:not([hidden])) .L3 .fz,
+.exp:has([data-panel=p4]:not([hidden])) .L4 .fz,
+.exp:has([data-panel=p5]:not([hidden])) .L5 .fz{outline:3px solid var(--accent);outline-offset:-3px}
+.exp:has([data-panel=p1]:not([hidden])) .L1 .tag,
+.exp:has([data-panel=p2]:not([hidden])) .L2 .tag,
+.exp:has([data-panel=p3]:not([hidden])) .L3 .tag,
+.exp:has([data-panel=p4]:not([hidden])) .L4 .tag,
+.exp:has([data-panel=p5]:not([hidden])) .L5 .tag{background:var(--accent);border-color:var(--accent);color:#fff}
+details.why{border-radius:0;background:transparent;border:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);margin-top:auto}
+details.why>summary{color:var(--ink);font-size:17px;font-weight:500;padding:10px 0}
+details.why>summary::before{border-radius:0;background:var(--ink);color:var(--bg);width:20px;height:20px;font-size:16px}
+details.why>.body{padding:0 0 12px;font-size:16px;color:var(--muted)}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--ink);border-radius:0;padding:14px 16px;left:0;right:0;box-shadow:6px 6px 0 rgb(27 26 24 / .12)}
+.exp details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
+
+/* ---------- 3 旧型との比較（仕様表） ---------- */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);margin-top:26px;border-top:1.5px solid var(--ink)}
+.kpis>div{padding:12px 20px 12px 0;display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:end}
+.kpis>div+div{border-left:1px solid var(--line);padding-left:20px}
+.kpis .v{font-family:var(--font-num);font-weight:500;font-size:66px;line-height:.95;letter-spacing:-.01em;grid-row:span 2}
+.kpis .v small{font-size:24px;margin-left:3px}
+.kpis .l{font-size:17px;font-weight:700;align-self:end}
+.kpis .o{font-size:15px;color:var(--muted)}
+.kpis .accent{color:var(--accent-text)}
+table.spec{width:100%;border-collapse:collapse;margin-top:14px;font-size:18px}
+table.spec th{font:600 14px/1 var(--font-num);letter-spacing:.16em;color:var(--muted);text-align:left;padding:10px 12px 8px 0;border-bottom:1.5px solid var(--ink)}
+table.spec td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:baseline}
+table.spec td:first-child{white-space:nowrap;font-weight:700;width:190px}
+table.spec td:first-child i{font:600 15px/1 var(--font-num);font-style:normal;letter-spacing:.1em;color:var(--muted);margin-right:10px}
+table.spec td.old{color:var(--muted);width:260px}
+table.spec td.new{font-weight:700;width:320px}
+table.spec td.eff{color:var(--muted);font-size:17px}
+table.spec tr.step{transform:none}
+table.spec tr.step.shown td.new{color:var(--ink)}
+table.spec tr.step.current td.new{box-shadow:inset 4px 0 0 var(--accent);padding-left:12px}
+
+/* ---------- 4 性能（棒グラフ） ---------- */
+.perf{display:grid;grid-template-columns:600px 1fr;gap:56px;margin-top:22px;flex:1}
+.perf .chart{height:330px;gap:44px;border-bottom:1.5px solid var(--ink);margin:10px 0 44px;padding-top:44px;
+  background:repeating-linear-gradient(180deg,transparent 0 65px,rgb(27 26 24 / .14) 65px 66px)}
+.perf .chart>.col>i{border-radius:0;background:var(--ink)}
+.perf .chart>.col.me>i{background:var(--accent)}
+.perf .chart>.col.dim>i{background:repeating-linear-gradient(135deg,#8f887c 0 2px,transparent 2px 7px);border:1.5px solid #6f695f;border-bottom:0}
+.perf .chart>.col::before{font-family:var(--font-num);font-weight:500;font-size:34px;bottom:calc(var(--v) * 1% + 8px)}
+.perf .chart>.col.me::before{color:var(--accent-text)}
+.perf .chart>.col::after{font-size:16px;color:var(--ink);line-height:1.35;margin-top:10px}
+.perf .unit{font-size:15px;color:var(--muted);margin-top:14px}
+.why2{display:grid;gap:0;align-content:start;border-top:1.5px solid var(--ink)}
+.why2 .r{display:grid;grid-template-columns:62px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.why2 .r .no{font:500 44px/1 var(--font-num);color:var(--ink)}
+.why2 .r h3{font-size:22px;margin:0 0 4px}
+.why2 .r p{font-size:17px;line-height:1.6;color:var(--muted);margin:0}
+.why2 .r .ly{display:inline-block;font:600 13px/1 var(--font-num);letter-spacing:.12em;border:1px solid var(--ink);padding:3px 6px;margin-left:8px;vertical-align:3px}
+
+/* ---------- 5 ランニングコスト ---------- */
+.run{display:grid;grid-template-columns:420px 1fr;gap:56px;margin-top:26px;flex:1}
+.run .field>label{color:var(--ink);font-size:18px}
+.run .field>label b{font-size:26px;font-weight:500}
+.run .field{margin-bottom:10px}
+.res{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--ink);align-content:start}
+.res>div{padding:14px 0 16px}
+.res>div+div{border-left:1px solid var(--line);padding-left:24px}
+.res .l{font-size:17px;color:var(--muted)}
+.res .v{font-family:var(--font-num);font-weight:500;font-size:84px;line-height:1;letter-spacing:-.01em;margin:6px 0 6px}
+.res .v small{font-size:26px;margin-left:3px;font-family:var(--font);font-weight:500}
+.res .s{font-size:17px}
+.res .s b{font-family:var(--font-num);font-weight:500;font-size:24px;color:var(--accent-text)}
+.watt{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;border-top:1px solid var(--line);padding:12px 0!important;border-left:0!important;padding-left:0!important}
+.watt .meter{height:12px;border-radius:0;background:repeating-linear-gradient(90deg,#c9c3b8 0 2px,transparent 2px 8px);border-bottom:1px solid var(--ink)}
+.watt .meter>i{border-radius:0;background:var(--ink)}
+.watt b{font-family:var(--font-num);font-weight:500;font-size:26px}
+.watt span{font-size:16px;color:var(--muted)}
+.tl{grid-column:1/-1;border-left:0!important;padding-left:0!important;border-top:1px solid var(--line);padding-top:18px!important}
+.tl .bar{position:relative;height:52px;margin-top:12px;border:1.5px solid var(--ink);
+  background:repeating-linear-gradient(90deg,transparent 0 calc(var(--mo) / 120 * 100% - 4px),var(--accent) calc(var(--mo) / 120 * 100% - 4px) calc(var(--mo) / 120 * 100%)),
+  repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgb(27 26 24 / .18) calc(10% - 1px) 10%)}
+.tl .yrs{display:grid;grid-template-columns:repeat(10,1fr);font:500 14px/1 var(--font-num);letter-spacing:.08em;color:var(--muted);margin-top:6px}
+.tl .yrs span{text-align:right}
+.ten{margin-top:22px;padding:14px 16px 14px;background:var(--ink);color:var(--bg);display:grid;grid-template-columns:1fr auto;align-items:end;gap:4px 12px}
+.ten .l{font-size:17px;font-weight:700;line-height:1.4;grid-column:1/-1}.ten .l small{font-weight:400;color:#b9b3a8;font-size:15px;margin-left:8px}.ten .l br{display:none}
+.ten .v2{font-family:var(--font-num);font-weight:500;font-size:50px;line-height:1}
+.ten .cmp{font-size:15px;color:#cfc9be;text-align:right;line-height:1.5}.ten .cmp b{font-family:var(--font-num);font-weight:500;font-size:21px;color:var(--bg)}.ten .cmp b.accent{color:#ff8a5c}
+.flow{list-style:none;margin:26px 0 0;padding:0;display:flex;gap:0;max-width:700px;border:1.5px solid var(--ink)}
+.flow li{flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:18px;position:relative}
+.flow li+li{border-left:1px solid var(--ink)}
+.flow li b{font:600 18px/1 var(--font-num);background:var(--ink);color:var(--bg);padding:4px 7px}
+.tl .l b{font-family:var(--font-num);font-weight:500;font-size:22px;color:var(--ink);margin:0 2px}
+
+/* ---------- 6 よく聞かれること ---------- */
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:26px;flex:1}
+.quiz .q{font-size:25px;font-weight:700;line-height:1.55;margin-bottom:22px}
+.quiz .choices>button{border-radius:0;border:1.5px solid var(--ink);background:transparent;font-size:22px;padding:19px 20px;display:flex;gap:14px;align-items:center}
+.quiz .choices>button b{font:600 18px/1 var(--font-num);letter-spacing:.1em;border:1px solid currentColor;padding:4px 6px}
+.quiz.answered .choices>button[data-correct]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.quiz.answered .choices>button.picked:not([data-correct]){background:transparent;border-color:var(--accent);color:var(--accent-text);text-decoration:line-through}
+.quiz .explain{font-size:18px;border-left:4px solid var(--accent);padding-left:14px}
+.faq{border-top:1.5px solid var(--ink)}
+.faq .r{padding:14px 0;border-bottom:1px solid var(--line)}
+.faq .r .qq{font-size:18px;font-weight:700;display:flex;gap:12px}
+.faq .r .qq::before{content:"Q";font:700 19px/1 var(--font);color:var(--accent-text);padding-top:3px}
+.faq .r p{font-size:17px;line-height:1.65;color:var(--muted);margin:6px 0 0 24px}
+.faq .r p b{color:var(--ink);font-family:var(--font-num);font-weight:500;font-size:22px}
+
+/* ---------- 7 締め ---------- */
+.s-end h2{max-width:720px}
+.s-end .estage{position:absolute;right:70px;top:96px;width:380px;height:380px}
+.s-end .estage .stage{left:50%;top:50%;width:560px;height:560px;margin:-280px 0 0 -280px;transform:scale(.66)}
+.asks{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:92px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1.5px solid var(--ink)}
+.asks>div{padding:16px 24px 0 0}
+.asks>div+div{border-left:1px solid var(--line);padding-left:24px}
+.asks .no{font:600 15px/1 var(--font-num);letter-spacing:.18em;color:var(--muted)}
+.asks .big2{font-family:var(--font-num);font-weight:500;font-size:52px;line-height:1.05;margin:8px 0 6px}
+.asks .big2 small{font-family:var(--font);font-size:20px;font-weight:700;margin-left:4px}
+.asks h3{font-size:21px;margin:0 0 4px}
+.asks p{font-size:17px;line-height:1.6;color:var(--muted);margin:0}
+.s-end .contact{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:44px;display:flex;gap:28px;font-size:16px;color:var(--muted);padding-top:10px}
+.s-end .contact b{color:var(--ink);font-weight:700}
+.s-end .lead{margin-top:14px;max-width:640px}
+
+@media (prefers-reduced-motion:reduce){.L5 .blades{animation:none}.L{transition:none}}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <section class="slide s-cover" data-title="表紙">
+    <div class="hd"><span><b>SAMPLE KIKO</b>PRODUCT BRIEFING 2026.11</span><span>代理店様向け 新製品説明会</span></div>
+    <div class="cat">業務用空気清浄機 ｜ 2027年モデル</div>
+    <div class="model">SK-AP560<sup>NEW</sup></div>
+    <h1>中を見れば、<br>選ぶ理由がわかる。</h1>
+    <p class="lead">5層のつくりを、1枚ずつ引き出してお見せします。<br>風量1.4倍・運転音−6dB・電気代は約3割減。</p>
+    <div class="cstage">
+      <div class="stage" data-orbit data-rx="-12" data-ry="-40" data-spin style="--x:58"><div class="orbit"><div class="grp">
+        <div class="L L5" style="--k:0;--z0:0;--t:84"><div class="sh"></div><div class="face fz"><div class="shroud"><div class="blades"></div><div class="hub"></div></div><i class="screw a"></i><i class="screw b"></i><i class="screw c"></i><i class="screw d"></i></div><div class="face bz"><div class="rear"><div class="vent"></div><div class="rating"><b>SK-AP560</b>AC100V 50/60Hz<br>38W　17kg</div></div></div><div class="face rx"><div class="grip"></div></div><div class="face lx"><div class="grip"></div></div><div class="face ty"><div class="louver"></div></div><div class="face by"></div></div>
+        <div class="L L4" style="--k:1;--z0:84;--t:22"><div class="sh"></div><div class="face fz"><div class="comb"></div></div><div class="face bz"><div class="comb"></div></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div></div>
+        <div class="L L3" style="--k:2;--z0:106;--t:40"><div class="sh"></div><div class="face fz"><div class="pleat"></div><div class="sticker"><b>HEPA H13</b>99.97% @0.3μm</div></div><div class="face bz"><div class="pleat"></div></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div></div>
+        <div class="L L2" style="--k:3;--z0:146;--t:7"><div class="sh"></div><div class="face fz"><div class="mesh"></div></div><div class="face bz"></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div></div>
+        <div class="L L1" style="--k:4;--z0:153;--t:14"><div class="sh"></div><div class="face fz"><div class="disp"><i></i><span>PM2.5</span><b>03</b></div><div class="plate">SK-AP560</div><div class="grille"></div></div><div class="face bz"><div class="ribs"></div></div><div class="face rx"><div class="slots"></div></div><div class="face lx"><div class="slots"></div></div><div class="face ty"></div><div class="face by"><div class="slots h"></div></div></div>
+      </div></div></div>
+    </div>
+    <div class="figlbl">FIG.01 ─ 5-LAYER STRUCTURE</div>
+    <dl class="specs">
+      <div><dt>適用床面積</dt><dd>120<small>㎡</small></dd></div>
+      <div><dt>最大風量</dt><dd>18.0<small>㎥/分</small></dd></div>
+      <div><dt>最大消費電力</dt><dd>38<small>W</small></dd></div>
+      <div><dt>静音運転</dt><dd>19<small>dB</small></dd></div>
+    </dl>
+    <aside class="notes">最初に型番と「中を見れば違いがわかる」を言い切る。右の立体はゆっくり回っている。次のページで、実際につまみを動かして5層を引き出して見せます。</aside>
+  </section>
+
+  <section class="slide s-exp" data-title="5層の分解図">
+    <div class="hd"><span><b>SAMPLE KIKO</b>SK-AP560 ／ 01 STRUCTURE</span><span>P.02</span></div>
+    <div class="exp" data-calc data-let="d = round((167 + x * 4) * 1.5)">
+      <div class="fig">
+      <div class="stage" data-orbit data-rx="-10" data-ry="-50"><div class="orbit"><div class="grp">
+        <div class="L L5" style="--k:0;--z0:0;--t:84"><div class="sh"></div><div class="face fz"><div class="shroud"><div class="blades"></div><div class="hub"></div></div><i class="screw a"></i><i class="screw b"></i><i class="screw c"></i><i class="screw d"></i></div><div class="face bz"><div class="rear"><div class="vent"></div><div class="rating"><b>SK-AP560</b>AC100V 50/60Hz<br>38W　17kg</div></div></div><div class="face rx"><div class="grip"></div></div><div class="face lx"><div class="grip"></div></div><div class="face ty"><div class="louver"></div></div><div class="face by"></div><div class="tag" style="--ty:-54"><b>05</b>ファン・本体</div></div>
+        <div class="L L4" style="--k:1;--z0:84;--t:22"><div class="sh"></div><div class="face fz"><div class="comb"></div></div><div class="face bz"><div class="comb"></div></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div><div class="tag dn" style="--ty:402"><b>04</b>脱臭フィルター</div></div>
+        <div class="L L3" style="--k:2;--z0:106;--t:40"><div class="sh"></div><div class="face fz"><div class="pleat"></div><div class="sticker"><b>HEPA H13</b>99.97% @0.3μm</div></div><div class="face bz"><div class="pleat"></div></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div><div class="tag" style="--ty:-54"><b>03</b>HEPAフィルター</div></div>
+        <div class="L L2" style="--k:3;--z0:146;--t:7"><div class="sh"></div><div class="face fz"><div class="mesh"></div></div><div class="face bz"></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div><div class="tag dn" style="--ty:402"><b>02</b>プレフィルター</div></div>
+        <div class="L L1" style="--k:4;--z0:153;--t:14"><div class="sh"></div><div class="face fz"><div class="disp"><i></i><span>PM2.5</span><b>03</b></div><div class="plate">SK-AP560</div><div class="grille"></div></div><div class="face bz"><div class="ribs"></div></div><div class="face rx"><div class="slots"></div></div><div class="face lx"><div class="slots"></div></div><div class="face ty"></div><div class="face by"><div class="slots h"></div></div><div class="tag" style="--ty:-54"><b>01</b>前面パネル</div></div>
+      </div></div></div>
+        <div class="figlbl"><b>FIG.02</b> ─ EXPLODED VIEW ／ 奥行き <span class="num" data-out="d" data-unit=" mm"></span></div>
+        <div class="hint">ドラッグで回す ／ ダブルクリックで元の向き</div>
+      </div>
+      <div class="side">
+        <div class="kicker">01 ｜ STRUCTURE</div>
+        <h2>違いは中の5層。<br>いちばん効くのは、<br><em>厚さ2倍のHEPA</em>。</h2>
+        <div class="field"><label>分解 <b data-show="x" data-unit="%"></b></label><input type="range" name="x" min="0" max="100" step="1" value="72"></div>
+        <div data-tabs>
+          <div class="tabs">
+            <button data-tab="p1"><b>01</b>パネル</button><button data-tab="p2"><b>02</b>プレ</button><button data-tab="p3" data-default><b>03</b>HEPA</button><button data-tab="p4"><b>04</b>脱臭</button><button data-tab="p5"><b>05</b>ファン</button>
+          </div>
+          <div class="lp" data-panel="p1"><h3>前面パネル</h3><p>前だけでなく、左右と下の3方向から吸い込む。壁ぎわに置いても風が落ちない。</p>
+            <div class="kv"><div><span>吸込口の面積</span><b class="up">1.8<small>倍</small></b></div><div><span>外板</span><b>1.0<small>mm 鋼板</small></b></div></div></div>
+          <div class="lp" data-panel="p2"><h3>プレフィルター</h3><p>大きなほこりを先に止めて、HEPAの目詰まりを遅らせる。手前に引き出して水洗いできる。</p>
+            <div class="kv"><div><span>網の目</span><b>0.5<small>mm</small></b></div><div><span>お手入れ</span><b>2<small>週に1回</small></b></div></div></div>
+          <div class="lp" data-panel="p3"><h3>HEPAフィルター</h3><p>0.3μmの粒子を99.97%捕まえる。旧型の2倍の厚さで、ひだの面積が増え、風が通りやすい。</p>
+            <div class="kv"><div><span>厚さ（旧型 20mm）</span><b class="up">40<small>mm</small></b></div><div><span>交換の目安</span><b>4<small>年</small></b></div></div></div>
+          <div class="lp" data-panel="p4"><h3>脱臭フィルター</h3><p>ハニカム状の活性炭で、たばこ・調理・薬品のにおいを吸着する。粒ではなく「気体」の担当。</p>
+            <div class="kv"><div><span>活性炭の量</span><b class="up">3<small>倍</small></b></div><div><span>交換の目安</span><b>2.5<small>年</small></b></div></div></div>
+          <div class="lp" data-panel="p5"><h3>ファン・本体</h3><p>DCモーターの大径ファン。ゆっくり回して大きく風を動かすので、音と電気が減る。</p>
+            <div class="kv"><div><span>最大風量</span><b class="up">18.0<small>㎥/分</small></b></div><div><span>最大消費電力</span><b>38<small>W（旧58W）</small></b></div></div></div>
+        </div>
+        <details class="why float"><summary>数字の測り方</summary><div class="body">当社試験室（120㎡・天井2.7m）で、旧型 <span class="nw">SK-AP400</span> と同じ条件で比べた値。捕集率は0.3μmの粒子、交換の目安は1日12時間・年300日の運転で算出。</div></details>
+      </div>
+    </div>
+    <aside class="notes">つまみを0から100へゆっくり動かし、5層が離れていくのを見せる。次に本体をドラッグで横から見せ、HEPAの厚みを指さす。タブで層を選ぶと、立体の中の板にも印が付きます。</aside>
+  </section>
+
+  <section class="slide s-spec" data-title="旧型との比較">
+    <div class="hd"><span><b>SAMPLE KIKO</b>SK-AP560 ／ 02 COMPARISON</span><span>P.03</span></div>
+    <div class="kicker">02 ｜ COMPARISON</div>
+    <h2>置き場所は同じまま、風量は<em>1.4倍</em>、電気は3分の2に。</h2>
+    <div class="kpis">
+      <div><div class="v accent"><span data-count="18" data-format="dec1"></span><small>㎥/分</small></div><div class="l">最大風量</div><div class="o">旧型 12.8㎥/分</div></div>
+      <div><div class="v">−<span data-count="6"></span><small>dB</small></div><div class="l">運転音（標準）</div><div class="o">41dB → 35dB</div></div>
+      <div><div class="v">−<span data-count="34"></span><small>%</small></div><div class="l">最大消費電力</div><div class="o">58W → 38W</div></div>
+    </div>
+    <table class="spec">
+      <thead><tr><th>LAYER</th><th>旧型 SK-AP400</th><th>新型 SK-AP560</th><th>お客様にとって</th></tr></thead>
+      <tbody>
+        <tr class="step"><td><i>01</i>前面パネル</td><td class="old">前面だけで吸い込む</td><td class="new">3方向から吸い込む</td><td class="eff">壁ぎわ・棚の横にも置ける</td></tr>
+        <tr class="step"><td><i>02</i>プレフィルター</td><td class="old">固定式（外せない）</td><td class="new">引き出して水洗い</td><td class="eff">掃除が1分で終わる</td></tr>
+        <tr class="step"><td><i>03</i>HEPA</td><td class="old">厚さ20mm・交換2年</td><td class="new">厚さ40mm・交換4年</td><td class="eff">交換費が半分になる</td></tr>
+        <tr class="step"><td><i>04</i>脱臭</td><td class="old">活性炭シート</td><td class="new">ハニカム活性炭（3倍）</td><td class="eff">喫煙所・厨房の横でも効く</td></tr>
+        <tr class="step"><td><i>05</i>ファン</td><td class="old">ACモーター 58W</td><td class="new">DCモーター 38W</td><td class="eff">夜間の連続運転でも静か</td></tr>
+      </tbody>
+    </table>
+    <div class="foot"><span>当社試験室での測定値（数字は架空のサンプルです）</span><span class="pg">P.03</span></div>
+    <aside class="notes">上の3つの数字を先に言い、→で1行ずつ出す。代理店さんには右端の「お客様にとって」の列をそのまま商談で使ってもらう。</aside>
+  </section>
+
+  <section class="slide s-perf" data-title="性能">
+    <div class="hd"><span><b>SAMPLE KIKO</b>SK-AP560 ／ 03 PERFORMANCE</span><span>P.04</span></div>
+    <div class="kicker">03 ｜ PERFORMANCE</div>
+    <h2>120㎡の会議室でも、<em>12分</em>で空気の汚れが半分になる。</h2>
+    <div class="perf">
+      <div>
+        <div class="chart">
+          <div class="col dim" style="--v:70" data-label="家庭用 2台" data-val="27分"><i></i></div>
+          <div class="col dim" style="--v:49" data-label="旧型 SK-AP400" data-val="19分"><i></i></div>
+          <div class="col me" style="--v:31" data-label="新型 SK-AP560" data-val="12分"><i></i></div>
+        </div>
+        <div class="unit">粉じんの濃さが半分になるまでの時間（120㎡・天井2.7m、短いほど良い）</div>
+      </div>
+      <div class="why2">
+        <div class="r"><div class="no">1</div><div><h3>風が多い<span class="ly">05 FAN</span></h3><p>大径ファンで1分に18㎥。部屋の空気を1時間に3.3回入れ替える。</p></div></div>
+        <div class="r"><div class="no">2</div><div><h3>吸い込みが広い<span class="ly">01 PANEL</span></h3><p>3方向から吸うので、部屋の隅の空気も引き寄せる。</p></div></div>
+        <div class="r"><div class="no">3</div><div><h3>目詰まりしにくい<span class="ly">03 HEPA</span></h3><p>厚さ2倍でひだの面積が増え、半年たっても風量が落ちにくい。</p></div></div>
+        <details class="why"><summary>試験の条件</summary><div class="body">当社試験室で線香の煙を満たし、粒子カウンターで0.3〜1μmの粒の数を1分ごとに測定（数字は架空のサンプルです）。</div></details>
+      </div>
+    </div>
+    <aside class="notes">棒は「短いほど良い」ことを最初に言う。家庭用を2台並べるより、この1台のほうが速い。理由の3つは、分解図の層の番号と対応させて話す。</aside>
+  </section>
+
+  <section class="slide s-run" data-title="電気代とフィルター">
+    <div class="hd"><span><b>SAMPLE KIKO</b>SK-AP560 ／ 04 RUNNING COST</span><span>P.05</span></div>
+    <div class="kicker">04 ｜ RUNNING COST</div>
+    <h2>120㎡を1日12時間なら、電気代は<em>年4,200円</em>。HEPAは約4年。</h2>
+    <div class="run" data-calc data-let="wn = min(38, 6 + a * 0.27); wo = min(58, 10 + a * 0.45); yen = wn * h * d / 1000 * 31; old = wo * h * d / 1000 * 31; save = old - yen; mo = min(120, 30000 * 60 / max(a, 60) / (h * d) * 12); mo2 = mo * 0.6; n = max(0, ceil(120 / mo) - 1); n2 = max(0, ceil(120 / mo2) - 1); tot = yen * 10 + n * 12800 + n2 * 6800; mo_o = mo / 2; otot = old * 10 + max(0, ceil(120 / mo_o) - 1) * 9800 + max(0, ceil(120 / (mo_o * 0.6)) - 1) * 3800; gap = otot - tot">
+      <div>
+        <div class="field"><label>部屋の広さ <b data-show="a" data-unit="㎡"></b></label><input type="range" name="a" min="20" max="200" step="5" value="120"></div>
+        <div class="field"><label>1日に使う時間 <b data-show="h" data-unit="時間"></b></label><input type="range" name="h" min="2" max="24" step="1" value="12"></div>
+        <div class="field"><label>1年に使う日数 <b data-show="d" data-unit="日"></b></label><input type="range" name="d" min="200" max="365" step="5" value="300"></div>
+        <details class="why"><summary>計算のしかた</summary><div class="body">自動運転の平均電力＝6W＋広さ×0.27W（最大38W）。電気代は1kWh＝31円。HEPAの寿命は60㎡で3万時間とし、広い部屋ほど短くなる。脱臭フィルターはHEPAの6割。</div></details>
+        <div class="ten"><div class="l">10年の持ち費<br><small>電気代＋交換フィルター</small></div><div class="v2" data-out="tot" data-format="yen"></div><div class="cmp">旧型 <b data-out="otot" data-format="yen"></b><br>差 <b class="accent" data-out="gap" data-format="yen"></b> 安い</div></div>
+      </div>
+      <div class="res">
+        <div><div class="l">1年の電気代</div><div class="v" data-out="yen" data-format="yen"></div><div class="s">旧型より 年 <b data-out="save" data-format="yen"></b> 安い</div></div>
+        <div><div class="l">HEPAの交換まで</div><div class="v"><span data-out="mo"></span><small>か月</small></div><div class="s">脱臭フィルターは <b data-out="mo2"></b> か月</div></div>
+        <div class="watt"><span>平均の消費電力</span><div class="meter" data-bar="wn" data-max="38"><i></i></div><b data-out="wn" data-unit=" W"></b></div>
+        <div class="tl"><div class="l">10年のうち、HEPAを替えるのは <b data-out="n"></b> 回</div><div class="bar"></div><div class="yrs"><span>1年</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10年</span></div></div>
+      </div>
+    </div>
+    <div class="foot"><span>電気代 31円/kWh で計算（数字は架空のサンプルです）</span><span class="pg">P.05</span></div>
+    <aside class="notes">お客様の部屋の広さと営業時間を聞いて、その場でつまみを合わせる。24時間・200㎡まで上げると交換は1年ほどになるので、大きな部屋には2台を勧める。</aside>
+  </section>
+
+  <section class="slide s-qa" data-title="よく聞かれること">
+    <div class="hd"><span><b>SAMPLE KIKO</b>SK-AP560 ／ 05 SALES TALK</span><span>P.06</span></div>
+    <div class="kicker">05 ｜ SALES TALK</div>
+    <h2>お客様の質問には、<em>層の番号</em>で答えられる。</h2>
+    <div class="qa">
+      <div class="quiz">
+        <div class="q">「たばこのにおいも取れる？」と聞かれたら、主に答える層はどれ？</div>
+        <div class="choices">
+          <button><b>03</b>HEPAフィルター</button>
+          <button data-correct><b>04</b>脱臭フィルター</button>
+          <button><b>02</b>プレフィルター</button>
+        </div>
+        <div class="explain">においは粒ではなく気体なので、04の活性炭が吸着する。煙の粒は03のHEPAが取る。「粒は03、においは04」と分けて話すと伝わりやすい。</div>
+      </div>
+      <div class="faq">
+        <div class="r step"><div class="qq">交換フィルターの値段は？</div><p>HEPA <b>12,800</b>円、脱臭 <b>6,800</b>円（希望小売・税抜）。</p></div>
+        <div class="r step"><div class="qq">夜も付けっぱなしでいい？</div><p>静音運転は <b>19</b>dB。図書館より静かで、24時間運転を前提に作っている。</p></div>
+        <div class="r step"><div class="qq">置き場所が狭いのだけど？</div><p>設置面積は旧型と同じ <b>390×250</b>mm。3方向吸込みなので壁から <b>5</b>cm あれば足りる。</p></div>
+      </div>
+    </div>
+    <aside class="notes">会場に答えてもらってからボタンを押す。右のよくある質問は→で1つずつ出す。代理店さんの商談メモにそのまま使える言い方にしてある。</aside>
+  </section>
+
+  <section class="slide s-end" data-title="次の一歩">
+    <div class="hd"><span><b>SAMPLE KIKO</b>SK-AP560 ／ 06 ORDER</span><span>P.07</span></div>
+    <div class="kicker">06 ｜ ORDER</div>
+    <h2>11月1日から受注を始めます。<br>まず、<em>デモ機</em>をお申し込みください。</h2>
+    <p class="lead">説明より、実物を1週間置いてもらうほうが決まります。<br>送料は往復とも当社で持ちます。</p>
+    <ol class="flow"><li class="step"><b>1</b>申込書をメール</li><li class="step"><b>2</b>3営業日で到着</li><li class="step"><b>3</b>2週間後に回収</li></ol>
+    <div class="estage">
+      <div class="stage" data-orbit data-rx="-10" data-ry="-34" style="--x:0"><div class="orbit"><div class="grp">
+        <div class="L L5" style="--k:0;--z0:0;--t:84"><div class="sh"></div><div class="face fz"><div class="shroud"><div class="blades"></div><div class="hub"></div></div><i class="screw a"></i><i class="screw b"></i><i class="screw c"></i><i class="screw d"></i></div><div class="face bz"><div class="rear"><div class="vent"></div><div class="rating"><b>SK-AP560</b>AC100V 50/60Hz<br>38W　17kg</div></div></div><div class="face rx"><div class="grip"></div></div><div class="face lx"><div class="grip"></div></div><div class="face ty"><div class="louver"></div></div><div class="face by"></div></div>
+        <div class="L L4" style="--k:1;--z0:84;--t:22"><div class="sh"></div><div class="face fz"><div class="comb"></div></div><div class="face bz"><div class="comb"></div></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div></div>
+        <div class="L L3" style="--k:2;--z0:106;--t:40"><div class="sh"></div><div class="face fz"><div class="pleat"></div><div class="sticker"><b>HEPA H13</b>99.97% @0.3μm</div></div><div class="face bz"><div class="pleat"></div></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div></div>
+        <div class="L L2" style="--k:3;--z0:146;--t:7"><div class="sh"></div><div class="face fz"><div class="mesh"></div></div><div class="face bz"></div><div class="face rx skin"></div><div class="face lx skin"></div><div class="face ty skin"></div><div class="face by skin"></div></div>
+        <div class="L L1" style="--k:4;--z0:153;--t:14"><div class="sh"></div><div class="face fz"><div class="disp"><i></i><span>PM2.5</span><b>03</b></div><div class="plate">SK-AP560</div><div class="grille"></div></div><div class="face bz"><div class="ribs"></div></div><div class="face rx"><div class="slots"></div></div><div class="face lx"><div class="slots"></div></div><div class="face ty"></div><div class="face by"><div class="slots h"></div></div></div>
+      </div></div></div>
+    </div>
+    <div class="asks">
+      <div><div class="no">01 ─ 受注開始</div><div class="big2">11.01<small>（日）</small></div><p>初回出荷は12月中旬。年内の納品は11月20日までのご注文分。</p></div>
+      <div><div class="no">02 ─ デモ機</div><div class="big2">2<small>台まで</small></div><p>2週間の無料貸出。申込は11月15日まで、先着60台。</p></div>
+      <div><div class="no">03 ─ 販促物</div><div class="big2">3<small>点</small></div><p>カタログ・比較表・この分解図のスライド（1ファイルで配れます）。</p></div>
+    </div>
+    <div class="contact"><span><b>お問い合わせ</b>　サンプル機工 営業本部 代理店課　03-0000-0000</span><span>社名・型番・数字はすべて架空のサンプルです</span></div>
+  </section>
+
+</main>

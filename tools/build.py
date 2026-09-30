@@ -24,11 +24,15 @@ SCRIPT_RE = re.compile(r"<script>.*?</script>", re.S)
 FEATURES = {
     "calc": r"\bdata-calc\b", "why": r'class="[^"]*\bwhy\b', "tabs": r"\bdata-tabs\b", "rank": r"\bdata-rank\b",
     "quiz": r'class="[^"]*\bquiz\b', "code": r'class="[^"]*\bcode\b', "count": r"\bdata-count=", "chart": r'class="[^"]*\bchart\b',
+    "morph": r"\bdata-morph=", "orbit": r"\bdata-orbit\b", "sheet": r"\bdata-sheet\b", "draw": r'class="(?:[^"]*\s)?draw(?:\s[^"]*)?"',
 }
 LABELS = {
     "calc": "数字で再計算", "why": "クリックで根拠", "tabs": "切り替え", "rank": "重みで順位",
     "quiz": "クイズ", "code": "コード強調", "count": "カウントアップ", "chart": "グラフ",
+    "morph": "めくると変形", "orbit": "回せる立体", "sheet": "表を貼って作り直す", "draw": "線が描かれる",
 }
+VOL2 = 51  # この番号から第2弾（一覧で別の区画に出す）
+NEW = ("morph", "orbit", "sheet", "draw")
 
 
 def read_engine():
@@ -82,7 +86,8 @@ def assemble(meta, styles, body, scripts, engine):
 
 
 def card(meta):
-    chips = "".join(f"<span>{LABELS[f]}</span>" for f in meta["features"] if f in LABELS)
+    feats = sorted(meta["features"], key=lambda f: f not in NEW)  # 第2弾の部品を先に
+    chips = "".join(f'<span class="{"new" if f in NEW else ""}">{LABELS[f]}</span>' for f in feats if f in LABELS)
     e = html.escape
     return (
         f'<article class="tpl" data-id="{e(meta["id"])}" data-group="{e(meta.get("group", ""))}">'
@@ -109,8 +114,14 @@ def build():
     tpl = (ROOT / "src" / "index.html").read_text()
     groups = {}
     for m in metas:
+        if int(m["id"][:2]) >= VOL2:
+            continue
         groups.setdefault(m.get("group", "その他"), []).append(m)
-    index = (tpl.replace("<!--CARDS-->", "\n".join(card(m) for m in metas))
+    vol2 = [m for m in metas if int(m["id"][:2]) >= VOL2]
+    index = (tpl.replace("<!--CARDS-->", "\n".join(card(m) for m in metas if m not in vol2))
+                .replace("<!--CARDS2-->", "\n".join(card(m) for m in vol2))
+                .replace("{{COUNT2}}", str(len(vol2)))
+                .replace("{{COUNT1}}", str(len(metas) - len(vol2)))
                 .replace("{{COUNT}}", str(len(metas)))
                 .replace("{{SLIDES}}", str(sum(m["slides"] for m in metas)))
                 .replace("{{GROUPS}}", "".join(
@@ -130,10 +141,41 @@ def build():
         info = zipfile.ZipInfo("ugoku-slide/LICENSE.txt", date_time=(2026, 1, 1, 0, 0, 0))
         info.external_attr = 0o644 << 16
         z.writestr(info, (ROOT / "LICENSE").read_text())
-    return files, buf.getvalue(), metas
+    return files, buf.getvalue(), metas, skill_zip(files, metas)
+
+
+def skill_zip(files, metas):
+    """Claude のスキル一式（SKILL.md・雛形・部品の説明・確かめるスクリプト）を zip にする"""
+    guide = (ROOT / "engine" / "guide.txt").read_text()
+    index = [{k: m.get(k) for k in ("id", "style", "use", "group", "aim", "desc", "slides", "features")} | {"file": m["id"] + ".html"}
+             for m in metas]
+    entries = {
+        "SKILL.md": (ROOT / "skill" / "SKILL.md").read_text(),
+        "templates/index.json": json.dumps(index, ensure_ascii=False, indent=1) + "\n",
+        "reference/parts.md": "# 使える部品\n\n各雛形の先頭コメントと同じもの。\n\n```text\n" + guide.strip() + "\n```\n",
+        "reference/rules.md": (ROOT / "skill" / "reference" / "rules.md").read_text(),
+        "scripts/check.py": (ROOT / "skill" / "scripts" / "check.py").read_text(),
+        "LICENSE.txt": (ROOT / "LICENSE").read_text(),
+    }
+    for m in metas:
+        entries[f"templates/{m['id']}.html"] = files[m["file"]]
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        for name in sorted(entries):
+            info = zipfile.ZipInfo("ugoku-slide/" + name, date_time=(2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            z.writestr(info, entries[name])
+    return buf.getvalue()
 
 
 def main():
+    if any(a in ("-h", "--help") for a in sys.argv[1:]):
+        print(__doc__)
+        return
+    unknown = [a for a in sys.argv[1:] if a.startswith("-") and a not in ("--check", "--only")]
+    if unknown:
+        raise SystemExit("知らない指定です：" + " ".join(unknown) + "\n" + __doc__)
     if "--only" in sys.argv:
         pats = sys.argv[sys.argv.index("--only") + 1:]
         engine = read_engine()
@@ -146,7 +188,7 @@ def main():
                 n += 1
         print(f"{n} 本を書き出しました")
         return
-    files, zipped, metas = build()
+    files, zipped, metas, skill = build()
     check = "--check" in sys.argv
     stale = []
     for name, text in files.items():
@@ -158,16 +200,19 @@ def main():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
     zpath = OUT / "ugoku-slide-all.zip"
+    spath = OUT / "ugoku-slide-skill.zip"
     if check:
-        if not zpath.exists() or zpath.read_bytes() != zipped:
-            stale.append(zpath.name)
-        known = set(files) | {zpath.name, ".nojekyll", "og.png"}
+        for path, data in ((zpath, zipped), (spath, skill)):
+            if not path.exists() or path.read_bytes() != data:
+                stale.append(path.name)
+        known = set(files) | {zpath.name, spath.name, ".nojekyll", "og.png"}
         extra = [str(p.relative_to(OUT)) for p in OUT.rglob("*") if p.is_file() and str(p.relative_to(OUT)) not in known]
         if stale or extra:
             raise SystemExit("docs/ が古いです。make build してください：" + ", ".join(stale + extra))
         print(f"docs/ は最新です（{len(metas)} 本）")
     else:
         zpath.write_bytes(zipped)
+        spath.write_bytes(skill)
         (OUT / ".nojekyll").write_text("")
         print(f"{len(metas)} 本・{sum(m['slides'] for m in metas)} 枚を docs/ に書き出しました")
 

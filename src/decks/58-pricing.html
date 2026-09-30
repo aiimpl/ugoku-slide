@@ -1,0 +1,417 @@
+<!--meta
+{"title":"サンプル勤怠 ご提案とお見積り","style":"プロダクト・ソフト","use":"SaaSの商談・その場の見積","group":"ビジネス定番",
+ "aim":"勤怠管理サービスの営業が商談中に相手の人数と欲しい機能を聞き、その場でいちばん得なプランを示して、そのまま見積書にして決めてもらう。",
+ "desc":"人数とオプションを動かすと、3つのプランのカードの高さと強調が変わり、いちばん得なプランが浮き上がる。次のページでそのカードが見積書に変形し、金額もそのまま引き継がれる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f4f5f9; --surface:#ffffff; --ink:#121521; --muted:#596074; --line:#e3e6ee; --frame:#dfe2ea;
+  --accent:#3552f2; --accent-ink:#ffffff; --good:#12805c; --bad:#c2412d;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
+  --font-num:"Figtree","Noto Sans JP","Hiragino Sans",sans-serif;
+  --head-weight:700; --head-track:-.01em; --radius:20px;
+  --pad-y:54px; --pad-x:72px;
+  --tint:#eef1fe; --sh-1:0 1px 1px rgb(18 24 60 / .04),0 3px 8px -2px rgb(18 24 60 / .06);
+  --sh-2:0 1px 1px rgb(18 24 60 / .04),0 6px 14px -4px rgb(18 24 60 / .08),0 28px 56px -18px rgb(18 24 60 / .18);
+}
+/* 地：細い方眼を中央だけに残し、端へ溶かす（製品ページの背景の作法） */
+.deck{background:var(--bg)}
+.deck::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgb(53 82 242 / .06) 1px,transparent 1px),linear-gradient(90deg,rgb(53 82 242 / .06) 1px,transparent 1px);
+  background-size:32px 32px;background-position:-1px -1px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 62% at 50% 38%,#000 20%,transparent 78%);mask-image:radial-gradient(ellipse 70% 62% at 50% 38%,#000 20%,transparent 78%)}
+.deck::after{content:"";position:absolute;left:0;right:0;top:0;height:260px;pointer-events:none;background:linear-gradient(180deg,rgb(255 255 255 / .9),transparent)}
+.slide{z-index:1}
+.kicker{display:inline-flex;align-items:center;gap:10px;width:max-content;padding:6px 14px 6px 10px;border-radius:999px;background:var(--surface);box-shadow:var(--sh-1);
+  font-size:14px;letter-spacing:.04em;text-transform:none;color:var(--muted);font-weight:500;margin-bottom:18px}
+.kicker b{font-family:var(--font-num);color:var(--accent);font-weight:700;letter-spacing:.02em}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgb(53 82 242 / .14)}
+h1{font-size:62px;line-height:1.22;font-weight:900;letter-spacing:-.02em}
+h2{font-size:36px;line-height:1.4;margin-bottom:0}
+h1 em,h2 em{font-style:normal;color:var(--accent)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+.lead{font-size:20px;line-height:1.8;color:var(--muted)}
+.foot{font-size:13px;color:#7a8093;display:flex;justify-content:space-between}
+details.why{border:0;background:var(--surface);box-shadow:var(--sh-1);border-radius:14px}
+details.why>summary{font-size:16px}
+details.why>.body{font-size:16px}
+
+/* 選ばれたプランだけを見せる板：いちばん得なプラン（--isL / --isS / --isP が 1）だけに大きさがあり、ほかは 0×0 で消える */
+.pick{position:absolute;left:0;top:0;width:calc(var(--k) * 100%);height:calc(var(--k) * 100%);opacity:var(--k)}
+.pick.p-L{--k:var(--isL)}.pick.p-S{--k:var(--isS)}.pick.p-P{--k:var(--isP)}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover .copy{position:absolute;left:72px;top:150px;width:600px}
+.s-cover h1{margin-top:6px}
+.s-cover .lead{margin-top:24px;max-width:560px}
+.s-cover .to{position:absolute;left:72px;bottom:62px;display:flex;gap:40px;font-size:16px;color:var(--ink)}
+.s-cover .to span{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.brand{position:absolute;left:72px;top:54px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
+.brand i{width:26px;height:26px;border-radius:8px;background:var(--accent);position:relative;box-shadow:0 4px 10px -2px rgb(53 82 242 / .5)}
+.brand i::after{content:"";position:absolute;left:12px;top:6px;width:2px;height:8px;background:#fff;border-radius:1px;box-shadow:3px 6px 0 -0 #fff}
+.brand i::before{content:"";position:absolute;inset:5px;border:2px solid #fff;border-radius:50%}
+.brand small{font-weight:500;color:var(--muted);font-size:14px;margin-left:6px}
+.hero{position:absolute;left:720px;top:96px;width:500px;height:560px}
+.app{position:absolute;left:30px;top:56px;width:430px;height:420px;border-radius:24px;background:var(--surface);box-shadow:var(--sh-2);padding:26px 28px}
+.app .bar{display:flex;justify-content:space-between;align-items:center;font-size:15px;color:var(--muted)}
+.app .bar b{font-family:var(--font-num);font-size:15px;color:var(--ink)}
+.app .clock{font-family:var(--font-num);font-size:64px;font-weight:700;letter-spacing:-.03em;margin:18px 0 2px;line-height:1}
+.app .clock small{font-size:22px;color:var(--muted);font-weight:600;margin-left:6px}
+.app .who{font-size:15px;color:var(--muted)}
+.app .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.app .btns span{display:grid;place-items:center;height:52px;border-radius:14px;font-weight:700;font-size:18px;background:var(--tint);color:var(--accent)}
+.app .btns span:first-child{background:var(--accent);color:#fff;box-shadow:0 8px 18px -8px rgb(53 82 242 / .7)}
+.app .week{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:92px;margin-top:26px;padding-top:12px;border-top:1px solid var(--line)}
+.app .week i{display:block;border-radius:6px 6px 3px 3px;background:#dfe4fb}
+.app .week i.on{background:var(--accent)}
+.app .days{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:6px;font-size:13px;color:var(--muted);text-align:center}
+.toast{position:absolute;right:-34px;top:-8px;display:flex;gap:12px;align-items:center;padding:14px 18px;border-radius:16px;background:var(--surface);box-shadow:var(--sh-2);font-size:15px}
+.toast i{width:30px;height:30px;border-radius:50%;background:#e3f5ee;display:grid;place-items:center}
+.toast i::after{content:"";width:10px;height:5px;border-left:2.5px solid var(--good);border-bottom:2.5px solid var(--good);transform:rotate(-45deg) translate(1px,-1px)}
+.toast b{display:block;font-size:16px}
+.chipcard{position:absolute;left:-40px;bottom:0;padding:16px 20px;border-radius:18px;background:var(--surface);box-shadow:var(--sh-2);width:250px}
+.chipcard .k{font-size:14px;color:var(--muted)}
+.chipcard .v{font-family:var(--font-num);font-size:32px;font-weight:700;letter-spacing:-.02em}
+.chipcard .v small{font-family:var(--font);font-size:15px;color:var(--muted);font-weight:500;margin-left:4px}
+.chipcard .v s{color:#a3a8b8;font-size:20px;margin-right:8px;text-decoration-thickness:1.5px}
+
+/* ---------- 2 いまの課題 ---------- */
+.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:34px}
+.pain{background:var(--surface);border-radius:var(--radius);box-shadow:var(--sh-1);padding:30px 30px 32px}
+.pain .v{font-family:var(--font-num);font-size:64px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.pain .v small{font-family:var(--font);font-size:20px;font-weight:700;margin-left:4px;letter-spacing:0}
+.pain .k{font-size:18px;font-weight:700;margin:14px 0 6px}
+.pain p{font-size:18px;line-height:1.7;color:var(--muted);margin:0}
+.pain.hot .v{color:var(--accent)}
+.flowline{margin-top:26px;display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto;align-items:center;gap:14px;padding:20px 26px;border-radius:var(--radius);background:rgb(255 255 255 / .6);border:1px dashed #cdd3e6}
+.flowline .n{font-size:17px;font-weight:700;white-space:nowrap}
+.flowline .n small{display:block;font-size:14px;color:var(--muted);font-weight:500}
+.flowline .n.x{color:var(--accent)}
+.flowline .a{height:1px;background:#c9cfe2;position:relative}
+.flowline .a::after{content:"";position:absolute;right:0;top:-4px;border-left:7px solid #c9cfe2;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+.s-pain .why{margin-top:18px;max-width:640px}
+
+/* ---------- 3 プランを選ぶ（触る） ---------- */
+.s-price .grid3{position:absolute;left:72px;right:72px;top:176px;bottom:42px;display:grid;grid-template-columns:300px 1fr;gap:26px}
+.panel{background:rgb(255 255 255 / .72);border-radius:22px;box-shadow:var(--sh-1);padding:24px 24px 18px;align-self:end}
+.panel .t{font-size:15px;color:var(--muted);font-weight:500}
+.people{display:flex;align-items:baseline;gap:6px;margin:4px 0 8px}
+.people b{font-family:var(--font-num);font-size:54px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.people span{font-size:18px;font-weight:700}
+.s-price input[type=range]{appearance:none;-webkit-appearance:none;height:28px;background:transparent}
+.s-price input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--accent) calc(var(--pct) * 1%),#e1e5f2 calc(var(--pct) * 1%))}
+.s-price input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 1px rgb(18 24 60 / .08),0 4px 10px rgb(18 24 60 / .18)}
+.s-price input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:#e1e5f2}
+.s-price input[type=range]::-moz-range-progress{height:8px;border-radius:99px;background:var(--accent)}
+.scale{display:flex;justify-content:space-between;font-family:var(--font-num);font-size:13px;color:#8a90a2;margin-top:2px}
+.opts{margin-top:14px;border-top:1px solid var(--line)}
+.opt{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+.opt:last-child{border-bottom:0}
+.opt b{font-size:18px;font-weight:700}
+.opt small{grid-column:1;font-size:14px;color:var(--muted);margin-top:-2px}
+.opt input{grid-row:1 / span 2;grid-column:2;appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:99px;background:#dfe3ef;position:relative;cursor:pointer;margin:0;transition:background .25s}
+.opt input::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgb(18 24 60 / .25);transition:transform .25s var(--ease)}
+.opt input:checked{background:var(--accent)}
+.opt input:checked::after{transform:translateX(18px)}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:end}
+.plan{position:relative;height:calc(430px + var(--is) * 60px);transition:height .55s var(--ease)}
+.c-L{--is:var(--isL)}.c-S{--is:var(--isS)}.c-P{--is:var(--isP)}
+.plan .plate{position:absolute;inset:0;border-radius:22px;background:var(--surface);
+  box-shadow:0 0 0 calc(var(--is) * 2px) var(--accent),0 1px 1px rgb(18 24 60 / .04),0 calc(4px + var(--is) * 22px) calc(10px + var(--is) * 40px) calc(-4px - var(--is) * 14px) rgb(30 44 140 / calc(.08 + var(--is) * .14));
+  transition:box-shadow .55s var(--ease)}
+.plan .in{position:relative;height:100%;padding:22px 22px 20px;display:flex;flex-direction:column}
+.plan .badge{position:absolute;left:50%;top:-15px;transform:translate(-50%,calc((1 - var(--is)) * 8px));opacity:var(--is);transition:opacity .4s,transform .4s var(--ease);
+  padding:5px 14px;border-radius:99px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:0 6px 14px -6px rgb(53 82 242 / .8)}
+.plan .nm{font-family:var(--font-num);font-size:15px;font-weight:700;letter-spacing:.08em;color:var(--muted)}
+.plan h3{font-size:24px;margin:2px 0 2px}
+.plan .tg{font-size:15px;color:var(--muted);line-height:1.5}
+.plan .up{margin-top:10px;font-size:15px;color:var(--muted)}
+.plan .up b{font-family:var(--font-num);font-size:30px;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-right:2px}
+.plan .tot{margin-top:12px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--tint) calc(var(--is) * 100%),#f5f6f9);transition:background .5s}
+.plan .tot .k{font-size:14px;color:var(--muted)}
+.plan .tot .v{font-family:var(--font-num);font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.2;color:color-mix(in srgb,var(--accent) calc(var(--is) * 100%),var(--ink));transition:color .5s}
+.plan .tot .d{font-size:14px;color:var(--muted);opacity:calc(1 - var(--is));height:calc((1 - var(--is)) * 20px);overflow:hidden;transition:opacity .4s,height .4s}
+.plan .tot .d b{font-family:var(--font-num);color:var(--bad);font-weight:700}
+.plan ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:7px;font-size:16px}
+.plan li{display:flex;align-items:center;gap:8px}
+.plan li::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;background:var(--tint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.2l2.6 2.6L13 6.4' fill='none' stroke='%233552f2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
+.plan li.no{color:#9aa0b1}
+.plan li.no::before{background:#f0f1f5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M6 9h6' stroke='%23a0a6b6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/18px no-repeat}
+.plan li.no em{font-style:normal;font-family:var(--font-num);font-size:13px;margin-left:auto;color:#8a90a2}
+.s-price h2 .bn{color:var(--accent)}
+.s-price .note{position:absolute;right:72px;bottom:14px;font-size:13px;color:#7a8093}
+
+/* ---------- 4 見積書 ---------- */
+.quote{position:absolute;left:72px;top:172px;width:640px;height:520px}
+.quote .plate{position:absolute;inset:0;border-radius:18px;background:var(--surface);box-shadow:var(--sh-2)}
+.quote .in{position:relative;padding:22px 36px}
+.qh{display:flex;justify-content:space-between;align-items:flex-start}
+.qh h3{font-size:26px;letter-spacing:.3em;margin:0}
+.qh .no{text-align:right;font-family:var(--font-num);font-size:13px;color:var(--muted);line-height:1.6}
+.qto{margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.qto b{font-size:20px}
+.qto span{font-size:14px;color:var(--muted)}
+.qrows{margin-top:6px}
+.qr{display:grid;grid-template-columns:1fr auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:17px;align-items:baseline}
+.qr small{display:block;font-size:14px;color:var(--muted)}
+.qr .a{font-family:var(--font-num);font-weight:700;font-size:19px;font-variant-numeric:tabular-nums}
+.qr.sub{color:var(--muted)}
+.qtotal{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding:14px 18px;border-radius:14px;background:var(--tint)}
+.qtotal span{font-size:17px;font-weight:700}
+.qtotal b{font-family:var(--font-num);font-size:40px;font-weight:800;letter-spacing:-.02em;color:var(--accent)}
+.qtotal b small{font-family:var(--font);font-size:15px;color:var(--muted);font-weight:500;margin-left:4px}
+.qf{display:flex;justify-content:space-between;margin-top:14px;font-size:14px;color:var(--muted)}
+.qchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qchips span{font-size:13px;padding:3px 10px;border-radius:99px;background:#f0f2f8;color:var(--muted)}
+.deck:not(:has(input[name=s]:checked)) .qchips .o-s,.deck:not(:has(input[name=w]:checked)) .qchips .o-w,
+.deck:not(:has(input[name=p]:checked)) .qchips .o-p,.deck:not(:has(input[name=f]:checked)) .qchips .o-f{display:none}
+.points{position:absolute;left:744px;right:72px;top:172px;display:grid;gap:14px}
+.point{background:rgb(255 255 255 / .75);border-radius:18px;box-shadow:var(--sh-1);padding:18px 22px}
+.point b{display:block;font-size:19px;margin-bottom:4px}
+.point p{font-size:16px;line-height:1.65;color:var(--muted);margin:0}
+.point .n{font-family:var(--font-num);color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.06em}
+.s-quote .why{margin-top:0}
+
+/* ---------- 5 導入の流れ ---------- */
+.flow{position:relative;margin-top:44px;height:318px}
+.flow .rail{position:absolute;left:150px;right:0;top:44px;height:2px;background:linear-gradient(90deg,var(--accent),#cdd4f6)}
+.doc{position:absolute;left:0;top:0;width:128px;height:168px}
+.doc .plate{position:absolute;inset:0;border-radius:12px;background:var(--surface);box-shadow:var(--sh-2)}
+.doc .in{position:relative;padding:16px 14px;font-size:13px;color:var(--muted)}
+.doc .in b{display:block;font-size:15px;color:var(--ink);letter-spacing:.2em}
+.doc .in i{display:block;height:5px;border-radius:3px;background:#eceef5;margin-top:8px}
+.doc .in i.s{width:60%}
+.doc .in .p{margin-top:14px;font-family:var(--font-num);font-weight:800;color:var(--accent);font-size:15px}
+.doc-cap{position:absolute;left:0;top:184px;width:140px;font-size:16px;font-weight:700}
+.doc-cap small{display:block;font-size:14px;color:var(--muted);font-weight:500}
+.weeks{position:absolute;left:170px;right:0;top:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.wk{padding-top:74px;position:relative}
+.wk::before{content:"";position:absolute;left:0;top:36px;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-sizing:border-box}
+.wk .d{position:absolute;left:0;top:0;font-family:var(--font-num);font-weight:700;font-size:15px;color:var(--accent);letter-spacing:.04em}
+.wk .c{background:var(--surface);border-radius:18px;box-shadow:var(--sh-1);padding:20px 22px;min-height:230px}
+.wk h3{font-size:20px;margin:0 0 8px}
+.wk p{font-size:17px;line-height:1.75;color:var(--muted);margin:0}
+.after{display:flex;gap:36px;align-items:center;margin-top:8px;padding:18px 26px;border-radius:20px;background:var(--surface);box-shadow:var(--sh-1)}
+.after .k{font-size:17px;font-weight:700}
+.after .v{font-family:var(--font-num);font-size:40px;font-weight:800;letter-spacing:-.02em}
+.after .v s{color:#a3a8b8;font-size:26px;margin-right:10px;text-decoration-thickness:2px}
+.after .v small{font-family:var(--font);font-size:17px;margin-left:4px}
+.after .v.accent{color:var(--accent)}
+.after p{font-size:16px;color:var(--muted);margin:0;flex:1}
+
+/* ---------- 6 よくあるご質問（タブ） ---------- */
+.faq{display:grid;grid-template-columns:330px 1fr;gap:30px;margin-top:34px}
+.faq .tabs{flex-direction:column;width:auto;border-radius:20px;padding:8px;background:rgb(255 255 255 / .7);box-shadow:var(--sh-1);gap:4px;margin:0}
+.faq .tabs>[data-tab]{text-align:left;border-radius:14px;padding:16px 18px;font-size:18px;color:var(--muted)}
+.faq .tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--sh-2)}
+.faq .tabs>[data-tab] small{display:block;font-family:var(--font-num);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em}
+.ans{background:var(--surface);border-radius:22px;box-shadow:var(--sh-2);padding:32px 36px;min-height:390px}
+.ans .q{font-size:15px;color:var(--accent);font-weight:700}
+.ans h3{font-size:30px;line-height:1.45;margin:8px 0 14px}
+.ans p{font-size:18px;line-height:1.8;color:var(--muted);margin:0 0 14px}
+.ans .ex{display:flex;gap:16px;margin-top:10px}
+.ans .ex div{flex:1;padding:14px 18px;border-radius:14px;background:#f5f6fa;font-size:16px;color:var(--muted)}
+.ans .ex b{display:block;font-family:var(--font-num);font-size:26px;color:var(--ink);font-weight:800}
+
+/* ---------- 7 締め ---------- */
+.close{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:40px}
+.dec{position:relative;background:var(--surface);border-radius:22px;box-shadow:var(--sh-2);padding:30px 32px;min-height:290px}
+.dec .n{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--tint);color:var(--accent);font-family:var(--font-num);font-weight:800}
+.dec .k{font-size:15px;color:var(--muted);margin-top:14px}
+.dec h3{font-size:30px;margin:4px 0 10px}
+.dec .v{font-family:var(--font-num);font-size:44px;font-weight:800;color:var(--accent);letter-spacing:-.02em}
+.dec .v small{font-family:var(--font);font-size:16px;color:var(--muted);font-weight:500;margin-left:6px}
+.dec p{font-size:17px;line-height:1.7;color:var(--muted);margin:6px 0 0}
+.cta{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;margin-top:24px;padding:26px 32px;border-radius:22px;background:var(--accent);color:#fff;box-shadow:0 18px 40px -18px rgb(53 82 242 / .8)}
+.cta b{font-size:22px;display:block}
+.cta span{font-size:16px;opacity:.9}
+.cta .who{text-align:right;font-size:16px;line-height:1.6}
+.cta .who b{font-size:18px}
+
+.wk h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chip{font-size:13px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--tint);color:var(--accent)}
+.perk{margin-top:14px!important;padding-top:12px;border-top:1px dashed var(--line);font-size:16px!important;color:var(--accent)!important;font-weight:700}
+.flowline .n small.step{color:var(--accent)}
+/* 3ページに着いたとき：白い板だけが先に出ないよう、板も中身と同じ時間にふわっと出す */
+.deck[data-transition=morph] .s-price.active .plan .plate{animation:ugk-enter .7s var(--ease) both;animation-delay:.25s}
+.deck[data-transition=morph] .s-price.active .c-S .plate{animation-delay:.3s}
+.deck[data-transition=morph] .s-price.active .c-P .plate{animation-delay:.35s}
+@media (prefers-reduced-motion:reduce){.s-price .plan .plate{animation:none!important}.plan,.plan .plate,.plan .badge,.plan .tot,.plan .tot .v,.plan .tot .d{transition:none}}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <section class="slide s-cover" data-title="表紙">
+    <div class="brand"><i></i>サンプル勤怠<small>勤怠管理クラウド</small></div>
+    <div class="copy">
+      <div class="kicker"><b>PROPOSAL</b> ご提案とお見積り</div>
+      <h1>勤怠の締めを、<br>月末の3日から<br><em>半日</em>に。</h1>
+      <p class="lead">打刻・シフト・申請・給与への受け渡しを1つに。ご利用人数をうかがえれば、この場でいちばんお得なプランをお出しします。</p>
+    </div>
+    <div class="hero">
+      <div class="app">
+        <div class="bar"><span>10月2日（金）</span><b>物流センター 東</b></div>
+        <div class="clock">08:57<small>出勤</small></div>
+        <div class="who">山田 さん ・ 早番シフト 9:00–18:00</div>
+        <div class="btns"><span>出勤する</span><span>休憩</span></div>
+        <div class="week"><i style="height:62%"></i><i style="height:78%"></i><i style="height:70%"></i><i style="height:84%"></i><i class="on" style="height:40%"></i><i style="height:0"></i><i style="height:0"></i></div>
+        <div class="days"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
+      </div>
+      <div class="toast"><i></i><div><b>9月分の締めが完了</b>給与ソフトへ送信しました</div></div>
+      <div class="chipcard"><div class="k">月末の締め作業</div><div class="v"><s>26時間</s>4<small>時間</small></div></div>
+    </div>
+    <div class="to"><div><span>ご提案先</span>株式会社サンプル物流 様</div><div><span>日付</span>2026年10月2日</div><div><span>担当</span>サンプル勤怠 営業部</div></div>
+    <aside class="notes">最初に「今日はこの場で見積まで出します」と言い切る。人数と、欲しい機能を2〜3聞いてから3枚目へ。</aside>
+  </section>
+
+  <section class="slide s-pain" data-title="いまの課題">
+    <div class="kicker"><b>01</b> うかがった、いまの勤怠</div>
+    <h2>月末の締めに毎月<em>26時間</em>。<br>そのほとんどが、紙とExcelの突き合わせです。</h2>
+    <div class="pains">
+      <div class="pain hot"><div class="v num"><span data-count="26">26</span><small>時間／月</small></div><div class="k">締め作業</div><p>3拠点の紙のタイムカードを、総務の2名がExcelに打ち直している。</p></div>
+      <div class="pain"><div class="v num"><span data-count="3.1" data-format="dec1">3.1</span><small>%</small></div><div class="k">打刻の漏れと直し</div><p>毎月およそ110件。本人に確認して、手で直している。</p></div>
+      <div class="pain"><div class="v num"><span data-count="4">4</span><small>日</small></div><div class="k">給与計算に渡すまで</div><p>締め日から給与ソフトへ入れるまで。残業の集計がいちばん重い。</p></div>
+    </div>
+    <div class="flowline">
+      <div class="n">紙のタイムカード<small>3拠点・120名</small></div><div class="a"></div>
+      <div class="n x">Excelへ打ち直し<small class="step">ここをなくす</small></div><div class="a"></div>
+      <div class="n x">残業・有給の集計<small class="step">ここを自動に</small></div><div class="a"></div>
+      <div class="n">給与ソフト<small>いまは手で入力</small></div>
+    </div>
+    <details class="why"><summary>数字のうかがい方</summary><div class="body">9月30日の打ち合わせで、総務課の方にうかがった8月分の実績です。打刻の漏れは、タイムカードの手書き修正の件数を数えたもの。</div></details>
+    <div class="foot"><span>数字は架空のサンプルです</span><span>02</span></div>
+  </section>
+
+  <section class="slide s-price" data-title="プランを選ぶ" data-calc="global"
+    data-let="pct = (n - 10) / 990 * 100;
+      BL = max(9000, 300*n); L = BL + (s*150 + w*150 + f*200)*n + p*20000;
+      BS = max(30000, 450*n); S = BS + f*200*n + p*20000;
+      BP = max(80000, 600*min(n,300) + 450*max(n-300,0)); P = BP;
+      best = min(L, S, P);
+      isL = (L <= S && L <= P) ? 1 : 0; isS = (isL == 0 && S <= P) ? 1 : 0; isP = 1 - isL - isS; bi = isL + isS*2 + isP*3;
+      B = isL*BL + isS*BS + isP*BP; O = best - B; T = best; X = floor(T / 10); G = T + X; Ym = round(G * 12 / 10000);
+      nm = bi == 1 ? 'ライト' : bi == 2 ? 'スタンダード' : 'プロ';
+      unit = bi == 1 ? '1人 ¥300／月（最低 ¥9,000）' : bi == 2 ? '1人 ¥450／月（最低 ¥30,000）' : '1人 ¥600／月・301人目から ¥450（最低 ¥80,000）'">
+    <div class="kicker"><b>02</b> プランとお見積り</div>
+    <h2><span class="num" data-show="n"></span>名・この機能なら、<span class="bn"><span data-global-out="nm"></span></span>がいちばんお得です。</h2>
+    <div class="grid3">
+      <div class="panel" data-morph-enter>
+        <div class="t">ご利用人数</div>
+        <div class="people"><b data-show="n"></b><span>名</span></div>
+        <input type="range" name="n" min="10" max="1000" step="10" value="120" aria-label="ご利用人数">
+        <div class="scale"><span>10</span><span>500</span><span>1,000</span></div>
+        <div class="opts">
+          <label class="opt"><b>シフト管理</b><small>ライトは +¥150／人</small><input type="checkbox" name="s" checked></label>
+          <label class="opt"><b>申請ワークフロー</b><small>ライトは +¥150／人</small><input type="checkbox" name="w" checked></label>
+          <label class="opt"><b>給与ソフト連携</b><small>プロ以外は +¥20,000／月</small><input type="checkbox" name="p"></label>
+          <label class="opt"><b>顔認証の打刻</b><small>プロ以外は +¥200／人</small><input type="checkbox" name="f"></label>
+        </div>
+      </div>
+      <div class="plans">
+        <div class="plan c-L"><div class="plate" data-morph="plan-L"></div><div class="in" data-morph-enter>
+          <div class="badge">いちばんお得</div>
+          <div class="nm">LITE</div><h3>ライト</h3><div class="tg">まず紙をなくしたい</div>
+          <div class="up"><b>¥300</b>／人・月</div>
+          <div class="tot"><div class="k">月額（税抜）</div><div class="v" data-out="L" data-format="yen"></div><div class="d">最安より <b data-out="L - best" data-format="int"></b> 円高い</div></div>
+          <ul><li>打刻・集計</li><li class="no">シフト管理<em>+¥150</em></li><li class="no">申請ワークフロー<em>+¥150</em></li><li class="no">給与ソフト連携</li></ul>
+        </div></div>
+        <div class="plan c-S"><div class="plate" data-morph="plan-S"></div><div class="in" data-morph-enter style="--d:.05">
+          <div class="badge">いちばんお得</div>
+          <div class="nm">STANDARD</div><h3>スタンダード</h3><div class="tg">現場とシフトが多い会社に</div>
+          <div class="up"><b>¥450</b>／人・月</div>
+          <div class="tot"><div class="k">月額（税抜）</div><div class="v" data-out="S" data-format="yen"></div><div class="d">最安より <b data-out="S - best" data-format="int"></b> 円高い</div></div>
+          <ul><li>打刻・集計</li><li>シフト管理</li><li>申請ワークフロー</li><li class="no">給与ソフト連携</li></ul>
+        </div></div>
+        <div class="plan c-P"><div class="plate" data-morph="plan-P"></div><div class="in" data-morph-enter style="--d:.1">
+          <div class="badge">いちばんお得</div>
+          <div class="nm">PRO</div><h3>プロ</h3><div class="tg">全部入り・301人目から ¥450</div>
+          <div class="up"><b>¥600</b>／人・月</div>
+          <div class="tot"><div class="k">月額（税抜）</div><div class="v" data-out="P" data-format="yen"></div><div class="d">最安より <b data-out="P - best" data-format="int"></b> 円高い</div></div>
+          <ul><li>打刻・集計</li><li>シフト・申請</li><li>給与ソフト連携</li><li>顔認証の打刻</li></ul>
+        </div></div>
+      </div>
+    </div>
+    <div class="note">最低料金：ライト ¥9,000・スタンダード ¥30,000・プロ ¥80,000（月額・税抜）　数字は架空のサンプルです</div>
+    <aside class="notes">お客さまに人数を聞いて、その場でつまみを動かす。欲しい機能のスイッチを入れると、カードの高さが変わって、いちばん得なプランが自動で浮き上がる。今の条件（120名・シフトと申請）ならスタンダード。給与連携と顔認証も入れると、プロのほうが安くなるのを見せる。</aside>
+  </section>
+
+  <section class="slide s-quote" data-title="お見積り">
+    <div class="kicker"><b>03</b> お見積書</div>
+    <h2>この内容で、月額<em class="num" data-global-out="G" data-format="yen"></em>（税込）です。</h2>
+    <div class="quote">
+      <div class="plate pick p-L" data-morph="plan-L"></div><div class="plate pick p-S" data-morph="plan-S"></div><div class="plate pick p-P" data-morph="plan-P"></div>
+      <div class="in" data-morph-enter style="--d:.15">
+        <div class="qh"><h3>御見積書</h3><div class="no">No. Q-2026-1002<br>発行日 2026年10月2日</div></div>
+        <div class="qto"><b>株式会社サンプル物流 御中</b><span>サンプル勤怠株式会社 営業部</span></div>
+        <div class="qrows">
+          <div class="qr"><div>基本料金　<span data-global-out="nm"></span>プラン・<span class="" data-global-out="n"></span>名<small data-global-out="unit"></small></div><div class="a" data-global-out="B" data-format="yen"></div></div>
+          <div class="qr"><div>オプション<small>プランに含まれない機能の追加分</small></div><div class="a" data-global-out="O" data-format="yen"></div></div>
+          <div class="qr sub"><div>小計（月額・税抜）</div><div class="a" data-global-out="T" data-format="yen"></div></div>
+          <div class="qr sub"><div>消費税（10%）</div><div class="a" data-global-out="X" data-format="yen"></div></div>
+        </div>
+        <div class="qtotal"><span>合計（月額・税込）</span><b class="" data-global-out="G" data-format="yen"></b></div>
+        <div class="qchips"><span>打刻・集計</span><span class="o-s">シフト管理</span><span class="o-w">申請ワークフロー</span><span class="o-p">給与ソフト連携</span><span class="o-f">顔認証の打刻</span></div>
+        <div class="qf"><span>年額の目安 約<span class="" data-global-out="Ym"></span>万円（税込）</span><span>有効期限 2026年10月31日</span></div>
+      </div>
+    </div>
+    <div class="points">
+      <div class="point"><div class="n">POINT 1</div><b>初期費用は0円</b><p>10月中のお申込みで、設定の代行（通常 ¥100,000）も含みます。</p></div>
+      <div class="point"><div class="n">POINT 2</div><b>人数は月ごとに増減できる</b><p>その月の最大人数で請求。繁忙期だけ増えても、翌月は戻ります。</p></div>
+      <div class="point step"><div class="n">POINT 3</div><b>最初の1か月は無料</b><p>紙のタイムカードと並べて試し、合わなければ費用はかかりません。</p></div>
+      <details class="why"><summary>金額の計算</summary><div class="body">基本料金 ＝ 1人あたりの料金 × 人数（最低料金に満たないときは最低料金）。オプションは、選んだ機能のうちプランに含まれないものだけを足します。</div></details>
+    </div>
+    <aside class="notes">前のページで浮き上がったカードが、そのまま見積書になる。金額は前のページの条件から自動で入る。戻ってスイッチを変えれば、見積書も変わる。</aside>
+  </section>
+
+  <section class="slide s-flow" data-title="導入の流れ">
+    <div class="kicker"><b>04</b> 導入の流れ</div>
+    <h2>お申込みから<em>4週間</em>で、<br>11月分の締めから使えます。</h2>
+    <div class="flow">
+      <div class="rail" data-morph-enter></div>
+      <div class="doc">
+        <div class="plate pick p-L" data-morph="plan-L"></div><div class="plate pick p-S" data-morph="plan-S"></div><div class="plate pick p-P" data-morph="plan-P"></div>
+        <div class="in" data-morph-enter style="--d:.2"><b>申込書</b><i></i><i></i><i class="s"></i><div class="p"><span data-global-out="nm"></span></div><i class="s"></i></div>
+      </div>
+      <div class="doc-cap" data-morph-enter style="--d:.25">お申込み<small>10月9日まで</small></div>
+      <div class="weeks">
+        <div class="wk"><div class="d">WEEK 1</div><div class="c"><h3>設定と取り込み<span class="chip step">代行します</span></h3><p>従業員120名とシフトの型を、いまのExcelから取り込みます。</p></div></div>
+        <div class="wk"><div class="d">WEEK 2</div><div class="c"><h3>1拠点で試す</h3><p>物流センター東で打刻を開始。打刻機は貸し出します。</p></div></div>
+        <div class="wk"><div class="d">WEEK 3</div><div class="c"><h3>紙と並べて運用</h3><p>3拠点で紙と並べ、集計の差がないかを確かめます。</p></div></div>
+        <div class="wk"><div class="d">WEEK 4</div><div class="c"><h3>紙をやめる<span class="chip step">担当が同席</span></h3><p>11月1日から本番。初回の締めは担当が横につきます。</p></div></div>
+      </div>
+    </div>
+    <div class="after" data-morph-enter style="--d:.3"><div class="k">11月分の締めから</div><div class="v num"><s>26</s><span class="accent" style="color:var(--accent)">4</span><small>時間／月</small></div><p>締め作業の見込み。打ち直しと残業の集計がなくなる分です（同じ規模の導入先の平均）。</p></div>
+    <aside class="notes">見積書が申込書になって、導入の最初の一歩に置かれる。「今日決めていただければ、11月分の締めから使える」を強調。→で週ごとに出ます。</aside>
+  </section>
+
+  <section class="slide s-faq" data-title="よくあるご質問">
+    <div class="kicker"><b>05</b> よくあるご質問</div>
+    <h2>契約は1年、人数とプランは<em>あとから変えられます</em>。</h2>
+    <div class="faq" data-tabs>
+      <div class="tabs">
+        <button data-tab="term"><small>Q1</small>契約の期間は？</button>
+        <button data-tab="grow"><small>Q2</small>人数が増えたら？</button>
+        <button data-tab="move"><small>Q3</small>いまのデータは？</button>
+        <button data-tab="stop"><small>Q4</small>やめるときは？</button>
+      </div>
+      <div class="ans" data-panel="term"><div class="q">Q1 契約の期間は？</div><h3>1年契約・月払いです。<br>年払いなら2か月分お得になります。</h3><p>更新は自動で、更新月の1か月前までにお知らせします。プランの変更は毎月1日から反映できます。</p><div class="ex"><div>月払い<b>12か月分</b></div><div>年払い<b>10か月分</b></div></div></div>
+      <div class="ans" data-panel="grow"><div class="q">Q2 人数が増えたら？</div><h3>その月にいちばん多かった人数で<br>請求します。</h3><p>繁忙期にアルバイトが増えても、翌月に減れば請求も戻ります。事前の手続きは要りません。</p><div class="ex"><div>11月 120名<b>¥54,000</b></div><div>12月 160名<b>¥72,000</b></div></div></div>
+      <div class="ans" data-panel="move"><div class="q">Q3 いまのデータは？</div><h3>Excelの従業員名簿とシフト表を<br>そのまま取り込みます。</h3><p>過去の勤怠は、直近3か月分を無料で移します。形がそろっていなくても、こちらで整えてからお渡しします。</p></div>
+      <div class="ans" data-panel="stop"><div class="q">Q4 やめるときは？</div><h3>最初の1か月は無料で、<br>いつでもやめられます。</h3><p>2か月目以降は、契約期間の終わりで解約できます。勤怠のデータはCSVで全部お渡しします。</p></div>
+    </div>
+    <div class="foot"><span>料金・条件は架空のサンプルです</span><span>06</span></div>
+  </section>
+
+  <section class="slide s-end" data-title="決めていただきたいこと">
+    <div class="kicker"><b>06</b> 本日のお願い</div>
+    <h2>決めていただきたいのは、<em>プランと開始日</em>の2つです。</h2>
+    <div class="close">
+      <div class="dec"><span class="n">1</span><div class="k">プラン</div><h3><span data-global-out="nm"></span>・<span class="" data-global-out="n"></span>名</h3><div class="v num" data-global-out="G" data-format="yen"><small></small></div><p>月額・税込。3ページ目の条件から出した金額です。</p><p class="perk step">最初の1か月は無料。合わなければ費用はかかりません</p></div>
+      <div class="dec"><span class="n">2</span><div class="k">開始日</div><h3>11月1日から本番</h3><div class="v num">10/9<small>までにお申込み</small></div><p>翌週にアカウントと打刻機をお渡しし、設定を始めます。</p><p class="perk step">10月中のお申込みで、設定の代行（¥100,000）が無料</p></div>
+    </div>
+    <div class="cta"><div><b>このまま申込書をお送りします</b><span>社内の稟議用に、見積書のPDFも本日中にお送りします。</span></div><div class="who"><b>サンプル勤怠 営業部</b><br>sales@example.jp ／ 03-0000-0000</div></div>
+    <aside class="notes">金額は3枚目で決めた条件のまま出ている。「この2つだけ決めていただければ、あとはこちらで進めます」で締める。</aside>
+  </section>
+
+</main>

@@ -1,0 +1,488 @@
+<!--meta
+{"title":"損益分岐点｜新任管理職研修 第3講","style":"上質な教科書","use":"管理職研修・管理会計の講義","group":"学び・研修",
+ "aim":"研修講師が新任の管理職研修で、受講者に固定費・単価・変動費のつまみを触らせ、損益分岐点が動く理由を体でわからせる。",
+ "desc":"固定費・単価・変動費のつまみを動かすと、売上と費用の線が傾き、交点（損益分岐点）が動き、黒字と赤字の面が塗り替わる。交点が図の外へ出ると「黒字にならない」と出る。例題のクイズつき。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Zen+Kaku+Gothic+Antique:wght@400;500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#fbfaf6; --surface:#ffffff; --ink:#1b2130; --muted:#525b69; --line:#dcd8cc; --grid:#ebe8df;
+  --accent:#1d5aa6; --accent-ink:#ffffff; --good:#1d5aa6; --bad:#c23d21; --frame:#e7e4da;
+  --blue:#1d5aa6; --blue-soft:rgb(29 90 166 / .16); --red:#c23d21; --red-soft:rgb(194 61 33 / .17); --marker:#f7df6e;
+  --font:"Zen Kaku Gothic Antique","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Source Serif 4","Zen Kaku Gothic Antique","Hiragino Sans",serif;
+  --head-weight:700; --head-track:.01em; --radius:4px; --shadow:none;
+  --pad-y:52px; --pad-x:72px;
+}
+.deck{background:var(--bg)}
+.num{font-family:var(--font-num);font-variant-numeric:lining-nums tabular-nums}
+var,.v{font-family:var(--font-num);font-style:italic;font-weight:600}
+.mk{background:linear-gradient(transparent 58%,var(--marker) 58%,var(--marker) 92%,transparent 92%)}
+.b{color:var(--blue)}.r{color:var(--red)}
+
+/* 柱・ノンブル・爪（ページの端の見出し） */
+.run{position:absolute;left:var(--pad-x);right:var(--pad-x);top:24px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);letter-spacing:.06em}
+.run b{color:var(--ink);font-weight:700;margin-right:12px}
+.run::after{content:"";position:absolute;left:0;right:0;top:28px;border-top:2px solid var(--ink)}
+.foot{bottom:20px;font-size:14px;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
+.foot .pg{font-family:var(--font-num);font-size:18px;color:var(--ink);font-weight:600}
+.thumb{position:absolute;right:0;top:120px;display:grid;gap:4px}
+.thumb i{display:grid;place-items:center;width:30px;height:62px;background:#ecebe4;color:#6a7280;font-style:normal;font-size:13px;font-weight:700;writing-mode:vertical-rl;letter-spacing:.1em;border-radius:4px 0 0 4px}
+.thumb i.on{background:var(--blue);color:#fff;width:38px;margin-left:-8px}
+
+/* 節の見出し（番号の箱＋結論の一文） */
+.sec{display:flex;align-items:center;gap:12px;margin:22px 0 10px}
+.sec .no{font-family:var(--font-num);font-weight:700;font-size:18px;background:var(--blue);color:#fff;padding:3px 10px 2px;border-radius:3px;letter-spacing:.02em}
+.sec .t{font-size:16px;font-weight:700;color:var(--blue);letter-spacing:.14em}
+h2{font-size:32px;line-height:1.45;font-weight:700;letter-spacing:.01em;margin:0;max-width:1080px}
+h2 .b,h2 .r{font-weight:900}
+
+/* 部品の見た目を教科書の作法に */
+details.why{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:0 4px 4px 0;background:#fff}
+details.why>summary{color:var(--blue);font-size:17px;padding:9px 14px}
+details.why>summary::before{background:var(--blue);color:#fff;border-radius:3px;width:20px;height:20px;font-size:16px}
+details.why>.body{font-size:17px;color:#3e4655;line-height:1.8}
+.box{border:1.5px solid var(--ink);border-radius:6px;background:#fff;position:relative;padding:22px 24px 18px}
+.box>.lbl{position:absolute;left:18px;top:-13px;background:var(--ink);color:#fff;font-size:14px;font-weight:700;letter-spacing:.14em;padding:3px 12px;border-radius:3px}
+.box.pt{border-color:var(--blue)}.box.pt>.lbl{background:var(--blue)}
+
+/* ============ 損益分岐点図表（HTML の要素だけで描く） ============ */
+@property --F{syntax:"<number>";inherits:true;initial-value:3000000}
+@property --p{syntax:"<number>";inherits:true;initial-value:1200}
+@property --v{syntax:"<number>";inherits:true;initial-value:700}
+@property --qx{syntax:"<number>";inherits:true;initial-value:.6}
+@property --qy{syntax:"<number>";inherits:true;initial-value:.36}
+@property --ok{syntax:"<number>";inherits:true;initial-value:1}
+@property --m1{syntax:"<number>";inherits:true;initial-value:0}
+@property --m2{syntax:"<number>";inherits:true;initial-value:0}
+@property --d8{syntax:"<number>";inherits:true;initial-value:1000000}
+@property --fl{syntax:"<number>";inherits:true;initial-value:0}
+@property --fu{syntax:"<number>";inherits:true;initial-value:0}
+.lab-calc{transition:--F .35s var(--ease),--p .35s var(--ease),--v .35s var(--ease),--qx .35s var(--ease),--qy .35s var(--ease),--ok .3s,--m1 .3s,--m2 .3s,--d8 .35s,--fl .3s,--fu .3s}
+
+.fig{position:relative;margin:0;width:calc(var(--W) * 1px + 70px);--h:calc(var(--H) * 1px);--w:calc(var(--W) * 1px)}
+.fig .plot{position:absolute;left:70px;top:0;width:var(--w);height:var(--h);overflow:hidden;background:#fff;
+  --fy:calc(var(--F) / 20000000 * var(--H) * 1px);--sr:calc(var(--p) * var(--H) / 2000 * 1px);--vr:calc(var(--v) * var(--H) / 2000 * 1px)}
+.fig .over{position:absolute;left:70px;top:0;width:var(--w);height:var(--h);pointer-events:none}
+.fig .gx,.fig .gy{position:absolute;background:var(--grid)}
+.fig .gx{top:0;bottom:0;width:1px}.fig .gy{left:0;right:0;height:1px}
+.fig .band{position:absolute;left:0;right:0;bottom:0;height:var(--fy);
+  background:repeating-linear-gradient(-45deg,rgb(27 33 48 / .16) 0 1.2px,transparent 1.2px 7px),rgb(27 33 48 / .04)}
+.fig .wedge{position:absolute;inset:0;background:rgb(27 33 48 / .07);
+  clip-path:polygon(0 calc(var(--h) - var(--fy)),var(--w) calc(var(--h) - var(--fy) - var(--vr)),var(--w) calc(var(--h) - var(--fy)))}
+.fig .loss,.fig .gain,.fig .loss>i,.fig .gain>i{position:absolute;inset:0;display:block}
+.fig .loss{clip-path:polygon(0 calc(var(--h) - var(--fy)),var(--w) calc(var(--h) - var(--fy) - var(--vr)),var(--w) var(--h),0 var(--h))}
+.fig .loss>i{background:var(--red-soft);clip-path:polygon(0 -4000px,var(--w) -4000px,var(--w) calc(var(--h) - var(--sr)),0 var(--h))}
+.fig .gain{clip-path:polygon(0 var(--h),var(--w) calc(var(--h) - var(--sr)),var(--w) var(--h))}
+.fig .gain>i{background:var(--blue-soft);clip-path:polygon(0 -4000px,var(--w) -4000px,var(--w) calc(var(--h) - var(--fy) - var(--vr)),0 calc(var(--h) - var(--fy)))}
+.fig .ln{position:absolute;left:0;width:2400px;height:3px;margin-bottom:-1.5px;transform-origin:0 50%;border-radius:2px}
+.fig .ln.sales{bottom:0;background:var(--blue);transform:rotate(atan2(calc(var(--p) * var(--H) / -2000), var(--W)))}
+.fig .ln.cost{bottom:var(--fy);background:var(--red);transform:rotate(atan2(calc(var(--v) * var(--H) / -2000), var(--W)))}
+.fig .ln.fix{bottom:var(--fy);height:1.5px;margin-bottom:-.75px;background:#6d7380}
+.fig .plan{position:absolute;left:80%;top:0;bottom:0;border-left:1.5px dashed #9aa0aa}
+.fig .gap{position:absolute;left:calc(80% - 5px);width:10px;
+  bottom:min(calc(var(--p) * var(--H) * .0004px),calc(var(--fy) + var(--v) * var(--H) * .0004px));
+  height:max(calc(var(--p) * var(--H) * .0004px - var(--fy) - var(--v) * var(--H) * .0004px),calc(var(--fy) + var(--v) * var(--H) * .0004px - var(--p) * var(--H) * .0004px))}
+.fig .gap.pos{background:var(--blue);opacity:clamp(0, var(--d8) / 20000, 1)}
+.fig .gap.neg{background:var(--red);opacity:clamp(0, var(--d8) / -20000, 1)}
+.fig .dropv{position:absolute;left:calc(var(--qx) * var(--w));bottom:0;height:calc(var(--qy) * var(--h));border-left:1.5px dotted var(--ink);opacity:var(--ok)}
+.fig .droph{position:absolute;left:0;bottom:calc(var(--qy) * var(--h));width:calc(var(--qx) * var(--w));border-top:1.5px dotted var(--ink);opacity:var(--ok)}
+.fig .pt{position:absolute;left:calc(var(--qx) * var(--w));bottom:calc(var(--qy) * var(--h));width:0;height:0;opacity:var(--ok)}
+.fig .pt::before{content:"";position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-sizing:border-box}
+.fig .pt>span{position:absolute;white-space:nowrap;font-size:16px;font-weight:700;background:var(--ink);color:#fff;padding:5px 10px;border-radius:3px;line-height:1.3;
+  left:16px;top:calc(-50px + var(--fu) * 64px);transform:translateX(calc(var(--fl) * (-100% - 32px)))}
+.fig .pt>span small{display:block;font-weight:500;font-size:13px;opacity:.85}
+.fig .xl,.fig .yl{position:absolute;font-family:var(--font-num);font-size:15px;color:var(--muted);white-space:nowrap}
+.fig .yl{right:calc(var(--w) + 10px);transform:translateY(50%)}
+.fig .xl{top:calc(var(--h) + 8px);transform:translateX(-50%)}
+.fig .axt{position:absolute;font-size:14px;color:var(--muted);font-weight:700;white-space:nowrap}
+.fig .axis-x{position:absolute;left:70px;top:var(--h);width:var(--w);border-top:1.5px solid var(--ink)}
+.fig .axis-y{position:absolute;left:70px;top:0;height:var(--h);border-left:1.5px solid var(--ink)}
+.fig .qlab{position:absolute;top:calc(var(--h) + 32px);left:calc(70px + var(--qx) * var(--w));transform:translateX(-50%);opacity:var(--ok);
+  font-family:var(--font-num);font-weight:700;font-size:16px;color:#fff;background:var(--ink);padding:1px 8px;border-radius:3px;white-space:nowrap}
+.fig .plan-l{position:absolute;left:calc(70px + .8 * var(--w) + 6px);top:6px;font-size:14px;color:var(--muted);font-weight:700;white-space:nowrap;background:rgb(255 255 255 / .85);padding:0 4px}
+.fig .tag{position:absolute;font-size:15px;font-weight:700;white-space:nowrap;padding:0 4px;background:rgb(255 255 255 / .85)}
+.fig figcaption{position:absolute;left:70px;top:calc(var(--h) + 62px);font-size:15px;color:var(--muted);white-space:nowrap}
+.fig figcaption b{color:var(--ink);margin-right:10px}
+/* 交点が図の外へ出たときの札 */
+.fig .out{position:absolute;left:14px;top:14px;max-width:420px;background:#fff;border:1.5px solid var(--red);border-radius:4px;padding:10px 14px;font-size:16px;line-height:1.55;font-weight:700;color:var(--red)}
+.fig .out small{display:block;font-weight:500;color:var(--muted);font-size:14px;margin-top:2px}
+.fig .out.o2{opacity:var(--m2)}.fig .out.o1{opacity:var(--m1)}
+.fig .arrow{position:absolute;right:0;top:0;height:0;opacity:var(--m2)}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover .cv{display:grid;grid-template-columns:540px 1fr;gap:56px;flex:1;margin-top:44px;align-items:start}
+.s-cover .chap{display:flex;align-items:baseline;gap:18px;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.s-cover .chap b{font-family:var(--font-num);font-size:96px;line-height:.9;font-weight:700;color:var(--blue)}
+.s-cover .chap span{font-size:18px;font-weight:700;letter-spacing:.2em;line-height:1.6}
+.s-cover .chap span small{display:block;font-family:var(--font-num);font-style:italic;font-weight:400;letter-spacing:.02em;color:var(--muted);font-size:17px}
+.s-cover h1{font-size:64px;line-height:1.2;margin-top:24px;font-weight:900;letter-spacing:.04em}
+.s-cover h1 ruby rt{font-size:15px;font-weight:500;letter-spacing:.3em;color:var(--muted)}
+.s-cover .lead{font-size:22px;line-height:1.75;color:var(--ink);margin-top:20px;font-weight:500}
+.s-cover .goal{margin-top:34px;display:grid;gap:8px;padding-top:26px}
+.s-cover .goal div{display:grid;grid-template-columns:28px 1fr;font-size:18px;line-height:1.55;color:var(--muted)}
+.s-cover .goal div i{font-style:normal;font-family:var(--font-num);font-weight:700;color:var(--blue)}
+.s-cover .fig{margin-top:8px}
+
+/* ---------- 2 費用を分ける ---------- */
+.two{display:grid;grid-template-columns:1fr 640px;gap:40px;margin-top:22px;flex:1}
+.kinds{display:grid;gap:18px;align-content:start}
+.kind{display:grid;grid-template-columns:66px 1fr;gap:16px;align-items:start}
+.kind .sw{height:66px;border-radius:4px;border:1.5px solid var(--ink)}
+.kind .sw.fx{background:repeating-linear-gradient(-45deg,rgb(27 33 48 / .22) 0 1.2px,transparent 1.2px 7px),#fff}
+.kind .sw.vr{background:linear-gradient(to top left,rgb(27 33 48 / .12) 50%,#fff 50%);border-color:var(--ink);box-shadow:inset 0 0 0 0 #fff}
+.kind .sw.vr{position:relative}.kind .sw.vr::after{content:"";position:absolute;left:-2px;right:-2px;top:50%;border-top:3px solid var(--red);transform:rotate(-45deg)}
+.kind h3{font-size:23px;margin:0 0 4px}
+.kind p{font-size:18px;line-height:1.7;color:var(--muted);margin:0}
+.kind p b{color:var(--ink)}
+
+/* ---------- 3 限界利益 ---------- */
+.mc{margin-top:24px;display:grid;gap:22px}
+.unit{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:18px}
+.unit .h{font-size:18px;font-weight:700;line-height:1.45}
+.unit .h small{display:block;font-weight:500;color:var(--muted);font-size:15px}
+.bar{display:flex;height:64px;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden;background:#fff}
+.bar>div{display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:18px;font-weight:700}
+.bar>div b{font-family:var(--font-num);font-size:28px;font-weight:700}
+.bar .vc{flex:0 0 58.33%;background:var(--red-soft);color:#8e2c16;border-right:1.5px solid var(--ink)}
+.bar .cm{flex:1;background:var(--blue);color:#fff}
+.scale{position:relative;height:26px;margin-left:168px;font-family:var(--font-num);font-size:15px;color:var(--muted)}
+.scale span{position:absolute;transform:translateX(-50%)}
+.fill{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:18px}
+.fill .track{position:relative;height:64px;border:1.5px solid var(--ink);border-radius:4px;background:repeating-linear-gradient(-45deg,rgb(27 33 48 / .14) 0 1.2px,transparent 1.2px 7px),#fff;overflow:hidden}
+.fill .track i{position:absolute;top:0;bottom:0;width:calc(100% / 6 - 3px);background:var(--blue);opacity:.9}
+.fill .track em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:18px;font-weight:700;color:var(--ink)}
+.fill .track em span{background:#fff;padding:2px 10px;border-radius:3px}
+.short{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--ink);margin-top:-4px}
+.short .c{padding:10px 20px 0;border-left:1px solid var(--line)}.short .c:first-child{border-left:0;padding-left:0}
+.short span{display:block;font-size:16px;font-weight:700;color:var(--muted)}
+.short b{display:block;font-size:36px;font-weight:700;line-height:1.2}.short b small{font-family:var(--font);font-size:17px;margin-left:2px}
+.short em{display:block;font-style:normal;font-size:15px;color:var(--muted);line-height:1.5}
+.formula{display:grid;grid-template-columns:auto auto auto auto auto;align-items:center;justify-content:start;gap:22px;font-size:22px;font-weight:700}
+.frac{display:grid;text-align:center;gap:6px}
+.frac>span:first-child{border-bottom:2px solid var(--ink);padding:0 10px 6px}
+.formula .eq{font-family:var(--font-num);font-size:30px;font-weight:400}
+.formula .ans{font-family:var(--font-num);font-size:54px;font-weight:700;color:var(--blue);line-height:1}
+.formula .ans small{font-family:var(--font);font-size:22px;margin-left:4px}
+
+/* ---------- 4 図で動かす ---------- */
+.lab-calc{display:grid;grid-template-columns:690px 1fr;gap:34px;margin-top:22px}
+.ctl .field{margin-bottom:4px;gap:0}
+.ctl .field>label{font-size:17px;color:var(--ink);font-weight:700}
+.ctl .field>label b{font-family:var(--font-num);font-size:24px}
+.ctl .field>label .sw2{display:inline-block;width:22px;height:4px;border-radius:2px;margin-right:8px;vertical-align:5px}
+.ctl .field small{display:block;font-size:14px;color:var(--muted);font-weight:500;margin-top:-2px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:26px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#e4e1d7}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;background:#fff;border:3px solid var(--c,var(--ink));box-shadow:0 1px 3px rgb(0 0 0 / .2)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#e4e1d7}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--c,var(--ink))}
+.res{border-top:2px solid var(--ink);margin-top:6px}
+.res .row{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:17px;font-weight:700}
+.res .row>span small{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.res .row .val{position:relative;text-align:right;font-family:var(--font-num);font-size:32px;font-weight:700;line-height:1.1;min-width:170px}
+.res .row .val .a{opacity:calc(1 - var(--m1))}
+.res .row .val .none{position:absolute;right:0;top:50%;transform:translateY(-50%);font-family:var(--font);font-size:20px;color:var(--red);opacity:var(--m1)}
+.res .row .val [data-sign].pos{color:var(--blue)}
+.say{position:relative;margin-top:10px;min-height:82px}
+.say p{position:absolute;inset:0;margin:0;font-size:16px;line-height:1.6;padding:9px 14px;border-radius:4px}
+.say .s0{opacity:calc(1 - var(--m1) - var(--m2));background:#f1f5fb;color:#173f73}
+.say .s1{opacity:var(--m1);background:#fbefeb;color:#8e2c16}
+.say .s2{opacity:var(--m2);background:#fbefeb;color:#8e2c16}
+
+/* ---------- 5 例題（クイズ） ---------- */
+.ex{display:grid;grid-template-columns:1fr 420px;gap:40px;margin-top:26px}
+.ex .box p{font-size:19px;line-height:1.75;margin:0}
+.quiz{margin-top:20px}
+.quiz .choices{grid-template-columns:1fr 1fr;gap:10px}
+.quiz .choices>button{font-size:19px;padding:12px 16px;border:1.5px solid var(--line);border-radius:4px;background:#fff;font-weight:700;display:flex;gap:12px;align-items:center}
+.quiz .choices>button i{font-family:var(--font-num);font-style:normal;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink);font-size:16px;flex:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--blue);background:#eef3fa}
+.quiz.answered .choices>button[data-correct] i{background:var(--blue);border-color:var(--blue);color:#fff}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--red);background:#fbefeb}
+.quiz .explain{font-size:17px;line-height:1.75;color:var(--ink);border-left:4px solid var(--marker);padding:4px 0 4px 14px;margin-top:14px}
+.cmp{display:grid;gap:18px;align-content:start}
+.cmp .it .h{font-size:16px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.cmp .it .h b{font-family:var(--font-num);color:var(--ink);font-size:20px}
+.cmp .bar{height:50px}
+.cmp .bar>div b{font-size:22px}
+.cmp .bar.cut .vc{flex:0 0 64.8%}
+.cmp .need{border-top:2px solid var(--ink);padding-top:12px;font-size:17px;line-height:1.6;color:var(--muted)}
+.cmp .need b{display:block;font-family:var(--font-num);font-size:44px;color:var(--red);line-height:1.1}
+.cmp .need b small{font-family:var(--font);font-size:18px;color:var(--ink);margin-left:4px}
+
+/* ---------- 6 打ち手の比較 ---------- */
+.tbl{margin-top:26px;border-top:2px solid var(--ink)}
+.tbl .tr{display:grid;grid-template-columns:260px 1fr 150px 150px;align-items:center;gap:20px;padding:12px 0;border-bottom:1px solid var(--line)}
+.tbl .th{font-size:14px;color:var(--muted);font-weight:700;padding:8px 0}
+.tbl .nm{font-size:19px;font-weight:700;line-height:1.4}
+.tbl .nm small{display:block;font-size:14px;color:var(--muted);font-weight:500}
+.tbl .ln2{position:relative;height:30px}
+.tbl .ln2 .rail{position:absolute;left:0;right:0;top:14px;border-top:1px solid var(--line)}
+.tbl .ln2 .base{position:absolute;top:0;bottom:0;left:calc(6000 / 7000 * 100%);border-left:1.5px dashed #9aa0aa}
+.tbl .ln2 .seg{position:absolute;top:9px;height:12px;left:calc(var(--q) / 7000 * 100%);right:calc(100% - 6000 / 7000 * 100%);background:var(--blue);border-radius:2px}
+.tbl .ln2 .dot{position:absolute;top:5px;left:calc(var(--q) / 7000 * 100% - 10px);width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
+.tbl .n{font-family:var(--font-num);font-size:28px;font-weight:700;text-align:right}
+.tbl .n small{font-family:var(--font);font-size:15px;margin-left:2px}
+.tbl .tr.best{background:linear-gradient(90deg,rgb(247 223 110 / .45),rgb(247 223 110 / 0) 70%)}
+.tbl .tr.best .n.q{color:var(--blue)}
+.tbl .tr.now .seg{display:none}
+.after{display:grid;grid-template-columns:1fr 420px;gap:34px;margin-top:18px;align-items:start}
+.after details.why,.kinds details.why{position:relative}
+.after details.why[open]>.body,.kinds details.why[open]>.body{position:absolute;z-index:5;left:-5px;right:-1px;bottom:calc(100% + 8px);background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue);box-shadow:0 10px 28px rgb(20 30 50 / .14);padding:14px 18px}
+.after p{font-size:18px;line-height:1.75;margin:0;color:var(--ink)}
+
+/* ---------- 7 まとめ ---------- */
+.sum{display:grid;grid-template-columns:1fr 470px;gap:40px;margin-top:30px}
+.sum ol{margin:0;padding:0;list-style:none;display:grid;gap:34px;counter-reset:n;align-content:start;padding-top:6px}
+.sum li{counter-increment:n;display:grid;grid-template-columns:52px 1fr;font-size:23px;line-height:1.6}
+.sum li::before{content:counter(n);font-family:var(--font-num);font-weight:700;font-size:22px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff}
+.sum li small{display:block;font-size:18px;color:var(--muted)}
+.work .q{display:grid;grid-template-columns:1fr 150px;align-items:end;gap:10px;padding:15px 0;border-bottom:1px solid var(--line);font-size:18px}
+.work .q .blank{border-bottom:1.5px solid var(--ink);height:26px;text-align:right;font-size:15px;color:var(--muted)}
+.work .q.res2{border-bottom:0;font-weight:700}
+.work .q.res2 .blank{border:2px solid var(--blue);border-radius:4px;height:38px}
+.work .note{font-size:15px;color:var(--muted);margin-top:8px;line-height:1.6}
+.next{position:absolute;left:72px;right:72px;bottom:58px;display:flex;gap:18px;align-items:baseline;border-top:2px solid var(--ink);padding-top:12px;font-size:18px}
+.next b{font-family:var(--font-num);color:var(--blue);font-size:20px}
+</style>
+
+<main class="deck" data-transition="fade">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="run"><span><b>新任管理職研修</b>管理会計のきほん</span><span>2026年度 第2期</span></div>
+    <div class="cv">
+      <div>
+        <div class="chap"><b>03</b><span>第3講<small>Break-even Point</small></span></div>
+        <h1><ruby>損益分岐点<rt>そんえきぶんきてん</rt></ruby></h1>
+        <p class="lead">売上の線と費用の線が交わる所から、<br>ようやく利益が出はじめる。</p>
+        <div class="goal box"><span class="lbl">この講のねらい</span>
+          <div><i>1</i>費用を「固定費」と「変動費」に分けられる</div>
+          <div><i>2</i>損益分岐点を、自分の部署の数字で出せる</div>
+          <div><i>3</i>値下げ・コスト削減が交点をどう動かすか言える</div>
+        </div>
+      </div>
+      <figure class="fig" style="--W:470;--H:400;--F:3000000;--p:1200;--v:700;--qx:.6;--qy:.36;--ok:1;--fl:0;--fu:0;--d8:1000000;--m1:0;--m2:0">
+        <div class="plot">
+          <i class="gx" style="left:20%"></i><i class="gx" style="left:40%"></i><i class="gx" style="left:60%"></i><i class="gx" style="left:80%"></i>
+          <i class="gy" style="top:25%"></i><i class="gy" style="top:50%"></i><i class="gy" style="top:75%"></i>
+          <div class="band"></div><div class="wedge"></div>
+          <div class="loss"><i></i></div><div class="gain"><i></i></div>
+          <div class="ln fix"></div><div class="ln cost"></div><div class="ln sales"></div>
+          <div class="dropv"></div><div class="droph"></div>
+        </div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <div class="over">
+          <div class="pt"><span>損益分岐点<small>6,000個・720万円</small></span></div>
+          <div class="tag b" style="left:392px;top:128px">売上高</div>
+          <div class="tag r" style="left:292px;top:262px">総費用</div>
+          <div class="tag" style="left:10px;top:306px;color:var(--muted)">固定費</div>
+        </div>
+        <span class="yl" style="top:var(--h)">0</span>
+        <span class="yl" style="top:calc(var(--h) / 2)">1,000万</span>
+        <span class="yl" style="top:0">2,000万円</span>
+        <span class="xl" style="left:calc(70px + var(--w))">1万個</span>
+        <span class="xl" style="left:calc(70px + var(--w) / 2)">5,000</span>
+        <figcaption><b>図3-1</b>損益分岐点図表（月あたり）　<span class="b">青＝黒字</span>　<span class="r">朱＝赤字</span></figcaption>
+      </figure>
+    </div>
+    <div class="foot"><span>講師：サンプル経営研究所　数字は架空のサンプルです</span><span class="pg">1</span></div>
+    <aside class="notes">最初に「今日のゴールは3つ」と言い、右の図を指して「今日の90分で、この図が自分で描けて、動かせるようになります」と約束する。専門用語は「そんえきぶんきてん」と読みだけ確認する。</aside>
+  </section>
+
+  <!-- 2 費用を分ける -->
+  <section class="slide" data-title="費用の分け方">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-1 費用の分け方</span><span>例：保存容器セット（1個1,200円）</span></div>
+    <nav class="thumb" aria-hidden="true"><i class="on">3-1</i><i>3-2</i><i>3-3</i><i>3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-1</span><span class="t">費用の分け方</span></div>
+    <h2>費用は「売らなくても出る<span class="mk">固定費</span>」と<br>「売るほど増える<span class="mk">変動費</span>」に分けて考える。</h2>
+    <div class="two">
+      <div class="kinds">
+        <div class="kind"><div class="sw fx"></div><div><h3>固定費　月300万円</h3><p>家賃、正社員の給与、機械のリース料など。<b>1個も売れなくても毎月出ていく。</b></p></div></div>
+        <div class="kind"><div class="sw vr"></div><div><h3 class="r">変動費　1個700円</h3><p>材料、仕入れ、送料、販売手数料など。<b>売った数に比例して増える。</b></p></div></div>
+        <div class="box" style="margin-top:12px"><span class="lbl">問 3-1</span><p style="margin:0;font-size:18px;line-height:1.7">あなたの部署の費用を、固定費と変動費で2つずつ挙げてみよう。<span style="color:var(--muted)">（2分・隣の人と見せ合う）</span></p></div>
+        <details class="why"><summary>迷いやすい費用はどちら？</summary><div class="body">残業代・パートの時給：作る量で増えるなら変動費。広告費：売れても売れなくても月額で出すなら固定費。迷ったら「来月1個も売れなかったら、この費用は出るか」で分ける。</div></details>
+      </div>
+      <figure class="fig" style="--W:540;--H:330;--F:3000000;--p:1200;--v:700;--ok:0;--d8:0;--m1:0;--m2:0">
+        <div class="plot">
+          <i class="gx" style="left:20%"></i><i class="gx" style="left:40%"></i><i class="gx" style="left:60%"></i><i class="gx" style="left:80%"></i>
+          <i class="gy" style="top:25%"></i><i class="gy" style="top:50%"></i><i class="gy" style="top:75%"></i>
+          <div class="step" style="position:absolute;inset:0"><div class="band"></div><div class="ln fix"></div><div class="tag" style="left:14px;top:292px">① 固定費の帯（高さ＝月300万円）</div></div>
+          <div class="step" style="position:absolute;inset:0"><div class="wedge"></div><div class="ln cost"></div><div class="tag r" style="left:300px;top:170px">② 総費用＝固定費＋変動費</div><div class="tag" style="left:330px;top:244px;color:var(--muted);background:none">変動費（1個700円ずつ積もる）</div></div>
+        </div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <span class="yl" style="top:0">2,000万円</span><span class="yl" style="top:calc(var(--h) / 2)">1,000万</span>
+        <span class="xl" style="left:calc(70px + var(--w) / 2)">5,000</span><span class="xl" style="left:calc(70px + var(--w))">1万個</span>
+        <figcaption><b>図3-2</b>費用の線。→で固定費、変動費の順に描く</figcaption>
+      </figure>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="pg">2</span></div>
+    <aside class="notes">→を押すと、左の説明と右の図が1つずつ出る。固定費は「床」、変動費は「床の上に積もる傾き」と言い換えると伝わりやすい。受講者に自部署の費用を2つずつ挙げてもらう（2分）。</aside>
+  </section>
+
+  <!-- 3 限界利益 -->
+  <section class="slide" data-title="限界利益">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-2 限界利益</span><span>例：保存容器セット（1個1,200円）</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i class="on">3-2</i><i>3-3</i><i>3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-2</span><span class="t">限界利益</span></div>
+    <h2>1個売るたびに残る<span class="b">500円</span>が、月300万円の固定費を少しずつ埋めていく。</h2>
+    <div class="mc">
+      <div class="unit">
+        <div class="h">1個の売値<small>1,200円の内訳</small></div>
+        <div class="bar"><div class="vc">変動費<b class="num">700円</b></div><div class="cm">限界利益<b class="num">500円</b></div></div>
+      </div>
+      <div class="fill">
+        <div class="h" style="font-size:18px;font-weight:700;line-height:1.45">固定費 300万円<small style="display:block;font-weight:500;color:var(--muted);font-size:15px">500円ずつ埋める</small></div>
+        <div class="track">
+          <i style="left:0"></i><i style="left:calc(100% / 6)"></i><i style="left:calc(200% / 6)"></i><i style="left:calc(300% / 6)"></i><i style="left:calc(400% / 6)"></i><i style="left:calc(500% / 6)"></i>
+          <em><span>1,000個で50万円 × 6 ＝ 300万円</span></em>
+        </div>
+      </div>
+      <div class="box pt">
+        <span class="lbl">公式</span>
+        <div class="formula">
+          <span>損益分岐点の販売数量</span><span class="eq">＝</span>
+          <div class="frac"><span>固定費</span><span>単価 − 変動費</span></div><span class="eq">＝</span>
+          <div class="frac num" style="font-weight:600"><span>3,000,000</span><span>1,200 − 700</span></div>
+        </div>
+        <div style="position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;align-items:baseline;gap:14px"><span class="eq num" style="font-size:30px">＝</span><span class="formula"><span class="ans num"><span data-count="6000">6,000</span><small>個</small></span></span></div>
+      </div>
+      <div class="short">
+        <div class="c"><span>月5,000個しか売れないと</span><b class="num r">−50<small>万円</small></b><em>500円×5,000個＝250万円。固定費に50万円届かない</em></div>
+        <div class="c"><span>月6,000個でちょうど</span><b class="num">±0</b><em>ここが損益分岐点。ここから先の1個は、500円ずつ利益</em></div>
+        <div class="c"><span>予定の月8,000個なら</span><b class="num b">+100<small>万円</small></b><em>分岐点を超えた2,000個 × 500円</em></div>
+      </div>
+    </div>
+    <div class="foot"><span>「単価 − 変動費」を限界利益（げんかいりえき）という　数字は架空のサンプルです</span><span class="pg">3</span></div>
+    <aside class="notes">ここが今日いちばん大事な式。「1個売ると500円残る。固定費300万円を埋めるには6,000個」。式を覚えるより、この2本の帯のイメージを持って帰ってもらう。次のページで、この3つの数字をつまみで動かす。</aside>
+  </section>
+
+  <!-- 4 図で動かす（芯） -->
+  <section class="slide" data-title="図で動かす">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-3 図で動かす</span><span>つまみを動かしてください</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i>3-2</i><i class="on">3-3</i><i>3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-3</span><span class="t">図で動かす</span></div>
+    <h2>固定費が増えると交点は右へ逃げ、単価が上がると左へ寄ってくる。</h2>
+    <div class="lab-calc" data-calc data-let="mg = p - v; q = mg > 0 ? F / mg : 0; m1 = mg > 0 ? 0 : 1; m2 = (mg > 0 && q > 10000) ? 1 : 0; ok = 1 - m1 - m2; qx = min(q / 10000, 1.3); qy = min(p * q / 20000000, 1.3); fl = qx > 0.6 ? 1 : 0; fu = qy > 0.8 ? 1 : 0; d8 = mg * 8000 - F; sm = mg > 0 ? (8000 - q) / 8000 * 100 : 0">
+      <figure class="fig" style="--W:600;--H:370">
+        <div class="plot">
+          <i class="gx" style="left:20%"></i><i class="gx" style="left:40%"></i><i class="gx" style="left:60%"></i><i class="gx" style="left:80%"></i>
+          <i class="gy" style="top:25%"></i><i class="gy" style="top:50%"></i><i class="gy" style="top:75%"></i>
+          <div class="band"></div><div class="wedge"></div>
+          <div class="loss"><i></i></div><div class="gain"><i></i></div>
+          <div class="plan"></div>
+          <div class="gap pos"></div><div class="gap neg"></div>
+          <div class="ln fix"></div><div class="ln cost"></div><div class="ln sales"></div>
+          <div class="dropv"></div><div class="droph"></div>
+        </div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <div class="over">
+          <div class="pt"><span>損益分岐点<small><span data-out="q" data-unit="個"></span></small></span></div>
+          <div class="out o2">この条件では、1万個売っても黒字にならない<small>交点は図の右の外（<span data-out="q" data-unit="個"></span>）</small></div>
+          <div class="out o1">単価が変動費を下回り、交点はない<small>1個売るたびに赤字が増えていく</small></div>
+        </div>
+        <span class="plan-l">予定 8,000個</span>
+        <div class="qlab"><span data-out="q"></span></div>
+        <span class="yl" style="top:0">2,000万円</span><span class="yl" style="top:calc(var(--h) / 4)">1,500万</span><span class="yl" style="top:calc(var(--h) / 2)">1,000万</span><span class="yl" style="top:calc(var(--h) * .75)">500万</span>
+        <span class="xl" style="left:calc(70px + var(--w) * .2)">2,000</span><span class="xl" style="left:calc(70px + var(--w) * .4)">4,000</span><span class="xl" style="left:calc(70px + var(--w) * .6)">6,000</span><span class="xl" style="left:calc(70px + var(--w) * .8)">8,000</span><span class="xl" style="left:calc(70px + var(--w))">1万個</span>
+        <figcaption><b>図3-3</b><span class="b">━ 売上高</span>　<span class="r">━ 総費用</span>　予定の位置の縦の棒＝その月の利益（青）・損失（朱）</figcaption>
+      </figure>
+      <div class="ctl">
+        <div class="field"><label><span><span class="sw2" style="background:#6d7380"></span>固定費（月）</span><b data-show="F" data-format="man"></b></label><input type="range" name="F" min="1000000" max="8000000" step="100000" value="3000000" style="--c:#6d7380"></div>
+        <div class="field"><label><span><span class="sw2" style="background:var(--blue)"></span>単価（1個）</span><b data-show="p" data-format="yen"></b></label><input type="range" name="p" min="500" max="2000" step="10" value="1200" style="--c:var(--blue)"></div>
+        <div class="field"><label><span><span class="sw2" style="background:var(--red)"></span>変動費（1個）</span><b data-show="v" data-format="yen"></b></label><input type="range" name="v" min="200" max="1500" step="10" value="700" style="--c:var(--red)"></div>
+        <div class="res">
+          <div class="row"><span>損益分岐点の販売数量</span><span class="val"><span class="a" data-out="q" data-unit="個"></span><span class="none">なし</span></span></div>
+          <div class="row"><span>予定8,000個での利益<small>（単価−変動費）×8,000−固定費</small></span><span class="val"><span data-out="d8" data-format="man" data-sign></span></span></div>
+          <div class="row"><span>安全余裕率<small>予定が交点をどれだけ上回るか</small></span><span class="val"><span class="a" data-out="sm" data-format="pct" data-sign></span><span class="none">なし</span></span></div>
+        </div>
+        <div class="say">
+          <p class="s0">交点より右（たくさん売る側）が<b>黒字</b>、左が<b>赤字</b>。予定の8,000個が交点より右にあれば、その月は黒字。</p>
+          <p class="s2">交点が図の右の外へ出た。固定費を下げるか、1個の限界利益（単価−変動費）を増やさない限り、黒字にならない。</p>
+          <p class="s1">単価が変動費以下では、売るほど赤字が広がる。まず値付けか仕入れを見直す。</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">受講者に交代でつまみを触ってもらう。①固定費を上げる→交点が右へ。②単価を上げる→売上の線が立ち、交点が左へ。③変動費を単価に近づける→交点が図の外へ逃げ、右上に「黒字にならない」と出る。最後に元の値（300万・1,200円・700円）に戻して次へ。</aside>
+  </section>
+
+  <!-- 5 例題（クイズ） -->
+  <section class="slide" data-title="例題">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-4 例題</span><span>考える時間：2分</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i>3-2</i><i>3-3</i><i class="on">3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-4</span><span class="t">例題</span></div>
+    <h2>値下げの損は、「1個の限界利益」がどれだけ減るかで考える。</h2>
+    <div class="ex">
+      <div>
+        <div class="box"><span class="lbl">例題 3-4</span>
+          <p>単価1,200円・変動費700円の保存容器セットを、<b>1割値下げして1,080円</b>にする。値下げ前と同じ限界利益の合計（月400万円）を得るには、販売数量を何割増やす必要があるか。</p>
+        </div>
+        <div class="quiz">
+          <div class="choices">
+            <button><i>ア</i>1割（値下げ幅と同じ）</button>
+            <button><i>イ</i>約2割</button>
+            <button data-correct><i>ウ</i>約3割</button>
+            <button><i>エ</i>5割以上</button>
+          </div>
+          <div class="explain">値下げ後の限界利益は 1,080 − 700 ＝ <b>380円</b>。400万円 ÷ 380円 ≒ 10,526個。8,000個から <b>約32%</b> 多く売る必要がある。「1割引き」は、限界利益では「2割4分引き」になる。</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="it"><div class="h">値下げ前<b class="num">1,200円</b></div><div class="bar"><div class="vc">700</div><div class="cm">限界利益<b class="num">500</b></div></div></div>
+        <div class="it"><div class="h">1割値下げ後<b class="num">1,080円</b></div><div class="bar cut"><div class="vc">700</div><div class="cm">限界利益<b class="num">380</b></div></div></div>
+        <div class="need">限界利益の減り方<b class="num">−24<small>%</small></b>売値は10%しか下げていないのに、1個から残るお金は4分の1近く減る。</div>
+      </div>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="pg">5</span></div>
+    <aside class="notes">まず2分、隣の人と相談してから選んでもらう。多くの人が「ア」を選ぶ。選んだあとに解説が出る。右の2本の帯で「青い部分が24%縮んだ」ことを見せ、営業の値引き判断につなげる。</aside>
+  </section>
+
+  <!-- 6 打ち手の比較 -->
+  <section class="slide" data-title="打ち手の比較">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-5 打ち手の比較</span><span>いずれも「1割」動かした場合</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i>3-2</i><i>3-3</i><i>3-4</i><i class="on">3-5</i></nav>
+    <div class="sec"><span class="no">3-5</span><span class="t">打ち手の比較</span></div>
+    <h2>同じ「1割」なら、交点をいちばん大きく左へ動かすのは<span class="b">単価</span>。</h2>
+    <div class="tbl">
+      <div class="tr th"><span>打ち手</span><span>損益分岐点の位置（点線＝いま 6,000個）</span><span style="text-align:right">分岐点</span><span style="text-align:right">安全余裕率</span></div>
+      <div class="tr now"><div class="nm">いまのまま<small>固定費300万・単価1,200・変動費700</small></div><div class="ln2" style="--q:6000"><i class="rail"></i><i class="base"></i><i class="dot"></i></div><div class="n q num">6,000<small>個</small></div><div class="n num">25.0<small>%</small></div></div>
+      <div class="tr"><div class="nm">固定費を1割下げる<small>300万 → 270万円</small></div><div class="ln2" style="--q:5400"><i class="rail"></i><i class="base"></i><i class="seg"></i><i class="dot"></i></div><div class="n q num">5,400<small>個</small></div><div class="n num">32.5<small>%</small></div></div>
+      <div class="tr"><div class="nm">変動費を1割下げる<small>700 → 630円</small></div><div class="ln2" style="--q:5263"><i class="rail"></i><i class="base"></i><i class="seg"></i><i class="dot"></i></div><div class="n q num">5,263<small>個</small></div><div class="n num">34.2<small>%</small></div></div>
+      <div class="tr best"><div class="nm">単価を1割上げる<small>1,200 → 1,320円</small></div><div class="ln2" style="--q:4839"><i class="rail"></i><i class="base"></i><i class="seg"></i><i class="dot"></i></div><div class="n q num">4,839<small>個</small></div><div class="n num">39.5<small>%</small></div></div>
+    </div>
+    <div class="after">
+      <p>単価の1割（120円）は、そのまま全部が限界利益に乗る。変動費の1割は70円、固定費の1割は30万円÷500円＝600個分。<b>ただし値上げは客数が減る。</b>何個まで減っても元が取れるかを、3-3の図で確かめてから決める。</p>
+      <details class="why"><summary>計算のしかた</summary><div class="body">分岐点＝固定費÷（単価−変動費）。<br>安全余裕率＝（予定8,000個−分岐点）÷8,000。<br>例：単価1,320円なら 300万÷620＝4,839個、（8,000−4,839）÷8,000＝39.5%。</div></details>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="pg">6</span></div>
+    <aside class="notes">「どれがいちばん効くと思うか」を先に手を挙げてもらってから見せる。固定費削減を選ぶ人が多い。単価が最も効くが、客数が減るリスクとセットで考えることを必ず付け加える。</aside>
+  </section>
+
+  <!-- 7 まとめと演習 -->
+  <section class="slide" data-title="まとめと演習">
+    <div class="run"><span><b>第3講 損益分岐点</b>まとめと演習</span><span>次回までの宿題</span></div>
+    <div class="sec"><span class="no">3-6</span><span class="t">まとめと演習</span></div>
+    <h2>明日の会議までに、自分の部署の3つの数字で交点を出してみる。</h2>
+    <div class="sum">
+      <ol>
+        <li><div>費用を<b>固定費</b>と<b>変動費</b>に分ける<small>迷ったら「1個も売れなくても出るか」</small></div></li>
+        <li><div>1個の<b>限界利益</b>＝単価−変動費<small>これが固定費を埋める力</small></div></li>
+        <li><div>分岐点＝<span class="mk">固定費 ÷ 限界利益</span><small>値下げは限界利益で考える。1割引きは2割以上効く</small></div></li>
+      </ol>
+      <div class="box"><span class="lbl">演習 3</span>
+        <div class="work">
+          <div class="q"><span>① 月の固定費</span><span class="blank">万円</span></div>
+          <div class="q"><span>② 1件（1個）の単価</span><span class="blank">円</span></div>
+          <div class="q"><span>③ 1件（1個）の変動費</span><span class="blank">円</span></div>
+          <div class="q res2"><span>損益分岐点 ＝ ① ÷（② − ③）</span><span class="blank">件</span></div>
+          <p class="work note">数字が分からないときは、経理に「先月の固定費と、1件あたりの変動費」を聞く。</p>
+        </div>
+      </div>
+    </div>
+    <div class="next"><b>次回</b>第4講「予算と実績の差を読む」――今日の交点が、予算の「最低ライン」になります。</div>
+    <div class="foot"><span>講師：サンプル経営研究所　社名・数字はすべて架空のサンプルです</span><span class="pg">7</span></div>
+    <aside class="notes">演習は持ち帰り。次回の冒頭で2〜3人に自部署の分岐点を発表してもらう。サービス業の人には「1個」を「1件」「1人」と読み替えてよいと伝える。</aside>
+  </section>
+
+</main>

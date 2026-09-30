@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>損益分岐点｜新任管理職研修 第3講</title>
+<meta name="description" content="固定費・単価・変動費のつまみを動かすと、売上と費用の線が傾き、交点（損益分岐点）が動き、黒字と赤字の面が塗り替わる。交点が図の外へ出ると「黒字にならない」と出る。例題のクイズつき。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&amp;family=Zen+Kaku+Gothic+Antique:wght@400;500;700;900&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く。下にはみ出すときは自動で上へ）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x|pad2|year"  data-unit="時間"  data-sign（マイナスで赤。data-sign="rev" で逆）
+                                  data-show="x" で入力値そのものを表示
+                                  文字を返す式なら文字をそのまま出す（例 data-out="rev >= goal ? '届く' : '届かない'"）
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  ── 第2弾で増えた部品 ──
+  data-morph="名前"             <main class="deck" data-transition="morph"> のとき、前のページと次のページで
+                                同じ名前の要素が、位置・大きさ・色・角丸を保ったまま変形してつながる（Keynote のマジックムーブ）
+                                data-morph-enter  変形しない要素をあとからふわっと出す（style="--d:.2" で0.2秒遅らせる）
+  data-calc の CSS 変数         入力と data-let の値は、その箱の --名前 にも入る。
+                                例 width:calc(var(--m) / 1000 * 1px) で、スライダーに合わせて図形の大きさが変わる
+  data-calc="global"            その値をほかのページでも使う：data-global-out="式"（文字を返す式なら文字をそのまま出す）
+                                と、.deck に付く CSS 変数 --名前（例：選んだプランの見積書を次のページに出す）
+  data-orbit > .orbit > .face   ドラッグで回せる立体。面は transform:translateZ() などで並べる
+                                面（.face）の中は平面になる。立体の中の要素は data-morph で外へつなげない
+                                data-rx / data-ry で最初の向き、data-spin でゆっくり回る。ダブルクリックで元の向き
+  data-sheet（figure）> table   表の数字をクリックして直せる。Excel やスプレッドシートでコピーした表を貼ると、
+                                グラフ（data-chart="bar|stack|line"）と集計が作り直される
+                                マイナスの値は下向きの棒。data-min="6000" で目盛りの下限を決められる（棒・折れ線）
+                                data-sheet-out="sum('売上')"  集計：sum avg first last max min growth(伸び率%) total() n
+                                  col('列名') で列の数字の並び（col(0) は1列目の数字）、label(-1) で最後の行の項目名
+                                  列は名前でも番号（0から）でも指定できる。式が文字を返せば、その文字を出す
+                                  数字の書式は要素ごとに data-format（figure の data-format は目盛りだけ。省略すると整数）
+                                  貼った数字の読み方：カンマ・¥・▲ は読める。「1.2億」「45件」の単位は読み飛ばす（換算しない）
+                                  表は data-calc とはつながらない（表を貼っても、スライダーの計算の数字は変わらない）
+                                [data-sheet-paste] を押すと貼り付け待ち、[data-sheet-reset] で元の表に戻る
+  .draw（SVG の path など）      表示されたときに線が描かれていく（.step と組むと → で描かれる）
+  data-morph-delay="0.2"        その要素だけ変形を遅らせて始める（秒）
+  <section class="slide" data-title="…">  一覧・発表者画面に出るページ名
+  <section class="slide" data-enter="none">  ページを開いたときのふわっと出る動きを止める
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|morph|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid .mark .step .draw .num .kpi .lead .pill .foot などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：上質な教科書 / 管理職研修・管理会計の講義
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 一続きに変形する切り替え（data-morph と組む）：新しいページはすぐ出て、前のページは溶けて消える */
+.deck[data-transition=morph] .slide{transform:none;transition:opacity .28s ease-out,visibility 0s .28s}
+.deck[data-transition=morph] .slide.active{transition:none}
+.deck[data-transition=morph] .slide.active > .bg{animation:ugk-fade .5s var(--ease) both}
+@keyframes ugk-fade{from{opacity:0}}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+/* 変形してつながる要素（と、それを包む箱）は、ふわっと出る動きを付けない */
+.deck[data-transition=morph] .slide.active > [data-morph],
+.deck[data-transition=morph] .slide.active > :has([data-morph]){animation:none!important}
+.deck[data-transition=morph] .slide.active [data-morph-enter]{animation:ugk-enter .7s var(--ease) both;animation-delay:calc(var(--d,0) * 1s + .25s)}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted);pointer-events:none}
+.foot a,.foot button,.foot summary{pointer-events:auto}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+:where(details.why.float){position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 線が描かれる（.draw を SVG の path / line / polyline に。pathLength は自動で付く） ---------- */
+:is(path,line,polyline,polygon,circle,ellipse,rect).draw{stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s var(--ease)}
+.slide.active :is(path,line,polyline,polygon,circle,ellipse,rect).draw:not(.step):not(.step .draw),.step.shown :is(path,line,polyline,polygon,circle,ellipse,rect).draw,:is(path,line,polyline,polygon,circle,ellipse,rect).draw.step.shown{stroke-dashoffset:0}
+:is(path,line,polyline,polygon,circle,ellipse,rect).draw.step{opacity:1;transform:none}
+
+/* ---------- ドラッグで回せる立体（data-orbit > .orbit の中に、面を translateZ で並べる） ---------- */
+[data-orbit]{perspective:var(--persp,1800px);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+[data-orbit].grabbing{cursor:grabbing}
+[data-orbit] .orbit{position:relative;transform-style:preserve-3d;
+  transform:rotateX(calc(var(--rx,-22) * 1deg)) rotateY(calc(var(--ry,32) * 1deg))}
+[data-orbit] .orbit *{transform-style:preserve-3d}
+[data-orbit] .face{position:absolute;backface-visibility:visible}
+[data-orbit] .orbit .face{transform-style:flat} /* 面の中の飾りは面に貼りつける */
+.orbit-hint{font-size:14px;color:var(--muted);letter-spacing:.04em}
+
+/* ---------- 表を貼って作り直すグラフ（data-sheet） ---------- */
+[data-sheet]{--s1:var(--accent);--s2:color-mix(in srgb,var(--accent) 45%,var(--muted));--s3:var(--muted);--s4:color-mix(in srgb,var(--muted) 40%,var(--line));
+  --s5:color-mix(in srgb,var(--accent) 70%,var(--bg));--s6:color-mix(in srgb,var(--muted) 70%,var(--bg));--s7:color-mix(in srgb,var(--accent) 35%,var(--bg));--s8:color-mix(in srgb,var(--muted) 35%,var(--bg));margin:0}
+[data-sheet] table td[contenteditable]{cursor:text;outline:none;border-radius:4px;transition:background .2s}
+[data-sheet] table td[contenteditable]:hover{background:var(--accent-soft)}
+[data-sheet] table td[contenteditable]:focus{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.sheet-pad{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;resize:none}
+.sheet-chart{position:relative;display:flex;flex-direction:column;gap:14px;height:320px}
+.sheet-chart .sc-legend{display:flex;gap:18px;font-size:15px;color:var(--muted)}
+.sheet-chart .sc-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c);margin-right:7px;vertical-align:-1px}
+.sheet-chart .sc-plot{position:relative;flex:1;margin:0 0 30px 56px}
+.sheet-chart .sc-gl{position:absolute;left:0;right:0;border-top:1px solid var(--line)}
+.sheet-chart .sc-gl span{position:absolute;right:100%;margin-right:10px;top:-.7em;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sheet-chart .sc-groups{position:absolute;inset:0;display:flex}
+.sheet-chart .sc-g{position:relative;flex:1;display:flex;justify-content:center}
+.sheet-chart .sc-bars{position:absolute;inset:0 14% 0}
+.sheet-chart .sc-bars>i{position:absolute;left:calc(var(--x,0) * 1%);width:calc(var(--w,100) * 1% - 4px);bottom:calc(var(--b,0) * 1%);height:calc(var(--h,0) * 1%);
+  background:var(--c);border-radius:4px 4px 0 0;transition:height .6s var(--ease),bottom .6s var(--ease)}
+.sheet-chart .sc-bars>i.neg{border-radius:0 0 4px 4px;background:color-mix(in srgb,var(--bad) 75%,var(--c))}
+.sheet-chart .sc-bars>i.neg>em{bottom:auto;top:100%;margin:5px 0 0}
+.sheet-chart .sc-zero{position:absolute;left:0;right:0;border-top:1.5px solid var(--muted)}
+.sheet-chart .sc-bars>i>em{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:5px;font-style:normal;font-size:14px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sheet-chart.multi .sc-bars>i>em{display:none}
+.sheet-chart.sc-stack .sc-bars>i{width:100%;border-radius:0}
+.sheet-chart .sc-l{position:absolute;left:2px;right:2px;top:100%;margin-top:8px;font-size:14px;line-height:1.3;color:var(--muted);text-align:center;overflow-wrap:anywhere}
+.sheet-chart .sc-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sheet-chart .sc-lines polyline{fill:none;stroke:var(--c);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.sheet-chart .sc-dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--bg);border:3px solid var(--c)}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt,svg .draw,.sheet-chart .sc-bars>i{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  :is(path,line,polyline,polygon,circle,ellipse,rect).draw{stroke-dashoffset:0!important}
+  .sheet-pad{display:none}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#fbfaf6; --surface:#ffffff; --ink:#1b2130; --muted:#525b69; --line:#dcd8cc; --grid:#ebe8df;
+  --accent:#1d5aa6; --accent-ink:#ffffff; --good:#1d5aa6; --bad:#c23d21; --frame:#e7e4da;
+  --blue:#1d5aa6; --blue-soft:rgb(29 90 166 / .16); --red:#c23d21; --red-soft:rgb(194 61 33 / .17); --marker:#f7df6e;
+  --font:"Zen Kaku Gothic Antique","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Source Serif 4","Zen Kaku Gothic Antique","Hiragino Sans",serif;
+  --head-weight:700; --head-track:.01em; --radius:4px; --shadow:none;
+  --pad-y:52px; --pad-x:72px;
+}
+.deck{background:var(--bg)}
+.num{font-family:var(--font-num);font-variant-numeric:lining-nums tabular-nums}
+var,.v{font-family:var(--font-num);font-style:italic;font-weight:600}
+.mk{background:linear-gradient(transparent 58%,var(--marker) 58%,var(--marker) 92%,transparent 92%)}
+.b{color:var(--blue)}.r{color:var(--red)}
+
+/* 柱・ノンブル・爪（ページの端の見出し） */
+.run{position:absolute;left:var(--pad-x);right:var(--pad-x);top:24px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);letter-spacing:.06em}
+.run b{color:var(--ink);font-weight:700;margin-right:12px}
+.run::after{content:"";position:absolute;left:0;right:0;top:28px;border-top:2px solid var(--ink)}
+.foot{bottom:20px;font-size:14px;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
+.foot .pg{font-family:var(--font-num);font-size:18px;color:var(--ink);font-weight:600}
+.thumb{position:absolute;right:0;top:120px;display:grid;gap:4px}
+.thumb i{display:grid;place-items:center;width:30px;height:62px;background:#ecebe4;color:#6a7280;font-style:normal;font-size:13px;font-weight:700;writing-mode:vertical-rl;letter-spacing:.1em;border-radius:4px 0 0 4px}
+.thumb i.on{background:var(--blue);color:#fff;width:38px;margin-left:-8px}
+
+/* 節の見出し（番号の箱＋結論の一文） */
+.sec{display:flex;align-items:center;gap:12px;margin:22px 0 10px}
+.sec .no{font-family:var(--font-num);font-weight:700;font-size:18px;background:var(--blue);color:#fff;padding:3px 10px 2px;border-radius:3px;letter-spacing:.02em}
+.sec .t{font-size:16px;font-weight:700;color:var(--blue);letter-spacing:.14em}
+h2{font-size:32px;line-height:1.45;font-weight:700;letter-spacing:.01em;margin:0;max-width:1080px}
+h2 .b,h2 .r{font-weight:900}
+
+/* 部品の見た目を教科書の作法に */
+details.why{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:0 4px 4px 0;background:#fff}
+details.why>summary{color:var(--blue);font-size:17px;padding:9px 14px}
+details.why>summary::before{background:var(--blue);color:#fff;border-radius:3px;width:20px;height:20px;font-size:16px}
+details.why>.body{font-size:17px;color:#3e4655;line-height:1.8}
+.box{border:1.5px solid var(--ink);border-radius:6px;background:#fff;position:relative;padding:22px 24px 18px}
+.box>.lbl{position:absolute;left:18px;top:-13px;background:var(--ink);color:#fff;font-size:14px;font-weight:700;letter-spacing:.14em;padding:3px 12px;border-radius:3px}
+.box.pt{border-color:var(--blue)}.box.pt>.lbl{background:var(--blue)}
+
+/* ============ 損益分岐点図表（HTML の要素だけで描く） ============ */
+@property --F{syntax:"<number>";inherits:true;initial-value:3000000}
+@property --p{syntax:"<number>";inherits:true;initial-value:1200}
+@property --v{syntax:"<number>";inherits:true;initial-value:700}
+@property --qx{syntax:"<number>";inherits:true;initial-value:.6}
+@property --qy{syntax:"<number>";inherits:true;initial-value:.36}
+@property --ok{syntax:"<number>";inherits:true;initial-value:1}
+@property --m1{syntax:"<number>";inherits:true;initial-value:0}
+@property --m2{syntax:"<number>";inherits:true;initial-value:0}
+@property --d8{syntax:"<number>";inherits:true;initial-value:1000000}
+@property --fl{syntax:"<number>";inherits:true;initial-value:0}
+@property --fu{syntax:"<number>";inherits:true;initial-value:0}
+.lab-calc{transition:--F .35s var(--ease),--p .35s var(--ease),--v .35s var(--ease),--qx .35s var(--ease),--qy .35s var(--ease),--ok .3s,--m1 .3s,--m2 .3s,--d8 .35s,--fl .3s,--fu .3s}
+
+.fig{position:relative;margin:0;width:calc(var(--W) * 1px + 70px);--h:calc(var(--H) * 1px);--w:calc(var(--W) * 1px)}
+.fig .plot{position:absolute;left:70px;top:0;width:var(--w);height:var(--h);overflow:hidden;background:#fff;
+  --fy:calc(var(--F) / 20000000 * var(--H) * 1px);--sr:calc(var(--p) * var(--H) / 2000 * 1px);--vr:calc(var(--v) * var(--H) / 2000 * 1px)}
+.fig .over{position:absolute;left:70px;top:0;width:var(--w);height:var(--h);pointer-events:none}
+.fig .gx,.fig .gy{position:absolute;background:var(--grid)}
+.fig .gx{top:0;bottom:0;width:1px}.fig .gy{left:0;right:0;height:1px}
+.fig .band{position:absolute;left:0;right:0;bottom:0;height:var(--fy);
+  background:repeating-linear-gradient(-45deg,rgb(27 33 48 / .16) 0 1.2px,transparent 1.2px 7px),rgb(27 33 48 / .04)}
+.fig .wedge{position:absolute;inset:0;background:rgb(27 33 48 / .07);
+  clip-path:polygon(0 calc(var(--h) - var(--fy)),var(--w) calc(var(--h) - var(--fy) - var(--vr)),var(--w) calc(var(--h) - var(--fy)))}
+.fig .loss,.fig .gain,.fig .loss>i,.fig .gain>i{position:absolute;inset:0;display:block}
+.fig .loss{clip-path:polygon(0 calc(var(--h) - var(--fy)),var(--w) calc(var(--h) - var(--fy) - var(--vr)),var(--w) var(--h),0 var(--h))}
+.fig .loss>i{background:var(--red-soft);clip-path:polygon(0 -4000px,var(--w) -4000px,var(--w) calc(var(--h) - var(--sr)),0 var(--h))}
+.fig .gain{clip-path:polygon(0 var(--h),var(--w) calc(var(--h) - var(--sr)),var(--w) var(--h))}
+.fig .gain>i{background:var(--blue-soft);clip-path:polygon(0 -4000px,var(--w) -4000px,var(--w) calc(var(--h) - var(--fy) - var(--vr)),0 calc(var(--h) - var(--fy)))}
+.fig .ln{position:absolute;left:0;width:2400px;height:3px;margin-bottom:-1.5px;transform-origin:0 50%;border-radius:2px}
+.fig .ln.sales{bottom:0;background:var(--blue);transform:rotate(atan2(calc(var(--p) * var(--H) / -2000), var(--W)))}
+.fig .ln.cost{bottom:var(--fy);background:var(--red);transform:rotate(atan2(calc(var(--v) * var(--H) / -2000), var(--W)))}
+.fig .ln.fix{bottom:var(--fy);height:1.5px;margin-bottom:-.75px;background:#6d7380}
+.fig .plan{position:absolute;left:80%;top:0;bottom:0;border-left:1.5px dashed #9aa0aa}
+.fig .gap{position:absolute;left:calc(80% - 5px);width:10px;
+  bottom:min(calc(var(--p) * var(--H) * .0004px),calc(var(--fy) + var(--v) * var(--H) * .0004px));
+  height:max(calc(var(--p) * var(--H) * .0004px - var(--fy) - var(--v) * var(--H) * .0004px),calc(var(--fy) + var(--v) * var(--H) * .0004px - var(--p) * var(--H) * .0004px))}
+.fig .gap.pos{background:var(--blue);opacity:clamp(0, var(--d8) / 20000, 1)}
+.fig .gap.neg{background:var(--red);opacity:clamp(0, var(--d8) / -20000, 1)}
+.fig .dropv{position:absolute;left:calc(var(--qx) * var(--w));bottom:0;height:calc(var(--qy) * var(--h));border-left:1.5px dotted var(--ink);opacity:var(--ok)}
+.fig .droph{position:absolute;left:0;bottom:calc(var(--qy) * var(--h));width:calc(var(--qx) * var(--w));border-top:1.5px dotted var(--ink);opacity:var(--ok)}
+.fig .pt{position:absolute;left:calc(var(--qx) * var(--w));bottom:calc(var(--qy) * var(--h));width:0;height:0;opacity:var(--ok)}
+.fig .pt::before{content:"";position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-sizing:border-box}
+.fig .pt>span{position:absolute;white-space:nowrap;font-size:16px;font-weight:700;background:var(--ink);color:#fff;padding:5px 10px;border-radius:3px;line-height:1.3;
+  left:16px;top:calc(-50px + var(--fu) * 64px);transform:translateX(calc(var(--fl) * (-100% - 32px)))}
+.fig .pt>span small{display:block;font-weight:500;font-size:13px;opacity:.85}
+.fig .xl,.fig .yl{position:absolute;font-family:var(--font-num);font-size:15px;color:var(--muted);white-space:nowrap}
+.fig .yl{right:calc(var(--w) + 10px);transform:translateY(50%)}
+.fig .xl{top:calc(var(--h) + 8px);transform:translateX(-50%)}
+.fig .axt{position:absolute;font-size:14px;color:var(--muted);font-weight:700;white-space:nowrap}
+.fig .axis-x{position:absolute;left:70px;top:var(--h);width:var(--w);border-top:1.5px solid var(--ink)}
+.fig .axis-y{position:absolute;left:70px;top:0;height:var(--h);border-left:1.5px solid var(--ink)}
+.fig .qlab{position:absolute;top:calc(var(--h) + 32px);left:calc(70px + var(--qx) * var(--w));transform:translateX(-50%);opacity:var(--ok);
+  font-family:var(--font-num);font-weight:700;font-size:16px;color:#fff;background:var(--ink);padding:1px 8px;border-radius:3px;white-space:nowrap}
+.fig .plan-l{position:absolute;left:calc(70px + .8 * var(--w) + 6px);top:6px;font-size:14px;color:var(--muted);font-weight:700;white-space:nowrap;background:rgb(255 255 255 / .85);padding:0 4px}
+.fig .tag{position:absolute;font-size:15px;font-weight:700;white-space:nowrap;padding:0 4px;background:rgb(255 255 255 / .85)}
+.fig figcaption{position:absolute;left:70px;top:calc(var(--h) + 62px);font-size:15px;color:var(--muted);white-space:nowrap}
+.fig figcaption b{color:var(--ink);margin-right:10px}
+/* 交点が図の外へ出たときの札 */
+.fig .out{position:absolute;left:14px;top:14px;max-width:420px;background:#fff;border:1.5px solid var(--red);border-radius:4px;padding:10px 14px;font-size:16px;line-height:1.55;font-weight:700;color:var(--red)}
+.fig .out small{display:block;font-weight:500;color:var(--muted);font-size:14px;margin-top:2px}
+.fig .out.o2{opacity:var(--m2)}.fig .out.o1{opacity:var(--m1)}
+.fig .arrow{position:absolute;right:0;top:0;height:0;opacity:var(--m2)}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover .cv{display:grid;grid-template-columns:540px 1fr;gap:56px;flex:1;margin-top:44px;align-items:start}
+.s-cover .chap{display:flex;align-items:baseline;gap:18px;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.s-cover .chap b{font-family:var(--font-num);font-size:96px;line-height:.9;font-weight:700;color:var(--blue)}
+.s-cover .chap span{font-size:18px;font-weight:700;letter-spacing:.2em;line-height:1.6}
+.s-cover .chap span small{display:block;font-family:var(--font-num);font-style:italic;font-weight:400;letter-spacing:.02em;color:var(--muted);font-size:17px}
+.s-cover h1{font-size:64px;line-height:1.2;margin-top:24px;font-weight:900;letter-spacing:.04em}
+.s-cover h1 ruby rt{font-size:15px;font-weight:500;letter-spacing:.3em;color:var(--muted)}
+.s-cover .lead{font-size:22px;line-height:1.75;color:var(--ink);margin-top:20px;font-weight:500}
+.s-cover .goal{margin-top:34px;display:grid;gap:8px;padding-top:26px}
+.s-cover .goal div{display:grid;grid-template-columns:28px 1fr;font-size:18px;line-height:1.55;color:var(--muted)}
+.s-cover .goal div i{font-style:normal;font-family:var(--font-num);font-weight:700;color:var(--blue)}
+.s-cover .fig{margin-top:8px}
+
+/* ---------- 2 費用を分ける ---------- */
+.two{display:grid;grid-template-columns:1fr 640px;gap:40px;margin-top:22px;flex:1}
+.kinds{display:grid;gap:18px;align-content:start}
+.kind{display:grid;grid-template-columns:66px 1fr;gap:16px;align-items:start}
+.kind .sw{height:66px;border-radius:4px;border:1.5px solid var(--ink)}
+.kind .sw.fx{background:repeating-linear-gradient(-45deg,rgb(27 33 48 / .22) 0 1.2px,transparent 1.2px 7px),#fff}
+.kind .sw.vr{background:linear-gradient(to top left,rgb(27 33 48 / .12) 50%,#fff 50%);border-color:var(--ink);box-shadow:inset 0 0 0 0 #fff}
+.kind .sw.vr{position:relative}.kind .sw.vr::after{content:"";position:absolute;left:-2px;right:-2px;top:50%;border-top:3px solid var(--red);transform:rotate(-45deg)}
+.kind h3{font-size:23px;margin:0 0 4px}
+.kind p{font-size:18px;line-height:1.7;color:var(--muted);margin:0}
+.kind p b{color:var(--ink)}
+
+/* ---------- 3 限界利益 ---------- */
+.mc{margin-top:24px;display:grid;gap:22px}
+.unit{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:18px}
+.unit .h{font-size:18px;font-weight:700;line-height:1.45}
+.unit .h small{display:block;font-weight:500;color:var(--muted);font-size:15px}
+.bar{display:flex;height:64px;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden;background:#fff}
+.bar>div{display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:18px;font-weight:700}
+.bar>div b{font-family:var(--font-num);font-size:28px;font-weight:700}
+.bar .vc{flex:0 0 58.33%;background:var(--red-soft);color:#8e2c16;border-right:1.5px solid var(--ink)}
+.bar .cm{flex:1;background:var(--blue);color:#fff}
+.scale{position:relative;height:26px;margin-left:168px;font-family:var(--font-num);font-size:15px;color:var(--muted)}
+.scale span{position:absolute;transform:translateX(-50%)}
+.fill{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:18px}
+.fill .track{position:relative;height:64px;border:1.5px solid var(--ink);border-radius:4px;background:repeating-linear-gradient(-45deg,rgb(27 33 48 / .14) 0 1.2px,transparent 1.2px 7px),#fff;overflow:hidden}
+.fill .track i{position:absolute;top:0;bottom:0;width:calc(100% / 6 - 3px);background:var(--blue);opacity:.9}
+.fill .track em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:18px;font-weight:700;color:var(--ink)}
+.fill .track em span{background:#fff;padding:2px 10px;border-radius:3px}
+.short{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--ink);margin-top:-4px}
+.short .c{padding:10px 20px 0;border-left:1px solid var(--line)}.short .c:first-child{border-left:0;padding-left:0}
+.short span{display:block;font-size:16px;font-weight:700;color:var(--muted)}
+.short b{display:block;font-size:36px;font-weight:700;line-height:1.2}.short b small{font-family:var(--font);font-size:17px;margin-left:2px}
+.short em{display:block;font-style:normal;font-size:15px;color:var(--muted);line-height:1.5}
+.formula{display:grid;grid-template-columns:auto auto auto auto auto;align-items:center;justify-content:start;gap:22px;font-size:22px;font-weight:700}
+.frac{display:grid;text-align:center;gap:6px}
+.frac>span:first-child{border-bottom:2px solid var(--ink);padding:0 10px 6px}
+.formula .eq{font-family:var(--font-num);font-size:30px;font-weight:400}
+.formula .ans{font-family:var(--font-num);font-size:54px;font-weight:700;color:var(--blue);line-height:1}
+.formula .ans small{font-family:var(--font);font-size:22px;margin-left:4px}
+
+/* ---------- 4 図で動かす ---------- */
+.lab-calc{display:grid;grid-template-columns:690px 1fr;gap:34px;margin-top:22px}
+.ctl .field{margin-bottom:4px;gap:0}
+.ctl .field>label{font-size:17px;color:var(--ink);font-weight:700}
+.ctl .field>label b{font-family:var(--font-num);font-size:24px}
+.ctl .field>label .sw2{display:inline-block;width:22px;height:4px;border-radius:2px;margin-right:8px;vertical-align:5px}
+.ctl .field small{display:block;font-size:14px;color:var(--muted);font-weight:500;margin-top:-2px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:26px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#e4e1d7}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;background:#fff;border:3px solid var(--c,var(--ink));box-shadow:0 1px 3px rgb(0 0 0 / .2)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#e4e1d7}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--c,var(--ink))}
+.res{border-top:2px solid var(--ink);margin-top:6px}
+.res .row{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:17px;font-weight:700}
+.res .row>span small{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.res .row .val{position:relative;text-align:right;font-family:var(--font-num);font-size:32px;font-weight:700;line-height:1.1;min-width:170px}
+.res .row .val .a{opacity:calc(1 - var(--m1))}
+.res .row .val .none{position:absolute;right:0;top:50%;transform:translateY(-50%);font-family:var(--font);font-size:20px;color:var(--red);opacity:var(--m1)}
+.res .row .val [data-sign].pos{color:var(--blue)}
+.say{position:relative;margin-top:10px;min-height:82px}
+.say p{position:absolute;inset:0;margin:0;font-size:16px;line-height:1.6;padding:9px 14px;border-radius:4px}
+.say .s0{opacity:calc(1 - var(--m1) - var(--m2));background:#f1f5fb;color:#173f73}
+.say .s1{opacity:var(--m1);background:#fbefeb;color:#8e2c16}
+.say .s2{opacity:var(--m2);background:#fbefeb;color:#8e2c16}
+
+/* ---------- 5 例題（クイズ） ---------- */
+.ex{display:grid;grid-template-columns:1fr 420px;gap:40px;margin-top:26px}
+.ex .box p{font-size:19px;line-height:1.75;margin:0}
+.quiz{margin-top:20px}
+.quiz .choices{grid-template-columns:1fr 1fr;gap:10px}
+.quiz .choices>button{font-size:19px;padding:12px 16px;border:1.5px solid var(--line);border-radius:4px;background:#fff;font-weight:700;display:flex;gap:12px;align-items:center}
+.quiz .choices>button i{font-family:var(--font-num);font-style:normal;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink);font-size:16px;flex:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--blue);background:#eef3fa}
+.quiz.answered .choices>button[data-correct] i{background:var(--blue);border-color:var(--blue);color:#fff}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--red);background:#fbefeb}
+.quiz .explain{font-size:17px;line-height:1.75;color:var(--ink);border-left:4px solid var(--marker);padding:4px 0 4px 14px;margin-top:14px}
+.cmp{display:grid;gap:18px;align-content:start}
+.cmp .it .h{font-size:16px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.cmp .it .h b{font-family:var(--font-num);color:var(--ink);font-size:20px}
+.cmp .bar{height:50px}
+.cmp .bar>div b{font-size:22px}
+.cmp .bar.cut .vc{flex:0 0 64.8%}
+.cmp .need{border-top:2px solid var(--ink);padding-top:12px;font-size:17px;line-height:1.6;color:var(--muted)}
+.cmp .need b{display:block;font-family:var(--font-num);font-size:44px;color:var(--red);line-height:1.1}
+.cmp .need b small{font-family:var(--font);font-size:18px;color:var(--ink);margin-left:4px}
+
+/* ---------- 6 打ち手の比較 ---------- */
+.tbl{margin-top:26px;border-top:2px solid var(--ink)}
+.tbl .tr{display:grid;grid-template-columns:260px 1fr 150px 150px;align-items:center;gap:20px;padding:12px 0;border-bottom:1px solid var(--line)}
+.tbl .th{font-size:14px;color:var(--muted);font-weight:700;padding:8px 0}
+.tbl .nm{font-size:19px;font-weight:700;line-height:1.4}
+.tbl .nm small{display:block;font-size:14px;color:var(--muted);font-weight:500}
+.tbl .ln2{position:relative;height:30px}
+.tbl .ln2 .rail{position:absolute;left:0;right:0;top:14px;border-top:1px solid var(--line)}
+.tbl .ln2 .base{position:absolute;top:0;bottom:0;left:calc(6000 / 7000 * 100%);border-left:1.5px dashed #9aa0aa}
+.tbl .ln2 .seg{position:absolute;top:9px;height:12px;left:calc(var(--q) / 7000 * 100%);right:calc(100% - 6000 / 7000 * 100%);background:var(--blue);border-radius:2px}
+.tbl .ln2 .dot{position:absolute;top:5px;left:calc(var(--q) / 7000 * 100% - 10px);width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
+.tbl .n{font-family:var(--font-num);font-size:28px;font-weight:700;text-align:right}
+.tbl .n small{font-family:var(--font);font-size:15px;margin-left:2px}
+.tbl .tr.best{background:linear-gradient(90deg,rgb(247 223 110 / .45),rgb(247 223 110 / 0) 70%)}
+.tbl .tr.best .n.q{color:var(--blue)}
+.tbl .tr.now .seg{display:none}
+.after{display:grid;grid-template-columns:1fr 420px;gap:34px;margin-top:18px;align-items:start}
+.after details.why,.kinds details.why{position:relative}
+.after details.why[open]>.body,.kinds details.why[open]>.body{position:absolute;z-index:5;left:-5px;right:-1px;bottom:calc(100% + 8px);background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue);box-shadow:0 10px 28px rgb(20 30 50 / .14);padding:14px 18px}
+.after p{font-size:18px;line-height:1.75;margin:0;color:var(--ink)}
+
+/* ---------- 7 まとめ ---------- */
+.sum{display:grid;grid-template-columns:1fr 470px;gap:40px;margin-top:30px}
+.sum ol{margin:0;padding:0;list-style:none;display:grid;gap:34px;counter-reset:n;align-content:start;padding-top:6px}
+.sum li{counter-increment:n;display:grid;grid-template-columns:52px 1fr;font-size:23px;line-height:1.6}
+.sum li::before{content:counter(n);font-family:var(--font-num);font-weight:700;font-size:22px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff}
+.sum li small{display:block;font-size:18px;color:var(--muted)}
+.work .q{display:grid;grid-template-columns:1fr 150px;align-items:end;gap:10px;padding:15px 0;border-bottom:1px solid var(--line);font-size:18px}
+.work .q .blank{border-bottom:1.5px solid var(--ink);height:26px;text-align:right;font-size:15px;color:var(--muted)}
+.work .q.res2{border-bottom:0;font-weight:700}
+.work .q.res2 .blank{border:2px solid var(--blue);border-radius:4px;height:38px}
+.work .note{font-size:15px;color:var(--muted);margin-top:8px;line-height:1.6}
+.next{position:absolute;left:72px;right:72px;bottom:58px;display:flex;gap:18px;align-items:baseline;border-top:2px solid var(--ink);padding-top:12px;font-size:18px}
+.next b{font-family:var(--font-num);color:var(--blue);font-size:20px}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="fade">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="run"><span><b>新任管理職研修</b>管理会計のきほん</span><span>2026年度 第2期</span></div>
+    <div class="cv">
+      <div>
+        <div class="chap"><b>03</b><span>第3講<small>Break-even Point</small></span></div>
+        <h1><ruby>損益分岐点<rt>そんえきぶんきてん</rt></ruby></h1>
+        <p class="lead">売上の線と費用の線が交わる所から、<br>ようやく利益が出はじめる。</p>
+        <div class="goal box"><span class="lbl">この講のねらい</span>
+          <div><i>1</i>費用を「固定費」と「変動費」に分けられる</div>
+          <div><i>2</i>損益分岐点を、自分の部署の数字で出せる</div>
+          <div><i>3</i>値下げ・コスト削減が交点をどう動かすか言える</div>
+        </div>
+      </div>
+      <figure class="fig" style="--W:470;--H:400;--F:3000000;--p:1200;--v:700;--qx:.6;--qy:.36;--ok:1;--fl:0;--fu:0;--d8:1000000;--m1:0;--m2:0">
+        <div class="plot">
+          <i class="gx" style="left:20%"></i><i class="gx" style="left:40%"></i><i class="gx" style="left:60%"></i><i class="gx" style="left:80%"></i>
+          <i class="gy" style="top:25%"></i><i class="gy" style="top:50%"></i><i class="gy" style="top:75%"></i>
+          <div class="band"></div><div class="wedge"></div>
+          <div class="loss"><i></i></div><div class="gain"><i></i></div>
+          <div class="ln fix"></div><div class="ln cost"></div><div class="ln sales"></div>
+          <div class="dropv"></div><div class="droph"></div>
+        </div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <div class="over">
+          <div class="pt"><span>損益分岐点<small>6,000個・720万円</small></span></div>
+          <div class="tag b" style="left:392px;top:128px">売上高</div>
+          <div class="tag r" style="left:292px;top:262px">総費用</div>
+          <div class="tag" style="left:10px;top:306px;color:var(--muted)">固定費</div>
+        </div>
+        <span class="yl" style="top:var(--h)">0</span>
+        <span class="yl" style="top:calc(var(--h) / 2)">1,000万</span>
+        <span class="yl" style="top:0">2,000万円</span>
+        <span class="xl" style="left:calc(70px + var(--w))">1万個</span>
+        <span class="xl" style="left:calc(70px + var(--w) / 2)">5,000</span>
+        <figcaption><b>図3-1</b>損益分岐点図表（月あたり）　<span class="b">青＝黒字</span>　<span class="r">朱＝赤字</span></figcaption>
+      </figure>
+    </div>
+    <div class="foot"><span>講師：サンプル経営研究所　数字は架空のサンプルです</span><span class="pg">1</span></div>
+    <aside class="notes">最初に「今日のゴールは3つ」と言い、右の図を指して「今日の90分で、この図が自分で描けて、動かせるようになります」と約束する。専門用語は「そんえきぶんきてん」と読みだけ確認する。</aside>
+  </section>
+
+  <!-- 2 費用を分ける -->
+  <section class="slide" data-title="費用の分け方">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-1 費用の分け方</span><span>例：保存容器セット（1個1,200円）</span></div>
+    <nav class="thumb" aria-hidden="true"><i class="on">3-1</i><i>3-2</i><i>3-3</i><i>3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-1</span><span class="t">費用の分け方</span></div>
+    <h2>費用は「売らなくても出る<span class="mk">固定費</span>」と<br>「売るほど増える<span class="mk">変動費</span>」に分けて考える。</h2>
+    <div class="two">
+      <div class="kinds">
+        <div class="kind"><div class="sw fx"></div><div><h3>固定費　月300万円</h3><p>家賃、正社員の給与、機械のリース料など。<b>1個も売れなくても毎月出ていく。</b></p></div></div>
+        <div class="kind"><div class="sw vr"></div><div><h3 class="r">変動費　1個700円</h3><p>材料、仕入れ、送料、販売手数料など。<b>売った数に比例して増える。</b></p></div></div>
+        <div class="box" style="margin-top:12px"><span class="lbl">問 3-1</span><p style="margin:0;font-size:18px;line-height:1.7">あなたの部署の費用を、固定費と変動費で2つずつ挙げてみよう。<span style="color:var(--muted)">（2分・隣の人と見せ合う）</span></p></div>
+        <details class="why"><summary>迷いやすい費用はどちら？</summary><div class="body">残業代・パートの時給：作る量で増えるなら変動費。広告費：売れても売れなくても月額で出すなら固定費。迷ったら「来月1個も売れなかったら、この費用は出るか」で分ける。</div></details>
+      </div>
+      <figure class="fig" style="--W:540;--H:330;--F:3000000;--p:1200;--v:700;--ok:0;--d8:0;--m1:0;--m2:0">
+        <div class="plot">
+          <i class="gx" style="left:20%"></i><i class="gx" style="left:40%"></i><i class="gx" style="left:60%"></i><i class="gx" style="left:80%"></i>
+          <i class="gy" style="top:25%"></i><i class="gy" style="top:50%"></i><i class="gy" style="top:75%"></i>
+          <div class="step" style="position:absolute;inset:0"><div class="band"></div><div class="ln fix"></div><div class="tag" style="left:14px;top:292px">① 固定費の帯（高さ＝月300万円）</div></div>
+          <div class="step" style="position:absolute;inset:0"><div class="wedge"></div><div class="ln cost"></div><div class="tag r" style="left:300px;top:170px">② 総費用＝固定費＋変動費</div><div class="tag" style="left:330px;top:244px;color:var(--muted);background:none">変動費（1個700円ずつ積もる）</div></div>
+        </div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <span class="yl" style="top:0">2,000万円</span><span class="yl" style="top:calc(var(--h) / 2)">1,000万</span>
+        <span class="xl" style="left:calc(70px + var(--w) / 2)">5,000</span><span class="xl" style="left:calc(70px + var(--w))">1万個</span>
+        <figcaption><b>図3-2</b>費用の線。→で固定費、変動費の順に描く</figcaption>
+      </figure>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="pg">2</span></div>
+    <aside class="notes">→を押すと、左の説明と右の図が1つずつ出る。固定費は「床」、変動費は「床の上に積もる傾き」と言い換えると伝わりやすい。受講者に自部署の費用を2つずつ挙げてもらう（2分）。</aside>
+  </section>
+
+  <!-- 3 限界利益 -->
+  <section class="slide" data-title="限界利益">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-2 限界利益</span><span>例：保存容器セット（1個1,200円）</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i class="on">3-2</i><i>3-3</i><i>3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-2</span><span class="t">限界利益</span></div>
+    <h2>1個売るたびに残る<span class="b">500円</span>が、月300万円の固定費を少しずつ埋めていく。</h2>
+    <div class="mc">
+      <div class="unit">
+        <div class="h">1個の売値<small>1,200円の内訳</small></div>
+        <div class="bar"><div class="vc">変動費<b class="num">700円</b></div><div class="cm">限界利益<b class="num">500円</b></div></div>
+      </div>
+      <div class="fill">
+        <div class="h" style="font-size:18px;font-weight:700;line-height:1.45">固定費 300万円<small style="display:block;font-weight:500;color:var(--muted);font-size:15px">500円ずつ埋める</small></div>
+        <div class="track">
+          <i style="left:0"></i><i style="left:calc(100% / 6)"></i><i style="left:calc(200% / 6)"></i><i style="left:calc(300% / 6)"></i><i style="left:calc(400% / 6)"></i><i style="left:calc(500% / 6)"></i>
+          <em><span>1,000個で50万円 × 6 ＝ 300万円</span></em>
+        </div>
+      </div>
+      <div class="box pt">
+        <span class="lbl">公式</span>
+        <div class="formula">
+          <span>損益分岐点の販売数量</span><span class="eq">＝</span>
+          <div class="frac"><span>固定費</span><span>単価 − 変動費</span></div><span class="eq">＝</span>
+          <div class="frac num" style="font-weight:600"><span>3,000,000</span><span>1,200 − 700</span></div>
+        </div>
+        <div style="position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;align-items:baseline;gap:14px"><span class="eq num" style="font-size:30px">＝</span><span class="formula"><span class="ans num"><span data-count="6000">6,000</span><small>個</small></span></span></div>
+      </div>
+      <div class="short">
+        <div class="c"><span>月5,000個しか売れないと</span><b class="num r">−50<small>万円</small></b><em>500円×5,000個＝250万円。固定費に50万円届かない</em></div>
+        <div class="c"><span>月6,000個でちょうど</span><b class="num">±0</b><em>ここが損益分岐点。ここから先の1個は、500円ずつ利益</em></div>
+        <div class="c"><span>予定の月8,000個なら</span><b class="num b">+100<small>万円</small></b><em>分岐点を超えた2,000個 × 500円</em></div>
+      </div>
+    </div>
+    <div class="foot"><span>「単価 − 変動費」を限界利益（げんかいりえき）という　数字は架空のサンプルです</span><span class="pg">3</span></div>
+    <aside class="notes">ここが今日いちばん大事な式。「1個売ると500円残る。固定費300万円を埋めるには6,000個」。式を覚えるより、この2本の帯のイメージを持って帰ってもらう。次のページで、この3つの数字をつまみで動かす。</aside>
+  </section>
+
+  <!-- 4 図で動かす（芯） -->
+  <section class="slide" data-title="図で動かす">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-3 図で動かす</span><span>つまみを動かしてください</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i>3-2</i><i class="on">3-3</i><i>3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-3</span><span class="t">図で動かす</span></div>
+    <h2>固定費が増えると交点は右へ逃げ、単価が上がると左へ寄ってくる。</h2>
+    <div class="lab-calc" data-calc data-let="mg = p - v; q = mg > 0 ? F / mg : 0; m1 = mg > 0 ? 0 : 1; m2 = (mg > 0 && q > 10000) ? 1 : 0; ok = 1 - m1 - m2; qx = min(q / 10000, 1.3); qy = min(p * q / 20000000, 1.3); fl = qx > 0.6 ? 1 : 0; fu = qy > 0.8 ? 1 : 0; d8 = mg * 8000 - F; sm = mg > 0 ? (8000 - q) / 8000 * 100 : 0">
+      <figure class="fig" style="--W:600;--H:370">
+        <div class="plot">
+          <i class="gx" style="left:20%"></i><i class="gx" style="left:40%"></i><i class="gx" style="left:60%"></i><i class="gx" style="left:80%"></i>
+          <i class="gy" style="top:25%"></i><i class="gy" style="top:50%"></i><i class="gy" style="top:75%"></i>
+          <div class="band"></div><div class="wedge"></div>
+          <div class="loss"><i></i></div><div class="gain"><i></i></div>
+          <div class="plan"></div>
+          <div class="gap pos"></div><div class="gap neg"></div>
+          <div class="ln fix"></div><div class="ln cost"></div><div class="ln sales"></div>
+          <div class="dropv"></div><div class="droph"></div>
+        </div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <div class="over">
+          <div class="pt"><span>損益分岐点<small><span data-out="q" data-unit="個"></span></small></span></div>
+          <div class="out o2">この条件では、1万個売っても黒字にならない<small>交点は図の右の外（<span data-out="q" data-unit="個"></span>）</small></div>
+          <div class="out o1">単価が変動費を下回り、交点はない<small>1個売るたびに赤字が増えていく</small></div>
+        </div>
+        <span class="plan-l">予定 8,000個</span>
+        <div class="qlab"><span data-out="q"></span></div>
+        <span class="yl" style="top:0">2,000万円</span><span class="yl" style="top:calc(var(--h) / 4)">1,500万</span><span class="yl" style="top:calc(var(--h) / 2)">1,000万</span><span class="yl" style="top:calc(var(--h) * .75)">500万</span>
+        <span class="xl" style="left:calc(70px + var(--w) * .2)">2,000</span><span class="xl" style="left:calc(70px + var(--w) * .4)">4,000</span><span class="xl" style="left:calc(70px + var(--w) * .6)">6,000</span><span class="xl" style="left:calc(70px + var(--w) * .8)">8,000</span><span class="xl" style="left:calc(70px + var(--w))">1万個</span>
+        <figcaption><b>図3-3</b><span class="b">━ 売上高</span>　<span class="r">━ 総費用</span>　予定の位置の縦の棒＝その月の利益（青）・損失（朱）</figcaption>
+      </figure>
+      <div class="ctl">
+        <div class="field"><label><span><span class="sw2" style="background:#6d7380"></span>固定費（月）</span><b data-show="F" data-format="man"></b></label><input type="range" name="F" min="1000000" max="8000000" step="100000" value="3000000" style="--c:#6d7380"></div>
+        <div class="field"><label><span><span class="sw2" style="background:var(--blue)"></span>単価（1個）</span><b data-show="p" data-format="yen"></b></label><input type="range" name="p" min="500" max="2000" step="10" value="1200" style="--c:var(--blue)"></div>
+        <div class="field"><label><span><span class="sw2" style="background:var(--red)"></span>変動費（1個）</span><b data-show="v" data-format="yen"></b></label><input type="range" name="v" min="200" max="1500" step="10" value="700" style="--c:var(--red)"></div>
+        <div class="res">
+          <div class="row"><span>損益分岐点の販売数量</span><span class="val"><span class="a" data-out="q" data-unit="個"></span><span class="none">なし</span></span></div>
+          <div class="row"><span>予定8,000個での利益<small>（単価−変動費）×8,000−固定費</small></span><span class="val"><span data-out="d8" data-format="man" data-sign></span></span></div>
+          <div class="row"><span>安全余裕率<small>予定が交点をどれだけ上回るか</small></span><span class="val"><span class="a" data-out="sm" data-format="pct" data-sign></span><span class="none">なし</span></span></div>
+        </div>
+        <div class="say">
+          <p class="s0">交点より右（たくさん売る側）が<b>黒字</b>、左が<b>赤字</b>。予定の8,000個が交点より右にあれば、その月は黒字。</p>
+          <p class="s2">交点が図の右の外へ出た。固定費を下げるか、1個の限界利益（単価−変動費）を増やさない限り、黒字にならない。</p>
+          <p class="s1">単価が変動費以下では、売るほど赤字が広がる。まず値付けか仕入れを見直す。</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">受講者に交代でつまみを触ってもらう。①固定費を上げる→交点が右へ。②単価を上げる→売上の線が立ち、交点が左へ。③変動費を単価に近づける→交点が図の外へ逃げ、右上に「黒字にならない」と出る。最後に元の値（300万・1,200円・700円）に戻して次へ。</aside>
+  </section>
+
+  <!-- 5 例題（クイズ） -->
+  <section class="slide" data-title="例題">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-4 例題</span><span>考える時間：2分</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i>3-2</i><i>3-3</i><i class="on">3-4</i><i>3-5</i></nav>
+    <div class="sec"><span class="no">3-4</span><span class="t">例題</span></div>
+    <h2>値下げの損は、「1個の限界利益」がどれだけ減るかで考える。</h2>
+    <div class="ex">
+      <div>
+        <div class="box"><span class="lbl">例題 3-4</span>
+          <p>単価1,200円・変動費700円の保存容器セットを、<b>1割値下げして1,080円</b>にする。値下げ前と同じ限界利益の合計（月400万円）を得るには、販売数量を何割増やす必要があるか。</p>
+        </div>
+        <div class="quiz">
+          <div class="choices">
+            <button><i>ア</i>1割（値下げ幅と同じ）</button>
+            <button><i>イ</i>約2割</button>
+            <button data-correct><i>ウ</i>約3割</button>
+            <button><i>エ</i>5割以上</button>
+          </div>
+          <div class="explain">値下げ後の限界利益は 1,080 − 700 ＝ <b>380円</b>。400万円 ÷ 380円 ≒ 10,526個。8,000個から <b>約32%</b> 多く売る必要がある。「1割引き」は、限界利益では「2割4分引き」になる。</div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="it"><div class="h">値下げ前<b class="num">1,200円</b></div><div class="bar"><div class="vc">700</div><div class="cm">限界利益<b class="num">500</b></div></div></div>
+        <div class="it"><div class="h">1割値下げ後<b class="num">1,080円</b></div><div class="bar cut"><div class="vc">700</div><div class="cm">限界利益<b class="num">380</b></div></div></div>
+        <div class="need">限界利益の減り方<b class="num">−24<small>%</small></b>売値は10%しか下げていないのに、1個から残るお金は4分の1近く減る。</div>
+      </div>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="pg">5</span></div>
+    <aside class="notes">まず2分、隣の人と相談してから選んでもらう。多くの人が「ア」を選ぶ。選んだあとに解説が出る。右の2本の帯で「青い部分が24%縮んだ」ことを見せ、営業の値引き判断につなげる。</aside>
+  </section>
+
+  <!-- 6 打ち手の比較 -->
+  <section class="slide" data-title="打ち手の比較">
+    <div class="run"><span><b>第3講 損益分岐点</b>3-5 打ち手の比較</span><span>いずれも「1割」動かした場合</span></div>
+    <nav class="thumb" aria-hidden="true"><i>3-1</i><i>3-2</i><i>3-3</i><i>3-4</i><i class="on">3-5</i></nav>
+    <div class="sec"><span class="no">3-5</span><span class="t">打ち手の比較</span></div>
+    <h2>同じ「1割」なら、交点をいちばん大きく左へ動かすのは<span class="b">単価</span>。</h2>
+    <div class="tbl">
+      <div class="tr th"><span>打ち手</span><span>損益分岐点の位置（点線＝いま 6,000個）</span><span style="text-align:right">分岐点</span><span style="text-align:right">安全余裕率</span></div>
+      <div class="tr now"><div class="nm">いまのまま<small>固定費300万・単価1,200・変動費700</small></div><div class="ln2" style="--q:6000"><i class="rail"></i><i class="base"></i><i class="dot"></i></div><div class="n q num">6,000<small>個</small></div><div class="n num">25.0<small>%</small></div></div>
+      <div class="tr"><div class="nm">固定費を1割下げる<small>300万 → 270万円</small></div><div class="ln2" style="--q:5400"><i class="rail"></i><i class="base"></i><i class="seg"></i><i class="dot"></i></div><div class="n q num">5,400<small>個</small></div><div class="n num">32.5<small>%</small></div></div>
+      <div class="tr"><div class="nm">変動費を1割下げる<small>700 → 630円</small></div><div class="ln2" style="--q:5263"><i class="rail"></i><i class="base"></i><i class="seg"></i><i class="dot"></i></div><div class="n q num">5,263<small>個</small></div><div class="n num">34.2<small>%</small></div></div>
+      <div class="tr best"><div class="nm">単価を1割上げる<small>1,200 → 1,320円</small></div><div class="ln2" style="--q:4839"><i class="rail"></i><i class="base"></i><i class="seg"></i><i class="dot"></i></div><div class="n q num">4,839<small>個</small></div><div class="n num">39.5<small>%</small></div></div>
+    </div>
+    <div class="after">
+      <p>単価の1割（120円）は、そのまま全部が限界利益に乗る。変動費の1割は70円、固定費の1割は30万円÷500円＝600個分。<b>ただし値上げは客数が減る。</b>何個まで減っても元が取れるかを、3-3の図で確かめてから決める。</p>
+      <details class="why"><summary>計算のしかた</summary><div class="body">分岐点＝固定費÷（単価−変動費）。<br>安全余裕率＝（予定8,000個−分岐点）÷8,000。<br>例：単価1,320円なら 300万÷620＝4,839個、（8,000−4,839）÷8,000＝39.5%。</div></details>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="pg">6</span></div>
+    <aside class="notes">「どれがいちばん効くと思うか」を先に手を挙げてもらってから見せる。固定費削減を選ぶ人が多い。単価が最も効くが、客数が減るリスクとセットで考えることを必ず付け加える。</aside>
+  </section>
+
+  <!-- 7 まとめと演習 -->
+  <section class="slide" data-title="まとめと演習">
+    <div class="run"><span><b>第3講 損益分岐点</b>まとめと演習</span><span>次回までの宿題</span></div>
+    <div class="sec"><span class="no">3-6</span><span class="t">まとめと演習</span></div>
+    <h2>明日の会議までに、自分の部署の3つの数字で交点を出してみる。</h2>
+    <div class="sum">
+      <ol>
+        <li><div>費用を<b>固定費</b>と<b>変動費</b>に分ける<small>迷ったら「1個も売れなくても出るか」</small></div></li>
+        <li><div>1個の<b>限界利益</b>＝単価−変動費<small>これが固定費を埋める力</small></div></li>
+        <li><div>分岐点＝<span class="mk">固定費 ÷ 限界利益</span><small>値下げは限界利益で考える。1割引きは2割以上効く</small></div></li>
+      </ol>
+      <div class="box"><span class="lbl">演習 3</span>
+        <div class="work">
+          <div class="q"><span>① 月の固定費</span><span class="blank">万円</span></div>
+          <div class="q"><span>② 1件（1個）の単価</span><span class="blank">円</span></div>
+          <div class="q"><span>③ 1件（1個）の変動費</span><span class="blank">円</span></div>
+          <div class="q res2"><span>損益分岐点 ＝ ① ÷（② − ③）</span><span class="blank">件</span></div>
+          <p class="work note">数字が分からないときは、経理に「先月の固定費と、1件あたりの変動費」を聞く。</p>
+        </div>
+      </div>
+    </div>
+    <div class="next"><b>次回</b>第4講「予算と実績の差を読む」――今日の交点が、予算の「最低ライン」になります。</div>
+    <div class="foot"><span>講師：サンプル経営研究所　社名・数字はすべて架空のサンプルです</span><span class="pg">7</span></div>
+    <aside class="notes">演習は持ち帰り。次回の冒頭で2〜3人に自部署の分岐点を発表してもらう。サービス業の人には「1個」を「1件」「1人」と読み替えてよいと伝える。</aside>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+    pad2: v => String(Math.round(v)).padStart(2, "0"),
+    year: v => String(Math.round(v)),
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev" はマイナスを良いこと（緑）として色を付ける
+      el.classList.toggle("neg", to * k < 0);
+      el.classList.toggle("pos", to * k > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  // data-calc="global" の値は、ほかのページの data-global-out="式" と、.deck の CSS 変数でも使える
+  const G = {};
+  const globalOuts = [...deck.querySelectorAll("[data-global-out]")].map(el => [el, compile(el.dataset.globalOut)]);
+  const updateGlobal = () => globalOuts.forEach(([el, f]) => {
+    let x; try { x = f(G); } catch (e) { x = NaN; }
+    if (typeof x === "string") el.textContent = x; else tween(el, Number(x));
+  });
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => {
+        if (i.type === "radio") { if (i.checked) v[i.name] = Number(i.value); else if (!(i.name in v)) v[i.name] = NaN; return; }
+        v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value);
+      });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => {
+        let x; try { x = f(v); } catch (e) { x = NaN; }
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら、その文字を出す
+      });
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+      // 入力と途中の計算は CSS 変数（--名前）にも入る。図形の大きさや位置を式で動かせる
+      Object.keys(v).forEach(k => { if (isFinite(v[k])) box.style.setProperty("--" + k, v[k]); });
+      if (box.dataset.calc === "global") {
+        Object.assign(G, v);
+        Object.keys(v).forEach(k => { if (isFinite(v[k])) deck.style.setProperty("--" + k, v[k]); });
+        updateGlobal();
+      }
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  deck.addEventListener("change", e => { if (e.target.matches("select")) e.target.blur(); });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range],input[type=checkbox],input[type=radio]")) setTimeout(() => e.target.blur(), 0);
+    else if (e.target.closest("label") && e.target.closest("label").querySelector("input[type=checkbox],input[type=radio]")) setTimeout(() => document.activeElement && document.activeElement.blur && document.activeElement.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = (slide, skip) => {
+    slide.querySelectorAll("[data-count]").forEach(el => {
+      if (skip && skip.has(el)) return;
+      el._v = 0; tween(el, Number(el.dataset.count));
+    });
+    // ほかのページで決まった数字（data-global-out）も、開いたときに数え上がる
+    let any = false;
+    globalOuts.forEach(([el]) => { if (slide.contains(el) && !(skip && skip.has(el))) { el._v = 0; any = true; } });
+    if (any) updateGlobal();
+  };
+
+  /* ---------- .draw：SVG の線が、表示されたときに描かれていく ---------- */
+  deck.querySelectorAll(".draw").forEach(p => { if (p instanceof SVGGeometryElement) p.setAttribute("pathLength", "1"); });
+
+  /* ---------- data-orbit：ドラッグで回せる立体（CSS の 3D） ---------- */
+  const orbits = [];
+  deck.querySelectorAll("[data-orbit]").forEach(box => {
+    const rx0 = Number(box.dataset.rx || -22), ry0 = Number(box.dataset.ry || 32);
+    const o = { box, rx: rx0, ry: ry0, spin: box.hasAttribute("data-spin") && !reduce };
+    const set = () => { box.style.setProperty("--rx", o.rx.toFixed(2)); box.style.setProperty("--ry", o.ry.toFixed(2)); };
+    let drag = null;
+    box.addEventListener("pointerdown", e => {
+      if (e.target.closest("input,button,summary,select,a")) return;
+      drag = { x: e.clientX, y: e.clientY, rx: o.rx, ry: o.ry };
+      o.spin = false;
+      try { box.setPointerCapture(e.pointerId); } catch (err) { /* 合成した操作など */ }
+      box.classList.add("grabbing");
+    });
+    box.addEventListener("pointermove", e => {
+      if (!drag) return;
+      const k = Number(deck.style.getPropertyValue("--scale")) || 1;
+      o.ry = drag.ry + (e.clientX - drag.x) / k * 0.45;
+      o.rx = Math.max(-85, Math.min(85, drag.rx - (e.clientY - drag.y) / k * 0.45));
+      set();
+    });
+    const end = () => { drag = null; box.classList.remove("grabbing"); };
+    box.addEventListener("pointerup", end);
+    box.addEventListener("pointercancel", end);
+    box.addEventListener("dblclick", () => { o.rx = rx0; o.ry = ry0; set(); });
+    o.set = set;
+    set();
+    orbits.push(o);
+  });
+  if (orbits.some(o => o.spin)) {
+    let last = performance.now();
+    const loop = now => {
+      const dt = Math.min(64, now - last); last = now;
+      orbits.forEach(o => {
+        if (o.spin && o.box.closest(".slide.active")) { o.ry += dt * 0.012; o.set(); }
+      });
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------- data-sheet：表の数字を直す・Excel から貼ると、グラフと集計が作り直される ---------- */
+  // 「1,200」「▲300」「1.2億」「45件」のように、数字のうしろの単位は読み飛ばす（単位の換算はしない）
+  const parseNum = s => {
+    const t = String(s).trim().replace(/[−－―]/g, "-").replace(/^[▲△]/, "-").replace(/[,，¥￥\s]/g, "")
+      .replace(/[０-９．]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+    const m = t.match(/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i);
+    return m ? Number(m[0]) : NaN;
+  };
+  // 目盛りは 1・2・2.5・5 の区切りで、3〜5本
+  const niceScale = (m, lo = 0) => {
+    if (!(m > lo)) m = lo + 1;
+    const raw = (m - lo) / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+    const a = Math.floor(lo / step + 1e-9) * step, b = Math.max(a + 2 * step, Math.ceil(m / step - 1e-9) * step);
+    const n = Math.round((b - a) / step);
+    return { min: a, max: b, ticks: Array.from({ length: n + 1 }, (_, i) => i / n) };
+  };
+  const sheets = [];
+  deck.querySelectorAll("[data-sheet]").forEach(fig => {
+    const table = fig.querySelector("table");
+    if (!table) return;
+    const initial = table.innerHTML;
+    const kind = fig.dataset.chart || "bar";
+    let chart = fig.querySelector(".sheet-chart");
+    if (!chart) { chart = document.createElement("div"); chart.className = "sheet-chart"; fig.appendChild(chart); }
+    const axisFmt = { dataset: { format: fig.dataset.format || "int", unit: "" } };
+    const read = () => {
+      const head = [...table.querySelectorAll("thead th")].slice(1).map(th => th.textContent.trim());
+      const rows = [...table.querySelectorAll("tbody tr")].map(tr => {
+        const c = [...tr.children];
+        return { label: c[0] ? c[0].textContent.trim() : "", vals: c.slice(1).map(td => parseNum(td.textContent)) };
+      });
+      const n = Math.max(head.length, ...rows.map(r => r.vals.length), 0);
+      while (head.length < n) head.push("系列" + (head.length + 1));
+      return { head, rows };
+    };
+    const prep = () => {
+      table.querySelectorAll("tbody td").forEach((td, i) => {
+        if (td.cellIndex === 0) return;
+        try { td.contentEditable = "plaintext-only"; } catch (e) { /* 古いブラウザ */ }
+        if (td.contentEditable !== "plaintext-only") td.contentEditable = "true";
+        td.classList.add("n");
+        td.spellcheck = false;
+      });
+    };
+    const outs = [...fig.querySelectorAll("[data-sheet-out]")].map(el => [el, (() => {
+      try { return new Function("h", "with(Math){with(h){return (" + el.dataset.sheetOut + ");}}"); }
+      catch (e) { console.warn("式が読めません:", el.dataset.sheetOut); return () => NaN; }
+    })()]);
+    let prevVals = null, shape = "";
+    const render = () => {
+      const d = read();
+      const S = d.head.length, R = d.rows.length;
+      const val = (r, s) => { const x = d.rows[r].vals[s]; return isFinite(x) ? x : 0; };
+      let max = 0, min = 0;
+      for (let r = 0; r < R; r++) {
+        if (kind === "stack") { let t = 0; for (let s = 0; s < S; s++) t += Math.max(0, val(r, s)); max = Math.max(max, t); }
+        else for (let s = 0; s < S; s++) { max = Math.max(max, val(r, s)); min = Math.min(min, val(r, s)); }
+      }
+      // data-min で目盛りの下限を決められる（客単価のように、0から描くと平らに見えるとき）
+      if (kind !== "stack" && fig.dataset.min !== undefined && isFinite(Number(fig.dataset.min))) min = Math.min(Number(fig.dataset.min), ...d.rows.flatMap(r => r.vals.filter(isFinite)));
+      const sc = niceScale(max * 1.02, min);
+      max = sc.max; const lo = sc.min, span = max - lo, base = Math.max(lo, Math.min(0, max));
+      const yOf = v => (v - lo) / span;
+      const sh = kind + R + "x" + S + "/" + sc.ticks.length + d.rows.map(r => r.label).join("|") + d.head.join("|");
+      if (sh !== shape) {
+        shape = sh;
+        const grid = sc.ticks.map(k => `<div class="sc-gl" style="bottom:${k * 100}%"><span></span></div>`).join("") +
+          (lo < 0 ? `<div class="sc-zero" style="bottom:${yOf(0) * 100}%"></div>` : "");
+        const legend = S > 1 ? `<div class="sc-legend">${d.head.map((h, s) => `<span style="--c:var(--s${s + 1})"><i></i>${esc(h)}</span>`).join("")}</div>` : "";
+        let plot = "";
+        if (kind === "line") {
+          plot = `<svg class="sc-lines" viewBox="0 0 1000 1000" preserveAspectRatio="none">${d.head.map((_, s) => `<polyline style="--c:var(--s${s + 1})" vector-effect="non-scaling-stroke"/>`).join("")}</svg>` +
+            d.head.map((_, s) => d.rows.map(() => `<b class="sc-dot" style="--c:var(--s${s + 1})"></b>`).join("")).join("");
+        }
+        const groups = d.rows.map(r => `<div class="sc-g">${kind === "line" ? "" : `<div class="sc-bars">${d.head.map((_, s) => `<i style="--c:var(--s${s + 1})"><em></em></i>`).join("")}</div>`}<span class="sc-l">${esc(r.label)}</span></div>`).join("");
+        chart.className = "sheet-chart sc-" + kind + (S > 1 ? " multi" : "");
+        chart.innerHTML = `${legend}<div class="sc-plot">${grid}<div class="sc-groups">${groups}</div>${plot}</div>`;
+        prevVals = null;
+      }
+      chart.querySelectorAll(".sc-gl span").forEach((sp, i) => { sp.textContent = format(axisFmt, lo + span * sc.ticks[i]); });
+      if (kind === "line") {
+        const from = prevVals, to = d.rows.map((_, r) => d.head.map((_, s) => val(r, s)));
+        prevVals = to;
+        const draw = k => {
+          const pl = chart.querySelectorAll(".sc-lines polyline"), dots = chart.querySelectorAll(".sc-dot");
+          d.head.forEach((_, s) => {
+            const pts = to.map((row, r) => {
+              const v = from ? from[r][s] + (row[s] - from[r][s]) * k : row[s];
+              const x = R > 1 ? (r + .5) / R : .5, y = 1 - yOf(v);
+              const dot = dots[s * R + r];
+              if (dot) { dot.style.left = x * 100 + "%"; dot.style.top = y * 100 + "%"; dot.title = format(axisFmt, row[s]); }
+              return (x * 1000).toFixed(1) + "," + (y * 1000).toFixed(1);
+            });
+            if (pl[s]) pl[s].setAttribute("points", pts.join(" "));
+          });
+        };
+        if (!from || reduce) draw(1);
+        else { const t0 = performance.now(); const tick = now => { const k = Math.min(1, (now - t0) / 500); draw(1 - Math.pow(1 - k, 3)); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+      } else {
+        chart.querySelectorAll(".sc-g").forEach((g, r) => {
+          let acc = 0;
+          g.querySelectorAll(".sc-bars > i").forEach((b, s) => {
+            const raw = val(r, s);
+            let from, to;
+            if (kind === "stack") { const v = Math.max(0, raw); from = acc; to = acc + v; acc = to; }
+            else { from = Math.min(raw, base); to = Math.max(raw, base); }
+            b.style.setProperty("--b", (yOf(from) * 100).toFixed(3));
+            b.style.setProperty("--h", ((to - from) / span * 100).toFixed(3));
+            b.style.setProperty("--x", kind === "stack" ? 0 : (s / S * 100).toFixed(3));
+            b.style.setProperty("--w", kind === "stack" ? 100 : (100 / S).toFixed(3));
+            b.classList.toggle("neg", kind !== "stack" && raw < base);
+            b.querySelector("em").textContent = format(axisFmt, raw);
+          });
+        });
+      }
+      const col = name => { const s = typeof name === "number" ? name : d.head.indexOf(name); return s < 0 ? [] : d.rows.map(r => r.vals[s]).filter(isFinite); };
+      const h = {
+        col, n: R,
+        sum: c => col(c).reduce((a, b) => a + b, 0),
+        avg: c => { const a = col(c); return a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN; },
+        first: c => col(c)[0], last: c => { const a = col(c); return a[a.length - 1]; },
+        max: c => Math.max(...col(c)), min: c => Math.min(...col(c)),
+        growth: c => { const a = col(c); return a.length > 1 && a[0] ? (a[a.length - 1] / a[0] - 1) * 100 : NaN; },
+        total: () => d.rows.reduce((a, r) => a + r.vals.filter(isFinite).reduce((x, y) => x + y, 0), 0),
+        label: i => (d.rows[i < 0 ? R + i : i] || {}).label || "",
+      };
+      outs.forEach(([el, f]) => {
+        let x; try { x = f(h); } catch (e) { x = NaN; }
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x));
+      });
+    };
+    const fromText = text => {
+      const lines = text.replace(/\r/g, "").split("\n").filter(l => l.trim() !== "");
+      if (!lines.length) return false;
+      const sep = lines.some(l => l.includes("\t")) ? "\t" : ",";
+      const cells = lines.map(l => l.split(sep).map(c => c.trim().replace(/^"(.*)"$/, "$1")));
+      if (cells[0].length < 2) return false;
+      const hasHead = cells[0].slice(1).some(c => !isFinite(parseNum(c)));
+      const head = hasHead ? cells.shift() : ["", ...read().head];
+      if (!cells.length) return false;
+      const cols = Math.max(...cells.map(r => r.length));
+      table.innerHTML = `<thead><tr>${Array.from({ length: cols }, (_, i) => `<th>${esc(head[i] || (i ? "系列" + i : ""))}</th>`).join("")}</tr></thead>` +
+        `<tbody>${cells.map(r => `<tr>${Array.from({ length: cols }, (_, i) => {
+          const x = parseNum(r[i] || "");
+          return `<td>${i && isFinite(x) ? x.toLocaleString("ja-JP") : esc(r[i] || "")}</td>`;
+        }).join("")}</tr>`).join("")}</tbody>`;
+      prep(); render();
+      return true;
+    };
+    let tm;
+    table.addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(render, 120); });
+    table.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
+    const onPaste = e => {
+      const text = (e.clipboardData || window.clipboardData).getData("text");
+      if (!/[\t,\n]/.test(text.trim())) return; // 数字1つだけならそのセルに貼る
+      e.preventDefault();
+      if (fromText(text)) say("貼った表で、グラフと集計を作り直しました");
+      else say("表として読めませんでした（1列目に項目名、2列目から数字）");
+    };
+    fig.addEventListener("paste", onPaste);
+    const pad = document.createElement("textarea");
+    pad.className = "sheet-pad"; pad.setAttribute("aria-label", "ここに表を貼る");
+    fig.appendChild(pad);
+    fig.querySelectorAll("[data-sheet-paste]").forEach(b => b.addEventListener("click", () => { pad.value = ""; pad.focus(); say("Excel やスプレッドシートでコピーした表を ⌘V / Ctrl+V で貼ってください"); }));
+    pad.addEventListener("blur", () => { pad.value = ""; });
+    fig.querySelectorAll("[data-sheet-reset]").forEach(b => b.addEventListener("click", () => { table.innerHTML = initial; prep(); render(); }));
+    prep(); render();
+    sheets.push({ fig, onPaste });
+  });
+  // どこにもフォーカスがないときの貼り付けは、表示中のスライドの表へ
+  document.addEventListener("paste", e => {
+    const t = e.target;
+    if (t.closest && t.closest("[data-sheet],input,textarea,[contenteditable]")) return;
+    const s = sheets.find(x => x.fig.closest(".slide.active"));
+    if (s) s.onPaste(e);
+  });
+
+  /* ---------- 上に重ねて開く補足（details.why.float）：下にはみ出すなら上へ開く ---------- */
+  deck.querySelectorAll("details.why.float").forEach(d => d.addEventListener("toggle", () => {
+    if (!d.open) return;
+    d.classList.remove("up");
+    const s = d.closest(".slide"), b = d.querySelector(".body");
+    if (!s || !b) return;
+    const k = s.getBoundingClientRect().height / H || 1;
+    if ((b.getBoundingClientRect().bottom - s.getBoundingClientRect().top) / k > H - 12) d.classList.add("up");
+  }));
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  /* ---------- data-morph：同じ名前の要素が、前のページの位置・大きさ・色から、次のページへ変形してつながる ---------- */
+  const morphMode = deck.dataset.transition === "morph";
+  const MORPH_MS = 900, MORPH_EASE = "cubic-bezier(.65,0,.25,1)";
+  const shownIn = (el, slide) => { for (let e = el; e && e !== slide; e = e.parentElement) if (e.classList.contains("step") && !e.classList.contains("shown")) return false; return true; };
+  // 見えている位置（アニメーション中なら途中の位置）
+  const seenRect = (el, slide) => {
+    const r = el.getBoundingClientRect(), s = slide.getBoundingClientRect(), k = s.width / W || 1;
+    return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
+  };
+  // 動きを止めたときの位置（まだ表示していないページ用。transform を無視して、置かれた場所だけを測る）
+  const layoutRect = (el, slide) => {
+    let x = 0, y = 0, e = el;
+    while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; const p = e.offsetParent; if (p && p !== slide && !slide.contains(p)) break; e = p; }
+    return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+  };
+  // 見えているままの写しを作る（class に頼らず、計算済みの見た目を全部書き込む）
+  const snapshot = (el, a) => {
+    const c = el.cloneNode(true);
+    const copy = (src, dst) => {
+      if (!(src instanceof Element)) return;
+      const cs = getComputedStyle(src);
+      for (let i = 0; i < cs.length; i++) dst.style.setProperty(cs[i], cs.getPropertyValue(cs[i]));
+      dst.style.animation = "none"; dst.style.transition = "none";
+      ["data-morph", "data-count", "data-out", "data-show", "id", "data-morph-enter"].forEach(k => dst.removeAttribute && dst.removeAttribute(k));
+      for (let i = 0; i < src.children.length; i++) copy(src.children[i], dst.children[i]);
+    };
+    copy(el, c);
+    Object.assign(c.style, { position: "absolute", margin: "0", right: "auto", bottom: "auto", width: a.w + "px", height: a.h + "px",
+      transform: "none", transformOrigin: "50% 50%", pointerEvents: "none", zIndex: "0", visibility: "visible", opacity: "1" });
+    c.classList.add("ugk-ghost");
+    c.setAttribute("aria-hidden", "true");
+    return c;
+  };
+  const LOOK = ["backgroundColor", "color", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "opacity", "borderColor"];
+  const measureMorph = (from, to) => {
+    const pairs = [];
+    const olds = new Map();
+    from.querySelectorAll("[data-morph]").forEach(el => {
+      if (!shownIn(el, from) || !el.offsetWidth) return;
+      if (parseFloat(getComputedStyle(el).opacity) < .05) return;
+      olds.set(el.dataset.morph, el);
+    });
+    to.querySelectorAll("[data-morph]").forEach(el => {
+      const o = olds.get(el.dataset.morph);
+      if (!o || !(el instanceof HTMLElement) || !el.offsetWidth) return;
+      const cs = getComputedStyle(o);
+      const a = seenRect(o, from);
+      const counting = o.hasAttribute("data-count") && el.hasAttribute("data-count");
+      // 数え直す数字は、写しを重ねず新しい方だけを動かす（二重に見えない）
+      const same = counting || (o.innerHTML === el.innerHTML && cs.backgroundImage === getComputedStyle(el).backgroundImage);
+      pairs.push({ o, n: el, a, look: LOOK.reduce((m, k) => (m[k] = cs[k], m), {}), same,
+        ghost: same ? null : snapshot(o, a), count: counting ? o._v : null });
+    });
+    return pairs;
+  };
+  const runMorph = (pairs, to) => {
+    const skip = new Set();
+    pairs.forEach(p => {
+      if (!shownIn(p.n, to)) return;
+      const b = layoutRect(p.n, to), a = p.a;
+      if (!b.w || !b.h) return;
+      const leaf = !p.n.firstElementChild && p.n.textContent.trim() !== "";
+      let sx = a.w / b.w, sy = a.h / b.h;
+      if (leaf) sx = sy = a.h / b.h; // 文字は縦横比を保って拡大縮小する
+      const dx = (a.x + a.w / 2) - (b.x + b.w / 2), dy = (a.y + a.h / 2) - (b.y + b.h / 2);
+      const cs = getComputedStyle(p.n);
+      const own = cs.transform === "none" ? "" : " " + cs.transform;
+      const start = { transform: `translate(${dx}px,${dy}px) scale(${sx},${sy})${own}` }, end = { transform: own.trim() || "none" };
+      LOOK.forEach(k => { if (k !== "opacity" && p.look[k] !== cs[k]) { start[k] = p.look[k]; end[k] = cs[k]; } });
+      if (/Radius/.test(Object.keys(start).join())) ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"].forEach(k => {
+        if (start[k] === undefined) { start[k] = p.look[k]; end[k] = cs[k]; }
+      });
+      const delay = Number(p.n.dataset.morphDelay || 0);
+      p.n.style.visibility = ""; // すばやく戻ったとき、前の変形で隠したままにしない
+      p.n.getAnimations().forEach(x => x.id === "ugk-morph" && x.cancel());
+      // 後片付けは実時間ではなく、アニメーションの終わりに合わせる（ゆっくり再生しても崩れない）
+      const after = (anim, fn) => anim.finished.then(fn, fn);
+      if (p.same) {
+        const an = p.n.animate([start, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
+        an.id = "ugk-morph";
+        p.o.style.visibility = "hidden";
+        after(an, () => { p.o.style.visibility = ""; });
+      } else {
+        // 中身や模様がちがう：前の形の写しを下に敷き、新しい方が浮かび上がってから写しを消す
+        const g = p.ghost;
+        g.style.left = a.x + "px"; g.style.top = a.y + "px";
+        to.insertBefore(g, to.firstChild);
+        const gsy = b.h / a.h, gsx = leaf ? gsy : b.w / a.w;
+        const toB = `translate(${-dx}px,${-dy}px) scale(${gsx},${gsy})`;
+        after(g.animate([{ transform: "none", opacity: 1 }, { opacity: 1, offset: .4 }, { transform: toB, opacity: 0 }], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "both" }), () => g.remove());
+        const an = p.n.animate([{ ...start, opacity: 0 }, { opacity: 1, offset: .45 }, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
+        an.id = "ugk-morph";
+        p.o.style.visibility = "hidden";
+        after(an, () => { p.o.style.visibility = ""; });
+      }
+      if (p.count !== null && isFinite(p.count)) { p.n._v = p.count; tween(p.n, Number(p.n.dataset.count)); skip.add(p.n); }
+    });
+    return skip;
+  };
+
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    const canMorph = morphMode && prev !== -1 && !reduce && !overview;
+    const pairs = canMorph ? measureMorph(slides[prev], slides[i]) : [];
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    const skip = pairs.length ? runMorph(pairs, slides[i]) : null;
+    render();
+    if (prev !== -1) countUp(slides[i], skip);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab],[data-orbit],[data-sheet]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

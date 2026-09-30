@@ -1,0 +1,433 @@
+<!--meta
+{"title":"十年の歩み｜サンプル工房 創業十周年","style":"エディトリアル年表","use":"周年イベント・会社説明会","group":"一続きに動く",
+ "aim":"創業十周年の社内イベントや会社説明会で、社長が「十年の歩み」を、年のつまみを動かしながら一続きに語る。",
+ "desc":"年のつまみを2016→2026へ動かすと、社員の点が増え、拠点の地図に印が灯り、売上の面が伸び、その年の出来事が切り替わる。売上の面はそのまま「次の十年」の図へ縮んでつながる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Zen+Old+Mincho:wght@400;600;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f2ede2; --surface:#f8f4ec; --ink:#1f1b16; --muted:#5d5548; --line:#cbc1ae; --hair:#ddd4c3;
+  --accent:#8a2d22; --accent-ink:#fbf6ee; --good:#3e5f3a; --bad:#8a2d22; --frame:#d9d1c1;
+  --ochre:#a88a55;
+  --font:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-head:var(--font);
+  --font-num:"Newsreader","Zen Old Mincho","Hiragino Mincho ProN",serif;
+  --head-weight:700; --head-track:.02em; --radius:0px; --shadow:none;
+  --pad-y:56px; --pad-x:72px;
+}
+/* 紙の地（.deck に敷く：ページ送りで消えない） */
+.deck{background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .18  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+  radial-gradient(1400px 900px at 30% 20%,#f6f2e9 0%,var(--bg) 70%)}
+.num{font-family:var(--font-num);font-variant-numeric:lining-nums tabular-nums;font-feature-settings:"lnum" 1,"tnum" 1}
+em{font-style:normal;color:var(--accent)}
+
+/* 柱（ページの上の見出し）と、ノンブル */
+.run{position:absolute;left:var(--pad-x);right:var(--pad-x);top:26px;display:flex;justify-content:space-between;align-items:baseline;
+  font-size:13px;letter-spacing:.24em;color:var(--muted);padding-bottom:9px;border-bottom:1px solid var(--line)}
+.run i{font-family:var(--font-num);font-style:italic;letter-spacing:.04em;font-size:15px}
+.foot{bottom:22px;font-size:13px;letter-spacing:.12em;color:var(--muted);display:flex;justify-content:space-between}
+.foot .folio{font-family:var(--font-num);font-size:15px;letter-spacing:.1em}
+
+.kicker{font-family:var(--font);color:var(--accent);font-size:15px;letter-spacing:.3em;font-weight:600;margin:18px 0 12px;display:flex;align-items:center;gap:14px;text-transform:none}
+.kicker::after{content:"";width:40px;height:1px;background:var(--accent)}
+h2{font-size:34px;line-height:1.5;letter-spacing:.04em;font-weight:700;margin:0}
+.yr{font-family:var(--font-num);font-weight:300;font-variant-numeric:lining-nums;letter-spacing:-.02em;line-height:.82;display:inline-block;white-space:nowrap}
+.yr::before{content:"20"}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover{padding-top:0}
+.s-cover .mast{position:absolute;left:72px;right:72px;top:40px;display:flex;justify-content:space-between;align-items:baseline;
+  padding:12px 0 10px;border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);font-size:14px;letter-spacing:.32em}
+.s-cover .mast i{font-family:var(--font-num);font-style:italic;letter-spacing:.12em;font-size:16px}
+.s-cover .ten{position:absolute;right:52px;top:100px;font-family:var(--font-num);font-weight:300;font-size:500px;line-height:1;letter-spacing:-.06em;color:var(--ink)}
+.s-cover .ten small{position:absolute;right:26px;bottom:74px;font-size:34px;font-style:italic;letter-spacing:.02em;color:var(--accent)}
+.s-cover .years{position:absolute;right:72px;bottom:124px;font-family:var(--font-num);font-size:22px;letter-spacing:.2em;color:var(--muted)}
+.s-cover .body{position:absolute;left:72px;top:150px;width:600px}
+.s-cover .kicker{margin-top:0}
+.s-cover .ky{font-family:var(--font);font-weight:600;letter-spacing:.3em;line-height:1;font-size:15px}
+.s-cover .ky::before{content:"20"}
+.s-cover h1{font-size:56px;line-height:1.45;letter-spacing:.04em;font-weight:700}
+.s-cover .lead{font-size:20px;line-height:1.9;color:var(--muted);margin-top:26px}
+.s-cover .colo{position:absolute;left:72px;right:72px;bottom:44px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}
+.s-cover .colo>div{padding:14px 0 0;font-size:18px;line-height:1.6}
+.s-cover .colo>div+div{padding-left:24px;border-left:1px solid var(--line)}
+.s-cover .colo b{display:block;font-weight:400;font-size:13px;letter-spacing:.3em;color:var(--muted);margin-bottom:2px}
+
+/* ---------- 2 はじまり ---------- */
+.origin{position:relative;flex:1;margin-top:26px;display:grid;grid-template-columns:330px 1fr 300px;gap:0}
+.origin>div{padding:0 34px;border-left:1px solid var(--line)}
+.origin>div:first-child{padding-left:0;border-left:0}
+.origin>div:last-child{padding-right:0}
+.origin .y1{font-size:128px;color:var(--ink)}
+.origin .pull{margin-top:40px;padding-top:18px;border-top:1px solid var(--ink);font-size:27px;line-height:1.6;color:var(--accent);font-weight:600;letter-spacing:.04em}
+.origin .pull small{display:block;margin-top:10px;font-size:16px;color:var(--muted);font-weight:400;letter-spacing:.12em}
+.origin .era{margin-top:20px;font-size:17px;letter-spacing:.2em;color:var(--muted)}
+.origin .era b{display:block;font-family:var(--font-num);font-style:italic;font-weight:400;font-size:22px;letter-spacing:.04em;color:var(--accent);margin-bottom:6px}
+.origin .story p{font-size:19px;line-height:2.05;letter-spacing:.03em;margin:0 0 .9em;text-align:justify}
+.origin .story p:first-child::first-letter{font-size:58px;float:left;line-height:1;margin:6px 10px 0 0;color:var(--accent);font-weight:700}
+.origin .facts{display:grid;gap:0}
+.origin .fact{padding:14px 0 16px;border-bottom:1px solid var(--line)}
+.origin .fact:first-child{border-top:1px solid var(--ink)}
+.origin .fact b{display:block;font-family:var(--font-num);font-weight:300;font-size:64px;line-height:1.05;letter-spacing:-.01em}
+.origin .fact b small{font-family:var(--font);font-size:20px;font-weight:600;margin-left:4px}
+.origin .fact span{font-size:17px;color:var(--muted);letter-spacing:.06em}
+details.why{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;border-radius:0}
+details.why>summary{color:var(--accent);font-size:17px;font-weight:600;padding:10px 0;letter-spacing:.08em}
+details.why>summary::before{background:transparent;border:1px solid var(--accent);border-radius:0;width:18px;height:18px;font-size:15px}
+details.why>.body{padding:0 0 14px;color:var(--muted);font-size:17px;line-height:1.85}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--line);border-radius:0;box-shadow:0 12px 30px rgb(40 30 10 / .12);padding:16px 18px}
+
+.proof details.why.float[open]>.body,.origin details.why.float[open]>.body,.nx details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 8px}
+
+/* ---------- 3 年表（時間のつまみ） ---------- */
+@property --y{syntax:"<number>";inherits:true;initial-value:2016}
+@property --st{syntax:"<number>";inherits:true;initial-value:3}
+@property --sa{syntax:"<number>";inherits:true;initial-value:.1}
+@property --g{syntax:"<number>";inherits:true;initial-value:12}
+@property --s36{syntax:"<number>";inherits:true;initial-value:60}
+.tl{position:absolute;left:72px;right:72px;top:180px;bottom:24px;transition:--y .7s var(--ease),--st .7s var(--ease),--sa .7s var(--ease)}
+.tl .era{position:absolute;left:0;top:0;width:380px}
+.tl .yr{font-size:128px}
+.tl .events{position:relative;height:124px;margin-top:16px;border-top:1px solid var(--ink)}
+.tl .ev{position:absolute;left:0;right:0;top:14px;
+  opacity:clamp(0, 1 - max(var(--y) - var(--e), var(--e) - var(--y)) * 2.2, 1);
+  transform:translateY(calc(max(var(--y) - var(--e), var(--e) - var(--y)) * 10px))}
+.tl .ev h3{font-size:23px;line-height:1.45;font-weight:700;letter-spacing:.03em;margin:0 0 8px}
+.tl .ev p{font-size:18px;line-height:1.75;color:var(--muted);margin:0}
+.tl .ev i{display:none!important;font-family:var(--font-num);font-style:italic;color:var(--accent);font-size:17px;letter-spacing:.06em;display:block;margin-bottom:6px}
+
+.tl .people{position:absolute;left:420px;top:0;width:292px}
+.lab{font-size:15px;letter-spacing:.28em;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:8px}
+.lab b{font-family:var(--font-num);font-weight:400;font-size:40px;letter-spacing:-.01em;color:var(--ink);line-height:1}
+.lab b small{font-family:var(--font);font-size:16px;margin-left:3px;font-weight:600;letter-spacing:.1em}
+.dots{display:grid;grid-template-columns:repeat(20,11px);gap:3.5px;margin-top:16px}
+.dots i{width:11px;height:11px;border-radius:50%;border:1px solid #bfb39c;position:relative}
+.dots i::after{content:"";position:absolute;inset:-1px;border-radius:50%;background:var(--ink);opacity:clamp(0, var(--st) - var(--i), 1);transform:scale(clamp(.3, (var(--st) - var(--i)) * 1.5, 1))}
+.dots i:nth-child(-n+3)::after{background:var(--accent)}
+.people .cap{font-size:15px;color:var(--muted);margin-top:14px;line-height:1.7;letter-spacing:.04em}
+.people .cap i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);margin:0 5px 0 2px;vertical-align:1px}
+
+.tl .map{position:absolute;right:0;top:0;width:356px}
+.tl .map .field{position:relative;height:400px;margin:6px 0 0}
+.land{position:absolute;inset:0}.land circle{fill:#a8946c;opacity:.5}
+.grat{position:absolute;inset:0}
+.grat .lo{position:absolute;top:0;bottom:0;border-left:1px solid rgb(168 138 85 / .22)}
+.grat .la{position:absolute;left:0;right:0;border-top:1px solid rgb(168 138 85 / .22)}
+.grat span{position:absolute;font-family:var(--font-num);font-style:italic;font-size:13px;color:#8a7f6c;white-space:nowrap}
+.grat .lo span{bottom:-2px;left:4px}
+.grat .la span{right:0;top:-18px}
+.route{position:absolute;inset:0;overflow:visible}
+.route line{stroke:var(--accent);stroke-width:1;stroke-dasharray:2 3;opacity:calc(clamp(0, (var(--y) - var(--o)) * 2 + 1, 1) * .7)}
+.city{position:absolute;left:calc(var(--x) * 1px);top:calc(var(--t) * 1px);width:0;height:0}
+.city::before{content:"";position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1px solid #a89a80;background:var(--bg)}
+.city::after{content:"";position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--accent);
+  opacity:clamp(0, (var(--y) - var(--o)) * 2 + 1, 1);transform:scale(clamp(0, (var(--y) - var(--o)) * 2 + 1, 1))}
+.city .halo{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border-radius:50%;border:1px solid var(--accent);
+  opacity:clamp(0, 1 - max(var(--y) - var(--o), var(--o) - var(--y)) * 2, 1)}
+.city b{position:absolute;top:calc(var(--ly,-11) * 1px);left:calc(var(--lx,12) * 1px);font-weight:600;font-size:16px;letter-spacing:.08em;white-space:nowrap;
+  opacity:clamp(0, (var(--y) - var(--o)) * 2 + 1, 1)}
+.city.l b{left:auto;right:12px}
+.city.u b{top:-30px;left:-8px}
+.city.d b{top:calc(var(--ly,8) * 1px);left:-4px}
+.city b small{font-family:var(--font-num);font-style:italic;font-weight:400;font-size:13px;color:var(--muted);margin-left:5px;letter-spacing:.02em}
+
+.tl .chart2{position:absolute;left:0;width:712px;top:300px;height:112px}
+.area{position:absolute;inset:0}
+.area .ghost{position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 5px,rgb(168 138 85 / .28) 5px 6px);clip-path:var(--poly)}
+.area .solid{position:absolute;inset:0;background:linear-gradient(180deg,#9a3528 0%,var(--accent) 60%,#6f231a 100%);clip-path:var(--poly)}
+.area .top{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.area .top polyline{fill:none;stroke:var(--ink);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.area{--poly:polygon(0% 100%,0% 99.5%,10% 98%,20% 94%,30% 87%,40% 85%,50% 75.5%,60% 63.5%,70% 49%,80% 34.5%,90% 18%,100% 2.5%,100% 100%)}
+.tl .area .solid,.tl .area .top{clip-path:var(--poly)}
+.tl .area .reveal{position:absolute;inset:0;clip-path:inset(-20px calc((2026 - var(--y)) * 10%) 0 0)}
+.tl .area .solid{clip-path:var(--poly)}
+.axis{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink)}
+.tl .now{position:absolute;top:-8px;bottom:0;left:calc((var(--y) - 2016) * 10%);width:0;border-left:1px solid var(--ink)}
+.tl .now .v{position:absolute;left:10px;transform:translateX(calc(clamp(0, (var(--y) - 2022.5) * 3, 1) * (-100% - 20px)));bottom:calc(var(--sa) / 20 * 112px + 4px);white-space:nowrap;font-family:var(--font-num);font-size:26px;line-height:1;background:var(--bg);padding:2px 6px 2px 4px}
+.tl .now .v small{font-family:var(--font);font-size:14px;font-weight:600;margin-left:2px}
+.tl .now .v.flip{left:auto}
+.tl .salesl{position:absolute;left:0;top:-30px;font-size:15px;letter-spacing:.24em;color:var(--muted)}
+.ticks{position:absolute;left:0;right:0;display:flex;justify-content:space-between}
+.ticks span{width:0;display:flex;justify-content:center;font-family:var(--font-num);font-size:16px;color:var(--muted);white-space:nowrap}
+.tl .ticks{top:420px;width:712px}
+.tl .ticks span{position:relative}
+.tl .ticks span::before{content:"";position:absolute;top:-8px;height:5px;border-left:1px solid var(--ink)}
+.tl .scrub{position:absolute;left:-11px;width:734px;top:444px}
+
+/* スライダー（細い罫と、丸いつまみ） */
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:30px}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-10.5px;border-radius:50%;background:var(--bg);border:1.5px solid var(--accent);box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 11px var(--accent)}
+input[type=range]::-moz-range-track{height:1px;background:var(--ink)}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:var(--accent);border:1.5px solid var(--bg);box-shadow:0 0 0 1.5px var(--accent)}
+input[type=range]:focus-visible{outline:1px dashed var(--accent);outline-offset:4px}
+
+/* ---------- 4 次の十年 ---------- */
+.nx{position:absolute;left:72px;right:72px;top:180px;bottom:24px;transition:--g .5s var(--ease),--s36 .5s var(--ease)}
+.nx .head{position:absolute;left:0;top:0;width:400px}
+.nx .yr{font-size:128px;color:var(--accent)}
+.nx .head p{font-size:18px;color:var(--muted);margin:16px 0 0;line-height:1.7;letter-spacing:.04em;border-top:1px solid var(--ink);padding-top:12px}
+.nx .ctrl{position:absolute;left:440px;right:0;top:4px;display:grid;grid-template-columns:1fr 1fr;column-gap:40px}
+.nx .field{margin:0}
+.nx .field>label{font-size:17px;color:var(--ink);letter-spacing:.06em}
+.nx .field>label b{font-family:var(--font-num);font-weight:400;font-size:28px;color:var(--accent)}
+.nx .outs{grid-column:1/-1;display:grid;grid-template-columns:1.25fr 1fr 1fr;margin-top:14px;border-top:1px solid var(--ink)}
+.nx .outs>div{padding:12px 0 0 22px;border-left:1px solid var(--line)}
+.nx .outs>div:first-child{padding-left:0;border-left:0}
+.nx .outs span{font-size:15px;letter-spacing:.2em;color:var(--muted)}
+.nx .outs b{display:block;font-family:var(--font-num);font-weight:300;font-size:50px;line-height:1.1;letter-spacing:-.01em;white-space:nowrap}
+.nx .outs b.neg{color:var(--accent)}.nx .outs b.pos{color:var(--ink)}
+.nx .why{grid-column:1/-1;margin-top:12px}
+.nx .chart3{position:absolute;left:0;right:0;top:250px;height:200px}
+.nx .gl{position:absolute;left:0;right:0;border-top:1px dotted #bdb097}
+.nx .gl span{position:absolute;left:0;top:-20px;font-family:var(--font-num);font-style:italic;font-size:14px;color:#81776a}
+.nx .past{position:absolute;left:0;bottom:0;width:50%;height:25%}
+.nx .proj{position:absolute;left:50%;right:0;top:0;bottom:0;--gg:calc(1 + var(--g) * .01)}
+.nx .proj .ln,.nx .proj .fl{position:absolute;inset:0;
+  clip-path:polygon(0% 100%,
+    0% calc(100% - 24.375% * pow(var(--gg),0)),10% calc(100% - 24.375% * pow(var(--gg),1)),20% calc(100% - 24.375% * pow(var(--gg),2)),
+    30% calc(100% - 24.375% * pow(var(--gg),3)),40% calc(100% - 24.375% * pow(var(--gg),4)),50% calc(100% - 24.375% * pow(var(--gg),5)),
+    60% calc(100% - 24.375% * pow(var(--gg),6)),70% calc(100% - 24.375% * pow(var(--gg),7)),80% calc(100% - 24.375% * pow(var(--gg),8)),
+    90% calc(100% - 24.375% * pow(var(--gg),9)),100% calc(100% - 24.375% * pow(var(--gg),10)),100% 100%)}
+.nx .proj .ln{background:var(--accent)}
+.nx .proj .fl{top:2px;bottom:-2px;background:var(--bg)}
+.nx .proj .fl::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 5px,rgb(138 45 34 / .32) 5px 6px)}
+.nx .end{position:absolute;right:0;bottom:calc(var(--s36) / 80 * 100%);width:0;height:0}
+.nx .end::before{content:"";position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.nx .end>span{position:absolute;right:14px;bottom:4px;font-family:var(--font-num);font-size:26px;white-space:nowrap;line-height:1}
+.nx .end>span small{font-family:var(--font);font-size:14px;font-weight:600}
+.nx .nowl{position:absolute;left:50%;top:-10px;bottom:0;border-left:1px solid var(--ink)}
+.nx .nowl span{position:absolute;left:8px;top:-4px;font-size:14px;letter-spacing:.2em;white-space:nowrap}
+.nx .tag{position:absolute;font-size:15px;letter-spacing:.14em;color:var(--muted);white-space:nowrap}
+.nx .ticks{top:462px}
+
+/* ---------- 5 約束 ---------- */
+.vows{display:grid;grid-template-columns:repeat(3,1fr);margin-top:30px;border-top:1px solid var(--ink)}
+.vow{padding:22px 32px 0;border-left:1px solid var(--line)}
+.vow:first-child{padding-left:0;border-left:0}
+.vow:last-child{padding-right:0}
+.vow .k{font-size:80px;line-height:1;color:var(--accent);font-weight:400}
+.vow h3{font-size:25px;line-height:1.55;margin:18px 0 12px;letter-spacing:.04em}
+.vow p{font-size:18px;line-height:1.85;color:var(--muted);margin:0}
+.proof{position:absolute;left:72px;right:72px;bottom:62px;display:grid;grid-template-columns:repeat(3,1fr) 1.3fr;align-items:end;border-top:1px solid var(--ink);padding-top:14px}
+.proof>div{padding-right:24px}
+.proof b{display:block;font-family:var(--font-num);font-weight:300;font-size:60px;line-height:1.05;letter-spacing:-.01em}
+.proof b small{font-family:var(--font);font-size:18px;font-weight:600;margin-left:3px}
+.proof>div>span{font-size:16px;color:var(--muted);letter-spacing:.06em}
+.proof .why{margin:0;align-self:end}
+
+/* ---------- 6 締め ---------- */
+.close{display:grid;grid-template-columns:1fr 420px;gap:56px;margin-top:26px;flex:1}
+.blank{border-top:1px solid var(--ink)}
+.blank .r{display:grid;grid-template-columns:90px 1fr;align-items:baseline;height:40px;border-bottom:1px solid var(--line)}
+.blank .r b{font-family:var(--font-num);font-weight:400;font-size:22px}
+.blank .r span{font-size:18px;color:var(--muted)}
+.blank .r.me b{color:var(--accent)}
+.blank .r.me span{color:var(--ink);font-weight:600}
+.blank .r .pen{display:block;height:22px;border-bottom:1px dashed #b7aa90;margin-right:40%}
+.asks .a{padding:16px 0 18px;border-top:1px solid var(--ink)}
+.asks .a+.a{border-top:1px solid var(--line)}
+.asks .a i{font-family:var(--font-num);font-style:italic;font-size:17px;color:var(--accent)}
+.asks .a h3{font-size:23px;line-height:1.55;margin:6px 0 6px}
+.asks .a p{font-size:18px;line-height:1.75;color:var(--muted);margin:0}
+.sign{margin-top:14px;font-size:18px;text-align:right;letter-spacing:.2em}
+.sign b{font-size:24px;letter-spacing:.3em;margin-left:14px}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="mast"><span>サンプル工房　創業十周年記念誌</span><i>Ten Years of Sample Kobo</i></div>
+    <div class="ten num">10<small>years</small></div>
+    <div class="years num">MMXVI — MMXXVI</div>
+    <div class="body">
+      <div class="kicker">十年の歩み　<span class="yr ky" data-morph="yr">16</span> — 2026</div>
+      <h1>三人の修理工房は、<br>十年で百八十人の<br>会社になりました。</h1>
+      <p class="lead">捨てずに、直して、また使う。<br>その一脚から始まった十年を、数字と年表でたどります。</p>
+    </div>
+    <div class="colo">
+      <div><b>発行</b>2026年10月1日　創業記念日</div>
+      <div><b>語り手</b>代表取締役　森下 修</div>
+      <div><b>読み手</b>社員・内定者・会社説明会の皆さま</div>
+    </div>
+    <aside class="notes">最初に「十年で三人が百八十人になった」とだけ言う。細かい数字はこのあと年表で一緒に動かすので、ここでは言わない。会社説明会で使うときは、語り手と読み手の行を書き換える。</aside>
+  </section>
+
+  <!-- 2 はじまり -->
+  <section class="slide s-origin" data-title="はじまり">
+    <div class="run"><span>十年の歩み　第一章　はじまり</span><i>Chapter One</i></div>
+    <div class="kicker">第一章　はじまり</div>
+    <h2>始まりは、福岡の六畳間と、三人と、一脚の椅子だった。</h2>
+    <div class="origin">
+      <div>
+        <span class="yr y1" data-morph="yr">16</span>
+        <div class="era" data-morph-enter><b>Spring, 2016</b>福岡市博多区・六畳の工房</div>
+        <p class="pull" data-morph-enter style="--d:.3">「これで、あと十年<br>座れる」<small>— 最初のお客さまの言葉</small></p>
+      </div>
+      <div class="story" data-morph-enter style="--d:.1">
+        <p>最初の依頼は、友人のお母さんからの一脚でした。「祖母の代から使ってきた椅子を、捨てずに直してほしい」。</p>
+        <p>家具職人が二人と、営業の私。工房は六畳一間、最初の月の売上は3万8千円です。</p>
+        <p>張り替えた椅子を届けた日に言われた一言が、いまも会社の真ん中にあります。直せば、家具はまた十年使える。私たちの仕事は、その十年をつくることです。</p>
+      </div>
+      <div class="facts" data-morph-enter style="--d:.2">
+        <div class="fact step"><b class="num">3<small>人</small></b><span>創業の仲間（職人2・営業1）</span></div>
+        <div class="fact step"><b class="num">6<small>畳</small></b><span>最初の工房（家賃 月4万円）</span></div>
+        <div class="fact step"><b class="num">1<small>脚</small></b><span>最初の依頼（2.4万円）</span></div>
+        <details class="why float"><summary>社名に込めたこと</summary><div class="body">「サンプル」は見本のこと。直した家具が、次に家具を直そうか迷う人の見本になるように、という意味で付けました。</div></details>
+      </div>
+    </div>
+    <div class="foot"><span>社名・人名・数字はすべて架空のサンプルです</span><span class="folio">— 02 —</span></div>
+    <aside class="notes">→ を押すたびに右の数字が1つずつ出る。「3人・6畳・1脚」と指で数えるように。左上の2016は、次のページで年のつまみの数字にそのままつながる。</aside>
+  </section>
+
+  <!-- 3 年表（芯：時間のつまみ） -->
+  <section class="slide s-tl" data-title="十年の年表">
+    <div class="run"><span>十年の歩み　第二章　年表</span><i>Chapter Two</i></div>
+    <div class="kicker">第二章　年表　つまみを動かしてください</div>
+    <h2>人が増え、拠点が灯り、売上が伸びた。十年は、一続きだった。</h2>
+    <div class="tl" data-calc data-let="k = min(10, max(0, round(y) - 2016)); st = [3,6,12,24,31,48,70,96,124,152,180][k]; sa = [0.1,0.4,1.2,2.6,3.0,4.9,7.3,10.2,13.1,16.4,19.5][k]; nb = [1,1,2,3,4,5,6,7,8,9,9][k]">
+      <div class="era">
+        <span class="yr" data-morph="yr" data-out="round(y) - 2000"></span>
+        <div class="events">
+          <div class="ev" style="--e:2016"><h3>福岡・六畳の工房で、三人で創業</h3><p>最初の依頼は、祖母の代から使ってきた椅子の張り替え。</p></div>
+          <div class="ev" style="--e:2017"><h3>会社の家具を「月1回の点検」で</h3><p>法人の定期点検が始まり、売上が季節に左右されなくなる。</p></div>
+          <div class="ev" style="--e:2018"><h3>熊本に、二つ目の工房</h3><p>職人を初めて公募で採用。社員は12人に。</p></div>
+          <div class="ev" style="--e:2019"><h3>大阪へ。初めての大きな仕事</h3><p>ホテル120室の客室家具を、捨てずにまとめて直す。</p></div>
+          <div class="ev" style="--e:2020"><h3>いちばん苦しい年に、東京へ</h3><p>法人の仕事が半分に。家の椅子の出張修理を月800件に広げて持ちこたえる。</p></div>
+          <div class="ev" style="--e:2021"><h3>写真3枚で見積もり。広島にも</h3><p>スマホで頼めるようにし、依頼の6割がオンラインに。</p></div>
+          <div class="ev" style="--e:2022"><h3>名古屋に「一年目の工房」</h3><p>未経験から一年で職人になる育成の仕組み。この年の入社は22人。</p></div>
+          <div class="ev" style="--e:2023"><h3>金沢で、漆と木工の職人と組む</h3><p>直すだけでなく、仕立て直す仕事が始まる。</p></div>
+          <div class="ev" style="--e:2024"><h3>仙台に工房。「二度目の家具」</h3><p>引き取った家具を直して、次の持ち主へ届ける。</p></div>
+          <div class="ev" style="--e:2025"><h3>札幌で9拠点目、修理10万件</h3><p>北海道から九州まで、翌週には伺えるようになった。</p></div>
+          <div class="ev" style="--e:2026"><h3>創業十年。社員180人に</h3><p>三人で始めた工房が、九つの街の工房になった。売上19.5億円（見込み）。</p></div>
+        </div>
+      </div>
+
+      <div class="people" data-morph-enter style="--d:.1">
+        <div class="lab">社員<b class="num"><span data-out="st"></span><small>人</small></b></div>
+        <div class="dots"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i><i style="--i:13"></i><i style="--i:14"></i><i style="--i:15"></i><i style="--i:16"></i><i style="--i:17"></i><i style="--i:18"></i><i style="--i:19"></i><i style="--i:20"></i><i style="--i:21"></i><i style="--i:22"></i><i style="--i:23"></i><i style="--i:24"></i><i style="--i:25"></i><i style="--i:26"></i><i style="--i:27"></i><i style="--i:28"></i><i style="--i:29"></i><i style="--i:30"></i><i style="--i:31"></i><i style="--i:32"></i><i style="--i:33"></i><i style="--i:34"></i><i style="--i:35"></i><i style="--i:36"></i><i style="--i:37"></i><i style="--i:38"></i><i style="--i:39"></i><i style="--i:40"></i><i style="--i:41"></i><i style="--i:42"></i><i style="--i:43"></i><i style="--i:44"></i><i style="--i:45"></i><i style="--i:46"></i><i style="--i:47"></i><i style="--i:48"></i><i style="--i:49"></i><i style="--i:50"></i><i style="--i:51"></i><i style="--i:52"></i><i style="--i:53"></i><i style="--i:54"></i><i style="--i:55"></i><i style="--i:56"></i><i style="--i:57"></i><i style="--i:58"></i><i style="--i:59"></i><i style="--i:60"></i><i style="--i:61"></i><i style="--i:62"></i><i style="--i:63"></i><i style="--i:64"></i><i style="--i:65"></i><i style="--i:66"></i><i style="--i:67"></i><i style="--i:68"></i><i style="--i:69"></i><i style="--i:70"></i><i style="--i:71"></i><i style="--i:72"></i><i style="--i:73"></i><i style="--i:74"></i><i style="--i:75"></i><i style="--i:76"></i><i style="--i:77"></i><i style="--i:78"></i><i style="--i:79"></i><i style="--i:80"></i><i style="--i:81"></i><i style="--i:82"></i><i style="--i:83"></i><i style="--i:84"></i><i style="--i:85"></i><i style="--i:86"></i><i style="--i:87"></i><i style="--i:88"></i><i style="--i:89"></i><i style="--i:90"></i><i style="--i:91"></i><i style="--i:92"></i><i style="--i:93"></i><i style="--i:94"></i><i style="--i:95"></i><i style="--i:96"></i><i style="--i:97"></i><i style="--i:98"></i><i style="--i:99"></i><i style="--i:100"></i><i style="--i:101"></i><i style="--i:102"></i><i style="--i:103"></i><i style="--i:104"></i><i style="--i:105"></i><i style="--i:106"></i><i style="--i:107"></i><i style="--i:108"></i><i style="--i:109"></i><i style="--i:110"></i><i style="--i:111"></i><i style="--i:112"></i><i style="--i:113"></i><i style="--i:114"></i><i style="--i:115"></i><i style="--i:116"></i><i style="--i:117"></i><i style="--i:118"></i><i style="--i:119"></i><i style="--i:120"></i><i style="--i:121"></i><i style="--i:122"></i><i style="--i:123"></i><i style="--i:124"></i><i style="--i:125"></i><i style="--i:126"></i><i style="--i:127"></i><i style="--i:128"></i><i style="--i:129"></i><i style="--i:130"></i><i style="--i:131"></i><i style="--i:132"></i><i style="--i:133"></i><i style="--i:134"></i><i style="--i:135"></i><i style="--i:136"></i><i style="--i:137"></i><i style="--i:138"></i><i style="--i:139"></i><i style="--i:140"></i><i style="--i:141"></i><i style="--i:142"></i><i style="--i:143"></i><i style="--i:144"></i><i style="--i:145"></i><i style="--i:146"></i><i style="--i:147"></i><i style="--i:148"></i><i style="--i:149"></i><i style="--i:150"></i><i style="--i:151"></i><i style="--i:152"></i><i style="--i:153"></i><i style="--i:154"></i><i style="--i:155"></i><i style="--i:156"></i><i style="--i:157"></i><i style="--i:158"></i><i style="--i:159"></i><i style="--i:160"></i><i style="--i:161"></i><i style="--i:162"></i><i style="--i:163"></i><i style="--i:164"></i><i style="--i:165"></i><i style="--i:166"></i><i style="--i:167"></i><i style="--i:168"></i><i style="--i:169"></i><i style="--i:170"></i><i style="--i:171"></i><i style="--i:172"></i><i style="--i:173"></i><i style="--i:174"></i><i style="--i:175"></i><i style="--i:176"></i><i style="--i:177"></i><i style="--i:178"></i><i style="--i:179"></i><i style="--i:180"></i><i style="--i:181"></i><i style="--i:182"></i><i style="--i:183"></i><i style="--i:184"></i><i style="--i:185"></i><i style="--i:186"></i><i style="--i:187"></i><i style="--i:188"></i><i style="--i:189"></i><i style="--i:190"></i><i style="--i:191"></i><i style="--i:192"></i><i style="--i:193"></i><i style="--i:194"></i><i style="--i:195"></i><i style="--i:196"></i><i style="--i:197"></i><i style="--i:198"></i><i style="--i:199"></i></div>
+        <p class="cap">点ひとつが一人。<i></i>は創業の三人。</p>
+      </div>
+
+      <div class="map" data-morph-enter style="--d:.18">
+        <div class="lab">拠点<b class="num"><span data-out="nb"></span><small>か所</small></b></div>
+        <div class="field">
+          <div class="grat"><div class="lo" style="left:13px"><span>130°E</span></div><div class="lo" style="left:56px"></div><div class="lo" style="left:99px"><span>134°</span></div><div class="lo" style="left:141px"></div><div class="lo" style="left:184px"><span>138°</span></div><div class="lo" style="left:227px"></div><div class="lo" style="left:270px"><span>142°</span></div><div class="lo" style="left:313px"></div><div class="la" style="top:370px"><span>32°</span></div><div class="la" style="top:316px"></div><div class="la" style="top:261px"><span>36°</span></div><div class="la" style="top:207px"></div><div class="la" style="top:152px"><span>40°</span></div><div class="la" style="top:98px"></div><div class="la" style="top:44px"><span>44°N</span></div></div>
+          <svg class="land" viewBox="0 0 356 400" aria-hidden="true"><circle cx="270.0" cy="10.8" r="1.35"/><circle cx="270.0" cy="18.0" r="1.35"/><circle cx="277.2" cy="18.0" r="1.35"/><circle cx="270.0" cy="25.2" r="1.35"/><circle cx="277.2" cy="25.2" r="1.35"/><circle cx="284.4" cy="25.2" r="1.35"/><circle cx="270.0" cy="32.4" r="1.35"/><circle cx="277.2" cy="32.4" r="1.35"/><circle cx="284.4" cy="32.4" r="1.35"/><circle cx="291.6" cy="32.4" r="1.35"/><circle cx="262.8" cy="39.6" r="1.35"/><circle cx="270.0" cy="39.6" r="1.35"/><circle cx="277.2" cy="39.6" r="1.35"/><circle cx="284.4" cy="39.6" r="1.35"/><circle cx="291.6" cy="39.6" r="1.35"/><circle cx="298.8" cy="39.6" r="1.35"/><circle cx="306.0" cy="39.6" r="1.35"/><circle cx="334.8" cy="39.6" r="1.35"/><circle cx="262.8" cy="46.8" r="1.35"/><circle cx="270.0" cy="46.8" r="1.35"/><circle cx="277.2" cy="46.8" r="1.35"/><circle cx="284.4" cy="46.8" r="1.35"/><circle cx="291.6" cy="46.8" r="1.35"/><circle cx="298.8" cy="46.8" r="1.35"/><circle cx="306.0" cy="46.8" r="1.35"/><circle cx="313.2" cy="46.8" r="1.35"/><circle cx="320.4" cy="46.8" r="1.35"/><circle cx="327.6" cy="46.8" r="1.35"/><circle cx="334.8" cy="46.8" r="1.35"/><circle cx="342.0" cy="46.8" r="1.35"/><circle cx="262.8" cy="54.0" r="1.35"/><circle cx="270.0" cy="54.0" r="1.35"/><circle cx="277.2" cy="54.0" r="1.35"/><circle cx="284.4" cy="54.0" r="1.35"/><circle cx="291.6" cy="54.0" r="1.35"/><circle cx="298.8" cy="54.0" r="1.35"/><circle cx="306.0" cy="54.0" r="1.35"/><circle cx="313.2" cy="54.0" r="1.35"/><circle cx="320.4" cy="54.0" r="1.35"/><circle cx="327.6" cy="54.0" r="1.35"/><circle cx="334.8" cy="54.0" r="1.35"/><circle cx="342.0" cy="54.0" r="1.35"/><circle cx="262.8" cy="61.2" r="1.35"/><circle cx="270.0" cy="61.2" r="1.35"/><circle cx="277.2" cy="61.2" r="1.35"/><circle cx="284.4" cy="61.2" r="1.35"/><circle cx="291.6" cy="61.2" r="1.35"/><circle cx="298.8" cy="61.2" r="1.35"/><circle cx="306.0" cy="61.2" r="1.35"/><circle cx="313.2" cy="61.2" r="1.35"/><circle cx="320.4" cy="61.2" r="1.35"/><circle cx="327.6" cy="61.2" r="1.35"/><circle cx="334.8" cy="61.2" r="1.35"/><circle cx="342.0" cy="61.2" r="1.35"/><circle cx="234.0" cy="68.4" r="1.35"/><circle cx="241.2" cy="68.4" r="1.35"/><circle cx="248.4" cy="68.4" r="1.35"/><circle cx="255.6" cy="68.4" r="1.35"/><circle cx="262.8" cy="68.4" r="1.35"/><circle cx="270.0" cy="68.4" r="1.35"/><circle cx="277.2" cy="68.4" r="1.35"/><circle cx="284.4" cy="68.4" r="1.35"/><circle cx="291.6" cy="68.4" r="1.35"/><circle cx="298.8" cy="68.4" r="1.35"/><circle cx="306.0" cy="68.4" r="1.35"/><circle cx="313.2" cy="68.4" r="1.35"/><circle cx="320.4" cy="68.4" r="1.35"/><circle cx="327.6" cy="68.4" r="1.35"/><circle cx="226.8" cy="75.6" r="1.35"/><circle cx="234.0" cy="75.6" r="1.35"/><circle cx="241.2" cy="75.6" r="1.35"/><circle cx="248.4" cy="75.6" r="1.35"/><circle cx="255.6" cy="75.6" r="1.35"/><circle cx="262.8" cy="75.6" r="1.35"/><circle cx="270.0" cy="75.6" r="1.35"/><circle cx="277.2" cy="75.6" r="1.35"/><circle cx="284.4" cy="75.6" r="1.35"/><circle cx="291.6" cy="75.6" r="1.35"/><circle cx="298.8" cy="75.6" r="1.35"/><circle cx="306.0" cy="75.6" r="1.35"/><circle cx="313.2" cy="75.6" r="1.35"/><circle cx="320.4" cy="75.6" r="1.35"/><circle cx="234.0" cy="82.8" r="1.35"/><circle cx="241.2" cy="82.8" r="1.35"/><circle cx="248.4" cy="82.8" r="1.35"/><circle cx="255.6" cy="82.8" r="1.35"/><circle cx="262.8" cy="82.8" r="1.35"/><circle cx="270.0" cy="82.8" r="1.35"/><circle cx="277.2" cy="82.8" r="1.35"/><circle cx="284.4" cy="82.8" r="1.35"/><circle cx="291.6" cy="82.8" r="1.35"/><circle cx="298.8" cy="82.8" r="1.35"/><circle cx="306.0" cy="82.8" r="1.35"/><circle cx="313.2" cy="82.8" r="1.35"/><circle cx="226.8" cy="90.0" r="1.35"/><circle cx="234.0" cy="90.0" r="1.35"/><circle cx="241.2" cy="90.0" r="1.35"/><circle cx="248.4" cy="90.0" r="1.35"/><circle cx="284.4" cy="90.0" r="1.35"/><circle cx="291.6" cy="90.0" r="1.35"/><circle cx="298.8" cy="90.0" r="1.35"/><circle cx="306.0" cy="90.0" r="1.35"/><circle cx="226.8" cy="97.2" r="1.35"/><circle cx="234.0" cy="97.2" r="1.35"/><circle cx="241.2" cy="97.2" r="1.35"/><circle cx="226.8" cy="104.4" r="1.35"/><circle cx="234.0" cy="104.4" r="1.35"/><circle cx="241.2" cy="118.8" r="1.35"/><circle cx="248.4" cy="118.8" r="1.35"/><circle cx="255.6" cy="118.8" r="1.35"/><circle cx="234.0" cy="126.0" r="1.35"/><circle cx="241.2" cy="126.0" r="1.35"/><circle cx="248.4" cy="126.0" r="1.35"/><circle cx="255.6" cy="126.0" r="1.35"/><circle cx="226.8" cy="133.2" r="1.35"/><circle cx="234.0" cy="133.2" r="1.35"/><circle cx="241.2" cy="133.2" r="1.35"/><circle cx="248.4" cy="133.2" r="1.35"/><circle cx="255.6" cy="133.2" r="1.35"/><circle cx="226.8" cy="140.4" r="1.35"/><circle cx="234.0" cy="140.4" r="1.35"/><circle cx="241.2" cy="140.4" r="1.35"/><circle cx="248.4" cy="140.4" r="1.35"/><circle cx="255.6" cy="140.4" r="1.35"/><circle cx="226.8" cy="147.6" r="1.35"/><circle cx="234.0" cy="147.6" r="1.35"/><circle cx="241.2" cy="147.6" r="1.35"/><circle cx="248.4" cy="147.6" r="1.35"/><circle cx="255.6" cy="147.6" r="1.35"/><circle cx="262.8" cy="147.6" r="1.35"/><circle cx="234.0" cy="154.8" r="1.35"/><circle cx="241.2" cy="154.8" r="1.35"/><circle cx="248.4" cy="154.8" r="1.35"/><circle cx="255.6" cy="154.8" r="1.35"/><circle cx="262.8" cy="154.8" r="1.35"/><circle cx="226.8" cy="162.0" r="1.35"/><circle cx="234.0" cy="162.0" r="1.35"/><circle cx="241.2" cy="162.0" r="1.35"/><circle cx="248.4" cy="162.0" r="1.35"/><circle cx="255.6" cy="162.0" r="1.35"/><circle cx="262.8" cy="162.0" r="1.35"/><circle cx="226.8" cy="169.2" r="1.35"/><circle cx="234.0" cy="169.2" r="1.35"/><circle cx="241.2" cy="169.2" r="1.35"/><circle cx="248.4" cy="169.2" r="1.35"/><circle cx="255.6" cy="169.2" r="1.35"/><circle cx="262.8" cy="169.2" r="1.35"/><circle cx="226.8" cy="176.4" r="1.35"/><circle cx="234.0" cy="176.4" r="1.35"/><circle cx="241.2" cy="176.4" r="1.35"/><circle cx="248.4" cy="176.4" r="1.35"/><circle cx="255.6" cy="176.4" r="1.35"/><circle cx="262.8" cy="176.4" r="1.35"/><circle cx="226.8" cy="183.6" r="1.35"/><circle cx="234.0" cy="183.6" r="1.35"/><circle cx="241.2" cy="183.6" r="1.35"/><circle cx="248.4" cy="183.6" r="1.35"/><circle cx="255.6" cy="183.6" r="1.35"/><circle cx="262.8" cy="183.6" r="1.35"/><circle cx="219.6" cy="190.8" r="1.35"/><circle cx="226.8" cy="190.8" r="1.35"/><circle cx="234.0" cy="190.8" r="1.35"/><circle cx="241.2" cy="190.8" r="1.35"/><circle cx="248.4" cy="190.8" r="1.35"/><circle cx="255.6" cy="190.8" r="1.35"/><circle cx="262.8" cy="190.8" r="1.35"/><circle cx="219.6" cy="198.0" r="1.35"/><circle cx="226.8" cy="198.0" r="1.35"/><circle cx="234.0" cy="198.0" r="1.35"/><circle cx="241.2" cy="198.0" r="1.35"/><circle cx="248.4" cy="198.0" r="1.35"/><circle cx="255.6" cy="198.0" r="1.35"/><circle cx="212.4" cy="205.2" r="1.35"/><circle cx="219.6" cy="205.2" r="1.35"/><circle cx="226.8" cy="205.2" r="1.35"/><circle cx="234.0" cy="205.2" r="1.35"/><circle cx="241.2" cy="205.2" r="1.35"/><circle cx="205.2" cy="212.4" r="1.35"/><circle cx="212.4" cy="212.4" r="1.35"/><circle cx="219.6" cy="212.4" r="1.35"/><circle cx="226.8" cy="212.4" r="1.35"/><circle cx="234.0" cy="212.4" r="1.35"/><circle cx="241.2" cy="212.4" r="1.35"/><circle cx="198.0" cy="219.6" r="1.35"/><circle cx="205.2" cy="219.6" r="1.35"/><circle cx="212.4" cy="219.6" r="1.35"/><circle cx="219.6" cy="219.6" r="1.35"/><circle cx="226.8" cy="219.6" r="1.35"/><circle cx="234.0" cy="219.6" r="1.35"/><circle cx="241.2" cy="219.6" r="1.35"/><circle cx="198.0" cy="226.8" r="1.35"/><circle cx="205.2" cy="226.8" r="1.35"/><circle cx="212.4" cy="226.8" r="1.35"/><circle cx="219.6" cy="226.8" r="1.35"/><circle cx="226.8" cy="226.8" r="1.35"/><circle cx="234.0" cy="226.8" r="1.35"/><circle cx="241.2" cy="226.8" r="1.35"/><circle cx="162.0" cy="234.0" r="1.35"/><circle cx="183.6" cy="234.0" r="1.35"/><circle cx="190.8" cy="234.0" r="1.35"/><circle cx="198.0" cy="234.0" r="1.35"/><circle cx="205.2" cy="234.0" r="1.35"/><circle cx="212.4" cy="234.0" r="1.35"/><circle cx="219.6" cy="234.0" r="1.35"/><circle cx="226.8" cy="234.0" r="1.35"/><circle cx="234.0" cy="234.0" r="1.35"/><circle cx="241.2" cy="234.0" r="1.35"/><circle cx="162.0" cy="241.2" r="1.35"/><circle cx="169.2" cy="241.2" r="1.35"/><circle cx="176.4" cy="241.2" r="1.35"/><circle cx="183.6" cy="241.2" r="1.35"/><circle cx="190.8" cy="241.2" r="1.35"/><circle cx="198.0" cy="241.2" r="1.35"/><circle cx="205.2" cy="241.2" r="1.35"/><circle cx="212.4" cy="241.2" r="1.35"/><circle cx="219.6" cy="241.2" r="1.35"/><circle cx="226.8" cy="241.2" r="1.35"/><circle cx="234.0" cy="241.2" r="1.35"/><circle cx="241.2" cy="241.2" r="1.35"/><circle cx="154.8" cy="248.4" r="1.35"/><circle cx="162.0" cy="248.4" r="1.35"/><circle cx="169.2" cy="248.4" r="1.35"/><circle cx="176.4" cy="248.4" r="1.35"/><circle cx="183.6" cy="248.4" r="1.35"/><circle cx="190.8" cy="248.4" r="1.35"/><circle cx="198.0" cy="248.4" r="1.35"/><circle cx="205.2" cy="248.4" r="1.35"/><circle cx="212.4" cy="248.4" r="1.35"/><circle cx="219.6" cy="248.4" r="1.35"/><circle cx="226.8" cy="248.4" r="1.35"/><circle cx="234.0" cy="248.4" r="1.35"/><circle cx="241.2" cy="248.4" r="1.35"/><circle cx="147.6" cy="255.6" r="1.35"/><circle cx="154.8" cy="255.6" r="1.35"/><circle cx="162.0" cy="255.6" r="1.35"/><circle cx="169.2" cy="255.6" r="1.35"/><circle cx="176.4" cy="255.6" r="1.35"/><circle cx="183.6" cy="255.6" r="1.35"/><circle cx="190.8" cy="255.6" r="1.35"/><circle cx="198.0" cy="255.6" r="1.35"/><circle cx="205.2" cy="255.6" r="1.35"/><circle cx="212.4" cy="255.6" r="1.35"/><circle cx="219.6" cy="255.6" r="1.35"/><circle cx="226.8" cy="255.6" r="1.35"/><circle cx="234.0" cy="255.6" r="1.35"/><circle cx="147.6" cy="262.8" r="1.35"/><circle cx="154.8" cy="262.8" r="1.35"/><circle cx="162.0" cy="262.8" r="1.35"/><circle cx="169.2" cy="262.8" r="1.35"/><circle cx="176.4" cy="262.8" r="1.35"/><circle cx="183.6" cy="262.8" r="1.35"/><circle cx="190.8" cy="262.8" r="1.35"/><circle cx="198.0" cy="262.8" r="1.35"/><circle cx="205.2" cy="262.8" r="1.35"/><circle cx="212.4" cy="262.8" r="1.35"/><circle cx="219.6" cy="262.8" r="1.35"/><circle cx="226.8" cy="262.8" r="1.35"/><circle cx="234.0" cy="262.8" r="1.35"/><circle cx="241.2" cy="262.8" r="1.35"/><circle cx="140.4" cy="270.0" r="1.35"/><circle cx="147.6" cy="270.0" r="1.35"/><circle cx="154.8" cy="270.0" r="1.35"/><circle cx="162.0" cy="270.0" r="1.35"/><circle cx="169.2" cy="270.0" r="1.35"/><circle cx="176.4" cy="270.0" r="1.35"/><circle cx="183.6" cy="270.0" r="1.35"/><circle cx="190.8" cy="270.0" r="1.35"/><circle cx="198.0" cy="270.0" r="1.35"/><circle cx="205.2" cy="270.0" r="1.35"/><circle cx="212.4" cy="270.0" r="1.35"/><circle cx="219.6" cy="270.0" r="1.35"/><circle cx="226.8" cy="270.0" r="1.35"/><circle cx="234.0" cy="270.0" r="1.35"/><circle cx="241.2" cy="270.0" r="1.35"/><circle cx="82.8" cy="277.2" r="1.35"/><circle cx="90.0" cy="277.2" r="1.35"/><circle cx="97.2" cy="277.2" r="1.35"/><circle cx="104.4" cy="277.2" r="1.35"/><circle cx="111.6" cy="277.2" r="1.35"/><circle cx="118.8" cy="277.2" r="1.35"/><circle cx="126.0" cy="277.2" r="1.35"/><circle cx="133.2" cy="277.2" r="1.35"/><circle cx="140.4" cy="277.2" r="1.35"/><circle cx="147.6" cy="277.2" r="1.35"/><circle cx="154.8" cy="277.2" r="1.35"/><circle cx="162.0" cy="277.2" r="1.35"/><circle cx="169.2" cy="277.2" r="1.35"/><circle cx="176.4" cy="277.2" r="1.35"/><circle cx="183.6" cy="277.2" r="1.35"/><circle cx="190.8" cy="277.2" r="1.35"/><circle cx="198.0" cy="277.2" r="1.35"/><circle cx="205.2" cy="277.2" r="1.35"/><circle cx="212.4" cy="277.2" r="1.35"/><circle cx="219.6" cy="277.2" r="1.35"/><circle cx="226.8" cy="277.2" r="1.35"/><circle cx="234.0" cy="277.2" r="1.35"/><circle cx="68.4" cy="284.4" r="1.35"/><circle cx="75.6" cy="284.4" r="1.35"/><circle cx="82.8" cy="284.4" r="1.35"/><circle cx="90.0" cy="284.4" r="1.35"/><circle cx="97.2" cy="284.4" r="1.35"/><circle cx="104.4" cy="284.4" r="1.35"/><circle cx="111.6" cy="284.4" r="1.35"/><circle cx="118.8" cy="284.4" r="1.35"/><circle cx="126.0" cy="284.4" r="1.35"/><circle cx="133.2" cy="284.4" r="1.35"/><circle cx="140.4" cy="284.4" r="1.35"/><circle cx="147.6" cy="284.4" r="1.35"/><circle cx="154.8" cy="284.4" r="1.35"/><circle cx="162.0" cy="284.4" r="1.35"/><circle cx="169.2" cy="284.4" r="1.35"/><circle cx="176.4" cy="284.4" r="1.35"/><circle cx="183.6" cy="284.4" r="1.35"/><circle cx="190.8" cy="284.4" r="1.35"/><circle cx="198.0" cy="284.4" r="1.35"/><circle cx="205.2" cy="284.4" r="1.35"/><circle cx="226.8" cy="284.4" r="1.35"/><circle cx="61.2" cy="291.6" r="1.35"/><circle cx="68.4" cy="291.6" r="1.35"/><circle cx="75.6" cy="291.6" r="1.35"/><circle cx="82.8" cy="291.6" r="1.35"/><circle cx="90.0" cy="291.6" r="1.35"/><circle cx="97.2" cy="291.6" r="1.35"/><circle cx="104.4" cy="291.6" r="1.35"/><circle cx="111.6" cy="291.6" r="1.35"/><circle cx="118.8" cy="291.6" r="1.35"/><circle cx="126.0" cy="291.6" r="1.35"/><circle cx="133.2" cy="291.6" r="1.35"/><circle cx="140.4" cy="291.6" r="1.35"/><circle cx="147.6" cy="291.6" r="1.35"/><circle cx="154.8" cy="291.6" r="1.35"/><circle cx="162.0" cy="291.6" r="1.35"/><circle cx="169.2" cy="291.6" r="1.35"/><circle cx="176.4" cy="291.6" r="1.35"/><circle cx="183.6" cy="291.6" r="1.35"/><circle cx="190.8" cy="291.6" r="1.35"/><circle cx="198.0" cy="291.6" r="1.35"/><circle cx="54.0" cy="298.8" r="1.35"/><circle cx="61.2" cy="298.8" r="1.35"/><circle cx="68.4" cy="298.8" r="1.35"/><circle cx="75.6" cy="298.8" r="1.35"/><circle cx="82.8" cy="298.8" r="1.35"/><circle cx="90.0" cy="298.8" r="1.35"/><circle cx="97.2" cy="298.8" r="1.35"/><circle cx="133.2" cy="298.8" r="1.35"/><circle cx="140.4" cy="298.8" r="1.35"/><circle cx="147.6" cy="298.8" r="1.35"/><circle cx="154.8" cy="298.8" r="1.35"/><circle cx="162.0" cy="298.8" r="1.35"/><circle cx="169.2" cy="298.8" r="1.35"/><circle cx="176.4" cy="298.8" r="1.35"/><circle cx="183.6" cy="298.8" r="1.35"/><circle cx="190.8" cy="298.8" r="1.35"/><circle cx="198.0" cy="298.8" r="1.35"/><circle cx="46.8" cy="306.0" r="1.35"/><circle cx="54.0" cy="306.0" r="1.35"/><circle cx="61.2" cy="306.0" r="1.35"/><circle cx="68.4" cy="306.0" r="1.35"/><circle cx="75.6" cy="306.0" r="1.35"/><circle cx="126.0" cy="306.0" r="1.35"/><circle cx="133.2" cy="306.0" r="1.35"/><circle cx="140.4" cy="306.0" r="1.35"/><circle cx="147.6" cy="306.0" r="1.35"/><circle cx="154.8" cy="306.0" r="1.35"/><circle cx="162.0" cy="306.0" r="1.35"/><circle cx="39.6" cy="313.2" r="1.35"/><circle cx="46.8" cy="313.2" r="1.35"/><circle cx="54.0" cy="313.2" r="1.35"/><circle cx="82.8" cy="313.2" r="1.35"/><circle cx="90.0" cy="313.2" r="1.35"/><circle cx="97.2" cy="313.2" r="1.35"/><circle cx="104.4" cy="313.2" r="1.35"/><circle cx="111.6" cy="313.2" r="1.35"/><circle cx="126.0" cy="313.2" r="1.35"/><circle cx="133.2" cy="313.2" r="1.35"/><circle cx="140.4" cy="313.2" r="1.35"/><circle cx="147.6" cy="313.2" r="1.35"/><circle cx="154.8" cy="313.2" r="1.35"/><circle cx="32.4" cy="320.4" r="1.35"/><circle cx="75.6" cy="320.4" r="1.35"/><circle cx="82.8" cy="320.4" r="1.35"/><circle cx="90.0" cy="320.4" r="1.35"/><circle cx="97.2" cy="320.4" r="1.35"/><circle cx="104.4" cy="320.4" r="1.35"/><circle cx="111.6" cy="320.4" r="1.35"/><circle cx="133.2" cy="320.4" r="1.35"/><circle cx="140.4" cy="320.4" r="1.35"/><circle cx="147.6" cy="320.4" r="1.35"/><circle cx="18.0" cy="327.6" r="1.35"/><circle cx="25.2" cy="327.6" r="1.35"/><circle cx="32.4" cy="327.6" r="1.35"/><circle cx="39.6" cy="327.6" r="1.35"/><circle cx="46.8" cy="327.6" r="1.35"/><circle cx="68.4" cy="327.6" r="1.35"/><circle cx="75.6" cy="327.6" r="1.35"/><circle cx="82.8" cy="327.6" r="1.35"/><circle cx="90.0" cy="327.6" r="1.35"/><circle cx="97.2" cy="327.6" r="1.35"/><circle cx="104.4" cy="327.6" r="1.35"/><circle cx="140.4" cy="327.6" r="1.35"/><circle cx="10.8" cy="334.8" r="1.35"/><circle cx="18.0" cy="334.8" r="1.35"/><circle cx="25.2" cy="334.8" r="1.35"/><circle cx="32.4" cy="334.8" r="1.35"/><circle cx="39.6" cy="334.8" r="1.35"/><circle cx="46.8" cy="334.8" r="1.35"/><circle cx="68.4" cy="334.8" r="1.35"/><circle cx="75.6" cy="334.8" r="1.35"/><circle cx="10.8" cy="342.0" r="1.35"/><circle cx="18.0" cy="342.0" r="1.35"/><circle cx="25.2" cy="342.0" r="1.35"/><circle cx="32.4" cy="342.0" r="1.35"/><circle cx="39.6" cy="342.0" r="1.35"/><circle cx="46.8" cy="342.0" r="1.35"/><circle cx="68.4" cy="342.0" r="1.35"/><circle cx="75.6" cy="342.0" r="1.35"/><circle cx="10.8" cy="349.2" r="1.35"/><circle cx="18.0" cy="349.2" r="1.35"/><circle cx="25.2" cy="349.2" r="1.35"/><circle cx="32.4" cy="349.2" r="1.35"/><circle cx="39.6" cy="349.2" r="1.35"/><circle cx="46.8" cy="349.2" r="1.35"/><circle cx="18.0" cy="356.4" r="1.35"/><circle cx="25.2" cy="356.4" r="1.35"/><circle cx="32.4" cy="356.4" r="1.35"/><circle cx="39.6" cy="356.4" r="1.35"/><circle cx="46.8" cy="356.4" r="1.35"/><circle cx="25.2" cy="363.6" r="1.35"/><circle cx="32.4" cy="363.6" r="1.35"/><circle cx="39.6" cy="363.6" r="1.35"/><circle cx="46.8" cy="363.6" r="1.35"/><circle cx="25.2" cy="370.8" r="1.35"/><circle cx="32.4" cy="370.8" r="1.35"/><circle cx="39.6" cy="370.8" r="1.35"/><circle cx="46.8" cy="370.8" r="1.35"/><circle cx="25.2" cy="378.0" r="1.35"/><circle cx="32.4" cy="378.0" r="1.35"/><circle cx="39.6" cy="378.0" r="1.35"/><circle cx="18.0" cy="385.2" r="1.35"/><circle cx="25.2" cy="385.2" r="1.35"/><circle cx="32.4" cy="385.2" r="1.35"/><circle cx="39.6" cy="385.2" r="1.35"/><circle cx="25.2" cy="392.4" r="1.35"/><circle cx="32.4" cy="392.4" r="1.35"/></svg>
+          <svg class="route" viewBox="0 0 356 400" aria-hidden="true"><line x1="21" y1="327" x2="28" y2="348" style="--o:2018"/><line x1="21" y1="327" x2="131" y2="297" style="--o:2019"/><line x1="21" y1="327" x2="221" y2="270" style="--o:2020"/><line x1="21" y1="327" x2="66" y2="305" style="--o:2021"/><line x1="21" y1="327" x2="161" y2="283" style="--o:2022"/><line x1="21" y1="327" x2="155" y2="246" style="--o:2023"/><line x1="21" y1="327" x2="246" y2="199" style="--o:2024"/><line x1="21" y1="327" x2="256" y2="69" style="--o:2025"/></svg>
+          <div class="city u" style="--x:21;--t:327;--o:2016"><i class="halo"></i><b>福岡</b></div>
+<div class="city" style="--x:28;--t:348;--o:2018"><i class="halo"></i><b>熊本</b></div>
+<div class="city d" style="--x:131;--t:297;--o:2019;--ly:12"><i class="halo"></i><b>大阪</b></div>
+<div class="city " style="--x:221;--t:270;--o:2020"><i class="halo"></i><b>東京</b></div>
+<div class="city u" style="--x:66;--t:305;--o:2021"><i class="halo"></i><b>広島</b></div>
+<div class="city" style="--x:161;--t:283;--o:2022;--ly:2"><i class="halo"></i><b>名古屋</b></div>
+<div class="city l" style="--x:155;--t:246;--o:2023"><i class="halo"></i><b>金沢</b></div>
+<div class="city " style="--x:246;--t:199;--o:2024"><i class="halo"></i><b>仙台</b></div>
+<div class="city l" style="--x:256;--t:69;--o:2025"><i class="halo"></i><b>札幌</b></div>
+        </div>
+      </div>
+
+      <div class="chart2">
+        <div class="salesl" data-morph-enter style="--d:.24">売上（億円）</div>
+        <div class="area" data-morph="area">
+          <div class="ghost"></div>
+          <div class="reveal"><div class="solid"></div><svg class="top" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,99.5 10,98 20,94 30,87 40,85 50,75.5 60,63.5 70,49 80,34.5 90,18 100,2.5"/></svg></div>
+        </div>
+        <div class="axis" data-morph="axis"></div>
+        <div class="now" data-morph-enter style="--d:.3"><div class="v num"><span data-out="sa" data-format="dec1"></span><small>億円</small></div></div>
+      </div>
+      <div class="ticks" data-morph-enter style="--d:.3"><span>2016</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>2026</span></div>
+      <div class="scrub" data-morph-enter style="--d:.34"><input type="range" name="y" min="2016" max="2026" step="1" value="2016" aria-label="年"></div>
+    </div>
+    <aside class="notes">ここが本題。つまみを2016から1年ずつ右へ。年ごとに「この年、何があったか」を一言ずつ話す。2020年で一度止めて「いちばん苦しかった年に東京を開いた」話を。2026まで来たら、→で次の十年へ（この売上の面が、そのまま次のページの左下に縮んでつながる）。</aside>
+  </section>
+
+  <!-- 4 次の十年（morph でつながる） -->
+  <section class="slide s-next" data-title="次の十年">
+    <div class="run"><span>十年の歩み　第三章　次の十年</span><i>Chapter Three</i></div>
+    <div class="kicker">第三章　次の十年　2026 — 2036</div>
+    <h2>年12%で伸び続ければ、十年後は売上60億円・仲間は約380人。</h2>
+    <div class="nx" data-calc data-let="s36 = 19.5 * pow(1 + g / 100, 10); p36 = 180 * pow(1 + g / 100, 10) / pow(1 + r / 100, 10); hire = (p36 - 180) / 10">
+      <div class="head">
+        <span class="yr" data-morph="yr">36</span>
+        <p data-morph-enter>創業二十年の年。いまの十年が、グラフの左下の小さな面になる。</p>
+      </div>
+      <div class="ctrl" data-morph-enter style="--d:.15">
+        <div class="field"><label>売上の年の伸び <b data-show="g" data-format="dec1" data-unit="%"></b></label><input type="range" name="g" min="0" max="15" step="0.5" value="12"></div>
+        <div class="field"><label>1人あたり売上の年の伸び <b data-show="r" data-format="dec1" data-unit="%"></b></label><input type="range" name="r" min="0" max="8" step="0.5" value="4"></div>
+        <div class="outs">
+          <div><span>2036年の売上</span><b class="num" data-out="s36" data-format="dec1" data-unit="億円"></b></div>
+          <div><span>仲間の数</span><b class="num" data-out="p36" data-unit="人"></b></div>
+          <div><span>毎年ふえる仲間</span><b class="num" data-out="hire" data-unit="人" data-sign></b></div>
+        </div>
+      </div>
+      <div class="chart3">
+        <div class="gl" style="top:0" data-morph-enter><span>80億円</span></div><div class="gl" style="top:25%" data-morph-enter><span>60</span></div>
+        <div class="gl" style="top:50%" data-morph-enter><span>40</span></div><div class="gl" style="top:75%" data-morph-enter></div>
+        <div class="proj" data-morph-enter style="--d:.35"><div class="ln"></div><div class="fl"></div></div>
+        <div class="past">
+          <div class="area" data-morph="area">
+            <div class="ghost"></div>
+            <div class="reveal"><div class="solid"></div><svg class="top" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,99.5 10,98 20,94 30,87 40,85 50,75.5 60,63.5 70,49 80,34.5 90,18 100,2.5"/></svg></div>
+          </div>
+        </div>
+        <div class="tag" style="left:0;bottom:calc(25% + 12px);--d:.4" data-morph-enter>これまでの十年　19.5億円</div>
+        <div class="nowl" data-morph-enter style="--d:.3"><span>いま</span></div>
+        <div class="end" data-morph-enter style="--d:.5"><span class="num"><span data-out="s36" data-format="dec1"></span><small>億円</small></span></div>
+        <div class="axis" data-morph="axis"></div>
+      </div>
+      <div class="ticks" data-morph-enter style="--d:.3"><span>2016</span><span>2021</span><span>2026</span><span>2031</span><span>2036</span></div>
+    </div>
+    <aside class="notes">年表の売上の面が、この図の左下に縮んで入る。「いまの十年は、次の十年から見ればこの大きさ」と言う。つまみで伸び率を下げると、右の点線の面が低くなる。1人あたり売上の伸びを上げると、同じ売上でも仲間の数は少なくて済む。会社説明会では「毎年ふえる仲間」の数字を指して、採用の話へつなぐ。</aside>
+  </section>
+
+  <!-- 5 変えなかった約束 -->
+  <section class="slide s-vow" data-title="三つの約束">
+    <div class="run"><span>十年の歩み　第四章　変えなかったこと</span><i>Chapter Four</i></div>
+    <div class="kicker">第四章　変えなかったこと</div>
+    <h2>十年で、変えなかった約束は三つだけです。</h2>
+    <div class="vows">
+      <div class="vow step"><div class="k">一</div><h3>捨てる前に、一度相談してもらえる会社でいる</h3><p>直せないときは、直せないと言う。買い替えを勧めるのは、そのあと。</p></div>
+      <div class="vow step"><div class="k">二</div><h3>直した人の名前を、家具の裏に残す</h3><p>十年後にまた直すとき、誰がどう直したかが分かるように。</p></div>
+      <div class="vow step"><div class="k">三</div><h3>職人は、急がず十年かけて育てる</h3><p>一年目は工房で、二年目からお客さまの前へ。速さより確かさ。</p></div>
+    </div>
+    <div class="proof">
+      <div><b class="num" data-count="102400">102,400</b><span>十年で直した家具（件）</span></div>
+      <div><b class="num"><span data-count="1900">1,900</span><small>トン</small></b><span>捨てずに済んだ家具の重さ</span></div>
+      <div><b class="num"><span data-count="91">91</span><small>%</small></b><span>入社3年後も働く職人</span></div>
+      <details class="why float"><summary>2020年に、出張修理をやめなかった理由</summary><div class="body">法人の仕事が半分になった春、職人を休ませる案もありました。それでも「約束の一」を守るために、家で使う椅子の出張修理に切り替えた。この年に来たお客さまの4割が、いまも定期点検を続けています。</div></details>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span class="folio">— 05 —</span></div>
+    <aside class="notes">→で約束が1つずつ出る。一つずつ読み上げて、それぞれ「なぜ変えなかったか」を一言。下の数字はページを開くと数え上がる。質問が出たら2020年の補足を開く。</aside>
+  </section>
+
+  <!-- 6 締め -->
+  <section class="slide s-close" data-title="次の年表">
+    <div class="run"><span>十年の歩み　終章</span><i>Epilogue</i></div>
+    <div class="kicker">終章　これからの年表</div>
+    <h2>次の十年の年表は、ここにいる皆さんと書きます。</h2>
+    <div class="close">
+      <div class="blank">
+        <div class="r"><b class="num">2027</b><span>「修理の学校」を開く（予定）</span></div>
+        <div class="r"><b class="num">2028</b><span class="pen"></span></div>
+        <div class="r"><b class="num">2029</b><span class="pen"></span></div>
+        <div class="r"><b class="num">2030</b><span>はじめての海外の工房（検討中）</span></div>
+        <div class="r"><b class="num">2031</b><span class="pen"></span></div>
+        <div class="r"><b class="num">2032</b><span class="pen"></span></div>
+        <div class="r"><b class="num">2033</b><span class="pen"></span></div>
+        <div class="r"><b class="num">2034</b><span class="pen"></span></div>
+        <div class="r"><b class="num">2035</b><span class="pen"></span></div>
+        <div class="r me"><b class="num">2036</b><span>創業二十年。この行は、あなたが書く。</span></div>
+      </div>
+      <div class="asks">
+        <div class="a"><i>For our team</i><h3>社員の皆さんへ</h3><p>会場の出口の年表に、「あなたの2036年」を一行書いていってください。記念誌の最後のページに載せます。</p></div>
+        <div class="a"><i>For our guests</i><h3>会社説明会の皆さんへ</h3><p>11月の毎週土曜、福岡と東京の工房で見学会を開きます。職人と一緒に、椅子を一脚直してみてください。</p></div>
+        <p class="sign">サンプル工房　代表取締役<b>森下 修</b></p>
+      </div>
+    </div>
+    <div class="foot"><span>社名・人名・数字はすべて架空のサンプルです</span><span class="folio">— 06 —</span></div>
+  </section>
+
+</main>

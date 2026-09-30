@@ -1,0 +1,446 @@
+<!--meta
+{"title":"経費精算 7工程→3工程｜サンプル物産 業務改善チーム","style":"方眼の図解","use":"業務改善・手順の切り替え説明","group":"一続きに動く",
+ "aim":"業務改善チームが現場の課長たちに、経費精算の7工程が3工程になる様子を見せて、来月からの切り替えに合意してもらう。",
+ "desc":"方眼紙の上で、7つの工程の箱がめくるたびに溶けて・合体して3工程に組み直り、そのまま日数の帯へ縮む。平均9.4日→2.1日を数え直す。件数と手間を動かすと、浮く時間がマス目で埋まる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"}
+-->
+<style>
+:root{
+  --bg:#fbfaf6; --surface:#ffffff; --ink:#1b1e24; --muted:#585d66; --line:#d9dbd6;
+  --accent:#cc3d0f; --accent-ink:#ffffff; --good:#1d7a4e; --bad:#cc3d0f; --frame:#e4e3dd;
+  --soft:#fbe6dc;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
+  --font-num:"DM Mono","SF Mono",ui-monospace,Menlo,"Hiragino Sans",monospace;
+  --head-weight:700; --head-track:.01em; --radius:3px; --shadow:none;
+  --pad-y:56px; --pad-x:80px;
+}
+/* 方眼：20px の細目、80px の太目。ページをめくっても紙は動かない */
+.deck{background-color:var(--bg);
+  background-image:
+    linear-gradient(rgb(40 62 92 / .11) 1px,transparent 1px),linear-gradient(90deg,rgb(40 62 92 / .11) 1px,transparent 1px),
+    linear-gradient(rgb(40 62 92 / .045) 1px,transparent 1px),linear-gradient(90deg,rgb(40 62 92 / .045) 1px,transparent 1px);
+  background-size:80px 80px,80px 80px,20px 20px,20px 20px;background-position:-1px -1px}
+.slide{color:var(--ink)}
+.mono{font-family:var(--font-num);letter-spacing:.02em}
+
+/* 図の見出し（業務マニュアルの図番号） */
+.kicker{position:absolute;left:80px;top:40px;margin:0;display:flex;gap:14px;align-items:center;font-family:var(--font-num);font-size:14px;font-weight:500;letter-spacing:.12em;color:var(--muted)}
+.kicker b{font-weight:500;color:var(--ink);background:var(--surface);border:1px solid var(--ink);padding:3px 8px 2px;letter-spacing:.1em}
+.sheetno{position:absolute;right:80px;top:40px;font-family:var(--font-num);font-size:14px;color:var(--muted);letter-spacing:.1em}
+h1{font-size:70px;line-height:1.2;font-weight:900;letter-spacing:.005em}
+h2{position:absolute;left:80px;top:80px;font-size:38px;line-height:1.42;max-width:1060px;margin:0;font-weight:700}
+h1 em,h2 em{font-style:normal;color:var(--accent)}
+.foot{pointer-events:none;left:80px;right:80px;bottom:22px;display:flex;justify-content:space-between;font-family:var(--font-num);font-size:13px;color:var(--muted);letter-spacing:.04em}
+.foot span:first-child{font-family:var(--font)}
+
+/* 工程の箱：背景だけの .plate が変形し、中の文字はあとから出る */
+.node{position:absolute}
+.plate{position:absolute;inset:0;background:var(--surface);border:1.5px solid var(--ink);border-radius:var(--radius)}
+.plate.wait{background:var(--soft);border-color:var(--accent)}
+.node .in{position:relative;padding:14px 14px 12px;height:100%;display:flex;flex-direction:column}
+.node .no{font-family:var(--font-num);font-size:14px;color:var(--muted);letter-spacing:.08em}
+.node .nm{font-size:18px;font-weight:700;line-height:1.35;margin-top:8px;white-space:nowrap}
+.node .who{font-size:15px;color:var(--muted);margin-top:4px}
+.node .d{margin-top:auto;font-size:26px;font-weight:700;letter-spacing:-.01em;line-height:1}
+.node .d small{font-family:var(--font);font-size:14px;margin-left:2px}
+.node.w .d,.node.w .no{color:var(--accent)}
+.node.w .tag{position:absolute;right:10px;top:12px;font-size:13px;font-weight:700;color:var(--accent);border:1px solid var(--accent);padding:0 5px;background:var(--surface)}
+.arrows{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none;overflow:visible}
+.arrows path{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:square}
+.arrows .acc{stroke:var(--accent)}
+.lbl{position:absolute;font-size:15px;font-weight:700;color:var(--accent);background:var(--bg);padding:0 8px;white-space:nowrap}
+.dim{position:absolute;font-family:var(--font-num);font-size:14px;color:var(--muted);white-space:nowrap}
+
+/* 大きな数字 */
+.fig{position:absolute}
+.fig .cap{font-size:16px;color:var(--muted);font-weight:500}
+.fig .v{display:flex;align-items:baseline;gap:6px;line-height:1}
+.fig .v .n{font-family:var(--font);font-size:104px;font-weight:700;letter-spacing:-.03em;display:inline-block;line-height:1}
+.fig .v .n::after,.dnum::after{content:"日";font-size:.3em;font-weight:700;margin-left:.12em;letter-spacing:0}
+.fig.acc .n{color:var(--accent)}
+
+details.why{background:var(--surface);border:1px solid var(--ink);border-radius:0}
+details.why>summary{color:var(--ink);font-size:16px;padding:9px 14px}
+details.why>summary::before{background:transparent;border:1px solid var(--ink);border-radius:0;width:18px;height:18px;font-size:15px}
+details.why>.body{font-size:16px;color:var(--muted)}
+details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px;border-color:var(--ink);border-radius:0;box-shadow:0 10px 30px rgb(27 30 36 / .12)}
+
+/* 1 表紙 */
+.s-cover h1{position:absolute;left:80px;top:142px}
+.s-cover .lead{position:absolute;left:80px;top:350px;max-width:620px;font-size:21px;line-height:1.8;color:var(--muted);margin:0}
+.s-cover .lead b{color:var(--ink)}
+.s-cover .node{top:510px;width:80px;height:80px}
+.s-cover .node .in{padding:7px 9px 8px;justify-content:space-between}
+.s-cover .node .no{font-size:13px}
+.s-cover .node .sn{font-size:15px;font-weight:700;white-space:nowrap}
+.s-cover .node.w .sn{color:var(--accent)}
+.s-cover .node.w .no{color:var(--accent)}
+.s-cover .ttl{position:absolute;left:80px;top:478px;font-size:14px;font-family:var(--font-num);color:var(--muted);letter-spacing:.1em}
+.s-cover .meta{position:absolute;left:880px;top:486px;width:320px;border-top:1.5px solid var(--ink)}
+.s-cover .meta div{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.s-cover .meta b{font-family:var(--font-num);font-weight:500;font-size:13px;color:var(--muted);letter-spacing:.1em;padding-top:2px}
+.s-cover .stamp{position:absolute;left:880px;top:142px;width:320px;height:300px;border:1.5px solid var(--ink);background:var(--surface);padding:22px 24px}
+.s-cover .stamp .cap{font-family:var(--font-num);font-size:13px;letter-spacing:.12em;color:var(--muted)}
+.s-cover .stamp .row{display:flex;align-items:baseline;gap:8px;margin-top:14px}
+.s-cover .stamp .row .n{font-size:72px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.s-cover .stamp .row .u{font-size:22px;font-weight:700}
+.s-cover .stamp .row.to .n,.s-cover .stamp .row.to .u{color:var(--accent)}
+.s-cover .stamp .arr{font-family:var(--font-num);font-size:14px;color:var(--muted);margin:10px 0 0;padding-top:10px;border-top:1px dashed #b9bcb6}
+
+/* 2 今の流れ */
+.s-now .node{top:246px;width:136px;height:150px}
+.s-now .fig{left:80px;top:512px}
+.s-now .split2{position:absolute;left:400px;top:512px;width:360px}
+.s-now .split2 .cap{font-size:16px;color:var(--muted);font-weight:500}
+.s-now .split2 .v{font-size:60px;font-weight:700;letter-spacing:-.02em;color:var(--accent);line-height:1.1;margin-top:6px}
+.s-now .split2 .v small{font-family:var(--font);font-size:22px;font-weight:700;margin-left:4px}
+.s-now .split2 p{font-size:18px;line-height:1.65;color:var(--muted);margin:6px 0 0}
+.s-now details.why{position:absolute;left:820px;top:512px;width:380px;margin:0}
+
+/* 3 来月からの流れ */
+.s-new .node{top:230px;width:300px;height:200px}
+.half{position:absolute;top:0;bottom:0;width:50%}
+.half.l{left:0}.half.r{left:50%}
+.half.l .plate{border-right:0;border-radius:var(--radius) 0 0 var(--radius)}
+.half.r .plate{border-left:0;border-radius:0 var(--radius) var(--radius) 0}
+.s-new .node .in{padding:18px 22px 16px}
+.s-new .node .nm{font-size:26px;margin-top:6px}
+.s-new .node .how{font-size:17px;line-height:1.6;color:var(--muted);margin-top:8px;white-space:normal}
+.s-new .node .d{font-size:30px}
+.seam{position:absolute;left:50%;top:-7px;bottom:-7px;width:0;pointer-events:none}
+.seam::before,.seam::after{content:"";position:absolute;left:-.75px;height:14px;border-left:1.5px solid var(--ink)}
+.seam::before{top:0}.seam::after{bottom:0}
+.node.w .seam::before,.node.w .seam::after{border-color:var(--accent)}
+.s-new .gone{position:absolute;left:80px;top:474px;width:720px;border-top:1.5px solid var(--ink)}
+.s-new .gone .h{font-family:var(--font-num);font-size:13px;letter-spacing:.12em;color:var(--muted);padding:10px 0 4px}
+.s-new .gone .g{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:18px}
+.s-new .gone .g s{color:var(--muted);text-decoration-color:var(--accent);text-decoration-thickness:2px}
+.s-new .gone .g span{color:var(--ink)}
+.s-new .gone .why{margin-top:14px;width:720px}
+.s-new .fig{left:880px;top:470px}
+
+/* 4 日数の帯 */
+.gantt{position:absolute;left:0;top:0}
+.s-time .rowlbl{position:absolute;left:80px;width:140px;font-size:18px;font-weight:700}
+.s-time .rowlbl small{display:block;font-size:14px;color:var(--muted);font-weight:500;font-family:var(--font-num)}
+.seg{position:absolute;height:48px}
+.seg .plate{border:0;border-radius:0;background:var(--ink)}
+.seg .plate.wait{background:var(--accent)}
+.seg.old{background:#8b9099;box-shadow:inset -1px 0 0 var(--bg)}
+.seg.old.w{background:color-mix(in srgb,var(--accent) 55%,#fff)}
+.seg.old span{position:absolute;left:8px;top:13px;font-size:15px;font-weight:700;white-space:nowrap;color:var(--ink)}
+.s-time .axis{position:absolute;left:240px;top:392px;width:760px;height:26px;border-top:1.5px solid var(--ink)}
+.s-time .axis i{position:absolute;top:-6px;height:10px;border-left:1.5px solid var(--ink)}
+.s-time .axis i::after{content:attr(data-d);position:absolute;top:12px;left:-5px;font-style:normal;font-family:var(--font-num);font-size:13px;color:var(--muted)}
+.s-time .tot{position:absolute;left:1016px;font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.s-time .tot small{font-family:var(--font);font-size:18px;font-weight:700;margin-left:3px}
+.s-time .tot.acc{color:var(--accent)}
+.s-time .notes3{position:absolute;left:80px;right:80px;top:470px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1.5px solid var(--ink)}
+.s-time .notes3>div{padding:16px 26px 0 0;margin-right:26px;border-right:1px solid var(--line)}
+.s-time .notes3>div:last-child{border-right:0;margin-right:0}
+.s-time .notes3 .k{font-family:var(--font-num);font-size:13px;color:var(--muted);letter-spacing:.1em}
+.s-time .notes3 h3{font-size:22px;margin:6px 0 6px;font-weight:700}
+.s-time .notes3 .ft{font-size:30px;font-weight:700;letter-spacing:-.01em}
+.s-time .notes3 .ft b{color:var(--accent);font-weight:700}
+.s-time .notes3 p{font-size:17px;line-height:1.65;color:var(--muted);margin:6px 0 0}
+
+/* 5 課長の仕事 */
+.s-boss .panelbox{position:absolute;left:80px;top:220px;width:720px}
+.tabs{background:transparent;border:1.5px solid var(--ink);border-radius:0;padding:0;gap:0}
+.tabs>[data-tab]{border-radius:0;padding:10px 20px;font-size:17px;color:var(--ink);border-right:1px solid var(--ink)}
+.tabs>[data-tab]:last-child{border-right:0}
+.tabs>[data-tab][aria-selected=true]{background:var(--ink);color:#fff;box-shadow:none}
+.ba{display:grid;grid-template-columns:110px 1fr 1.2fr;border-top:1.5px solid var(--ink)}
+.ba>div{padding:13px 16px 13px 0;border-bottom:1px solid var(--line);font-size:18px;line-height:1.55}
+.ba .hd{font-family:var(--font-num);font-size:13px;color:var(--muted);letter-spacing:.1em;padding:10px 0}
+.ba .k{font-weight:700;font-size:17px}
+.ba .o{color:var(--muted)}
+.ba .n b{color:var(--accent);font-weight:700}
+.s-boss .mini{position:absolute;left:880px;width:320px;height:64px}
+.s-boss .mini .in{padding:10px 16px;flex-direction:row;align-items:center;justify-content:space-between}
+.s-boss .mini .nm{margin:0;font-size:18px}
+.s-boss .mini .who{margin:0}
+.s-boss .mini.me .plate{border-width:2.5px;border-color:var(--accent)}
+.s-boss .mini.me .nm{color:var(--accent)}
+.s-boss .you{position:absolute;left:880px;top:486px;width:320px;font-size:17px;line-height:1.7;color:var(--muted)}
+.s-boss .you b{color:var(--ink)}
+
+/* 6 試算 */
+.s-calc .calc{position:absolute;left:80px;top:212px;right:80px;bottom:56px;display:grid;grid-template-columns:360px 1fr;gap:60px}
+.s-calc .field>label{font-size:17px;color:var(--ink)}
+.s-calc .field>label b{font-family:var(--font-num);font-weight:500;font-size:22px}
+.s-calc input[type=range]{accent-color:var(--accent)}
+.s-calc .cmp{margin-top:6px;border-top:1.5px solid var(--ink);padding-top:12px}
+.s-calc .cmp .r{display:grid;grid-template-columns:88px 1fr 60px;align-items:center;gap:10px;font-size:15px;color:var(--muted);margin:6px 0}
+.s-calc .cmp .bar{height:14px;border:1.5px solid var(--ink);background:var(--surface);transition:width .45s var(--ease)}
+.s-calc .cmp .bar.now{width:calc(var(--t) * 5px)}
+.s-calc .cmp .bar.nx{width:30px;background:var(--accent);border-color:var(--accent)}
+.s-calc .cmp .m{font-family:var(--font-num);font-size:15px;color:var(--ink)}
+.s-calc .res{position:relative}
+.s-calc .res .cap{font-size:16px;color:var(--muted);font-weight:500}
+.s-calc .res .big{font-size:88px;font-weight:700;letter-spacing:-.03em;line-height:1.05;white-space:nowrap}
+.s-calc .res .pair{display:flex;gap:40px;margin-top:8px}
+.s-calc .res .pair .v{font-size:36px;font-weight:700;letter-spacing:-.01em}
+.s-calc .res .pair .v.acc{color:var(--accent)}
+.cells{position:absolute;left:0;top:214px;width:360px;height:216px;border:1.5px solid var(--ink);background:var(--surface)}
+.cells .full{position:absolute;left:0;top:0;width:100%;height:calc(var(--rows) * 36px);background:var(--accent);transition:height .45s var(--ease)}
+.cells .rem{position:absolute;left:0;top:calc(var(--rows) * 36px);height:36px;width:calc(var(--rem) * 36px);background:var(--accent);transition:width .45s var(--ease),top .45s var(--ease)}
+.cells .gridl{position:absolute;inset:0;background-image:linear-gradient(var(--ink) 1px,transparent 1px),linear-gradient(90deg,var(--ink) 1px,transparent 1px);background-size:36px 36px;background-position:-1px -1px;opacity:.28}
+.cells-cap{position:absolute;left:392px;top:214px;width:308px;font-size:17px;color:var(--muted);line-height:1.7;margin:0}
+.cells-cap b{color:var(--accent)}
+.s-calc .res .lower{position:absolute;left:392px;top:330px;width:308px;border-top:1px solid var(--line);padding-top:12px;font-size:16px;line-height:1.7;color:var(--muted);margin:0}
+.s-calc .why{margin-top:14px}
+
+/* 7 お願い */
+.s-end .tl{position:absolute;left:80px;top:230px;width:640px}
+.s-end .tl .it{position:relative;display:grid;grid-template-columns:120px 1fr;gap:20px;padding:0 0 22px 0}
+.s-end .tl .it .dt{font-family:var(--font-num);font-size:20px;padding-left:26px;position:relative}
+.s-end .tl .it .dt::before{content:"";position:absolute;left:0;top:6px;width:12px;height:12px;border:1.5px solid var(--ink);background:var(--surface)}
+.s-end .tl .it.key .dt::before{background:var(--accent);border-color:var(--accent)}
+.s-end .tl .it.key .dt{color:var(--accent)}
+.s-end .tl .it h3{font-size:21px;margin:0 0 4px;font-weight:700}
+.s-end .tl .it p{font-size:17px;color:var(--muted);margin:0;line-height:1.6}
+.s-end .ask{position:absolute;left:780px;top:230px;width:420px;border:1.5px solid var(--ink);background:var(--surface);padding:22px 26px}
+.s-end .ask .h{font-family:var(--font-num);font-size:13px;letter-spacing:.12em;color:var(--accent)}
+.s-end .ask ol{margin:10px 0 0;padding:0;list-style:none;counter-reset:a}
+.s-end .ask li{counter-increment:a;position:relative;padding:12px 0 12px 44px;border-bottom:1px solid var(--line);font-size:19px;line-height:1.55}
+.s-end .ask li:last-child{border-bottom:0}
+.s-end .ask li::before{content:counter(a);position:absolute;left:0;top:12px;width:28px;height:28px;border:1.5px solid var(--ink);display:grid;place-items:center;font-family:var(--font-num);font-size:15px}
+.s-end .ask li b{display:block}
+.s-end .ask li span{font-size:16px;color:var(--muted)}
+.s-end .contact{position:absolute;left:780px;top:560px;width:420px;font-size:16px;color:var(--muted);line-height:1.7}
+.s-end .emb{position:absolute;top:44px;height:22px}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="kicker"><b>FIG.00</b>経費精算 ／ 手順の見直し</div>
+    <div class="sheetno">SAMPLE BUSSAN ｜ 業務改善チーム</div>
+    <h1>経費精算を、<br>7工程から<em>3工程</em>へ。</h1>
+    <p class="lead">11月1日から、紙の申請をやめてスマホで出す流れに切り替えます。<br><b>課長のみなさんに、今日この切り替えに合意をいただきたい。</b></p>
+    <div class="ttl">現在の手順 ── 7工程</div>
+    <div class="node" style="left:80px"><div class="plate" data-morph="b1"></div><div class="in"><span class="no">01</span><span class="sn">申請書</span></div></div>
+    <div class="node" style="left:184px"><div class="plate" data-morph="b2"></div><div class="in"><span class="no">02</span><span class="sn">領収書</span></div></div>
+    <div class="node w" style="left:288px"><div class="plate wait" data-morph="b3"></div><div class="in"><span class="no">03</span><span class="sn">郵送</span></div></div>
+    <div class="node w" style="left:392px"><div class="plate wait" data-morph="b4"></div><div class="in"><span class="no">04</span><span class="sn">課長</span></div></div>
+    <div class="node w" style="left:496px"><div class="plate wait" data-morph="b5"></div><div class="in"><span class="no">05</span><span class="sn">部長</span></div></div>
+    <div class="node w" style="left:600px"><div class="plate wait" data-morph="b6"></div><div class="in"><span class="no">06</span><span class="sn">突合</span></div></div>
+    <div class="node" style="left:704px"><div class="plate" data-morph="b7"></div><div class="in"><span class="no">07</span><span class="sn">振込</span></div></div>
+    <svg class="arrows" viewBox="0 0 1280 720" aria-hidden="true">
+      <path class="draw" d="M160 550H184M264 550H288M368 550H392M472 550H496M576 550H600M680 550H704"/>
+      <path class="draw" d="M80 606V626M784 606V626M80 616H784"/>
+    </svg>
+    <div class="dim" style="left:340px;top:606px;background:var(--bg);padding:0 8px">申請 → 振込　平均 9.4 日</div>
+    <div class="stamp">
+      <div class="cap">LEAD TIME ／ 申請から振込まで</div>
+      <div class="row"><span class="n dnum" data-morph="days" data-count="9.4" data-format="dec1">9.4</span></div>
+      <div class="arr">↓ 11月1日から</div>
+      <div class="row to"><span class="n dnum">2.1</span></div>
+      <div class="arr">浮く手間　年1,560時間（全社）</div>
+    </div>
+    <div class="meta">
+      <div><b>DATE</b>2026.10.15　課長会議</div>
+      <div><b>ASK</b>11月1日の全課切り替え</div>
+    </div>
+    <aside class="notes">最初に「今日は11月1日からの切り替えに合意がほしい」と言い切る。下の7つの四角が、このあと1枚ずつ形を変えて3工程になります。オレンジの4つが「待ち」の工程。</aside>
+  </section>
+
+  <!-- 2 今の7工程 -->
+  <section class="slide s-now" data-title="今の7工程">
+    <div class="kicker"><b>FIG.01</b>今の流れ</div>
+    <div class="sheetno">01 / 06</div>
+    <h2>今は7工程・平均9.4日。そのうち<em>7.8日は「待ち」</em>の時間。</h2>
+    <div class="node" style="left:80px"><div class="plate" data-morph="b1"></div><div class="in" data-morph-enter style="--d:0"><span class="no">01</span><span class="nm">申請書を作る</span><span class="who">申請者・Excel</span><span class="d">0.4<small>日</small></span></div></div>
+    <div class="node" style="left:244px"><div class="plate" data-morph="b2"></div><div class="in" data-morph-enter style="--d:.04"><span class="no">02</span><span class="nm">領収書を貼る</span><span class="who">申請者・台紙</span><span class="d">0.6<small>日</small></span></div></div>
+    <div class="node w" style="left:408px"><div class="plate wait" data-morph="b3"></div><div class="in" data-morph-enter style="--d:.08"><span class="tag">待ち</span><span class="no">03</span><span class="nm">原本を郵送</span><span class="who">社内便</span><span class="d">2.1<small>日</small></span></div></div>
+    <div class="node w" style="left:572px"><div class="plate wait" data-morph="b4"></div><div class="in" data-morph-enter style="--d:.12"><span class="tag">待ち</span><span class="no">04</span><span class="nm">上長が承認</span><span class="who">課長・押印</span><span class="d">1.8<small>日</small></span></div></div>
+    <div class="node w" style="left:736px"><div class="plate wait" data-morph="b5"></div><div class="in" data-morph-enter style="--d:.16"><span class="tag">待ち</span><span class="no">05</span><span class="nm">部門長が承認</span><span class="who">部長・押印</span><span class="d">2.3<small>日</small></span></div></div>
+    <div class="node w" style="left:900px"><div class="plate wait" data-morph="b6"></div><div class="in" data-morph-enter style="--d:.2"><span class="tag">待ち</span><span class="no">06</span><span class="nm">経理が突合</span><span class="who">経理・目視</span><span class="d">1.6<small>日</small></span></div></div>
+    <div class="node" style="left:1064px"><div class="plate" data-morph="b7"></div><div class="in" data-morph-enter style="--d:.24"><span class="no">07</span><span class="nm">振込する</span><span class="who">経理・週1回</span><span class="d">0.6<small>日</small></span></div></div>
+    <svg class="arrows" viewBox="0 0 1280 720" aria-hidden="true">
+      <path class="draw" d="M218 321H242M235 315L242 321L235 327"/>
+      <path class="draw" d="M382 321H406M399 315L406 321L399 327"/>
+      <path class="draw" d="M546 321H570M563 315L570 321L563 327"/>
+      <path class="draw" d="M710 321H734M727 315L734 321L727 327"/>
+      <path class="draw" d="M874 321H898M891 315L898 321L891 327"/>
+      <path class="draw" d="M1038 321H1062M1055 315L1062 321L1055 327"/>
+      <path class="draw acc step" d="M968 398V446H148V400M142 407L148 400L154 407"/>
+    </svg>
+    <div class="lbl step" style="left:420px;top:435px">差戻し　4件に1件（23%）── そのたびに＋3.2日</div>
+    <div class="fig"><div class="cap" data-morph-enter>申請から振込まで（平均）</div><div class="v"><span class="n" data-morph="days" data-count="9.4" data-format="dec1">9.4</span></div></div>
+    <div class="split2"><div class="cap">うち、誰も手を動かしていない「待ち」</div><div class="v">7.8<small>日（83%）</small></div><p>作業そのものは合計1.6日。遅いのは、紙が机の上で待っている時間。</p></div>
+    <details class="why float up"><summary>9.4日の測り方</summary><div class="body">2026年4〜9月に精算された 3,612件（架空）の、申請日と振込日の差の平均。工程ごとの日数は、ワークフローの押印日時と社内便の受付記録から出した。</div></details>
+    <div class="foot"><span>出典：精算データ 2026年4〜9月（数字は架空のサンプルです）</span><span>SAMPLE BUSSAN</span></div>
+    <aside class="notes">左から指でなぞる。オレンジの4つは「待ち」。→を押すと、差戻しの線が描かれる。「4件に1件は戻ってくる。そのたびに3日延びる」がこのページの山場。</aside>
+  </section>
+
+  <!-- 3 来月からの3工程 -->
+  <section class="slide s-new" data-title="来月からの3工程">
+    <div class="kicker"><b>FIG.02</b>11月からの流れ</div>
+    <div class="sheetno">02 / 06</div>
+    <h2>11月からは3工程・<em>平均2.1日</em>。2つは合わせ、2つはなくす。</h2>
+    <div class="node" style="left:80px">
+      <div class="half l"><div class="plate" data-morph="b1"></div></div><div class="half r"><div class="plate" data-morph="b2"></div></div>
+      <div class="seam" data-morph-enter style="--d:.1"></div>
+      <div class="in" data-morph-enter style="--d:.15"><span class="no">01 ＝ 旧01＋02</span><span class="nm">撮って申請</span><span class="how">領収書をスマホで撮るだけ。日付・金額は読み取りで埋まる。</span><span class="d">0.3<small>日</small></span></div>
+    </div>
+    <div class="node w" style="left:490px">
+      <div class="plate wait" data-morph="b4"></div>
+      <div class="in" data-morph-enter style="--d:.2"><span class="no">02 ＝ 旧04</span><span class="nm">課長が承認</span><span class="how">スマホに届く。10万円未満は課長だけで終わり。</span><span class="d">0.8<small>日</small></span></div>
+    </div>
+    <div class="node" style="left:900px">
+      <div class="half l"><div class="plate" data-morph="b6"></div></div><div class="half r"><div class="plate" data-morph="b7"></div></div>
+      <div class="seam" data-morph-enter style="--d:.1"></div>
+      <div class="in" data-morph-enter style="--d:.25"><span class="no">03 ＝ 旧06＋07</span><span class="nm">突合して振込</span><span class="how">カード明細と自動で突き合わせ。振込は週2回に。</span><span class="d">1.0<small>日</small></span></div>
+    </div>
+    <svg class="arrows" viewBox="0 0 1280 720" aria-hidden="true">
+      <path class="draw" d="M384 330H486M477 322L486 330L477 338"/>
+      <path class="draw" d="M794 330H896M887 322L896 330L887 338"/>
+    </svg>
+    <div class="gone" data-morph-enter style="--d:.35">
+      <div class="h">なくなる工程</div>
+      <div class="g"><s>03　原本を郵送</s><span>電子保存に切り替えるので、紙を送らない</span></div>
+      <div class="g"><s>05　部門長が承認</s><span>10万円以上のときだけ残す（全体の6%）</span></div>
+      <details class="why float up"><summary>部門長の承認を外してよい理由</summary><div class="body">過去半年、部門長の段階で差し戻された10万円未満の申請は 0.4%（架空）。すべて課長の段階でも気づける内容だった。10万円以上と、交際費は今までどおり部門長まで回す。</div></details>
+    </div>
+    <div class="fig acc"><div class="cap" data-morph-enter>申請から振込まで（平均）</div><div class="v"><span class="n" data-morph="days" data-count="2.1" data-format="dec1">2.1</span></div></div>
+    <div class="foot"><span>2026年9月の試行（営業二課・購買課）の実績（数字は架空のサンプルです）</span><span>SAMPLE BUSSAN</span></div>
+    <aside class="notes">めくった瞬間に、01と02、06と07がくっついて1つの箱になり、03と05は溶けて消える。「作る＋貼る」は撮るだけに、「突合＋振込」は自動に。数字は9.4から2.1まで数え直す。</aside>
+  </section>
+
+  <!-- 4 日数の帯 -->
+  <section class="slide s-time" data-title="縮んだのは待ち時間">
+    <div class="kicker"><b>FIG.03</b>日数で並べる（1マス＝1日）</div>
+    <div class="sheetno">03 / 06</div>
+    <h2>縮んだのは作業ではなく<em>待ち時間</em>。7.3日ぶん早く振り込まれる。</h2>
+    <div class="rowlbl" style="top:220px">今<small>7工程</small></div>
+    <div class="rowlbl" style="top:320px">11月から<small>3工程</small></div>
+    <div class="gantt" data-morph-enter style="--d:0">
+      <div class="seg old" style="left:240px;top:218px;width:32px"></div>
+      <div class="seg old" style="left:272px;top:218px;width:48px"></div>
+      <div class="seg old w" style="left:320px;top:218px;width:168px"><span>郵送</span></div>
+      <div class="seg old w" style="left:488px;top:218px;width:144px"><span>課長</span></div>
+      <div class="seg old w" style="left:632px;top:218px;width:184px"><span>部門長</span></div>
+      <div class="seg old w" style="left:816px;top:218px;width:128px"><span>突合</span></div>
+      <div class="seg old" style="left:944px;top:218px;width:48px"></div>
+    </div>
+    <div class="seg" style="left:240px;top:318px;width:12px"><div class="plate" data-morph="b1"></div></div>
+    <div class="seg" style="left:252px;top:318px;width:12px"><div class="plate" data-morph="b2"></div></div>
+    <div class="seg" style="left:264px;top:318px;width:64px"><div class="plate wait" data-morph="b4"></div></div>
+    <div class="seg" style="left:328px;top:318px;width:40px"><div class="plate" data-morph="b6"></div></div>
+    <div class="seg" style="left:368px;top:318px;width:40px"><div class="plate" data-morph="b7"></div></div>
+    <div class="tot" style="top:222px" data-morph-enter><span class="dnum">9.4</span></div>
+    <div class="tot acc" style="top:326px"><span class="dnum" data-morph="days" data-count="2.1" data-format="dec1">2.1</span></div>
+    <div class="axis" data-morph-enter style="--d:.1"><i style="left:0" data-d="0"></i><i style="left:80px" data-d="1"></i><i style="left:160px" data-d="2"></i><i style="left:240px" data-d="3"></i><i style="left:320px" data-d="4"></i><i style="left:400px" data-d="5"></i><i style="left:480px" data-d="6"></i><i style="left:560px" data-d="7"></i><i style="left:640px" data-d="8"></i><i style="left:720px" data-d="9"></i></div>
+    <div class="notes3">
+      <div class="step"><div class="k">WAIT 01 ／ 郵送</div><h3>紙を送らない</h3><div class="ft">2.1 → <b>0</b> 日</div><p>領収書は撮った画像が原本。紙は各課で3か月保管して捨てる。</p></div>
+      <div class="step"><div class="k">WAIT 02 ／ 承認</div><h3>承認は1回・スマホで</h3><div class="ft">4.1 → <b>0.8</b> 日</div><p>机に戻らなくても承認できる。24時間止まると自動で催促が届く。</p></div>
+      <div class="step"><div class="k">WAIT 03 ／ 突合</div><h3>突合は自動で</h3><div class="ft">1.6 → <b>0.6</b> 日</div><p>カード明細と合わない申請だけを経理が見る。全体の1割。</p></div>
+    </div>
+    <div class="foot"><span>工程ごとの平均日数（数字は架空のサンプルです）</span><span>SAMPLE BUSSAN</span></div>
+    <aside class="notes">3つの箱が、日数の帯に縮んで下の段に入る。上の段が今。斜線が待ち。→で、どの待ちをどう消したかを1つずつ出す。「作業は速くなっていない。待ちが消えただけ」と言う。</aside>
+  </section>
+
+  <!-- 5 課長の仕事 -->
+  <section class="slide s-boss" data-title="課長の仕事">
+    <div class="kicker"><b>FIG.04</b>課長の仕事はどう変わるか</div>
+    <div class="sheetno">04 / 06</div>
+    <h2>課長の出番は<em>「スマホで1回承認」</em>だけになる。</h2>
+    <div class="panelbox" data-tabs>
+      <div class="tabs"><button data-tab="a">承認するとき</button><button data-tab="b">自分が精算するとき</button><button data-tab="c">部下に聞かれたら</button></div>
+      <div data-panel="a"><div class="ba">
+        <div class="hd"></div><div class="hd">今</div><div class="hd">11月から</div>
+        <div class="k">届く場所</div><div class="o">机の上の紙の束</div><div class="n">スマホの通知。<b>外出先でも</b></div>
+        <div class="k">見るもの</div><div class="o">台紙の領収書と申請書を見比べる</div><div class="n">金額と画像が1画面。<b>合わない所に印</b></div>
+        <div class="k">かかる時間</div><div class="o">1件 約3分・週に2回まとめて</div><div class="n"><b>1件 約40秒</b>・届いたその日に</div>
+        <div class="k">押印</div><div class="o">朱肉で押印</div><div class="n">なし（承認の記録が残る）</div>
+      </div></div>
+      <div data-panel="b" hidden><div class="ba">
+        <div class="hd"></div><div class="hd">今</div><div class="hd">11月から</div>
+        <div class="k">出し方</div><div class="o">Excel に書いて印刷</div><div class="n">領収書を<b>撮るだけ</b></div>
+        <div class="k">領収書</div><div class="o">台紙に貼って社内便</div><div class="n">撮った画像が原本。紙は課で3か月保管</div>
+        <div class="k">承認者</div><div class="o">部長</div><div class="n">部長（今までどおり）</div>
+        <div class="k">振込</div><div class="o">毎週金曜</div><div class="n"><b>火曜と金曜</b>の週2回</div>
+      </div></div>
+      <div data-panel="c" hidden><div class="ba">
+        <div class="hd"></div><div class="hd">よくある質問</div><div class="hd">答え</div>
+        <div class="k">紙の申請</div><div class="o">11月以降も出していい？</div><div class="n">12月10日まで受け付ける。<b>それ以降は受けない</b></div>
+        <div class="k">スマホ</div><div class="o">私物のスマホを使うの？</div><div class="n">会社のスマホか、PCのカメラで出せる</div>
+        <div class="k">間違い</div><div class="o">金額を間違えたら？</div><div class="n">課長が戻すと、本人が直して出し直す。<b>紙の再提出なし</b></div>
+      </div></div>
+    </div>
+    <div class="node mini" style="top:220px"><div class="half l"><div class="plate" data-morph="b1"></div></div><div class="half r"><div class="plate" data-morph="b2"></div></div><div class="in" data-morph-enter style="--d:.1"><span class="nm">撮って申請</span><span class="who">申請者</span></div></div>
+    <div class="node mini me" style="top:308px"><div class="plate" data-morph="b4"></div><div class="in" data-morph-enter style="--d:.15"><span class="nm">課長が承認</span><span class="who">あなた</span></div></div>
+    <div class="node mini" style="top:396px"><div class="half l"><div class="plate" data-morph="b6"></div></div><div class="half r"><div class="plate" data-morph="b7"></div></div><div class="in" data-morph-enter style="--d:.2"><span class="nm">突合して振込</span><span class="who">自動＋経理</span></div></div>
+    <svg class="arrows" viewBox="0 0 1280 720" aria-hidden="true">
+      <path class="draw" d="M1040 285V307M1034 300L1040 307L1046 300"/>
+      <path class="draw" d="M1040 373V395M1034 388L1040 395L1046 388"/>
+    </svg>
+    <p class="you" data-morph-enter style="--d:.3">課長1人あたりの承認は<b>月に約40件</b>。今は合計2時間、11月からは<b>約30分</b>。</p>
+    <div class="foot"><span>試行2課の聞き取りから（数字は架空のサンプルです）</span><span>SAMPLE BUSSAN</span></div>
+    <aside class="notes">タブを押して、課長の立場ごとに見せる。会場から質問が出たら「部下に聞かれたら」のタブで答える。右の3つの箱は前のページの帯が戻ってきたもの。オレンジが課長の出番。</aside>
+  </section>
+
+  <!-- 6 試算 -->
+  <section class="slide s-calc" data-title="浮く時間">
+    <div class="kicker"><b>FIG.05</b>浮く時間の試算　動かせます</div>
+    <div class="sheetno">05 / 06</div>
+    <h2>月600件なら、会社全体で<em>年1,560時間</em>が浮く。</h2>
+    <div class="calc" data-calc data-let="save = max(t - 6, 0); h = n * save * 12 / 60; yen = h * w; fte = h / 1800; c = min(h / 160, 60); rows = floor(c / 10); rem = c - rows * 10">
+      <div>
+        <div class="field"><label>月の精算件数（全社） <b data-show="n" data-unit="件"></b></label><input type="range" name="n" min="100" max="2000" step="50" value="600"></div>
+        <div class="field"><label>今の1件の手間（申請＋承認＋経理） <b data-show="t" data-unit="分"></b></label><input type="range" name="t" min="8" max="40" step="1" value="19"></div>
+        <div class="field"><label>1時間あたりの人件費 <b data-show="w" data-format="yen"></b></label><input type="range" name="w" min="2500" max="6000" step="100" value="3800"></div>
+        <div class="cmp">
+          <div class="r"><span>今</span><i class="bar now"></i><span class="m" data-show="t" data-unit="分"></span></div>
+          <div class="r"><span>11月から</span><i class="bar nx"></i><span class="m">6分</span></div>
+        </div>
+        <details class="why float up"><summary>計算のしかた</summary><div class="body">浮く時間 ＝ 件数 ×（今の手間 − 6分）× 12か月。6分は試行2課の実測（撮る2分・承認1分・経理3分）。人件費は、賞与と社会保険を含めた1時間あたり。1,800時間を1人の年間の勤務時間とした。</div></details>
+      </div>
+      <div class="res">
+        <div class="cap">年間で浮く時間</div>
+        <div class="big"><span data-out="h" data-format="int"></span><span style="font-family:var(--font);font-size:30px;font-weight:700;margin-left:6px">時間</span></div>
+        <div class="pair">
+          <div><div class="cap">人件費にすると</div><div class="v acc" data-out="yen" data-format="man"></div></div>
+          <div><div class="cap">社員何人分か</div><div class="v" data-out="fte" data-format="dec1" data-unit="人分"></div></div>
+        </div>
+        <div class="cells"><div class="full"></div><div class="rem"></div><div class="gridl"></div></div>
+        <p class="cells-cap">1マス＝160時間（1人の1か月ぶん）。<br>いま埋まっているのは <b data-out="c" data-format="dec1" data-unit="マス"></b>。</p>
+        <p class="lower">件数を増やすと、マスが下へ埋まっていく。手間が6分以下の課では、浮く時間は0になる。</p>
+      </div>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span>SAMPLE BUSSAN</span></div>
+    <aside class="notes">自分の課の件数に合わせて、件数のつまみを動かしてもらう。「1マスが1人の1か月」と言ってから、マスが埋まるのを見せる。人件費は目安で、人を減らす話ではないことも添える。</aside>
+  </section>
+
+  <!-- 7 お願い -->
+  <section class="slide s-end" data-title="切り替えの段取り">
+    <div class="kicker"><b>FIG.06</b>切り替えの段取り</div>
+    <div class="sheetno">06 / 06</div>
+    <div class="emb" style="left:900px;width:24px"><div class="plate" data-morph="b1" data-morph-enter style="--d:.3"></div></div>
+    <div class="emb" style="left:924px;width:24px"><div class="plate" data-morph="b2" data-morph-enter style="--d:.3"></div></div>
+    <div class="emb" style="left:960px;width:48px"><div class="plate wait" data-morph="b4" data-morph-enter style="--d:.3"></div></div>
+    <div class="emb" style="left:1020px;width:24px"><div class="plate" data-morph="b6" data-morph-enter style="--d:.3"></div></div>
+    <div class="emb" style="left:1044px;width:24px"><div class="plate" data-morph="b7" data-morph-enter style="--d:.3"></div></div>
+    <h2>今日、<em>11月1日の全課切り替え</em>に合意をください。</h2>
+    <svg class="arrows" viewBox="0 0 1280 720" aria-hidden="true"><path class="draw" d="M86 244V494"/></svg>
+    <div class="tl">
+      <div class="it step"><span class="dt">10.15</span><div><h3>課長会議（今日）</h3><p>切り替えの合意と、各課の担当者を決める。</p></div></div>
+      <div class="it step"><span class="dt">10.22</span><div><h3>担当者向けの説明会（30分）</h3><p>各課1名。スマホでの出し方と、承認の画面を触る。</p></div></div>
+      <div class="it step key"><span class="dt">11.01</span><div><h3>全課で切り替え</h3><p>新しい申請は、この日からスマホで出す。</p></div></div>
+      <div class="it step"><span class="dt">12.10</span><div><h3>紙の申請の受付を終える</h3><p>それまでは紙でも受け付ける。</p></div></div>
+    </div>
+    <div class="ask">
+      <div class="h">DECISION ／ 決めていただきたいこと</div>
+      <ol>
+        <li><b>11月1日から全課で切り替える</b><span>試行2課は9月から先に使っている。</span></li>
+        <li><b>各課から担当者を1名出す</b><span>10月20日までに業務改善チームへ名前を。</span></li>
+      </ol>
+    </div>
+    <p class="contact">問い合わせ：業務改善チーム　内線 4120<br>社名・人名・数字はすべて架空のサンプルです。</p>
+    <aside class="notes">右上の小さな5つの四角は、今日ずっと動いてきた工程の箱。最後は日程を→で1つずつ出し、11月1日で止めて合意を取る。担当者の名前は会議の場で決めてもらうとよい。</aside>
+  </section>
+
+</main>

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>動くスライド {{COUNT}}選</title>
-<meta name="description" content="クリックで根拠が開き、数字を動かすとその場で再計算される。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類。全部無料・MIT ライセンス。">
+<meta name="description" content="クリックで根拠が開き、数字を動かすと再計算。第2弾はめくっても図形が途切れず変形してつながる。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類と Claude 用スキル。全部無料・MIT ライセンス。">
 <meta property="og:title" content="動くスライド {{COUNT}}選">
-<meta property="og:description" content="1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類。全部無料。Claude に渡して中身を差し替えるだけ。">
+<meta property="og:description" content="めくっても、途切れない。1ファイルで完結する動くスライドの雛形 {{COUNT}} 種類と Claude 用スキル。全部無料。">
 <meta property="og:image" content="https://aiimpl.github.io/ugoku-slide/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='6' width='28' height='20' rx='4' fill='%23ff5a36'/%3E%3Cpath d='M13 11l8 5-8 5z' fill='white'/%3E%3C/svg%3E">
@@ -53,7 +53,8 @@ nav a{text-decoration:none;color:var(--muted)}nav a:hover{color:var(--ink)}
 .pick button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:4px 12px;font:600 12px var(--font);cursor:pointer}
 .pick button[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}
 section{padding:56px 0}
-h2.sec{font-size:32px;letter-spacing:-.02em;margin:0 0 8px;font-weight:900}
+h2.sec{font-size:32px;letter-spacing:-.02em;margin:0 0 8px;font-weight:900;word-break:auto-phrase}
+.sub,.lede,.new-head p,.parts p,.skill li{word-break:auto-phrase}
 .sub{color:var(--muted);margin:0 0 28px}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
 .steps>div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;counter-increment:s}
@@ -78,6 +79,24 @@ h2.sec{font-size:32px;letter-spacing:-.02em;margin:0 0 8px;font-weight:900}
 .tpl .desc{margin:0 0 10px;font-size:14px;color:var(--muted);line-height:1.65}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips span{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
+.chips span.new{background:var(--ink);color:var(--bg)}
+.vol{display:inline-flex;align-items:center;gap:8px;font:800 12px "Inter",sans-serif;letter-spacing:.14em;color:var(--accent);margin-bottom:12px}
+.vol::before{content:"";width:22px;height:2px;background:var(--accent)}
+.new-sec{border-top:1px solid var(--line)}
+.new-head{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:end;margin-bottom:30px}
+.new-head h2{font-size:clamp(30px,4vw,46px);line-height:1.2;letter-spacing:-.03em;margin:0;font-weight:900}
+.new-head p{color:var(--muted);margin:0;font-size:16px}
+.parts{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:34px}
+.parts>div{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;background:var(--surface)}
+.parts b{display:block;font-size:15px;margin-bottom:4px}
+.parts code{font:600 11.5px ui-monospace,"SF Mono",Menlo,monospace;color:var(--accent)}
+.parts p{margin:6px 0 0;font-size:13px;color:var(--muted);line-height:1.6}
+.skill{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.skill>div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
+.skill h3{margin:0 0 10px;font-size:18px}
+.skill ol{margin:0 0 14px;padding-left:1.3em;color:var(--muted);font-size:15px;line-height:1.9}
+.skill code{font:600 13px ui-monospace,"SF Mono",Menlo,monospace;background:color-mix(in srgb,var(--ink) 7%,transparent);padding:1px 6px;border-radius:6px}
+@media (max-width:1000px){.parts{grid-template-columns:repeat(2,1fr)}.new-head{grid-template-columns:1fr;gap:12px}.skill{grid-template-columns:1fr}}
 .acts{display:flex;gap:8px;padding:12px 18px 18px;margin-top:auto;flex-wrap:wrap}
 .acts .btn{padding:8px 12px;font-size:13px}
 .prompt{position:relative;background:var(--code);color:#e8e8e8;border-radius:14px;padding:20px 22px;font:14px/1.8 ui-monospace,"SF Mono",Menlo,monospace;white-space:pre-wrap;margin:0 0 14px}
@@ -108,25 +127,43 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="#"><i></i>動くスライド</a>
-  <nav><a href="#how">使い方</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
+  <nav><a href="#new">第2弾</a><a href="#how">使い方</a><a href="#skill">スキル</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
 </div></header>
 
 <main class="wrap">
   <div class="hero">
     <div>
-      <h1><span class="ln"><span class="ph">押すと、</span><span class="ph">根拠が開く。</span></span><span class="ln"><span class="ph">動かすと、</span><span class="ph"><em>再計算</em>。</span></span></h1>
-      <p class="lede"><span class="ln"><span class="ph">1ファイルで完結する</span><span class="ph">「動くスライド」の</span><span class="ph">雛形を {{COUNT}} 種類。</span></span><span class="ln"><span class="ph">どれも無料で、</span><span class="ph">何本でも</span><span class="ph">ダウンロードできます。</span></span><span class="ln"><span class="ph">Claude に渡して</span><span class="ph">「この内容に作り替えて」と</span><span class="ph">頼むだけで、</span><span class="ph">自分の資料になります。</span></span></p>
+      <div class="vol">VOL.2 — {{COUNT2}} DESIGNS ADDED</div>
+      <h1><span class="ln"><span class="ph">めくっても、</span></span><span class="ln"><span class="ph"><em>途切れない</em>。</span></span></h1>
+      <p class="lede"><span class="ln"><span class="ph">前のページの図形が、</span><span class="ph">次のページの形へ</span><span class="ph">変形してつながる。</span></span><span class="ln"><span class="ph">押すと根拠が開き、</span><span class="ph">動かすと再計算される</span><span class="ph">「動くスライド」の</span><span class="ph">雛形を {{COUNT}} 種類。</span></span><span class="ln"><span class="ph">どれも無料で、</span><span class="ph">何本でも</span><span class="ph">ダウンロードできます。</span></span><span class="ln"><span class="ph">Claude に渡して</span><span class="ph">「この内容に作り替えて」と</span><span class="ph">頼むだけで、</span><span class="ph">自分の資料になります。</span></span></p>
       <div class="stats"><div><b>{{COUNT}}</b><span>デザイン</span></div><div><b>{{SLIDES}}</b><span>枚のスライド</span></div><div><b>0円</b><span>MIT ライセンス</span></div></div>
       <div class="row" style="display:flex;gap:10px;flex-wrap:wrap">
         <a class="btn primary big" href="ugoku-slide-all.zip" download>全部まとめてダウンロード（zip）</a>
-        <a class="btn big" href="#gallery">一覧を見る</a>
+        <a class="btn big" href="ugoku-slide-skill.zip" download>Claude 用スキル（zip）</a>
       </div>
     </div>
     <div>
-      <div class="stage"><iframe id="feature" title="見本" src="slides/01-swiss.html#4"></iframe><span class="hint">クリックして → キー／スライダーを動かせます</span></div>
+      <div class="stage"><iframe id="feature" title="見本" src="slides/51-onetake.html"></iframe><span class="hint">クリックして → キーでめくってください</span></div>
       <div class="pick" id="pick"></div>
     </div>
   </div>
+
+  <section id="new" class="new-sec">
+    <div class="new-head">
+      <div><div class="vol">第2弾 ｜ {{COUNT2}} 種</div><h2>めくると形が変わる。<br>触ると図が動く。</h2></div>
+      <p>第1弾の「押すと根拠・動かすと再計算」はそのままに、ページをまたいで図形が変形してつながる動きと、触って形を変える部品を足しました。1本ずつ場面を決めて作っています。</p>
+    </div>
+    <div class="parts">
+      <div><b>めくると変形</b><code>data-morph</code><p>前のページの丸が、次のページの棒やカードへ。位置・大きさ・色がつながる。</p></div>
+      <div><b>形が動く図</b><code>data-calc → CSS 変数</code><p>つまみで数字だけでなく、図形の大きさ・傾き・位置が動く。</p></div>
+      <div><b>回せる立体</b><code>data-orbit</code><p>ドラッグで回す分解図・構成図。外部の読み込みなし。</p></div>
+      <div><b>表を貼って作り直す</b><code>data-sheet</code><p>Excel でコピーした表を貼ると、グラフと集計が作り直される。</p></div>
+      <div><b>線が描かれる</b><code>.draw</code><p>矢印や線が順に描かれて、図が組み上がる。</p></div>
+    </div>
+    <div class="gallery" id="list2">
+<!--CARDS2-->
+    </div>
+  </section>
 
   <section id="how">
     <h2 class="sec">使い方（ターミナル不要・3ステップ）</h2>
@@ -138,10 +175,35 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     </div>
   </section>
 
+  <section id="skill">
+    <h2 class="sec">Claude のスキルとして入れる</h2>
+    <p class="sub">入れておけば、ファイルを渡さなくても「動くスライドで、〇〇の資料を作って」と頼むだけで、{{COUNT}} 種から場面に合う雛形を選んで作ります。</p>
+    <div class="skill">
+      <div>
+        <h3>claude.ai・デスクトップアプリ</h3>
+        <ol>
+          <li><a href="ugoku-slide-skill.zip" download>ugoku-slide-skill.zip</a> をダウンロード（解凍しない）</li>
+          <li>Settings → Capabilities で Code execution（コードの実行）をオンにする</li>
+          <li>Customize → Skills →「＋」→ Upload a skill で、zip をそのまま選ぶ</li>
+        </ol>
+        <a class="btn primary" href="ugoku-slide-skill.zip" download>スキルをダウンロード</a>
+      </div>
+      <div>
+        <h3>Claude Code</h3>
+        <ol>
+          <li>zip を解凍して、できた <code>ugoku-slide</code> フォルダを <code>~/.claude/skills/</code> に置く</li>
+          <li>「動くスライドで、来期の採用計画を役員会向けに作って」のように頼む</li>
+          <li>できた HTML を開いて確かめ、話しかけて直す（同梱の <code>scripts/check.py</code> で崩れも確かめられる）</li>
+        </ol>
+        <p class="sub" style="margin:0;font-size:14px">中身：SKILL.md（作り方）・雛形 {{COUNT}} 本・部品と決まりの説明・確かめるスクリプト。MIT。</p>
+      </div>
+    </div>
+  </section>
+
   <section id="gallery">
-    <h2 class="sec">雛形 {{COUNT}} 種</h2>
+    <h2 class="sec">第1弾の雛形 {{COUNT1}} 種</h2>
     <p class="sub">見本にマウスを乗せるとページが送られます。どれも中身（文章・数字）は架空のサンプルです。</p>
-    <div class="filters" id="filters"><button type="button" data-filter="" aria-pressed="true">すべて<small>{{COUNT}}</small></button>{{GROUPS}}</div>
+    <div class="filters" id="filters"><button type="button" data-filter="" aria-pressed="true">すべて<small>{{COUNT1}}</small></button>{{GROUPS}}</div>
     <div class="gallery" id="list">
 <!--CARDS-->
     </div>
@@ -200,6 +262,8 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <details class="faq"><summary>インターネットがないと動かない？</summary><p>動きます。仕組みはすべてファイルの中に入っています。ネットから読むのはフォントだけで、つながらないときはパソコンにある文字で表示されます。</p></details>
     <details class="faq"><summary>PowerPoint で渡したいと言われたら？</summary><p>ブラウザの印刷から「PDF に保存」すると、1ページ1枚のきれいな PDF になります（クリックで開く補足も開いた状態で出ます）。PowerPoint で編集できる形にはなりませんが、PDF なら PowerPoint にも挿入できます。</p></details>
     <details class="faq"><summary>相手のパソコンやスマホでも見られる？</summary><p>Chrome・Edge・Safari・Firefox の最近の版で動きます。画面の大きさに合わせて 16:9 のまま拡大縮小するので、レイアウトは崩れません。スマホは横向きで、左右にスワイプするとページが送れます。</p></details>
+    <details class="faq"><summary>第1弾で作ったスライドにも、変形する動きを足せる？</summary><p>足せます。第2弾の雛形を1本 Claude に一緒に渡して「この雛形の data-morph の使い方をまねて、〇枚目から〇枚目の図形を変形でつなげて」と頼んでください。仕組みは全部の雛形で共通なので、今回のダウンロードからは第1弾の50本にも入っています。</p></details>
+    <details class="faq"><summary>スキルと、ファイルを渡すのは何がちがう？</summary><p>できるスライドは同じです。スキルを入れると、毎回ファイルを添付しなくても、Claude が {{COUNT}} 種の説明を読んで場面に合う雛形を選び、作り終えたら崩れを確かめるところまでやります。</p></details>
     <details class="faq"><summary>HTML が分からなくても直せる？</summary><p>Claude に頼めば直せます。各ファイルの先頭に「使える部品と書き方」の説明が入っているので、Claude はそれを読んで同じ作りのまま中身を書き換えます。</p></details>
   </section>
 
@@ -256,12 +320,12 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
   const fbtns = [...document.querySelectorAll("#filters button")];
   fbtns.forEach(b => b.addEventListener("click", () => {
     fbtns.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-    document.querySelectorAll(".tpl").forEach(c => { c.hidden = !!b.dataset.filter && c.dataset.group !== b.dataset.filter; });
+    document.querySelectorAll("#list .tpl").forEach(c => { c.hidden = !!b.dataset.filter && c.dataset.group !== b.dataset.filter; });
   }));
 
   // 上の大きな見本を切り替える
   const feature = document.getElementById("feature"), pick = document.getElementById("pick");
-  const featured = ["01-swiss", "16-consulting", "18-wa-modern", "05-neobrutal", "38-dashboard", "14-terminal"].filter(id => byId[id]);
+  const featured = ["51-onetake", "53-exploded", "54-monthly", "60-reorg", "16-consulting", "35-kinetic"].filter(id => byId[id]);
   featured.forEach((id, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.textContent = byId[id].style; b.setAttribute("aria-pressed", String(i === 0));

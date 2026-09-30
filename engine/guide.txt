@@ -9,11 +9,12 @@ https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い�
 ■ 使える部品（class や data 属性を付けるだけ）
   .step                         → キーで順番に出てくる
   <details class="why"><summary>根拠</summary><div class="body">…</div></details>
-                                クリックで開く補足（float を足すと上に重ねて開く）
+                                クリックで開く補足（float を足すと上に重ねて開く。下にはみ出すときは自動で上へ）
   data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
                                   式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
-                                  data-format="int|dec1|yen|man|pct|x"  data-unit="時間"  data-sign（マイナスで赤）
+                                  data-format="int|dec1|yen|man|pct|x|pad2|year"  data-unit="時間"  data-sign（マイナスで赤。data-sign="rev" で逆）
                                   data-show="x" で入力値そのものを表示
+                                  文字を返す式なら文字をそのまま出す（例 data-out="rev >= goal ? '届く' : '届かない'"）
   data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
   data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
   data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
@@ -21,13 +22,38 @@ https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い�
   <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
   .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
   data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  ── 第2弾で増えた部品 ──
+  data-morph="名前"             <main class="deck" data-transition="morph"> のとき、前のページと次のページで
+                                同じ名前の要素が、位置・大きさ・色・角丸を保ったまま変形してつながる（Keynote のマジックムーブ）
+                                data-morph-enter  変形しない要素をあとからふわっと出す（style="--d:.2" で0.2秒遅らせる）
+  data-calc の CSS 変数         入力と data-let の値は、その箱の --名前 にも入る。
+                                例 width:calc(var(--m) / 1000 * 1px) で、スライダーに合わせて図形の大きさが変わる
+  data-calc="global"            その値をほかのページでも使う：data-global-out="式"（文字を返す式なら文字をそのまま出す）
+                                と、.deck に付く CSS 変数 --名前（例：選んだプランの見積書を次のページに出す）
+  data-orbit > .orbit > .face   ドラッグで回せる立体。面は transform:translateZ() などで並べる
+                                面（.face）の中は平面になる。立体の中の要素は data-morph で外へつなげない
+                                data-rx / data-ry で最初の向き、data-spin でゆっくり回る。ダブルクリックで元の向き
+  data-sheet（figure）> table   表の数字をクリックして直せる。Excel やスプレッドシートでコピーした表を貼ると、
+                                グラフ（data-chart="bar|stack|line"）と集計が作り直される
+                                マイナスの値は下向きの棒。data-min="6000" で目盛りの下限を決められる（棒・折れ線）
+                                data-sheet-out="sum('売上')"  集計：sum avg first last max min growth(伸び率%) total() n
+                                  col('列名') で列の数字の並び（col(0) は1列目の数字）、label(-1) で最後の行の項目名
+                                  列は名前でも番号（0から）でも指定できる。式が文字を返せば、その文字を出す
+                                  数字の書式は要素ごとに data-format（figure の data-format は目盛りだけ。省略すると整数）
+                                  貼った数字の読み方：カンマ・¥・▲ は読める。「1.2億」「45件」の単位は読み飛ばす（換算しない）
+                                  表は data-calc とはつながらない（表を貼っても、スライダーの計算の数字は変わらない）
+                                [data-sheet-paste] を押すと貼り付け待ち、[data-sheet-reset] で元の表に戻る
+  .draw（SVG の path など）      表示されたときに線が描かれていく（.step と組むと → で描かれる）
+  data-morph-delay="0.2"        その要素だけ変形を遅らせて始める（秒）
+  <section class="slide" data-title="…">  一覧・発表者画面に出るページ名
+  <section class="slide" data-enter="none">  ページを開いたときのふわっと出る動きを止める
   <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
   並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
-  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|none">
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|morph|none">
 
 ■ 気をつけること
   スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
-  .big .card .grid などエンジンの class 名は、別の意味で使わない。
+  .big .card .grid .mark .step .draw .num .kpi .lead .pill .foot などエンジンの class 名は、別の意味で使わない。
 
 ■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
 ■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。

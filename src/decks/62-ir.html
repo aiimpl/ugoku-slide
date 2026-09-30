@@ -1,0 +1,454 @@
+<!--meta
+{"title":"2027年3月期 第2四半期 決算説明会｜サンプルホールディングス","style":"IR・端正","use":"決算説明会・IR","group":"表から作る",
+ "aim":"上場企業の IR 担当が機関投資家向けの決算説明会で、売上から営業利益までの流れと事業ごとの内訳を一続きに見せ、四半期の数字の差し替えもその場で済ませる。",
+ "desc":"白地に墨と緑の1色。表紙の緑の柱が滝グラフの営業利益に縮み、次のページで3つの事業の横棒に割れて広がる。四半期の表は貼ると利益率ごと作り直され、為替を動かすと通期予想が変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#ffffff; --surface:#ffffff; --ink:#1b1d1c; --muted:#5d6461; --line:#dcdfdd; --rule:#1b1d1c;
+  --accent:#17684c; --accent-ink:#ffffff; --good:#17684c; --bad:#b3372a; --frame:#e9ecea;
+  --g1:#17684c; --g2:#4f9477; --g3:#a3c9b7; --k1:#1b1d1c; --k2:#5a605d; --k3:#a5aba8; --tint:#eef4f1;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+  --font-num:"Libre Franklin","Helvetica Neue","Noto Sans JP",sans-serif;
+  --head-weight:500; --head-track:.01em; --radius:0px; --shadow:none;
+  --pad-y:0px; --pad-x:0px;
+  --accent-soft:rgb(23 104 76 / .1);
+}
+.slide{padding:0}
+h1,h2,h3,p,li{word-break:auto-phrase}
+h2 em,h1 em{font-style:normal;color:var(--accent);font-weight:700}
+.n{font-family:var(--font-num);font-variant-numeric:tabular-nums lining-nums;font-feature-settings:"tnum" 1,"lnum" 1}
+
+/* 各ページの頭と足（全ページ同じ位置なので、めくっても動かない） */
+.hdr{position:absolute;left:80px;right:80px;top:28px;height:30px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--rule);font-size:13px;color:var(--muted);letter-spacing:.04em}
+.hdr .co{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:500;letter-spacing:.12em;font-family:var(--font-num);font-size:12px}
+.hdr .co i{width:10px;height:10px;background:var(--accent)}
+.hdr .pg{font-family:var(--font-num);color:var(--ink);margin-left:18px}
+.ftr{position:absolute;left:80px;right:80px;bottom:24px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);letter-spacing:.02em;padding-top:10px;border-top:1px solid var(--line)}
+.kick{position:absolute;left:80px;top:84px;font-size:14px;color:var(--muted);letter-spacing:.1em;display:flex;gap:12px}
+.kick b{font-family:var(--font-num);color:var(--accent);font-weight:600;letter-spacing:.06em}
+.ttl{position:absolute;left:80px;top:112px;width:1120px}
+.ttl h2{font-size:31px;line-height:1.5;margin:0;font-weight:500}
+.slide.active .in{animation:ugk-enter .7s var(--ease) both;animation-delay:calc(var(--d,0) * 1s + .1s)}
+
+/* 変形する部品（3つの事業） */
+.pc{position:absolute}
+.pc.ra{background:var(--k1)}.pc.rb{background:var(--k2)}.pc.rc{background:var(--k3)}
+.pc.oa{background:var(--g1)}.pc.ob{background:var(--g2)}.pc.oc{background:var(--g3)}
+/* 滝グラフの売上の棒は、表紙から来たときは下からふわっと出す（3ページ目から戻るときは変形が上書きする） */
+.slide.active .wf .pc.ra,.slide.active .wf .pc.rb,.slide.active .wf .pc.rc{animation:ugk-enter .7s var(--ease) both;animation-delay:.08s}
+
+/* ---------- 1 表紙 ---------- */
+.s-cover .ev{position:absolute;left:80px;top:112px;font-size:16px;color:var(--muted);letter-spacing:.08em}
+.s-cover .ev b{font-family:var(--font-num);font-weight:500;color:var(--ink);letter-spacing:.02em;margin-right:14px}
+.s-cover h1{position:absolute;left:80px;top:156px;width:800px;font-size:50px;line-height:1.42;font-weight:500;letter-spacing:.01em}
+.s-cover h1 em{font-weight:700}
+.s-cover .kpi3{position:absolute;left:80px;top:430px;width:860px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule)}
+.kpi3>div{padding:16px 24px 0 0}
+.kpi3>div+div{padding-left:24px;border-left:1px solid var(--line)}
+.kpi3 .lb{font-size:15px;color:var(--muted)}
+.kpi3 .v{font-family:var(--font-num);font-weight:300;font-size:66px;line-height:1.1;letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums lining-nums}
+.kpi3 .v small{font-family:var(--font);font-size:18px;font-weight:500;margin-left:6px;letter-spacing:0}
+.kpi3 .d{font-family:var(--font-num);font-size:17px;margin-top:6px;color:var(--accent);font-weight:500}
+.kpi3 .d span{font-family:var(--font);color:var(--muted);font-size:14px;font-weight:400;margin-left:8px}
+.s-cover .colcap{position:absolute;left:1010px;top:622px;width:190px;font-size:13px;color:var(--muted);line-height:1.5}
+.s-cover .colcap b{display:block;font-family:var(--font-num);font-weight:500;color:var(--ink);font-size:15px}
+.s-cover .pc.oa{left:1090px;top:327px;width:110px;height:283px}
+.s-cover .pc.ob{left:1090px;top:179px;width:110px;height:148px}
+.s-cover .pc.oc{left:1090px;top:151px;width:110px;height:28px}
+.s-cover .tick{position:absolute;left:1000px;font-size:13px;color:var(--muted);width:80px;text-align:right;line-height:1.3}
+.s-cover .tick b{display:block;font-family:var(--font-num);font-weight:500;color:var(--ink);font-size:15px}
+.s-cover .date{position:absolute;left:80px;top:640px;font-size:14px;color:var(--muted)}
+
+/* ---------- 2 滝グラフ ---------- */
+.wf{position:absolute;left:0;top:0;width:1280px;height:720px;pointer-events:none}
+.wf .bar{position:absolute;width:96px}
+.wf .cost{background:repeating-linear-gradient(135deg,#d3d7d5 0 1px,#eceeed 1px 6px);border:1px solid #b9bebb}
+.wf .gp{background:var(--k2)}
+.wf .base{position:absolute;left:80px;width:704px;top:596px;border-top:1px solid var(--rule)}
+.wf .cn{position:absolute;height:0;border-top:1px dashed #9ca29f;width:42px}
+.wf .val{position:absolute;width:140px;margin-left:-22px;text-align:center;font-family:var(--font-num);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums}
+.wf .val.neg{color:var(--muted);font-weight:400}
+.wf .val.op{color:var(--accent);font-weight:600}
+.wf .lb{position:absolute;top:606px;width:140px;margin-left:-22px;text-align:center;font-size:16px;color:var(--ink);line-height:1.35}
+.wf .lb small{display:block;font-size:13px;color:var(--muted)}
+.ratios{position:absolute;left:856px;top:236px;width:344px}
+.ratios .r{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:16px 0 14px;border-top:1px solid var(--line)}
+.ratios .r:first-child{border-top:1px solid var(--rule)}
+.ratios .r .lb{font-size:17px}
+.ratios .r .v{font-family:var(--font-num);font-size:40px;font-weight:300;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.ratios .r .v small{font-size:18px;margin-left:2px}
+.ratios .r .d{grid-column:1/-1;font-size:14px;color:var(--muted);margin-top:0}
+.ratios .r .d b{font-family:var(--font-num);color:var(--accent);font-weight:600;margin-right:6px}
+.ratios .r.hl .v{color:var(--accent);font-weight:400}
+.ratios .why{border-radius:0;border-color:var(--line);margin-top:14px}
+.ratios .why>summary{font-size:15px;color:var(--accent)}
+.ratios .why>summary::before{border-radius:0;background:var(--tint)}
+.ratios .why .body{font-size:15px}
+
+/* ---------- 3 セグメント ---------- */
+.seg-h{position:absolute;top:236px;font-size:13px;color:var(--muted);letter-spacing:.06em}
+.seg-rule{position:absolute;left:80px;right:80px;height:0;border-top:1px solid var(--line)}
+.seg-rule.top{border-top-color:var(--rule)}
+.seg-name{position:absolute;left:80px;width:230px}
+.seg-name h3{font-size:22px;font-weight:700;margin:0}
+.seg-name p{font-size:15px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+.seg-v{position:absolute;width:100px;text-align:right;font-family:var(--font-num);font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;line-height:1}
+.seg-v small{display:block;font-family:var(--font);font-size:13px;color:var(--muted);margin-top:6px;font-weight:400}
+.seg-v small b{font-family:var(--font-num);font-weight:500;color:var(--accent)}
+.seg-v.op{color:var(--accent);font-weight:400}
+.seg-m{position:absolute;left:1086px;width:114px;text-align:right;font-family:var(--font-num);font-size:34px;font-weight:300;font-variant-numeric:tabular-nums;line-height:1}
+.seg-m small{font-size:17px}
+.seg-m i{display:block;font-style:normal;font-family:var(--font);font-size:13px;color:var(--muted);margin-top:6px}
+.seg-m i b{font-family:var(--font-num);color:var(--accent);font-weight:500}
+.seg-m.low{color:var(--muted)}
+.s-seg .why{position:absolute;left:80px;top:604px;width:560px;border-radius:0;border-color:var(--line);margin:0}
+.s-seg .why>summary{font-size:15px;padding:7px 14px}
+.s-seg .why>summary::before{border-radius:0;background:var(--tint)}
+.s-seg .why .body{font-size:15px}
+.s-seg .tot{position:absolute;left:680px;top:612px;right:80px;display:flex;justify-content:flex-end;gap:36px;font-size:14px;color:var(--muted);align-items:baseline}
+.s-seg .tot b{font-family:var(--font-num);font-size:22px;font-weight:500;color:var(--ink);margin-left:8px}
+.s-seg .tot b.g{color:var(--accent)}
+
+/* ---------- 4 四半期（表から作る） ---------- */
+figure.q{display:contents}
+.q .ttl{width:720px}
+.q .side{position:absolute;left:856px;top:108px;width:344px;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule)}
+.q .side>div{padding:10px 0 10px;border-bottom:1px solid var(--line)}
+.q .side>div:nth-child(even){padding-left:18px;border-left:1px solid var(--line)}
+.q .side .lb{font-size:13px;color:var(--muted)}
+.q .side .v{font-family:var(--font-num);font-size:30px;font-weight:300;font-variant-numeric:tabular-nums;line-height:1.15;white-space:nowrap}
+.q .side .v small{font-family:var(--font);font-size:14px;margin-left:3px}
+.q .side .v.g{color:var(--accent);font-weight:400}
+.q .pos::before{content:"+"}
+.q .ops{position:absolute;left:80px;top:236px;display:flex;gap:20px;align-items:center;font-size:14px;color:var(--muted)}
+.q .ops button{border:0;background:none;padding:4px 0;font-size:15px;color:var(--accent);border-bottom:1px solid var(--accent);cursor:pointer;font-weight:500}
+.q .ops button.alt{color:var(--muted);border-bottom-color:var(--line)}
+.q .ops kbd{font-family:var(--font-num);font-size:12px;border:1px solid var(--line);padding:0 5px;margin-left:6px;color:var(--muted)}
+.q .tb{position:absolute;left:80px;top:276px;width:420px;max-height:320px;overflow:hidden}
+.q table{width:100%;border-collapse:collapse;font-family:var(--font-num);font-size:18px;font-variant-numeric:tabular-nums}
+.q th,.q td{height:38px;padding:0 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.q thead th{font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);text-align:right;border-bottom:1px solid var(--rule);height:32px}
+.q thead th:first-child,.q td:first-child{text-align:left;padding-left:0}
+.q td:first-child{font-size:15px;color:var(--muted)}
+.q td.n{text-align:right}
+.q tbody tr:last-child td{font-weight:600;background:var(--tint)}
+.q tbody tr:last-child td:first-child{color:var(--accent);font-weight:600;padding-left:6px}
+.q td[contenteditable]:hover{background:var(--tint)}
+.q td[contenteditable]:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);border-radius:0}
+.q tbody:has(tr:nth-child(8)) td{height:30px;font-size:16px}
+.q tbody:has(tr:nth-child(10)) td{height:22px;font-size:13px}
+.q tbody:has(tr:nth-child(14)) td{height:17px;font-size:11px}
+.q .cb{position:absolute;left:540px;right:80px;top:276px}
+.q .sheet-chart{height:318px;gap:8px}
+.q .sheet-chart .sc-legend{font-size:14px;margin-left:56px}
+.q .sheet-chart .sc-legend i{border-radius:0}
+.q .sheet-chart .sc-plot{margin:6px 0 30px 56px}
+.q .sheet-chart .sc-gl{border-top-color:#eceeed}
+.q .sheet-chart .sc-gl:first-child{border-top:1px solid var(--rule)}
+.q .sheet-chart .sc-gl span{font-family:var(--font-num);font-size:13px}
+.q .sheet-chart .sc-l{font-family:var(--font-num);font-size:13px;left:0;right:0;text-align:center;white-space:normal;padding:0 2px;line-height:1.25;color:var(--muted)}
+.q .sheet-chart .sc-g:last-child .sc-l{color:var(--ink);font-weight:600}
+.q .sheet-chart .sc-bars{inset:0 16% 0;gap:4px}
+.q .sheet-chart .sc-bars>i{border-radius:0}
+.q .sheet-chart:has(.sc-g:nth-child(10)) .sc-l{font-size:11px}
+.q .sheet-chart:has(.sc-g:nth-child(13)) .sc-g:nth-child(even) .sc-l{visibility:hidden}
+.q .sheet-chart:not(:has(.sc-g:nth-child(5))) .sc-bars{inset:0 26% 0}
+.q{--s1:#c3c9c6;--s2:var(--accent);--s3:var(--k2);--s4:var(--g3);--s5:var(--k1);--s6:#dde5e1}
+.q:has(tbody tr:nth-child(8)) .note{display:none}
+.q .note{position:absolute;left:80px;top:548px;width:420px;font-size:15px;line-height:1.75;color:var(--muted)}
+.q .note b{color:var(--ink);font-weight:500}
+
+/* ---------- 5 通期見通し（為替） ---------- */
+.fxbox{position:absolute;left:80px;right:80px;top:236px;bottom:70px;display:grid;grid-template-columns:400px 1fr;gap:56px}
+.fxbox .ctl{border-top:1px solid var(--rule);padding-top:18px}
+.fxbox .field>label{font-size:17px;color:var(--ink)}
+.fxbox .field>label b{font-family:var(--font-num);font-size:26px;font-weight:400;color:var(--accent)}
+.fxbox .field{margin-bottom:16px}
+.fxbox input[type=range]{accent-color:var(--accent)}
+.fxbox .sens{border-top:1px solid var(--line);margin-top:4px}
+.fxbox .sens .r{display:grid;grid-template-columns:1fr auto auto;gap:18px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px;align-items:baseline}
+.fxbox .sens .r span{color:var(--muted)}
+.fxbox .sens .r b{font-family:var(--font-num);font-weight:500;font-size:17px;text-align:right;min-width:74px}
+.fxbox .sens .r.h{font-size:12px;color:var(--muted);letter-spacing:.06em;padding:6px 0}
+.fxbox .why{border-radius:0;border-color:var(--line);margin-top:12px}
+.fxbox .why>summary{font-size:15px;padding:7px 14px}
+.fxbox .why>summary::before{border-radius:0;background:var(--tint)}
+.fxbox .why .body{font-size:15px}
+.fxbox .res{border-top:1px solid var(--rule);padding-top:14px}
+.fxbox .res .lb{font-size:15px;color:var(--muted)}
+.fxbox .big{font-family:var(--font-num);font-weight:300;font-size:108px;line-height:1;letter-spacing:-.03em;color:var(--ink);margin:6px 0 0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fxbox .big small{font-family:var(--font);font-size:24px;font-weight:500;margin-left:10px;letter-spacing:0}
+.gauge{position:relative;height:30px;margin-top:40px;border-bottom:1px solid var(--rule)}
+.gauge .fill{position:absolute;left:0;bottom:0;height:22px;background:var(--accent);width:calc(var(--op) / 360 * 100%);transition:width .45s var(--ease)}
+.gauge .h1{position:absolute;left:0;bottom:0;height:22px;width:calc(142.6 / 360 * 100%);background:repeating-linear-gradient(135deg,rgb(255 255 255 / .38) 0 2px,transparent 2px 6px)}
+.gauge .mk{position:absolute;bottom:-8px;height:48px;border-left:1px solid var(--ink)}
+.gauge .mk span{position:absolute;left:6px;top:-6px;font-size:12px;color:var(--muted);white-space:nowrap}
+.gauge .mk span b{font-family:var(--font-num);color:var(--ink);font-weight:500}
+.gscale{display:flex;justify-content:space-between;font-family:var(--font-num);font-size:12px;color:var(--muted);margin-top:6px}
+.fxbox .trio{display:grid;grid-template-columns:repeat(3,1fr);margin-top:26px;border-top:1px solid var(--line)}
+.fxbox .trio>div{padding:12px 0 0}
+.fxbox .trio>div+div{padding-left:20px;border-left:1px solid var(--line)}
+.fxbox .trio .v{font-family:var(--font-num);font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fxbox .trio .v small{font-family:var(--font);font-size:15px;margin-left:3px}
+.fxbox .trio .lb{font-size:14px}
+.fxbox [data-sign].pos::before{content:"+"}
+
+/* ---------- 6 株主還元 ---------- */
+.dps{position:absolute;left:80px;top:250px;width:620px}
+.dps .chart{height:300px;gap:30px;padding-top:40px;border-bottom:1px solid var(--rule);margin-bottom:40px}
+.dps .chart>.col>i{border-radius:0;background:#c3c9c6}
+.dps .chart>.col:last-child>i{background:repeating-linear-gradient(135deg,var(--accent) 0 3px,#3f8a6d 3px 7px)}
+.dps .chart>.col:nth-last-child(2)>i{background:var(--accent)}
+.dps .chart>.col::before{font-family:var(--font-num);font-size:22px;font-weight:500;bottom:calc(var(--v) * 1% + 8px)}
+.dps .chart>.col:last-child::before{color:var(--accent)}
+.dps .chart>.col::after{font-family:var(--font-num);font-size:14px;color:var(--muted)}
+.dps .cap{font-size:13px;color:var(--muted);margin-top:0}
+.ret{position:absolute;left:776px;top:250px;width:424px;border-top:1px solid var(--rule)}
+.ret .r{padding:16px 0 16px;border-bottom:1px solid var(--line)}
+.ret .r .lb{font-size:15px;color:var(--muted)}
+.ret .r .v{font-family:var(--font-num);font-size:44px;font-weight:300;line-height:1.1;font-variant-numeric:tabular-nums;margin-top:4px}
+.ret .r .v small{font-family:var(--font);font-size:17px;margin-left:4px}
+.ret .r p{font-size:16px;color:var(--muted);margin:4px 0 0;line-height:1.6}
+.ret .r .v.g{color:var(--accent);font-weight:400}
+
+/* ---------- 7 まとめ ---------- */
+.pts{position:absolute;left:80px;top:206px;width:1120px;border-top:1px solid var(--rule)}
+.pts .r{display:grid;grid-template-columns:80px 1fr 260px;gap:0;align-items:baseline;padding:16px 0 14px;border-bottom:1px solid var(--line)}
+.pts .no{font-family:var(--font-num);font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.08em}
+.pts h3{font-size:24px;font-weight:700;margin:0}
+.pts p{font-size:17px;color:var(--muted);margin:6px 0 0;line-height:1.6}
+.pts .v{font-family:var(--font-num);font-size:40px;font-weight:300;text-align:right;font-variant-numeric:tabular-nums}
+.pts .v small{font-family:var(--font);font-size:16px;margin-left:4px}
+.pts .v.g{color:var(--accent);font-weight:400}
+.ir{position:absolute;left:80px;top:590px;right:80px;display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:0;font-size:15px;color:var(--muted);line-height:1.6}
+.ir>div{padding-right:24px}
+.ir b{display:block;color:var(--ink);font-weight:500;font-size:15px}
+.ir .disc{font-size:12px;line-height:1.6}
+
+@media (prefers-reduced-motion:reduce){.gauge .fill{transition:none}}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-enter="none" data-title="表紙">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>証券コード 0000（架空）<span class="pg">01</span></div></div>
+    <div class="ev in"><b>2027年3月期 第2四半期</b>決算説明会 ｜ 2026年11月10日</div>
+    <h1 class="in" style="--d:.06">上期は増収増益。<br>通期の営業利益予想を<br><em>300億円</em>に引き上げます。</h1>
+    <div class="kpi3 in" style="--d:.14">
+      <div><div class="lb">売上収益（上期）</div><div class="v"><span data-count="1284">1,284</span><small>億円</small></div><div class="d">+9.1%<span>前年同期比</span></div></div>
+      <div><div class="lb">営業利益（上期）</div><div class="v"><span data-count="142.6" data-format="dec1">142.6</span><small>億円</small></div><div class="d">+18.4%<span>前年同期比</span></div></div>
+      <div><div class="lb">営業利益率</div><div class="v"><span data-count="11.1" data-format="dec1">11.1</span><small>%</small></div><div class="d">+0.9pt<span>前年同期差</span></div></div>
+    </div>
+    <div class="pc oc" data-morph="oc"></div>
+    <div class="pc ob" data-morph="ob"></div>
+    <div class="pc oa" data-morph="oa"></div>
+    <div class="tick in" style="top:155px;--d:.3"><b>8.6</b>ソリューション</div>
+    <div class="tick in" style="top:236px;--d:.26"><b>46.0</b>医療・計測</div>
+    <div class="tick in" style="top:450px;--d:.22"><b>88.0</b>産業機器</div>
+    <div class="colcap in" style="--d:.34"><b>営業利益 142.6億円</b>3つの事業の内訳（上期）</div>
+    <div class="ftr"><span>サンプルホールディングス株式会社 ｜ IR室</span><span>社名・数字はすべて架空のサンプルです</span></div>
+    <aside class="notes">最初に結論を2つ：上期は増収増益、通期の営業利益予想を280億円から300億円へ引き上げる。右の緑の柱は営業利益の内訳で、次のページで売上のどこから残った利益なのかを見せる。</aside>
+  </section>
+
+  <!-- 2 滝グラフ -->
+  <section class="slide s-wf" data-enter="none" data-title="損益の構造">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">02</span></div></div>
+    <div class="kick in"><b>01</b>連結損益 ｜ 上期（4〜9月）・億円</div>
+    <div class="ttl in"><h2>売上1,284億円のうち、営業利益として残ったのは<em>142.6億円</em>。<br>原価率の改善で、利益率は<em>11.1%</em>に上がった。</h2></div>
+    <div class="wf">
+      <div class="base"></div>
+      <!-- 売上収益：3つの事業を積んだ1本 -->
+      <div class="pc rc" data-morph="rc" style="left:96px;top:275px;width:96px;height:64px"></div>
+      <div class="pc rb" data-morph="rb" style="left:96px;top:339px;width:96px;height:102px"></div>
+      <div class="pc ra" data-morph="ra" style="left:96px;top:441px;width:96px;height:155px"></div>
+      <div class="cn" style="left:192px;top:275px"></div>
+      <div class="bar cost in" style="left:234px;top:275px;height:202px;--d:.1"></div>
+      <div class="cn" style="left:330px;top:477px"></div>
+      <div class="bar gp in" style="left:372px;top:477px;height:119px;--d:.18"></div>
+      <div class="cn" style="left:468px;top:477px"></div>
+      <div class="bar cost in" style="left:510px;top:477px;height:83px;--d:.26"></div>
+      <div class="cn" style="left:606px;top:560px"></div>
+      <!-- 営業利益：3つの事業を積んだ1本（表紙の緑の柱が縮んでここに来る） -->
+      <div class="pc oc" data-morph="oc" style="left:648px;top:560px;width:96px;height:3px"></div>
+      <div class="pc ob" data-morph="ob" style="left:648px;top:563px;width:96px;height:11px"></div>
+      <div class="pc oa" data-morph="oa" style="left:648px;top:574px;width:96px;height:22px"></div>
+      <div class="val in n" style="left:96px;top:238px">1,284.0</div>
+      <div class="val neg in n" style="left:234px;top:238px;--d:.1">−809.1</div>
+      <div class="val in n" style="left:372px;top:440px;--d:.18">474.9</div>
+      <div class="val neg in n" style="left:510px;top:440px;--d:.26">−332.3</div>
+      <div class="val op in n" style="left:648px;top:523px;--d:.34">142.6</div>
+      <div class="lb" style="left:96px">売上収益<small>+9.1%</small></div>
+      <div class="lb" style="left:234px">売上原価<small>原価率 63.0%</small></div>
+      <div class="lb" style="left:372px">売上総利益<small>+12.7%</small></div>
+      <div class="lb" style="left:510px">販管費<small>+9.8%</small></div>
+      <div class="lb" style="left:648px;color:var(--accent);font-weight:700">営業利益<small>+18.4%</small></div>
+    </div>
+    <div class="ratios in" style="--d:.45">
+      <div class="r"><span class="lb">売上総利益率</span><span class="v n">37.0<small>%</small></span><span class="d"><b>+1.2pt</b>前年同期 35.8%</span></div>
+      <div class="r"><span class="lb">販管費率</span><span class="v n">25.9<small>%</small></span><span class="d"><b style="color:var(--muted)">+0.3pt</b>前年同期 25.6%（人への投資）</span></div>
+      <div class="r hl"><span class="lb">営業利益率</span><span class="v n">11.1<small>%</small></span><span class="d"><b>+0.9pt</b>前年同期 10.2%</span></div>
+      <details class="why"><summary>原価率が下がった理由</summary><div class="body">産業機器で、値上げ（平均3.2%・4月から）が一巡した。部材の調達先を2社から4社に増やし、単価を1.8%下げた。</div></details>
+    </div>
+    <div class="ftr"><span>連結・IFRS。前年同期は2026年3月期 上期</span><span>数字は架空のサンプルです</span></div>
+    <aside class="notes">左の売上の棒から、原価と販管費を引いて、右端に残った緑が営業利益。表紙の緑の柱がここまで小さくなったのは、同じ営業利益を売上と同じ目盛りで描いたから。次のページでこの緑を3つの事業に割る。</aside>
+  </section>
+
+  <!-- 3 セグメント -->
+  <section class="slide s-seg" data-enter="none" data-title="セグメント別">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">03</span></div></div>
+    <div class="kick in"><b>02</b>セグメント別 ｜ 上期・億円</div>
+    <div class="ttl in"><h2>営業利益の6割は産業機器。<br>医療・計測は利益率が<em>11.2%</em>まで上がり、2本目の柱になった。</h2></div>
+    <div class="seg-h in" style="left:80px">事業</div>
+    <div class="seg-h in" style="left:320px">売上収益</div>
+    <div class="seg-h in" style="left:750px">営業利益</div>
+    <div class="seg-h in" style="left:1086px;width:114px;text-align:right">営業利益率</div>
+    <div class="seg-rule top" style="top:262px"></div>
+    <div class="seg-rule" style="top:374px"></div>
+    <div class="seg-rule" style="top:486px"></div>
+    <div class="seg-rule" style="top:598px"></div>
+
+    <div class="seg-name in" style="top:284px"><h3>産業機器</h3><p>工作機械の制御装置・センサー</p></div>
+    <div class="seg-v in n" style="left:300px;top:292px">620.0<small>前年比 <b>+8.2%</b></small></div>
+    <div class="pc ra" data-morph="ra" style="left:420px;top:292px;width:300px;height:28px"></div>
+    <div class="seg-v op in n" style="left:730px;top:292px">88.0<small>前年比 <b>+14.6%</b></small></div>
+    <div class="pc oa" data-morph="oa" style="left:850px;top:292px;width:220px;height:28px"></div>
+    <div class="seg-m in n" style="top:292px">14.2<small>%</small><i><b>+0.8pt</b></i></div>
+
+    <div class="seg-name in" style="top:396px"><h3>医療・計測</h3><p>検体分析装置・保守サービス</p></div>
+    <div class="seg-v in n" style="left:300px;top:404px">410.0<small>前年比 <b>+13.3%</b></small></div>
+    <div class="pc rb" data-morph="rb" style="left:420px;top:404px;width:198px;height:28px"></div>
+    <div class="seg-v op in n" style="left:730px;top:404px">46.0<small>前年比 <b>+35.3%</b></small></div>
+    <div class="pc ob" data-morph="ob" style="left:850px;top:404px;width:115px;height:28px"></div>
+    <div class="seg-m in n" style="top:404px">11.2<small>%</small><i><b>+1.8pt</b></i></div>
+
+    <div class="seg-name in" style="top:508px"><h3>ソリューション</h3><p>工場向けソフト・導入支援</p></div>
+    <div class="seg-v in n" style="left:300px;top:516px">254.0<small>前年比 <b>+5.4%</b></small></div>
+    <div class="pc rc" data-morph="rc" style="left:420px;top:516px;width:123px;height:28px"></div>
+    <div class="seg-v op in n" style="left:730px;top:516px">8.6<small>前年比 <b style="color:var(--bad)">−12.2%</b></small></div>
+    <div class="pc oc" data-morph="oc" style="left:850px;top:516px;width:22px;height:28px"></div>
+    <div class="seg-m low in n" style="top:516px">3.4<small>%</small><i><b style="color:var(--bad)">−0.7pt</b></i></div>
+
+    <details class="why in" style="--d:.3"><summary>ソリューションの利益が減った理由</summary><div class="body">大型案件2件の立ち上げで、先に人件費（外部の技術者 42名）を計上した。売上は下期に計上される見込みで、通期では増益を見込む。</div></details>
+    <div class="tot in" style="--d:.3"><span>合計 売上収益<b class="n">1,284.0</b></span><span>営業利益<b class="n g">142.6</b></span></div>
+    <div class="ftr"><span>セグメント間の取引は消去済み。調整額は各セグメントに配分</span><span>数字は架空のサンプルです</span></div>
+    <aside class="notes">前のページの2本の棒（売上と営業利益）が、そのまま3つの事業に割れて横に並ぶ。棒の長さは、売上どうし・営業利益どうしで比べられる。ソリューションの減益は一時的な要因なので、質問が出たら根拠を開いて答える。</aside>
+  </section>
+
+  <!-- 4 四半期の推移（data-sheet） -->
+  <section class="slide s-q" data-enter="none" data-title="四半期推移">
+    <figure class="q" data-sheet data-chart="bar" data-format="int">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">04</span></div></div>
+    <div class="kick in"><b>03</b>四半期の推移 ｜ 億円</div>
+    <div class="ttl in"><h2><span data-sheet-out="label(-1)">FY26 2Q</span>の営業利益率は<em><span class="n" data-sheet-out="last(col('営業利益').length?'営業利益':1)/last(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)*100" data-format="pct">11.9%</span></em>。<br><span data-sheet-out="(()=>{const a=col(col('売上収益').length?'売上収益':col('営業利益').length?-1:0),b=col(col('営業利益').length?'営業利益':1);const m=i=>b.at(i)/a.at(i)*100;let d,t;if(a.length>=5){d=m(-1)-m(-5);t='前年同期から'}else if(a.length>=2){d=m(-1)-m(-2);t='前の四半期から'}else return '';if(!isFinite(d))return '';if(Math.abs(d)<.05)return t+'横ばい。';return t+(d<0?'−':'+')+Math.abs(d).toFixed(1)+'pt、'+(d<0?'下がった。':'上がった。')})()">前年同期から+0.6pt、上がった。</span></h2></div>
+    <div class="side in" style="--d:.1">
+      <div><div class="lb">売上収益（最新）</div><div class="v n"><span data-sheet-out="last(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)" data-format="dec1">666.0</span><small>億円</small></div></div>
+      <div><div class="lb">営業利益（最新）</div><div class="v n g"><span data-sheet-out="last(col('営業利益').length?'営業利益':1)" data-format="dec1">79.5</span><small>億円</small></div></div>
+      <div><div class="lb">営業利益 前年同期比</div><div class="v n"><span data-sheet-out="(()=>{const b=col(col('営業利益').length?'営業利益':1);if(b.length<5)return NaN;const p=b.at(-5),c=b.at(-1);if(!(p>0))return c>0?'黒字転換':'—';const g=(c/p-1)*100;return (g<0?'−':'+')+Math.abs(g).toFixed(1)+'%'})()">+16.2%</span></div></div>
+      <div><div class="lb">表の期間の利益率</div><div class="v n"><span data-sheet-out="sum(col('営業利益').length?'営業利益':1)/sum(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)*100" data-format="pct">10.9%</span></div></div>
+    </div>
+    <div class="note in" style="--d:.16">決算の数字が確定したら、<b>Excel の四半期表を見出しごとコピーして、このページで ⌘V</b>。グラフ・見出しの利益率・右の4つの数字が作り直される。セルを直接直してもよい。</div>
+    <div class="ops in" style="--d:.06">
+      <button data-sheet-paste>表を貼る<kbd>⌘V</kbd></button>
+      <button class="alt" data-sheet-reset>元の表に戻す</button>
+      <span>1列目に四半期。「売上収益」「営業利益」の列名で読む（名前がなければ2列目・3列目）</span>
+    </div>
+    <div class="tb in" style="--d:.1">
+      <table>
+        <thead><tr><th>四半期</th><th>売上収益</th><th>営業利益</th></tr></thead>
+        <tbody>
+          <tr><td>FY25 1Q</td><td>571.0</td><td>52.0</td></tr>
+          <tr><td>FY25 2Q</td><td>606.0</td><td>68.4</td></tr>
+          <tr><td>FY25 3Q</td><td>598.0</td><td>61.2</td></tr>
+          <tr><td>FY25 4Q</td><td>652.0</td><td>74.5</td></tr>
+          <tr><td>FY26 1Q</td><td>618.0</td><td>63.1</td></tr>
+          <tr><td>FY26 2Q</td><td>666.0</td><td>79.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cb in" style="--d:.14"><div class="sheet-chart"></div></div>
+    <div class="ftr"><span>FY26 ＝ 2027年3月期。四半期は会計期間（3か月）の数字</span><span>数字は架空のサンプルです</span></div>
+    </figure>
+    <aside class="notes">このページは決算の数字の差し替え用。確定値を Excel から貼れば、見出しの利益率と前年同期との差も自動で書き換わる。説明会では、2Qの利益率が四半期で最も高いことだけ伝えればよい。</aside>
+  </section>
+
+  <!-- 5 通期見通しと為替 -->
+  <section class="slide s-fx" data-enter="none" data-title="通期見通し">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">05</span></div></div>
+    <div class="kick in"><b>04</b>通期の見通し ｜ 下期の想定為替と感応度</div>
+    <div class="ttl in"><h2>下期1ドル145円の前提で、通期の営業利益は<em>300億円</em>。<br>1円の円安で、<em>2.4億円</em>上振れする。</h2></div>
+    <div class="fxbox in" style="--d:.1" data-calc data-let="op = 300 + (u - 145) * 2.4 + (e - 158) * 0.7; rev = 2650 + (u - 145) * 12 + (e - 158) * 3.5">
+      <div class="ctl">
+        <div class="field"><label>下期の想定　1ドル <b data-show="u" data-unit="円"></b></label><input type="range" name="u" min="130" max="165" step="1" value="145"></div>
+        <div class="field"><label>下期の想定　1ユーロ <b data-show="e" data-unit="円"></b></label><input type="range" name="e" min="145" max="175" step="1" value="158"></div>
+        <div class="sens">
+          <div class="r h"><span>1円の円安で（下期）</span><span>売上収益</span><span>営業利益</span></div>
+          <div class="r"><span>米ドル</span><b class="n">+12.0億</b><b class="n">+2.4億</b></div>
+          <div class="r"><span>ユーロ</span><b class="n">+3.5億</b><b class="n">+0.7億</b></div>
+        </div>
+        <details class="why"><summary>感応度の前提</summary><div class="body">下期の外貨建て売上（米ドル 1,000万ドル／月、ユーロ 290万ユーロ／月）と、外貨建ての調達を差し引いた額から算出。上期の実績レートは1ドル148円・1ユーロ161円。</div></details>
+      </div>
+      <div class="res">
+        <div class="lb">2027年3月期 通期の営業利益（見通し）</div>
+        <div class="big"><span data-out="op" data-format="dec1"></span><small>億円</small></div>
+        <div class="gauge"><div class="fill"></div><div class="h1"></div>
+          <div class="mk" style="left:calc(142.6 / 360 * 100%)"><span>上期実績 <b>142.6</b></span></div>
+          <div class="mk" style="left:calc(280 / 360 * 100%)"><span>期初予想 <b>280</b></span></div>
+        </div>
+        <div class="gscale"><span>0</span><span>90</span><span>180</span><span>270</span><span>360億円</span></div>
+        <div class="trio">
+          <div><div class="lb muted">期初予想との差</div><div class="v n" data-out="op - 280" data-format="dec1" data-sign></div></div>
+          <div><div class="lb muted">売上収益</div><div class="v n"><span data-out="rev"></span><small>億円</small></div></div>
+          <div><div class="lb muted">営業利益率</div><div class="v n" data-out="op / rev * 100" data-format="pct"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ftr"><span>見通しは現時点の前提による。実際の業績は為替・需要などで変わる</span><span>数字は架空のサンプルです</span></div>
+    <aside class="notes">質問が多いのは為替。ドルを137円まで動かして「ここまで円高になっても期初予想の280億円は守れる」ことを見せる（ユーロは据え置き）。感応度は下期分だけで、上期の実績は確定している。</aside>
+  </section>
+
+  <!-- 6 株主還元 -->
+  <section class="slide s-ret" data-enter="none" data-title="株主還元">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">06</span></div></div>
+    <div class="kick in"><b>05</b>株主還元 ｜ 1株あたり配当・円</div>
+    <div class="ttl in"><h2>年間配当は<em>86円</em>に増やす予定。<br>9期連続の増配で、配当性向は35%をめざす。</h2></div>
+    <div class="dps in" style="--d:.08">
+      <div class="chart">
+        <div class="col" style="--v:62" data-label="FY22" data-val="58"><i></i></div>
+        <div class="col" style="--v:68" data-label="FY23" data-val="64"><i></i></div>
+        <div class="col" style="--v:77" data-label="FY24" data-val="72"><i></i></div>
+        <div class="col" style="--v:85" data-label="FY25" data-val="80"><i></i></div>
+        <div class="col" style="--v:92" data-label="FY26（予想）" data-val="86"><i></i></div>
+      </div>
+      <div class="cap">FY26 の斜線は予想（中間 42円・期末 44円）</div>
+    </div>
+    <div class="ret">
+      <div class="r step"><div class="lb">中間配当</div><div class="v n g">42<small>円</small></div><p>前年の中間から+6円。12月5日に支払い開始</p></div>
+      <div class="r step"><div class="lb">配当性向（予想）</div><div class="v n"><span data-count="33.8" data-format="dec1">33.8</span><small>%</small></div><p>中期経営計画の目標は35%（2029年3月期）</p></div>
+      <div class="r step"><div class="lb">自己株式の取得</div><div class="v n">50<small>億円</small></div><p>上限 200万株。11月11日〜2027年3月31日</p></div>
+    </div>
+    <div class="ftr"><span>FY は3月期。FY26 ＝ 2027年3月期</span><span>数字は架空のサンプルです</span></div>
+  </section>
+
+  <!-- 7 まとめ -->
+  <section class="slide s-end" data-enter="none" data-title="まとめ">
+    <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">07</span></div></div>
+    <div class="kick in"><b>06</b>本日のまとめ</div>
+    <div class="ttl in"><h2>お伝えしたかったのは、この<em>3つ</em>です。</h2></div>
+    <div class="pts in" style="--d:.08">
+      <div class="r step"><div class="no">01</div><div><h3>上期は増収増益。利益率は11.1%</h3><p>原価率の改善が効いた。販管費は人への投資で少し増えた。</p></div><div class="v n">+18.4<small>%</small></div></div>
+      <div class="r step"><div class="no">02</div><div><h3>医療・計測が2本目の柱に</h3><p>営業利益は前年から+35%。保守サービスの契約が1.4倍になった。</p></div><div class="v n g">46.0<small>億円</small></div></div>
+      <div class="r step"><div class="no">03</div><div><h3>通期の営業利益予想を引き上げ</h3><p>280億円 → 300億円。下期の為替は1ドル145円で保守的に置いた。</p></div><div class="v n g">300<small>億円</small></div></div>
+    </div>
+    <div class="ir in" style="--d:.16">
+      <div><b>次回の開示</b>第3四半期決算 2027年2月9日（予定）</div>
+      <div><b>お問い合わせ</b>IR室　ir@sample.example</div>
+      <div class="disc">本資料の見通しは、現時点で入手できる情報と前提にもとづくもので、実際の業績は変わることがあります。本資料の社名・数字はすべて架空のサンプルです。</div>
+    </div>
+    <div class="ftr"><span>サンプルホールディングス株式会社 ｜ IR室</span><span>社名・数字はすべて架空のサンプルです</span></div>
+    <aside class="notes">→ で1つずつ出して、最後に質疑へ。為替の質問が来たら5ページ目に戻って、その場でつまみを動かす。</aside>
+  </section>
+
+</main>

@@ -1,0 +1,1666 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>入社1年目の12か月｜サンプル工機 会社説明会</title>
+<meta name="description" content="新入社員の名札が、研修→配属→初担当→振り返りへとページをまたいで歩き、12か月の帯の現在地も動く。勤務地と家賃を選ぶと、手取りと家賃の負担が出る。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=LINE+Seed+JP:wght@400;700;800&amp;display=swap">
+<!--
+動くスライド ugoku-slide ── このファイル1つで完結（外部読み込みはフォントだけ。ネットがなくても動く）
+https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い・直し・配ってOK）
+
+■ 書き換える場所
+  <main class="deck"> の中の <section class="slide"> が1枚。増やす・消す・並べ替えるだけでページが変わる。
+  色や文字は <style>（2つ目）の :root にある --accent などを変える。
+  「ugoku-slide engine」の BEGIN〜END は共通の仕組み。触らなくていい。
+
+■ 使える部品（class や data 属性を付けるだけ）
+  .step                         → キーで順番に出てくる
+  <details class="why"><summary>根拠</summary><div class="body">…</div></details>
+                                クリックで開く補足（float を足すと上に重ねて開く。下にはみ出すときは自動で上へ）
+  data-calc                     中の <input name="x"> を動かすと、data-out="式" の数字を計算し直す
+                                  式は x*y など（round/max/min 使える）。data-let="a = x*2; b = a+1" で途中の計算
+                                  data-format="int|dec1|yen|man|pct|x|pad2|year"  data-unit="時間"  data-sign（マイナスで赤。data-sign="rev" で逆）
+                                  data-show="x" で入力値そのものを表示
+                                  文字を返す式なら文字をそのまま出す（例 data-out="rev >= goal ? '届く' : '届かない'"）
+  data-bar="式" data-max="式"    横棒（.meter の中の <i>）の長さを式で決める
+  data-count="1234"             ページを開いたときにカウントアップ（data-format も使える）
+  data-tabs                     中の [data-tab="a"] を押すと [data-panel="a"] に切り替わる
+  .chart > .col[style="--v:70"][data-label="4月"][data-val="70"]   縦棒グラフ（--v は 0〜100）
+  <pre class="code" data-highlight="1-2|4">                         → で行を順番に強調
+  .quiz > .choices > button[data-correct]   クイズ（.explain は答えたあとに出る）
+  data-rank + <script type="application/json">{criteria, options}</script>   重みを動かすと順位が入れ替わる
+  ── 第2弾で増えた部品 ──
+  data-morph="名前"             <main class="deck" data-transition="morph"> のとき、前のページと次のページで
+                                同じ名前の要素が、位置・大きさ・色・角丸を保ったまま変形してつながる（Keynote のマジックムーブ）
+                                data-morph-enter  変形しない要素をあとからふわっと出す（style="--d:.2" で0.2秒遅らせる）
+  data-calc の CSS 変数         入力と data-let の値は、その箱の --名前 にも入る。
+                                例 width:calc(var(--m) / 1000 * 1px) で、スライダーに合わせて図形の大きさが変わる
+  data-calc="global"            その値をほかのページでも使う：data-global-out="式"（文字を返す式なら文字をそのまま出す）
+                                と、.deck に付く CSS 変数 --名前（例：選んだプランの見積書を次のページに出す）
+  data-orbit > .orbit > .face   ドラッグで回せる立体。面は transform:translateZ() などで並べる
+                                面（.face）の中は平面になる。立体の中の要素は data-morph で外へつなげない
+                                data-rx / data-ry で最初の向き、data-spin でゆっくり回る。ダブルクリックで元の向き
+  data-sheet（figure）> table   表の数字をクリックして直せる。Excel やスプレッドシートでコピーした表を貼ると、
+                                グラフ（data-chart="bar|stack|line"）と集計が作り直される
+                                マイナスの値は下向きの棒。data-min="6000" で目盛りの下限を決められる（棒・折れ線）
+                                data-sheet-out="sum('売上')"  集計：sum avg first last max min growth(伸び率%) total() n
+                                  col('列名') で列の数字の並び（col(0) は1列目の数字）、label(-1) で最後の行の項目名
+                                  列は名前でも番号（0から）でも指定できる。式が文字を返せば、その文字を出す
+                                  数字の書式は要素ごとに data-format（figure の data-format は目盛りだけ。省略すると整数）
+                                  貼った数字の読み方：カンマ・¥・▲ は読める。「1.2億」「45件」の単位は読み飛ばす（換算しない）
+                                  表は data-calc とはつながらない（表を貼っても、スライダーの計算の数字は変わらない）
+                                [data-sheet-paste] を押すと貼り付け待ち、[data-sheet-reset] で元の表に戻る
+  .draw（SVG の path など）      表示されたときに線が描かれていく（.step と組むと → で描かれる）
+  data-morph-delay="0.2"        その要素だけ変形を遅らせて始める（秒）
+  <section class="slide" data-title="…">  一覧・発表者画面に出るページ名
+  <section class="slide" data-enter="none">  ページを開いたときのふわっと出る動きを止める
+  <aside class="notes">         発表者メモ（N で表示、P で発表者画面）
+  並べ方  .cover .center .grid .cols-2/3/4 .split .card .kpi .pill .lead .big .kicker .list .foot
+  切り替え効果  <main class="deck" data-transition="slide|fade|rise|zoom|blur|wipe|flip|morph|none">
+
+■ 気をつけること
+  スライド直下の要素は表示のときにふわっと出る動きが付き、transform が上書きされる。回転などの飾りは .bg か内側の箱に入れる。
+  .big .card .grid .mark .step .draw .num .kpi .lead .pill .foot などエンジンの class 名は、別の意味で使わない。
+
+■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
+
+■ AI（Claude など）に直してもらうとき
+  このファイルを渡して「先頭コメントの部品だけを使って、〇〇に作り替えて。1ファイルのまま、HTML 全文で」と頼む。
+
+  このスライド：フレンドリー・エディトリアル / 新卒採用の会社説明会
+-->
+<style>
+/* ==== ugoku-slide engine:css BEGIN ==== */
+/* 色・文字・角丸はテーマ側（このあとの <style>）で上書きする */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1a1c21; --muted:#5b616d; --line:#e2e0d9;
+  --accent:#2f5bea; --accent-ink:#ffffff; --good:#1f8a5b; --bad:#c2412d; --frame:#d9d7d0;
+  --radius:16px; --shadow:0 1px 2px rgb(0 0 0 / .06),0 8px 24px rgb(0 0 0 / .06);
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --font-head:var(--font); --font-num:var(--font-head); --head-weight:800; --head-track:-.01em;
+  --pad-y:64px; --pad-x:80px; --ease:cubic-bezier(.2,.7,.2,1); --dur:.55s;
+  --accent-soft:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--frame);color:var(--ink);font-family:var(--font);overflow:hidden;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+body.embed{background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+
+/* ---------- 舞台：1280×720 を画面に合わせて拡大縮小 ---------- */
+.deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--scale,1));background:var(--bg);isolation:isolate}
+.slide{position:absolute;inset:0;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;isolation:isolate;color:var(--ink);
+  opacity:0;visibility:hidden;transform:translateX(32px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s var(--dur)}
+.slide.past{transform:translateX(-32px)}
+.slide.active{opacity:1;visibility:visible;transform:none;filter:none;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease),clip-path var(--dur) var(--ease),visibility 0s}
+.deck[data-transition=fade] .slide{transform:none}
+.deck[data-transition=rise] .slide{transform:translateY(40px)}
+.deck[data-transition=rise] .slide.past{transform:translateY(-40px)}
+.deck[data-transition=zoom] .slide{transform:scale(1.06)}
+.deck[data-transition=zoom] .slide.past{transform:scale(.94)}
+.deck[data-transition=blur] .slide{transform:scale(1.02);filter:blur(14px)}
+.deck[data-transition=wipe] .slide{transform:none;opacity:1;clip-path:inset(0 0 0 100%)}
+.deck[data-transition=wipe] .slide.past{clip-path:inset(0 100% 0 0)}
+.deck[data-transition=wipe] .slide.active{clip-path:inset(0 0 0 0)}
+.deck[data-transition=flip] .slide{transform:perspective(1600px) rotateY(-14deg) translateX(60px);transform-origin:left center}
+.deck[data-transition=flip] .slide.past{transform:perspective(1600px) rotateY(14deg) translateX(-60px);transform-origin:right center}
+.deck[data-transition=flip] .slide.active{transform:none}
+.deck[data-transition=none] .slide{transition:none;transform:none}
+.deck[data-transition] .slide.active{transform:none;filter:none}
+
+/* 一続きに変形する切り替え（data-morph と組む）：新しいページはすぐ出て、前のページは溶けて消える */
+.deck[data-transition=morph] .slide{transform:none;transition:opacity .28s ease-out,visibility 0s .28s}
+.deck[data-transition=morph] .slide.active{transition:none}
+.deck[data-transition=morph] .slide.active > .bg{animation:ugk-fade .5s var(--ease) both}
+@keyframes ugk-fade{from{opacity:0}}
+
+/* 表示されたスライドの中身が、上から順にふわっと出る（.slide に data-enter="none" で止める） */
+.slide.active:not([data-enter=none]) > :not(.notes):not(.bg){animation:ugk-enter .7s var(--ease) both}
+.slide.active > :nth-child(2){animation-delay:.06s!important}
+.slide.active > :nth-child(3){animation-delay:.12s!important}
+.slide.active > :nth-child(4){animation-delay:.18s!important}
+.slide.active > :nth-child(5){animation-delay:.24s!important}
+.slide.active > :nth-child(n+6){animation-delay:.3s!important}
+@keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+/* 変形してつながる要素（と、それを包む箱）は、ふわっと出る動きを付けない */
+.deck[data-transition=morph] .slide.active > [data-morph],
+.deck[data-transition=morph] .slide.active > :has([data-morph]){animation:none!important}
+.deck[data-transition=morph] .slide.active [data-morph-enter]{animation:ugk-enter .7s var(--ease) both;animation-delay:calc(var(--d,0) * 1s + .25s)}
+
+/* 背景の飾り用（.bg はスライド全面に敷かれ、中身の後ろに回る） */
+.slide > .bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+
+/* ---------- 文字 ---------- */
+h1,h2,h3{font-family:var(--font-head);font-weight:var(--head-weight);letter-spacing:var(--head-track);margin:0}
+h1{font-size:68px;line-height:1.14}
+h2{font-size:42px;line-height:1.25;margin-bottom:28px}
+h3{font-size:24px;line-height:1.4;margin-bottom:8px}
+p{margin:0 0 .6em}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+.lead{font-size:24px;line-height:1.75;color:var(--muted)}
+.big{font-family:var(--font-head);font-size:60px;font-weight:var(--head-weight);line-height:1.25;letter-spacing:var(--head-track)}
+.small{font-size:16px}.muted{color:var(--muted)}.accent{color:var(--accent)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.mark{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ul.list,ol.list{margin:0;padding:0;list-style:none;display:grid;gap:18px;font-size:26px;line-height:1.5}
+ul.list>li{padding-left:34px;position:relative}
+ul.list>li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+ol.list{counter-reset:n}
+ol.list>li{counter-increment:n;padding-left:56px;position:relative}
+ol.list>li::before{content:counter(n);position:absolute;left:0;top:.05em;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:20px;font-weight:700;display:grid;place-items:center}
+.foot{position:absolute;left:var(--pad-x);right:var(--pad-x);bottom:26px;font-size:14px;color:var(--muted);pointer-events:none}
+.foot a,.foot button,.foot summary{pointer-events:auto}
+
+/* ---------- 並べ方 ---------- */
+.cover{justify-content:center}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid{display:grid;gap:24px}
+.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow)}
+.card p{font-size:18px;line-height:1.7;color:var(--muted)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700}
+
+/* ---------- 数字 ---------- */
+.kpi .value{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.delta{font-size:16px;font-weight:700}.delta.up{color:var(--good)}.delta.down{color:var(--bad)}
+.delta.up::before{content:"▲ "}.delta.down::before{content:"▼ "}
+[data-sign].neg{color:var(--bad)}[data-sign].pos{color:var(--good)}
+
+/* ---------- 順番に出す ---------- */
+.step{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.shown{opacity:1;transform:none}
+.step.dim-prev.shown:not(.current){opacity:.35}
+
+/* ---------- クリックで開く補足 ---------- */
+details.why{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+details.why>summary{list-style:none;cursor:pointer;padding:10px 16px;font-size:17px;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:10px;user-select:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why>summary::before{content:"+";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent-soft);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+details.why[open]>summary::before{transform:rotate(45deg)}
+details.why>.body{padding:0 18px 16px;font-size:17px;line-height:1.75;color:var(--muted)}
+details.why[open]>.body{animation:ugk-open .4s var(--ease)}
+@keyframes ugk-open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+:where(details.why.float){position:relative}
+details.why.float[open]>.body{position:absolute;z-index:5;left:-1px;right:-1px;top:100%;margin-top:6px;padding-top:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
+
+/* ---------- 数字を動かす ---------- */
+.field{display:grid;gap:6px;margin-bottom:18px}
+.field>label{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;color:var(--muted)}
+.field>label b{font-family:var(--font-num);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px;cursor:pointer;margin:0}
+input[type=checkbox]{accent-color:var(--accent);width:22px;height:22px}
+.meter{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width .5s var(--ease)}
+.meter.alt>i{background:var(--muted)}
+.result .value{font-family:var(--font-num);font-size:64px;font-weight:800;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- 切り替え ---------- */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--line);width:max-content;margin-bottom:22px}
+.tabs>[data-tab]{border:0;background:transparent;padding:8px 20px;border-radius:999px;cursor:pointer;font-size:17px;font-weight:700;color:var(--muted)}
+.tabs>[data-tab][aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+[data-panel]:not([hidden]){animation:ugk-open .4s var(--ease)}
+[data-tab].hot{cursor:pointer}
+
+/* ---------- 縦棒グラフ ---------- */
+.chart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:18px;height:300px;padding-top:34px;border-bottom:2px solid var(--line);margin-bottom:34px}
+.chart>.col{position:relative;height:100%;display:flex;align-items:flex-end}
+.chart>.col>i{display:block;width:100%;height:calc(var(--v) * 1%);border-radius:8px 8px 2px 2px;background:var(--accent);transform-origin:bottom}
+.chart>.col.dim>i{background:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.chart>.col::before{content:attr(data-val);position:absolute;z-index:1;left:0;right:0;bottom:calc(var(--v) * 1% + 6px);text-align:center;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart>.col::after{content:attr(data-label);position:absolute;left:-10px;right:-10px;top:100%;margin-top:8px;text-align:center;font-size:15px;color:var(--muted)}
+.slide.active .chart>.col>i{animation:ugk-grow .9s var(--ease) both}
+.slide.active .chart>.col:nth-child(2)>i{animation-delay:.05s}.slide.active .chart>.col:nth-child(3)>i{animation-delay:.1s}
+.slide.active .chart>.col:nth-child(4)>i{animation-delay:.15s}.slide.active .chart>.col:nth-child(5)>i{animation-delay:.2s}
+.slide.active .chart>.col:nth-child(n+6)>i{animation-delay:.25s}
+@keyframes ugk-grow{from{transform:scaleY(0)}to{transform:none}}
+
+/* ---------- 表 ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:19px}
+table.t th,table.t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:15px;color:var(--muted);font-weight:700}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- コード ---------- */
+pre.code{margin:0;padding:22px 26px;border-radius:var(--radius);background:#16181d;color:#e6e6e6;font:17px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow:hidden;counter-reset:ln}
+pre.code .ln{display:block;padding:0 10px;margin:0 -10px;border-radius:6px;transition:opacity .35s,background .35s}
+pre.code .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:2.2em;color:#6b7280;user-select:none}
+pre.code.hl-on .ln{opacity:.32}
+pre.code.hl-on .ln.hl{opacity:1;background:rgb(255 255 255 / .08)}
+pre.code .k{color:#c792ea}pre.code .s{color:#c3e88d}pre.code .c{color:#6b7280;font-style:italic}pre.code .d{color:#f78c6c}
+
+/* ---------- クイズ ---------- */
+.quiz .choices{display:grid;gap:12px}
+.quiz .choices>button{text-align:left;padding:16px 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-size:21px;transition:border-color .3s,background .3s,transform .15s}
+.quiz .choices>button:hover{transform:translateX(4px)}
+.quiz.answered .choices>button{cursor:default;transform:none}
+.quiz.answered .choices>button[data-correct]{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.quiz.answered .choices>button.picked:not([data-correct]){border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.quiz .explain{display:none;margin-top:16px;font-size:18px;line-height:1.7;color:var(--muted)}
+.quiz.answered .explain{display:block;animation:ugk-open .4s var(--ease)}
+
+/* ---------- 重みづけ比較（data-rank） ---------- */
+.rank{display:grid;grid-template-columns:340px 1fr;gap:44px}
+.rank .opts{position:relative}
+.rank .opt{position:absolute;left:0;right:0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center;padding:16px 20px;
+  border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .6s var(--ease),border-color .3s}
+.rank .opt .name{font-size:22px;font-weight:800}
+.rank .opt .score{font-family:var(--font-num);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank .opt .meter{grid-column:1/-1;height:10px}
+.rank .opt .note{grid-column:1/-1;font-size:15px;color:var(--muted)}
+.rank .opt.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.rank .opt.top .name::after{content:"推奨";margin-left:10px;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:15px;vertical-align:4px}
+
+/* ---------- 線が描かれる（.draw を SVG の path / line / polyline に。pathLength は自動で付く） ---------- */
+:is(path,line,polyline,polygon,circle,ellipse,rect).draw{stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s var(--ease)}
+.slide.active :is(path,line,polyline,polygon,circle,ellipse,rect).draw:not(.step):not(.step .draw),.step.shown :is(path,line,polyline,polygon,circle,ellipse,rect).draw,:is(path,line,polyline,polygon,circle,ellipse,rect).draw.step.shown{stroke-dashoffset:0}
+:is(path,line,polyline,polygon,circle,ellipse,rect).draw.step{opacity:1;transform:none}
+
+/* ---------- ドラッグで回せる立体（data-orbit > .orbit の中に、面を translateZ で並べる） ---------- */
+[data-orbit]{perspective:var(--persp,1800px);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+[data-orbit].grabbing{cursor:grabbing}
+[data-orbit] .orbit{position:relative;transform-style:preserve-3d;
+  transform:rotateX(calc(var(--rx,-22) * 1deg)) rotateY(calc(var(--ry,32) * 1deg))}
+[data-orbit] .orbit *{transform-style:preserve-3d}
+[data-orbit] .face{position:absolute;backface-visibility:visible}
+[data-orbit] .orbit .face{transform-style:flat} /* 面の中の飾りは面に貼りつける */
+.orbit-hint{font-size:14px;color:var(--muted);letter-spacing:.04em}
+
+/* ---------- 表を貼って作り直すグラフ（data-sheet） ---------- */
+[data-sheet]{--s1:var(--accent);--s2:color-mix(in srgb,var(--accent) 45%,var(--muted));--s3:var(--muted);--s4:color-mix(in srgb,var(--muted) 40%,var(--line));
+  --s5:color-mix(in srgb,var(--accent) 70%,var(--bg));--s6:color-mix(in srgb,var(--muted) 70%,var(--bg));--s7:color-mix(in srgb,var(--accent) 35%,var(--bg));--s8:color-mix(in srgb,var(--muted) 35%,var(--bg));margin:0}
+[data-sheet] table td[contenteditable]{cursor:text;outline:none;border-radius:4px;transition:background .2s}
+[data-sheet] table td[contenteditable]:hover{background:var(--accent-soft)}
+[data-sheet] table td[contenteditable]:focus{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.sheet-pad{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;resize:none}
+.sheet-chart{position:relative;display:flex;flex-direction:column;gap:14px;height:320px}
+.sheet-chart .sc-legend{display:flex;gap:18px;font-size:15px;color:var(--muted)}
+.sheet-chart .sc-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c);margin-right:7px;vertical-align:-1px}
+.sheet-chart .sc-plot{position:relative;flex:1;margin:0 0 30px 56px}
+.sheet-chart .sc-gl{position:absolute;left:0;right:0;border-top:1px solid var(--line)}
+.sheet-chart .sc-gl span{position:absolute;right:100%;margin-right:10px;top:-.7em;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sheet-chart .sc-groups{position:absolute;inset:0;display:flex}
+.sheet-chart .sc-g{position:relative;flex:1;display:flex;justify-content:center}
+.sheet-chart .sc-bars{position:absolute;inset:0 14% 0}
+.sheet-chart .sc-bars>i{position:absolute;left:calc(var(--x,0) * 1%);width:calc(var(--w,100) * 1% - 4px);bottom:calc(var(--b,0) * 1%);height:calc(var(--h,0) * 1%);
+  background:var(--c);border-radius:4px 4px 0 0;transition:height .6s var(--ease),bottom .6s var(--ease)}
+.sheet-chart .sc-bars>i.neg{border-radius:0 0 4px 4px;background:color-mix(in srgb,var(--bad) 75%,var(--c))}
+.sheet-chart .sc-bars>i.neg>em{bottom:auto;top:100%;margin:5px 0 0}
+.sheet-chart .sc-zero{position:absolute;left:0;right:0;border-top:1.5px solid var(--muted)}
+.sheet-chart .sc-bars>i>em{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:5px;font-style:normal;font-size:14px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sheet-chart.multi .sc-bars>i>em{display:none}
+.sheet-chart.sc-stack .sc-bars>i{width:100%;border-radius:0}
+.sheet-chart .sc-l{position:absolute;left:2px;right:2px;top:100%;margin-top:8px;font-size:14px;line-height:1.3;color:var(--muted);text-align:center;overflow-wrap:anywhere}
+.sheet-chart .sc-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sheet-chart .sc-lines polyline{fill:none;stroke:var(--c);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.sheet-chart .sc-dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--bg);border:3px solid var(--c)}
+
+/* ---------- 画面の操作パネル（スライドの外） ---------- */
+.ugk-hud{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:10px 14px;z-index:20;
+  font:14px/1 system-ui,sans-serif;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .45));opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui .ugk-hud,body.help .ugk-hud{opacity:1;pointer-events:auto}
+.ugk-hud button{border:0;background:rgb(255 255 255 / .16);color:#fff;border-radius:8px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font:inherit}
+.ugk-hud button:hover{background:rgb(255 255 255 / .28)}
+.ugk-hud .count{margin:0 8px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.ugk-hud .sp{flex:1}
+.ugk-bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);z-index:10;transition:width .5s var(--ease)}
+body.embed .ugk-hud,body.embed .ugk-bar{display:none}
+.ugk-notes{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(900px,94vw);max-height:36vh;overflow:auto;z-index:21;
+  padding:18px 22px;border-radius:14px;background:rgb(20 20 24 / .92);color:#f2f2f2;font:17px/1.7 system-ui,sans-serif;display:none}
+body.notes .ugk-notes{display:block}
+.slide>.notes{display:none}
+.ugk-help{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgb(0 0 0 / .55)}
+body.help .ugk-help{display:grid}
+.ugk-help>div{background:#1b1c20;color:#eee;border-radius:16px;padding:28px 34px;font:16px/1.9 system-ui,sans-serif;min-width:340px}
+.ugk-help kbd{display:inline-block;min-width:2.2em;padding:0 8px;margin-right:12px;border-radius:6px;background:#33353c;text-align:center;font:inherit}
+.ugk-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:10px;background:#111;color:#fff;font:15px system-ui,sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+.ugk-toast.on{opacity:1}
+body.black .deck{opacity:0}
+.deck{transition:opacity .3s}
+
+/* ---------- 一覧（O キー） ---------- */
+.deck.overview{background:var(--frame)}
+.deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
+  transform:translate(var(--ox),var(--oy)) scale(var(--os))!important;filter:none!important;clip-path:none!important;background:var(--bg);outline:2px solid transparent;border-radius:6px;transition:transform .5s var(--ease),outline-color .2s}
+.deck.overview .slide.active{outline:6px solid var(--accent)}
+.deck.overview .slide:hover{outline-color:var(--muted)}
+.deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .step{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.step,.meter>i,.rank .opt,svg .draw,.sheet-chart .sc-bars>i{transition-duration:.01s!important}
+  .slide.active > *,.chart>.col>i{animation:none!important}
+}
+
+/* ---------- 印刷・PDF（Ctrl/⌘+P）：1ページ1スライド、補足と順番出しは全部表示 ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{height:auto;overflow:visible;background:none}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{position:static;transform:none!important;width:1280px;height:auto;overflow:visible;background:none}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1!important;visibility:visible!important;transform:none!important;
+    filter:none!important;clip-path:none!important;break-after:page;page-break-after:always;overflow:hidden;background:var(--bg)}
+  .slide *{animation:none!important;transition:none!important}
+  .step{opacity:1!important;transform:none!important}
+  :is(path,line,polyline,polygon,circle,ellipse,rect).draw{stroke-dashoffset:0!important}
+  .sheet-pad{display:none}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+}
+/* ==== ugoku-slide engine:css END ==== */
+</style>
+<!-- ==== ここから下の <style> が、このスライドの見た目（色・文字・飾り） ==== -->
+<style>
+:root{
+  --bg:#f2ece1; --surface:#fbf8f2; --ink:#1f1c2c; --muted:#5d5867; --line:#d8cfbf;
+  --accent:#ef4f2c; --accent-ink:#1f1c2c; --accent-text:#c23b1c; --lilac:#c5b8f2; --lilac-deep:#a996ea; --lilac-ink:#d6cdf7;
+  --good:#1f1c2c; --bad:#c23b1c; --frame:#e4dccd;
+  --font:"LINE Seed JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --font-num:"Bricolage Grotesque","LINE Seed JP","Hiragino Sans",sans-serif;
+  --head-weight:800; --head-track:.01em; --radius:16px; --shadow:none;
+  --pad-y:60px; --pad-x:80px;
+}
+/* 紙の手ざわり：背景の粒はページではなく .deck に付ける（めくっても消えない） */
+.deck{background:var(--bg)}
+.deck::after{content:"";position:absolute;inset:0;z-index:40;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .1 0 0 0 0 .16 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.slide{padding:0}
+.slide > *{position:absolute}
+.slide > .notes{position:static}
+
+/* ---------- 共通：柱・ノンブル ---------- */
+.run{left:80px;right:80px;top:26px;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-num);font-size:13px;font-weight:600;letter-spacing:.16em;color:var(--ink)}
+.run span:first-child::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-right:10px;vertical-align:0}
+.foot{left:80px;right:80px;bottom:20px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.foot b{font-family:var(--font-num);font-weight:700;letter-spacing:.1em;color:var(--ink)}
+
+/* ---------- 共通：月の大きな数字 ---------- */
+.mohead{left:72px;top:62px;display:flex;align-items:flex-start;gap:16px}
+.mo{font-family:var(--font-num);font-weight:800;font-size:176px;line-height:.8;letter-spacing:-.045em;color:var(--accent);white-space:nowrap}
+.mo-lab{padding-top:14px;font-size:15px;color:var(--muted);line-height:1.5}
+.mo-lab .u{font-family:var(--font);font-size:26px;letter-spacing:.02em;font-weight:800;margin-bottom:8px}
+.mo-lab b{display:block;font-family:var(--font-num);font-size:15px;letter-spacing:.2em;color:var(--ink);font-weight:700}
+.mo-lab em{font-style:normal;display:inline-block;margin-top:8px;font-size:22px;font-weight:800;color:var(--ink)}
+h2{font-size:36px;line-height:1.4;letter-spacing:.01em;margin:0}
+h1 em,h2 em{font-style:normal;background:linear-gradient(transparent 60%,var(--lilac) 60%,var(--lilac) 94%,transparent 94%);padding:0 .06em}
+.hd2{left:80px;top:222px;width:580px}
+.body{font-size:19px;line-height:1.75;color:var(--ink)}
+.body .mute{color:var(--muted)}
+
+/* ---------- 共通：12か月の帯（全ページで同じ。上を現在地が動く） ---------- */
+.band{left:80px;top:604px;width:1120px;height:58px;display:flex;z-index:2;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.band .bc{flex:0 0 83.333px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-left:1px dashed #b9ae9c}
+.band .bc:nth-child(2){border-left:2px solid var(--ink)}
+.band .bc.pre{flex:0 0 120px;border-left:0}
+.band .bc b{font-family:var(--font-num);font-size:22px;font-weight:700;line-height:1;color:var(--ink)}
+.band .bc b small{font-family:var(--font);font-size:12px;font-weight:700;margin-left:1px}
+.band .bc.pre b{font-family:var(--font);font-size:15px;font-weight:800}
+.band .bc.pre i{display:none}
+.band .bc i{font-style:normal;font-size:12px;line-height:1.2;color:var(--ink);height:14px}
+.now{top:608px;height:50px;z-index:1;border-radius:14px;background:var(--accent);
+  left:calc(200px + 83.333px * var(--a,0) + 3px);width:calc(83.333px * var(--n,1) - 6px)}
+.now.pre{left:83px;width:114px}
+
+/* ---------- 共通：名札（1人の新入社員。ページをまたいで歩く） ---------- */
+.tag{--k:1;width:calc(220px * var(--k));height:calc(296px * var(--k));z-index:3}
+.tag .plate{position:absolute;inset:0;border-radius:calc(16px * var(--k));border:2px solid var(--ink);
+  background:linear-gradient(var(--accent) 0 12%,var(--ink) 12% calc(12% + 2px),var(--surface) calc(12% + 2px))}
+.tag .plate::before{content:"";position:absolute;left:40%;width:20%;top:3.6%;height:4.2%;border-radius:99px;background:var(--bg);border:2px solid var(--ink)}
+.ava{position:absolute;left:50%;top:calc(54px * var(--k));width:calc(108px * var(--k));height:calc(108px * var(--k));margin-left:calc(-54px * var(--k));
+  border-radius:50%;background:var(--lilac);overflow:hidden;border:2px solid var(--ink);isolation:isolate}
+.ava .h{position:absolute;left:32%;top:20%;width:36%;height:38%;border-radius:50%;background:var(--accent);border:2px solid var(--ink)}
+.ava .h::before{content:"";position:absolute;z-index:-1;left:-24%;top:-20%;width:148%;height:118%;border-radius:50% 50% 38% 38% / 56% 56% 44% 44%;background:var(--ink)}
+.ava .h::after{content:"";position:absolute;left:-4%;top:-6%;width:108%;height:46%;border-radius:0 100% 0 70% / 0 100% 0 100%;background:var(--ink)}
+.ava .b{position:absolute;left:14%;top:62%;width:72%;height:60%;border-radius:50% 50% 0 0;background:var(--ink)}
+.ava .b::before{content:"";position:absolute;left:42%;top:0;width:16%;height:22%;background:var(--surface);clip-path:polygon(0 0,100% 0,50% 100%)}
+.tin{position:absolute;inset:0;text-align:center;color:var(--ink)}
+.tin .org{position:absolute;left:0;right:0;top:0;height:12%;display:flex;align-items:center;justify-content:space-between;padding:0 calc(14px * var(--k));
+  font-family:var(--font-num);font-weight:700;font-size:calc(11px * var(--k));letter-spacing:.14em}
+.tin .org span:last-child{letter-spacing:.06em}
+.tin .who{position:absolute;left:0;right:0;top:calc(172px * var(--k))}
+.tin .yr{font-size:calc(13px * var(--k));color:var(--muted);font-weight:700;letter-spacing:.04em}
+.tin .nm{font-size:calc(25px * var(--k));font-weight:800;letter-spacing:.12em;line-height:1.3;margin-top:calc(2px * var(--k))}
+.tin .ro{display:inline-block;margin-top:calc(9px * var(--k));padding:calc(4px * var(--k)) calc(12px * var(--k));border-radius:99px;border:1.5px solid var(--ink);
+  background:var(--lilac);font-size:calc(14px * var(--k));font-weight:700;white-space:nowrap}
+.tag.L{--k:1.36}.tag.S{--k:.8}
+
+/* ---------- 共通：場所（紫の切り紙。形を変えながら名札と一緒に移る） ---------- */
+.place{z-index:0;background-color:var(--lilac);
+  background-image:radial-gradient(rgb(31 28 44 / .13) 1.2px,transparent 1.6px);background-size:9px 9px}
+.plab{z-index:1;font-size:16px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:10px;white-space:nowrap}
+.plab::before{content:"PLACE";font-family:var(--font-num);font-size:11px;letter-spacing:.2em;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--surface)}
+
+/* ---------- 共通：先輩の一言 ---------- */
+.voice{z-index:4}
+.voice .plate{position:absolute;inset:0;border-radius:22px;background:var(--ink)}
+.vin{position:relative;padding:20px 22px 18px;color:var(--surface)}
+.vin q{display:block;quotes:none;font-size:19px;line-height:1.62;font-weight:700}
+.vin q::before{content:"“";position:absolute;left:18px;top:-22px;font-family:var(--font-num);font-size:72px;line-height:1;color:var(--accent);font-weight:800;-webkit-text-stroke:2px var(--ink)}
+.vin .by{display:flex;align-items:center;gap:10px;margin-top:10px;line-height:1.35;font-size:14px;color:var(--lilac-ink)}
+.mini{position:relative;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--surface);overflow:hidden;border:1.5px solid var(--ink)}
+.mini::before{content:"";position:absolute;left:31%;top:18%;width:38%;height:38%;border-radius:50%;background:var(--ink)}
+.mini::after{content:"";position:absolute;left:15%;top:62%;width:70%;height:60%;border-radius:50% 50% 0 0;background:var(--lilac-deep)}
+.mini.o::before{background:var(--accent)}
+
+/* ---------- 共通：ゆいのメーター（前のページの数字から数え直す） ---------- */
+.stats{left:80px;top:494px;width:1120px;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.st{padding:12px 20px 0 0;border-top:2px solid var(--ink)}
+.st + .st{padding-left:20px;border-left:1px solid var(--line)}
+.st .lab{font-size:15px;color:var(--muted);font-weight:700}
+.st .val{font-family:var(--font-num);font-weight:700;font-size:50px;line-height:1.05;letter-spacing:-.02em;margin-top:4px;white-space:nowrap}
+.st .val small{font-family:var(--font);font-size:17px;font-weight:700;letter-spacing:0;margin-left:4px}
+.st.hot .val{color:var(--accent-text)}
+.deck[data-transition=morph] .slide.s-apr.active > .stats{animation:ugk-enter .7s var(--ease) both .3s!important}
+
+/* ---------- 補足 ---------- */
+details.why{background:var(--surface);border:1.5px solid var(--ink);border-radius:14px}
+details.why>summary{color:var(--ink);font-size:17px;padding:9px 16px}
+details.why>summary::before{background:var(--accent);color:var(--ink)}
+details.why>.body{font-size:16px;color:var(--ink)}
+details.why.float{z-index:20}
+details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 8px;background:var(--surface);border:1.5px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+
+/* ================= 1 表紙 ================= */
+.s-cover .mohead{left:62px;top:66px;gap:22px}
+.s-cover .mo{font-size:300px}
+.s-cover .mo-lab{padding-top:30px}
+.s-cover .kick{left:80px;top:326px;font-size:17px;font-weight:800;color:var(--accent-text);letter-spacing:.06em}
+.s-cover h1{left:80px;top:360px;font-size:62px;line-height:1.24;letter-spacing:.01em}
+.s-cover .lead{left:80px;top:522px;font-size:19px;line-height:1.7;color:var(--muted);margin:0}
+.s-cover .place{left:716px;top:64px;width:500px;height:500px;border-radius:46% 54% 42% 58% / 52% 44% 56% 48%}
+.s-cover .tag{left:816px;top:118px}
+.sticker{left:1086px;top:64px;z-index:5;width:124px;height:124px}
+.sticker .plate{position:absolute;inset:0;border-radius:50%;background:var(--ink)}
+.sticker .stk{position:absolute;inset:0;color:var(--surface);display:grid;place-items:center;text-align:center;font-size:14px;font-weight:700;line-height:1.35}
+.sticker .stk > span{display:block;transform:rotate(-10deg)}
+.sticker b{display:block;font-family:var(--font-num);font-size:40px;line-height:1;color:var(--accent);font-weight:800}
+
+/* ================= 2 クイズ ================= */
+.s-quiz .quiz{left:80px;top:344px;width:1120px;height:240px}
+.s-quiz .choices{grid-template-columns:1fr 1fr;width:580px;gap:12px}
+.s-quiz .choices>button{position:relative;display:flex;align-items:baseline;gap:14px;padding:14px 18px;border:2px solid var(--ink);border-radius:14px;background:var(--surface);font-size:20px;font-weight:700;color:var(--ink)}
+.s-quiz .choices>button span{font-family:var(--font-num);font-weight:800;font-size:22px;color:var(--accent-text);width:18px}
+.s-quiz .choices>button b{font-family:var(--font-num);font-size:30px;font-weight:700;line-height:1}
+.s-quiz .choices>button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.s-quiz.active .quiz.answered .choices>button{opacity:.45}
+.s-quiz .quiz.answered .choices>button[data-correct]{opacity:1;background:var(--lilac);border-color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.s-quiz .quiz.answered .choices>button[data-correct]::after{content:"正解";position:absolute;right:14px;top:50%;margin-top:-13px;padding:3px 10px;border-radius:99px;background:var(--ink);color:var(--surface);font-size:14px}
+.s-quiz .quiz.answered .choices>button.picked:not([data-correct]){opacity:1;background:var(--surface);border-color:var(--accent-text);text-decoration:line-through;text-decoration-color:var(--accent-text)}
+.s-quiz .hint,.s-quiz .explain{position:absolute;left:620px;top:-14px;width:500px;height:250px}
+.s-quiz .hint{border:2px dashed #a79c8a;border-radius:18px;text-align:center;font-size:18px;color:var(--muted);line-height:1.65;
+  background:repeating-linear-gradient(90deg,transparent 0 30px,rgb(31 28 44 / .06) 30px 62px) 18px 62px / calc(100% - 36px) 120px no-repeat}
+.s-quiz .hint .hq{position:absolute;left:0;right:0;top:40px}
+.s-quiz .hint b{display:block;font-family:var(--font-num);font-size:64px;color:var(--accent);line-height:1;font-weight:800;-webkit-text-stroke:2px var(--ink)}
+.s-quiz .hint .hx{position:absolute;left:18px;right:18px;bottom:18px;display:flex;justify-content:space-between;border-top:2px dashed #a79c8a;padding-top:6px}
+.s-quiz .hint .hx i{font-style:normal;font-family:var(--font-num);font-size:13px;font-weight:700;color:var(--muted);width:34px;text-align:center}
+.s-quiz .answered .hint{display:none}
+.s-quiz .quiz .explain{margin:0;color:var(--ink);font-size:17px;line-height:1.6}
+.s-quiz .explain .ans{font-size:18px;font-weight:700}
+.s-quiz .explain .ans b{font-family:var(--font-num);font-size:30px;color:var(--accent-text)}
+.s-quiz .chart{height:152px;gap:8px;padding-top:24px;margin:6px 0 0;border-bottom:2px solid var(--ink)}
+.s-quiz .chart>.col>i{background:var(--lilac);border:1.5px solid var(--ink);border-bottom:0;border-radius:6px 6px 0 0}
+.s-quiz .chart>.col.pk>i{background:var(--accent)}
+.s-quiz .chart>.col::before{font-family:var(--font-num);font-size:13px}
+.s-quiz .chart>.col::after{font-size:12px;margin-top:4px;color:var(--ink);left:-6px;right:-6px}
+.s-quiz .avg{position:absolute;left:0;right:0;border-top:2px dashed var(--ink);z-index:2}
+.s-quiz .avg span{position:absolute;left:0;top:-24px;font-size:13px;font-weight:700;background:var(--bg);padding:0 4px}
+.s-quiz .place{left:1000px;top:58px;width:220px;height:280px;border-radius:52% 48% 44% 56% / 40% 50% 50% 60%}
+.s-quiz .tag{left:1020px;top:76px}
+.s-quiz .voice{left:700px;top:96px;width:280px}
+
+/* ================= 3 4月 研修 ================= */
+.s-apr .place{left:690px;top:62px;width:520px;height:408px;border-radius:38% 62% 46% 54% / 44% 38% 62% 56%}
+.s-apr .plab{left:736px;top:92px}
+.s-apr .tag{left:748px;top:140px}
+.s-apr .voice{left:984px;top:196px;width:236px}
+.phases{left:80px;top:342px;width:580px;display:grid;gap:0}
+.ph{display:grid;grid-template-columns:96px 1fr;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
+.ph:last-child{border-bottom:1px solid var(--line)}
+.ph i{font-style:normal;font-family:var(--font-num);font-weight:700;font-size:18px;color:var(--accent-text)}
+.ph b{font-size:19px}
+.ph span{font-size:16px;color:var(--muted);margin-left:10px}
+
+/* ================= 4 6月 配属 ================= */
+.s-jun .place{left:692px;top:58px;width:518px;height:420px;border-radius:50% 50% 46% 54% / 56% 50% 50% 44%}
+.s-jun .plab{left:722px;top:88px}
+.s-jun .tag{left:972px;top:128px}
+.s-jun .voice{left:700px;top:352px;width:300px}
+.team{left:730px;top:130px;width:222px;display:grid;grid-template-columns:repeat(3,70px);gap:12px 6px;z-index:2}
+.team .p{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+.team .mini{width:56px;height:56px;border-width:2px}
+.team .p.me .mini{background:transparent;border:2px dashed var(--ink)}
+.team .p.me .mini::before,.team .p.me .mini::after{display:none}
+.team .p.ojt .mini{box-shadow:0 0 0 4px var(--accent)}
+.link{left:946px;top:238px;width:36px;height:24px;z-index:4}
+.s-jun .body{left:80px;top:342px;width:580px}
+.s-jun .why{left:80px;top:430px;width:360px}
+
+/* ================= 5 10月 初担当 ================= */
+.s-oct .place{left:690px;top:300px;width:524px;height:168px;border-radius:84px 84px 84px 84px / 84px 84px 84px 84px}
+.s-oct .plab{left:982px;top:308px}
+.s-oct .tag{left:752px;top:46px}
+.s-oct .voice{left:990px;top:78px;width:228px}
+.line{left:716px;top:360px;width:476px;height:96px;z-index:2;display:grid;grid-template-columns:repeat(4,1fr)}
+.line .sta{position:relative;text-align:center;font-size:15px;font-weight:700;line-height:1.35;padding-top:30px}
+.line .sta::before{content:"";position:absolute;left:50%;top:0;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
+.line .sta.on::before{background:var(--accent);width:26px;height:26px;margin-left:-13px;top:-3px}
+.line .sta small{display:block;font-family:var(--font-num);font-size:14px;font-weight:700;color:var(--muted)}
+.line .rail{position:absolute;left:12.5%;right:12.5%;top:9px;border-top:2px solid var(--ink)}
+.s-oct .body{left:80px;top:342px;width:580px}
+.s-oct .why{left:80px;top:430px;width:380px}
+
+/* ================= 6 3月 振り返り ================= */
+.s-mar .mohead{left:592px}
+.s-mar .hd2{left:600px;width:600px}
+.s-mar .place{left:70px;top:60px;width:476px;height:416px;border-radius:56% 44% 52% 48% / 46% 56% 44% 54%}
+.s-mar .plab{left:110px;top:88px}
+.s-mar .tag{left:112px;top:118px}
+.s-mar .voice{left:318px;top:262px;width:262px}
+.grow{left:600px;top:342px;width:600px}
+.gr{display:grid;grid-template-columns:70px 1fr 34px 1fr;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:19px}
+.gr:last-child{border-bottom:1px solid var(--line)}
+.gr i{font-style:normal;font-size:15px;font-weight:800;color:var(--muted)}
+.gr span{color:var(--muted)}
+.gr u{text-decoration:none;font-family:var(--font-num);font-weight:800;color:var(--accent-text);text-align:center}
+.gr b{font-weight:800}
+
+/* ================= 7 暮らしの計算 ================= */
+.s-life .kick{left:80px;top:70px;font-family:var(--font-num);font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--accent-text)}
+.s-life h2{left:80px;top:98px;width:900px}
+.s-life .calc{left:80px;top:226px;width:1120px;height:362px;z-index:5}
+.s-life .in{position:absolute;left:0;top:0;width:420px}
+.s-life .field{margin-bottom:14px}
+.s-life .field>label{font-size:17px;color:var(--ink);font-weight:700}
+.s-life .field>label b{font-size:24px}
+.s-life select{appearance:none;-webkit-appearance:none;width:100%;padding:10px 44px 10px 16px;border:2px solid var(--ink);border-radius:12px;background:var(--surface);font-size:19px;font-weight:700;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(-45deg,transparent 50%,var(--ink) 50%);background-size:7px 7px;background-position:calc(100% - 26px) 52%,calc(100% - 19px) 52%;background-repeat:no-repeat}
+.s-life .chk{display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid var(--ink);border-radius:12px;background:var(--surface);font-size:18px;font-weight:700;cursor:pointer;margin-bottom:14px}
+.s-life .chk input{accent-color:var(--accent);width:22px;height:22px;margin:0}
+.s-life .chk span{font-size:15px;color:var(--muted);font-weight:400;margin-left:auto}
+.s-life input[type=range]{-webkit-appearance:none;appearance:none;height:28px;background:transparent}
+.s-life input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:var(--ink)}
+.s-life input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:var(--accent);border:2px solid var(--ink)}
+.s-life input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:var(--ink)}
+.s-life input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--ink)}
+.s-life .why{width:420px}
+.s-life .place{left:560px;top:214px;width:650px;height:378px;border-radius:28px 36px 30px 40px / 34px 28px 40px 30px}
+.s-life .tag{left:1046px;top:52px}
+.res{position:absolute;left:520px;top:6px;width:560px;z-index:2}
+.res .lab{font-size:16px;font-weight:700}
+.res .net{font-family:var(--font-num);font-weight:800;font-size:80px;line-height:1;letter-spacing:-.035em;margin:4px 0 14px}
+.res .net small{font-family:var(--font);font-size:22px;letter-spacing:0;margin-left:6px}
+.wallet{position:relative;height:34px;border:2px solid var(--ink);border-radius:12px;background:var(--surface);overflow:hidden}
+.wallet .rent{position:absolute;left:0;top:0;bottom:0;width:calc(var(--share) * 1%);background:var(--accent);border-right:2px solid var(--ink);transition:width .45s var(--ease)}
+.wl{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:700;margin-bottom:8px}
+.wl b{font-family:var(--font-num);font-size:22px;margin-left:4px}
+.wl .sw{display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--accent);border:1.5px solid var(--ink);margin-right:8px;vertical-align:-1px}
+.res .three{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;border-top:2px solid var(--ink)}
+.res .three>div{padding:10px 14px 0 0}
+.res .three>div + div{padding-left:14px;border-left:1px solid rgb(31 28 44 / .3)}
+.res .three .lab{font-size:14px}
+.res .three .v{font-family:var(--font-num);font-weight:700;font-size:32px;letter-spacing:-.02em;white-space:nowrap}
+.res .three .v.hot{color:var(--accent-text)}
+
+/* ================= 8 締め ================= */
+.s-end .kick{left:80px;top:70px;font-family:var(--font-num);font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--accent-text)}
+.s-end h1{left:80px;top:100px;font-size:56px;line-height:1.3}
+.s-end .place{left:752px;top:58px;width:460px;height:500px;border-radius:44% 56% 50% 50% / 50% 46% 54% 50%}
+.s-end .tag{left:832px;top:102px}
+.s-end .tag .plate{background:linear-gradient(var(--accent) 0 12%,var(--ink) 12% calc(12% + 2px),var(--surface) calc(12% + 2px))}
+.s-end .ava{background:var(--surface);border-style:dashed}
+.s-end .ava .h,.s-end .ava .b{background:transparent;border:2px dashed var(--ink)}
+.s-end .ava .h::before,.s-end .ava .h::after,.s-end .ava .b::before{display:none}
+.s-end .tin .nm{display:block;margin:6px 34px 0;padding-bottom:4px;border-bottom:2px dotted var(--ink);color:var(--muted);font-size:26px;letter-spacing:.06em}
+.nexts{left:80px;top:334px;width:620px;display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.nx{padding:14px 18px 0 0;border-top:2px solid var(--ink)}
+.nx + .nx{padding-left:18px;border-left:1px solid var(--line)}
+.nx b{display:block;font-family:var(--font-num);font-size:34px;font-weight:800;line-height:1.05;color:var(--accent-text)}
+.nx b small{font-family:var(--font);font-size:15px;margin-left:2px}
+.nx p{font-size:18px;line-height:1.55;font-weight:700;margin:8px 0 4px}
+.nx span{font-size:15px;color:var(--muted);line-height:1.5;display:block}
+.contact{left:80px;top:500px;width:620px;display:flex;align-items:center;gap:18px;padding:16px 20px;border:2px solid var(--ink);border-radius:16px;background:var(--surface);font-size:18px}
+.contact b{font-family:var(--font-num);font-size:22px;font-weight:700}
+.contact span{font-size:15px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){.wallet .rent{transition:none}}
+</style>
+</head>
+<body>
+<main class="deck" data-transition="morph">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="12">12</div><div class="mo-lab" data-morph-enter><b class="u">か月</b><b>MONTHS</b>入社してから<br>2年目の春まで</div></div>
+    <div class="kick">新入社員ひとりを、12か月追いかけました。</div>
+    <h1>入社1年目を、<br><em>ぜんぶ</em>見せます。</h1>
+    <p class="lead">研修・配属・初めての担当・振り返り。<br>春日ゆいさん（仮名）の1年を、月ごとにたどります。</p>
+    <div class="place" data-morph="place"></div>
+    <div class="tag L"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">2028年度 新入社員</div><div class="nm">春日 ゆい</div><div class="ro">生産技術部</div></div></div></div>
+    <div class="sticker"><div class="plate" data-morph="voice"></div><div class="stk"><span>同期<b>42</b>人</span></div></div>
+
+    <div class="now" data-morph="now" style="--a:0;--n:12"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="1">1</span> / 8</b></div>
+    <aside class="notes">最初に「今日は、ひとりの新入社員の1年を見てもらいます」と言い切る。右の名札が春日ゆいさん（仮名）。このあとページをめくるたびに、名札が研修センター・配属先・試作ライン・振り返り会へと移っていきます。下の帯は12か月のカレンダーで、オレンジが「いまどこか」を示します。</aside>
+  </section>
+
+  <!-- 2 クイズ -->
+  <section class="slide s-quiz" data-title="クイズ">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="0">0</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>BEFORE APRIL</b>先に1問だけ。<br><em>入社前のあなたへ</em></div></div>
+    <h2 class="hd2">1年目の平均残業は、<br><em>月に何時間</em>だと思いますか。</h2>
+    <div class="quiz">
+      <div class="choices">
+        <button><span>A</span><b>3</b>時間</button>
+        <button data-correct><span>B</span><b>11</b>時間</button>
+        <button><span>C</span><b>25</b>時間</button>
+        <button><span>D</span><b>40</b>時間</button>
+      </div>
+      <div class="hint" data-morph-enter style="--d:.2"><div class="hq"><b>?</b>答えを選ぶと、ゆいさんの<br>12か月の残業が月ごとに出ます</div><div class="hx"><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i><i>10</i><i>11</i><i>12</i><i>1</i><i>2</i><i>3月</i></div></div>
+      <div class="explain">
+        <div class="ans">正解は <b>月11時間</b>（2027年度入社・42人の平均）</div>
+        研修中の4〜5月はほぼゼロ。多いのは初担当の秋。
+        <div class="chart" style="position:relative">
+          <div class="avg" style="bottom:calc((100% - 24px) * .545)"><span>平均 10.9</span></div>
+          <div class="col" style="--v:3" data-label="4" data-val=""><i></i></div>
+          <div class="col" style="--v:3" data-label="5" data-val=""><i></i></div>
+          <div class="col" style="--v:30" data-label="6" data-val="6"><i></i></div>
+          <div class="col" style="--v:50" data-label="7" data-val="10"><i></i></div>
+          <div class="col" style="--v:35" data-label="8" data-val="7"><i></i></div>
+          <div class="col" style="--v:65" data-label="9" data-val="13"><i></i></div>
+          <div class="col pk" style="--v:87.5" data-label="10" data-val="17.5"><i></i></div>
+          <div class="col pk" style="--v:90" data-label="11" data-val="18"><i></i></div>
+          <div class="col" style="--v:75" data-label="12" data-val="15"><i></i></div>
+          <div class="col" style="--v:70" data-label="1" data-val="14"><i></i></div>
+          <div class="col" style="--v:85" data-label="2" data-val="17"><i></i></div>
+          <div class="col" style="--v:60" data-label="3月" data-val="12"><i></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="place" data-morph="place"></div>
+    <div class="tag S"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">大学4年・3月</div><div class="nm">春日 ゆい</div><div class="ro">入社まで あと2週間</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>入社前は、月40時間くらいあると思っていました。</q><div class="by"><span class="mini o"></span>ゆい（入社前の3月）</div></div></div>
+    <div class="now pre" data-morph="now"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="2">2</span> / 8</b></div>
+    <aside class="notes">会場に手を挙げてもらう（A〜D）。いちばん多いのはたいてい C か D。答えを押すと右に月ごとのグラフが出るので、「研修中はほぼゼロ、増えるのは担当を持つ秋から」と指でなぞる。次のページから、この1年を月ごとに見ていきます。</aside>
+  </section>
+
+  <!-- 3 4月 研修 -->
+  <section class="slide s-apr" data-title="4月 研修">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="1">1</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>APRIL – MAY</b>入社式の翌日から<br><em>2か月の研修</em></div></div>
+    <h2 class="hd2">最初の2か月は、<em>研修だけ</em>。<br>現場に出るのは6月から。</h2>
+    <div class="phases">
+      <div class="ph step"><i>1–2週</i><div><b>ビジネスの基本</b><span>メール・会議・原価の考え方</span></div></div>
+      <div class="ph step"><i>3–6週</i><div><b>工場実習</b><span>岡山と名古屋で、ラインに入る</span></div></div>
+      <div class="ph step"><i>7–8週</i><div><b>製品と設計の基礎</b><span>最後に配属の希望を出す</span></div></div>
+    </div>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">横浜・研修センター</div>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">2028年度 新入社員</div><div class="nm">春日 ゆい</div><div class="ro">新入社員研修 中</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>研修で見ているのは、<br>正解よりも<br>「分かりません」と<br>言える早さです。</q><div class="by"><span class="mini"></span>人事部 佐伯さん<br>（入社7年目）</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="320">320</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="0.5" data-format="dec1">0.5</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="0">0</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="180">180</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:0;--n:2"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="3">3</span> / 8</b></div>
+    <aside class="notes">→ で研修の3つの段階が1つずつ出ます。工場実習では、岡山と名古屋の2つの工場で実際にラインに入ります。下のメーター（学んだ時間・残業・有給・質問の数）は、このあと月が進むたびに数え直されます。「質問180回」は笑いが取れるところ。</aside>
+  </section>
+
+  <!-- 4 6月 配属 -->
+  <section class="slide s-jun" data-title="6月 配属">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="3">3</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>JUNE</b>研修の最後の面談で<br><em>配属が決まる</em></div></div>
+    <h2 class="hd2">配属は、本人の希望から。<br>42人中<em>35人が第1希望</em>へ。</h2>
+    <p class="body" data-morph-enter style="--d:.1">ゆいは岡山工場の生産技術部 第2課へ。<br><span class="mute">6人の課に、OJTの先輩が1人つきます。</span></p>
+    <details class="why float" data-morph-enter style="--d:.15"><summary>配属の決め方</summary><div class="body">研修中に面談を2回。工場実習の評価と、本人の第1〜第3希望を合わせて人事と各部の部長で決める。第1希望に入れなかった7人も、2年目の秋の面談で異動の希望を出せる（2027年度は3人が異動）。</div></details>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">岡山工場・生産技術部 第2課</div>
+    <div class="team" data-morph-enter style="--d:.35">
+      <div class="p"><span class="mini"></span>石田 課長</div>
+      <div class="p ojt"><span class="mini"></span>森（OJT）</div>
+      <div class="p"><span class="mini"></span>大野</div>
+      <div class="p"><span class="mini"></span>林</div>
+      <div class="p"><span class="mini"></span>野口</div>
+      <div class="p me"><span class="mini"></span>6人目の席</div>
+    </div>
+    <svg class="link" viewBox="0 0 60 40" data-morph-enter style="--d:.45" aria-hidden="true"><path class="draw" d="M2 20 C 20 4, 36 36, 54 18" fill="none" stroke="#1f1c2c" stroke-width="2.5" stroke-linecap="round"/><path d="M46 14 L55 17 L50 25" fill="none" stroke="#1f1c2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">生産技術部</div><div class="nm">春日 ゆい</div><div class="ro">第2課 に配属</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>最初の3か月は、ぼくの隣で同じ図面を見よう。</q><div class="by"><span class="mini o"></span>OJT担当 森さん（入社4年目）</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="368">368</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="6" data-format="dec1">6.0</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="1">1</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="420">420</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:2;--n:1"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="4">4</span> / 8</b></div>
+    <aside class="notes">「配属ガチャ」を気にする学生が多いので、決め方は聞かれる前に開いて見せてよい。名札が課の空いた席に入るところで「6人の課の、6人目になります」と言う。OJTの先輩は、1年間ずっと同じ人です。</aside>
+  </section>
+
+  <!-- 5 10月 初担当 -->
+  <section class="slide s-oct" data-title="10月 初担当">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="7">7</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>OCTOBER</b>入社して半年で<br><em>はじめての担当</em></div></div>
+    <h2 class="hd2">半年で、自分の担当を持つ。<br><em>ポンプの試作50台</em>。</h2>
+    <p class="body" data-morph-enter style="--d:.1">図面を直すのも、工場に頼むのも、ゆい。<br><span class="mute">森さんは隣の机のまま、確かめる役に回ります。</span></p>
+    <details class="why float" data-morph-enter style="--d:.15"><summary>なぜ半年で任せるのか</summary><div class="body">2019〜2024年度入社で比べると、1年目の秋までに担当を持った人は、3年目までに辞めた割合が半分だった。任せるのは、失敗しても量産に響かない「試作」から。</div></details>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">試作ライン（岡山）</div>
+    <div class="line" data-morph-enter style="--d:.35"><div class="rail"></div>
+      <div class="sta"><small>10月</small>図面の修正</div>
+      <div class="sta on"><small>11月</small>試作50台</div>
+      <div class="sta"><small>12月</small>評価</div>
+      <div class="sta"><small>1月</small>量産の判定</div>
+    </div>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">生産技術部 第2課</div><div class="nm">春日 ゆい</div><div class="ro">担当：試作50台</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>試作をひとつ、<br>任せます。<br>失敗していいから、<br>報告は毎週ね。</q><div class="by"><span class="mini"></span>石田 課長</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="436">436</span><small>時間</small></div></div>
+      <div class="st hot"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="17.5" data-format="dec1">17.5</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="4">4</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="760">760</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:6;--n:1"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="5">5</span> / 8</b></div>
+    <aside class="notes">残業のメーターがここで17.5時間まで上がる。クイズの答え（平均11時間）と合わせて、「忙しいのは担当を持った秋。それでも月20時間はこえない」と話す。名札が試作ラインの「試作50台」の駅の上に立っています。</aside>
+  </section>
+
+  <!-- 6 3月 振り返り -->
+  <section class="slide s-mar" data-title="3月 振り返り">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="mohead"><div class="mo n" data-morph="mo" data-count="12">12</div><div class="mo-lab" data-morph-enter><b class="u">か月目</b><b>MARCH</b>課の全員の前で<br><em>1年の振り返り</em></div></div>
+    <h2 class="hd2">12か月で、「手伝う人」から<br><em>「任される人」</em>になった。</h2>
+    <div class="grow" data-morph-enter style="--d:.1">
+      <div class="gr step"><i>図面</i><span>読める</span><u>→</u><b>自分で直せる</b></div>
+      <div class="gr step"><i>会議</i><span>聞いている</span><u>→</u><b>自分で開く</b></div>
+      <div class="gr step"><i>試作</i><span>手伝う</span><u>→</u><b>1人で任される</b></div>
+    </div>
+    <div class="place" data-morph="place"></div>
+    <div class="plab" data-morph-enter style="--d:.3">本社・振り返り会</div>
+    <div class="tag"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">生産技術部 第2課</div><div class="nm">春日 ゆい</div><div class="ro">4月から 2年目</div></div></div></div>
+    <div class="voice"><div class="plate" data-morph="voice"></div><div class="vin" data-morph-enter style="--d:.3"><q>1回目の試作は、<br>全部やり直し。<br>2回目で通ったとき、<br>やっと仕事になった。</q><div class="by"><span class="mini o"></span>ゆい（入社1年目の3月）</div></div></div>
+    <div class="stats">
+      <div class="st"><div class="lab">学んだ時間（累計）</div><div class="val"><span class="n" data-morph="m1" data-count="512">512</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">その月の残業</div><div class="val"><span class="n" data-morph="m2" data-count="12" data-format="dec1">12.0</span><small>時間</small></div></div>
+      <div class="st"><div class="lab">有給を使った日（累計）</div><div class="val"><span class="n" data-morph="m3" data-count="10">10</span><small>日</small></div></div>
+      <div class="st"><div class="lab">先輩にした質問（累計）</div><div class="val"><span class="n" data-morph="m4" data-count="1020">1,020</span><small>回</small></div></div>
+    </div>
+    <div class="now" data-morph="now" style="--a:11;--n:1"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="6">6</span> / 8</b></div>
+    <aside class="notes">名札が左へ、月の数字が右へ入れ替わる。→ で「できるようになったこと」が1行ずつ出ます。質問の数が1,020回まで数え上がったところで、「聞いた回数がいちばん多い人ほど、早く任されていた」と添える。</aside>
+  </section>
+
+  <!-- 7 暮らしの計算 -->
+  <section class="slide s-life" data-title="1年目の暮らし">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="kick" data-morph-enter>LIFE ─ 1年目の暮らしを計算する</div>
+    <h2>相場の家賃なら、どの勤務地でも<br>家賃の負担は<em>手取りの2割以下</em>。</h2>
+    <div class="place" data-morph="place"></div>
+    <div class="calc" data-calc data-let="area = loc == 0 ? 20000 : (loc == 1 ? 10000 : 0); cap = loc == 0 ? 30000 : (loc == 1 ? 22000 : 18000); base = 228000; ot = round((base + area) / 160 * 1.25 * h); sub = s ? min(rent * 0.5, cap) : 0; net = round((base + area + ot + sub) * 0.82); burden = rent - sub; share = min(100, burden / net * 100); rest = net - burden">
+      <div class="in" data-morph-enter style="--d:.1">
+        <div class="field"><label>勤務地</label>
+          <select name="loc"><option value="0">本社（東京・品川）</option><option value="1">名古屋工場</option><option value="2" selected>岡山工場（ゆいの配属先）</option></select></div>
+        <label class="chk"><input type="checkbox" name="s" checked>住宅補助を使う<span>家賃の半分まで</span></label>
+        <div class="field"><label>家賃（月） <b data-show="rent" data-format="yen"></b></label><input type="range" name="rent" min="30000" max="120000" step="1000" value="52000"></div>
+        <div class="field"><label>残業（月） <b data-show="h" data-unit="時間"></b></label><input type="range" name="h" min="0" max="30" step="1" value="11"></div>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">基本給22.8万円＋地域手当（東京2万・名古屋1万）＋残業代（時給×1.25）＋住宅補助。住宅補助は家賃の半分で、上限は東京3万・名古屋2.2万・岡山1.8万円。手取りは額面の82%（1年目は住民税がかからない）で計算。ひとり暮らしの家賃の相場は、東京7万・名古屋5.5万・岡山5.2万円。</div></details>
+      </div>
+      <div class="res" data-morph-enter style="--d:.2">
+        <div class="lab">1年目の手取り（月の目安）</div>
+        <div class="net"><span data-out="net" data-format="yen"></span></div>
+        <div class="wl"><span><i class="sw"></i>手取りに占める家賃 <b data-out="share" data-format="pct"></b></span><span>家賃を払って残る <b data-out="rest" data-format="yen"></b></span></div><div class="wallet"><div class="rent"></div></div>
+        <div class="three">
+          <div><div class="lab">住宅補助</div><div class="v" data-out="sub" data-format="yen"></div></div>
+          <div><div class="lab">家賃の自己負担</div><div class="v hot" data-out="burden" data-format="yen"></div></div>
+          <div><div class="lab">残業代</div><div class="v" data-out="ot" data-format="yen"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tag S"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.2"><div class="org"><span>S/K</span><span>2028</span></div><div class="who"><div class="yr">ゆいの場合</div><div class="nm">春日 ゆい</div><div class="ro">岡山で ひとり暮らし</div></div></div></div>
+    <div class="now" data-morph="now" style="--a:0;--n:12"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="7">7</span> / 8</b></div>
+    <aside class="notes">最初はゆいの場合（岡山・家賃5.2万円）。会場で「東京で家賃9万円なら？」と聞いて、勤務地を本社に、家賃を9万円に動かす。住宅補助を外すと、家賃の帯が一気に伸びるのを見せる。寮（月1万円）もあるが、ここでは一人暮らしで計算しています。</aside>
+  </section>
+
+  <!-- 8 締め -->
+  <section class="slide s-end" data-title="次の一歩">
+    <div class="run" data-morph="run"><span>SAMPLE KOKI ─ 2029年卒 会社説明会</span><span>THE FIRST YEAR</span></div>
+    <div class="kick" data-morph-enter>NEXT ─ 次は、あなたの1年目</div>
+    <h1>2029年4月、<br>この名札に<br><em>あなたの名前</em>を。</h1>
+    <div class="nexts" data-morph-enter style="--d:.15">
+      <div class="nx"><b>11<small>月</small></b><p>工場見学ツアー</p><span>岡山・名古屋。ゆいの試作ラインも回ります</span></div>
+      <div class="nx"><b>12<small>月</small></b><p>1日仕事体験</p><span>生産技術・設計・品質の3コースから</span></div>
+      <div class="nx"><b>1<small>月〜</small></b><p>エントリー受付</p><span>面接は3回。すべてオンラインでも可</span></div>
+    </div>
+    <div class="contact" data-morph-enter style="--d:.25"><div><b>saiyo@example.com</b><br><span>人事部 採用チーム ／ 今日のアンケートで工場見学の優先枠</span></div></div>
+    <div class="place" data-morph="place"></div>
+    <div class="tag L"><div class="plate" data-morph="tag"></div><div class="ava" data-morph="me"><i class="h"></i><i class="b"></i></div>
+      <div class="tin" data-morph-enter style="--d:.3"><div class="org"><span>S/K</span><span>2029</span></div><div class="who"><div class="yr">2029年度 新入社員</div><div class="nm">あなたの名前</div><div class="ro">配属は、面談で一緒に</div></div></div></div>
+    <div class="now pre" data-morph="now"></div>
+    <div class="band" data-morph="band"><div class="bc pre"><b>入社前</b><i></i></div><div class="bc"><b>4<small>月</small></b><i>研修</i></div><div class="bc"><b>5<small>月</small></b><i>研修</i></div><div class="bc"><b>6<small>月</small></b><i>配属</i></div><div class="bc"><b>7<small>月</small></b><i>OJT</i></div><div class="bc"><b>8<small>月</small></b><i>夏休み</i></div><div class="bc"><b>9<small>月</small></b><i></i></div><div class="bc"><b>10<small>月</small></b><i>初担当</i></div><div class="bc"><b>11<small>月</small></b><i>試作</i></div><div class="bc"><b>12<small>月</small></b><i>評価</i></div><div class="bc"><b>1<small>月</small></b><i>量産判定</i></div><div class="bc"><b>2<small>月</small></b><i></i></div><div class="bc"><b>3<small>月</small></b><i>振り返り</i></div></div>
+    <div class="foot"><span data-morph="foot">メーターは各月末の時点。社名・人物・数字はすべて架空のサンプルです</span><b><span class="n" data-morph="pg" data-count="8">8</span> / 8</b></div>
+    <aside class="notes">ゆいの名札が、名前の空いた名札に変わる。「この帯の、いちばん左がいまのあなたです」と帯を指して締める。質問はこのあと個別ブースで。</aside>
+  </section>
+
+</main>
+<script>
+/* ==== ugoku-slide engine:js BEGIN ==== */
+(() => {
+  "use strict";
+  const W = 1280, H = 720;
+  const deck = document.querySelector(".deck");
+  if (!deck) return;
+  const slides = [...deck.querySelectorAll(":scope > .slide")];
+  const params = new URLSearchParams(location.search);
+  const embed = params.has("embed");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const body = document.body;
+  if (embed) body.classList.add("embed");
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  /* ---------- 数字の見せ方 ---------- */
+  const FORMAT = {
+    int: v => Math.round(v).toLocaleString("ja-JP"),
+    dec1: v => (Math.round(v * 10) / 10).toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+    yen: v => (v < 0 ? "-¥" : "¥") + Math.round(Math.abs(v)).toLocaleString("ja-JP"),
+    man: v => {
+      const a = Math.abs(v), s = v < 0 ? "-" : "";
+      if (a >= 1e8) return s + (a / 1e8).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e10 ? 0 : a >= 1e9 ? 1 : 2 }) + "億円";
+      return s + (a / 1e4).toLocaleString("ja-JP", { maximumFractionDigits: a >= 1e6 ? 0 : 1 }) + "万円";
+    },
+    pct: v => (Math.round(v * 10) / 10).toFixed(1) + "%",
+    x: v => (Math.round(v * 10) / 10).toFixed(1) + "倍",
+    pad2: v => String(Math.round(v)).padStart(2, "0"),
+    year: v => String(Math.round(v)),
+  };
+  const format = (el, v) => {
+    if (!isFinite(v)) return "—";
+    const f = FORMAT[el.dataset.format] || FORMAT.int;
+    return f(v) + (el.dataset.unit || "");
+  };
+  const tween = (el, to) => {
+    const from = isFinite(el._v) ? el._v : to;
+    el._v = to;
+    if (el.hasAttribute("data-sign")) {
+      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev" はマイナスを良いこと（緑）として色を付ける
+      el.classList.toggle("neg", to * k < 0);
+      el.classList.toggle("pos", to * k > 0);
+    }
+    if (reduce || from === to || !isFinite(to)) { el.textContent = format(el, to); return; }
+    const t0 = performance.now(), d = 450;
+    cancelAnimationFrame(el._raf);
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(el, from + (to - from) * e);
+      if (k < 1) el._raf = requestAnimationFrame(tick);
+    };
+    el._raf = requestAnimationFrame(tick);
+  };
+
+  /* ---------- data-calc：入力を動かすと式を計算し直す ---------- */
+  const compile = expr => {
+    try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
+    catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
+  };
+  // data-calc="global" の値は、ほかのページの data-global-out="式" と、.deck の CSS 変数でも使える
+  const G = {};
+  const globalOuts = [...deck.querySelectorAll("[data-global-out]")].map(el => [el, compile(el.dataset.globalOut)]);
+  const updateGlobal = () => globalOuts.forEach(([el, f]) => {
+    let x; try { x = f(G); } catch (e) { x = NaN; }
+    if (typeof x === "string") el.textContent = x; else tween(el, Number(x));
+  });
+  deck.querySelectorAll("[data-calc]").forEach(box => {
+    const inputs = [...box.querySelectorAll("input[name],select[name]")];
+    const lets = (box.dataset.let || "").split(";").map(s => s.trim()).filter(Boolean).map(s => {
+      const i = s.indexOf("=");
+      return [s.slice(0, i).trim(), compile(s.slice(i + 1))];
+    });
+    const outs = [...box.querySelectorAll("[data-out]")].map(el => [el, compile(el.dataset.out)]);
+    const bars = [...box.querySelectorAll("[data-bar]")].map(el => [el, compile(el.dataset.bar), compile(el.dataset.max || "100")]);
+    const shows = [...box.querySelectorAll("[data-show]")];
+    const update = () => {
+      const v = {};
+      inputs.forEach(i => {
+        if (i.type === "radio") { if (i.checked) v[i.name] = Number(i.value); else if (!(i.name in v)) v[i.name] = NaN; return; }
+        v[i.name] = i.type === "checkbox" ? (i.checked ? 1 : 0) : Number(i.value);
+      });
+      lets.forEach(([k, f]) => { try { v[k] = f(v); } catch (e) { v[k] = NaN; } });
+      const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
+      outs.forEach(([el, f]) => {
+        let x; try { x = f(v); } catch (e) { x = NaN; }
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら、その文字を出す
+      });
+      bars.forEach(([el, f, m]) => {
+        const r = Math.max(0, Math.min(1, run(f) / run(m)));
+        const fill = el.querySelector("i") || el;
+        fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
+      });
+      shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
+      // 入力と途中の計算は CSS 変数（--名前）にも入る。図形の大きさや位置を式で動かせる
+      Object.keys(v).forEach(k => { if (isFinite(v[k])) box.style.setProperty("--" + k, v[k]); });
+      if (box.dataset.calc === "global") {
+        Object.assign(G, v);
+        Object.keys(v).forEach(k => { if (isFinite(v[k])) deck.style.setProperty("--" + k, v[k]); });
+        updateGlobal();
+      }
+    };
+    box.addEventListener("input", update);
+    box.addEventListener("change", update);
+    update();
+  });
+  deck.addEventListener("change", e => { if (e.target.matches("select")) e.target.blur(); });
+  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  deck.addEventListener("pointerup", e => {
+    if (e.target.matches("input[type=range],input[type=checkbox],input[type=radio]")) setTimeout(() => e.target.blur(), 0);
+    else if (e.target.closest("label") && e.target.closest("label").querySelector("input[type=checkbox],input[type=radio]")) setTimeout(() => document.activeElement && document.activeElement.blur && document.activeElement.blur(), 0);
+  });
+
+  /* ---------- data-count：ページを開いたときにカウントアップ ---------- */
+  const counters = [...deck.querySelectorAll("[data-count]")];
+  counters.forEach(el => { el._v = Number(el.dataset.count); el.textContent = format(el, el._v); });
+  const countUp = (slide, skip) => {
+    slide.querySelectorAll("[data-count]").forEach(el => {
+      if (skip && skip.has(el)) return;
+      el._v = 0; tween(el, Number(el.dataset.count));
+    });
+    // ほかのページで決まった数字（data-global-out）も、開いたときに数え上がる
+    let any = false;
+    globalOuts.forEach(([el]) => { if (slide.contains(el) && !(skip && skip.has(el))) { el._v = 0; any = true; } });
+    if (any) updateGlobal();
+  };
+
+  /* ---------- .draw：SVG の線が、表示されたときに描かれていく ---------- */
+  deck.querySelectorAll(".draw").forEach(p => { if (p instanceof SVGGeometryElement) p.setAttribute("pathLength", "1"); });
+
+  /* ---------- data-orbit：ドラッグで回せる立体（CSS の 3D） ---------- */
+  const orbits = [];
+  deck.querySelectorAll("[data-orbit]").forEach(box => {
+    const rx0 = Number(box.dataset.rx || -22), ry0 = Number(box.dataset.ry || 32);
+    const o = { box, rx: rx0, ry: ry0, spin: box.hasAttribute("data-spin") && !reduce };
+    const set = () => { box.style.setProperty("--rx", o.rx.toFixed(2)); box.style.setProperty("--ry", o.ry.toFixed(2)); };
+    let drag = null;
+    box.addEventListener("pointerdown", e => {
+      if (e.target.closest("input,button,summary,select,a")) return;
+      drag = { x: e.clientX, y: e.clientY, rx: o.rx, ry: o.ry };
+      o.spin = false;
+      try { box.setPointerCapture(e.pointerId); } catch (err) { /* 合成した操作など */ }
+      box.classList.add("grabbing");
+    });
+    box.addEventListener("pointermove", e => {
+      if (!drag) return;
+      const k = Number(deck.style.getPropertyValue("--scale")) || 1;
+      o.ry = drag.ry + (e.clientX - drag.x) / k * 0.45;
+      o.rx = Math.max(-85, Math.min(85, drag.rx - (e.clientY - drag.y) / k * 0.45));
+      set();
+    });
+    const end = () => { drag = null; box.classList.remove("grabbing"); };
+    box.addEventListener("pointerup", end);
+    box.addEventListener("pointercancel", end);
+    box.addEventListener("dblclick", () => { o.rx = rx0; o.ry = ry0; set(); });
+    o.set = set;
+    set();
+    orbits.push(o);
+  });
+  if (orbits.some(o => o.spin)) {
+    let last = performance.now();
+    const loop = now => {
+      const dt = Math.min(64, now - last); last = now;
+      orbits.forEach(o => {
+        if (o.spin && o.box.closest(".slide.active")) { o.ry += dt * 0.012; o.set(); }
+      });
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------- data-sheet：表の数字を直す・Excel から貼ると、グラフと集計が作り直される ---------- */
+  // 「1,200」「▲300」「1.2億」「45件」のように、数字のうしろの単位は読み飛ばす（単位の換算はしない）
+  const parseNum = s => {
+    const t = String(s).trim().replace(/[−－―]/g, "-").replace(/^[▲△]/, "-").replace(/[,，¥￥\s]/g, "")
+      .replace(/[０-９．]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+    const m = t.match(/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i);
+    return m ? Number(m[0]) : NaN;
+  };
+  // 目盛りは 1・2・2.5・5 の区切りで、3〜5本
+  const niceScale = (m, lo = 0) => {
+    if (!(m > lo)) m = lo + 1;
+    const raw = (m - lo) / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+    const a = Math.floor(lo / step + 1e-9) * step, b = Math.max(a + 2 * step, Math.ceil(m / step - 1e-9) * step);
+    const n = Math.round((b - a) / step);
+    return { min: a, max: b, ticks: Array.from({ length: n + 1 }, (_, i) => i / n) };
+  };
+  const sheets = [];
+  deck.querySelectorAll("[data-sheet]").forEach(fig => {
+    const table = fig.querySelector("table");
+    if (!table) return;
+    const initial = table.innerHTML;
+    const kind = fig.dataset.chart || "bar";
+    let chart = fig.querySelector(".sheet-chart");
+    if (!chart) { chart = document.createElement("div"); chart.className = "sheet-chart"; fig.appendChild(chart); }
+    const axisFmt = { dataset: { format: fig.dataset.format || "int", unit: "" } };
+    const read = () => {
+      const head = [...table.querySelectorAll("thead th")].slice(1).map(th => th.textContent.trim());
+      const rows = [...table.querySelectorAll("tbody tr")].map(tr => {
+        const c = [...tr.children];
+        return { label: c[0] ? c[0].textContent.trim() : "", vals: c.slice(1).map(td => parseNum(td.textContent)) };
+      });
+      const n = Math.max(head.length, ...rows.map(r => r.vals.length), 0);
+      while (head.length < n) head.push("系列" + (head.length + 1));
+      return { head, rows };
+    };
+    const prep = () => {
+      table.querySelectorAll("tbody td").forEach((td, i) => {
+        if (td.cellIndex === 0) return;
+        try { td.contentEditable = "plaintext-only"; } catch (e) { /* 古いブラウザ */ }
+        if (td.contentEditable !== "plaintext-only") td.contentEditable = "true";
+        td.classList.add("n");
+        td.spellcheck = false;
+      });
+    };
+    const outs = [...fig.querySelectorAll("[data-sheet-out]")].map(el => [el, (() => {
+      try { return new Function("h", "with(Math){with(h){return (" + el.dataset.sheetOut + ");}}"); }
+      catch (e) { console.warn("式が読めません:", el.dataset.sheetOut); return () => NaN; }
+    })()]);
+    let prevVals = null, shape = "";
+    const render = () => {
+      const d = read();
+      const S = d.head.length, R = d.rows.length;
+      const val = (r, s) => { const x = d.rows[r].vals[s]; return isFinite(x) ? x : 0; };
+      let max = 0, min = 0;
+      for (let r = 0; r < R; r++) {
+        if (kind === "stack") { let t = 0; for (let s = 0; s < S; s++) t += Math.max(0, val(r, s)); max = Math.max(max, t); }
+        else for (let s = 0; s < S; s++) { max = Math.max(max, val(r, s)); min = Math.min(min, val(r, s)); }
+      }
+      // data-min で目盛りの下限を決められる（客単価のように、0から描くと平らに見えるとき）
+      if (kind !== "stack" && fig.dataset.min !== undefined && isFinite(Number(fig.dataset.min))) min = Math.min(Number(fig.dataset.min), ...d.rows.flatMap(r => r.vals.filter(isFinite)));
+      const sc = niceScale(max * 1.02, min);
+      max = sc.max; const lo = sc.min, span = max - lo, base = Math.max(lo, Math.min(0, max));
+      const yOf = v => (v - lo) / span;
+      const sh = kind + R + "x" + S + "/" + sc.ticks.length + d.rows.map(r => r.label).join("|") + d.head.join("|");
+      if (sh !== shape) {
+        shape = sh;
+        const grid = sc.ticks.map(k => `<div class="sc-gl" style="bottom:${k * 100}%"><span></span></div>`).join("") +
+          (lo < 0 ? `<div class="sc-zero" style="bottom:${yOf(0) * 100}%"></div>` : "");
+        const legend = S > 1 ? `<div class="sc-legend">${d.head.map((h, s) => `<span style="--c:var(--s${s + 1})"><i></i>${esc(h)}</span>`).join("")}</div>` : "";
+        let plot = "";
+        if (kind === "line") {
+          plot = `<svg class="sc-lines" viewBox="0 0 1000 1000" preserveAspectRatio="none">${d.head.map((_, s) => `<polyline style="--c:var(--s${s + 1})" vector-effect="non-scaling-stroke"/>`).join("")}</svg>` +
+            d.head.map((_, s) => d.rows.map(() => `<b class="sc-dot" style="--c:var(--s${s + 1})"></b>`).join("")).join("");
+        }
+        const groups = d.rows.map(r => `<div class="sc-g">${kind === "line" ? "" : `<div class="sc-bars">${d.head.map((_, s) => `<i style="--c:var(--s${s + 1})"><em></em></i>`).join("")}</div>`}<span class="sc-l">${esc(r.label)}</span></div>`).join("");
+        chart.className = "sheet-chart sc-" + kind + (S > 1 ? " multi" : "");
+        chart.innerHTML = `${legend}<div class="sc-plot">${grid}<div class="sc-groups">${groups}</div>${plot}</div>`;
+        prevVals = null;
+      }
+      chart.querySelectorAll(".sc-gl span").forEach((sp, i) => { sp.textContent = format(axisFmt, lo + span * sc.ticks[i]); });
+      if (kind === "line") {
+        const from = prevVals, to = d.rows.map((_, r) => d.head.map((_, s) => val(r, s)));
+        prevVals = to;
+        const draw = k => {
+          const pl = chart.querySelectorAll(".sc-lines polyline"), dots = chart.querySelectorAll(".sc-dot");
+          d.head.forEach((_, s) => {
+            const pts = to.map((row, r) => {
+              const v = from ? from[r][s] + (row[s] - from[r][s]) * k : row[s];
+              const x = R > 1 ? (r + .5) / R : .5, y = 1 - yOf(v);
+              const dot = dots[s * R + r];
+              if (dot) { dot.style.left = x * 100 + "%"; dot.style.top = y * 100 + "%"; dot.title = format(axisFmt, row[s]); }
+              return (x * 1000).toFixed(1) + "," + (y * 1000).toFixed(1);
+            });
+            if (pl[s]) pl[s].setAttribute("points", pts.join(" "));
+          });
+        };
+        if (!from || reduce) draw(1);
+        else { const t0 = performance.now(); const tick = now => { const k = Math.min(1, (now - t0) / 500); draw(1 - Math.pow(1 - k, 3)); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+      } else {
+        chart.querySelectorAll(".sc-g").forEach((g, r) => {
+          let acc = 0;
+          g.querySelectorAll(".sc-bars > i").forEach((b, s) => {
+            const raw = val(r, s);
+            let from, to;
+            if (kind === "stack") { const v = Math.max(0, raw); from = acc; to = acc + v; acc = to; }
+            else { from = Math.min(raw, base); to = Math.max(raw, base); }
+            b.style.setProperty("--b", (yOf(from) * 100).toFixed(3));
+            b.style.setProperty("--h", ((to - from) / span * 100).toFixed(3));
+            b.style.setProperty("--x", kind === "stack" ? 0 : (s / S * 100).toFixed(3));
+            b.style.setProperty("--w", kind === "stack" ? 100 : (100 / S).toFixed(3));
+            b.classList.toggle("neg", kind !== "stack" && raw < base);
+            b.querySelector("em").textContent = format(axisFmt, raw);
+          });
+        });
+      }
+      const col = name => { const s = typeof name === "number" ? name : d.head.indexOf(name); return s < 0 ? [] : d.rows.map(r => r.vals[s]).filter(isFinite); };
+      const h = {
+        col, n: R,
+        sum: c => col(c).reduce((a, b) => a + b, 0),
+        avg: c => { const a = col(c); return a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN; },
+        first: c => col(c)[0], last: c => { const a = col(c); return a[a.length - 1]; },
+        max: c => Math.max(...col(c)), min: c => Math.min(...col(c)),
+        growth: c => { const a = col(c); return a.length > 1 && a[0] ? (a[a.length - 1] / a[0] - 1) * 100 : NaN; },
+        total: () => d.rows.reduce((a, r) => a + r.vals.filter(isFinite).reduce((x, y) => x + y, 0), 0),
+        label: i => (d.rows[i < 0 ? R + i : i] || {}).label || "",
+      };
+      outs.forEach(([el, f]) => {
+        let x; try { x = f(h); } catch (e) { x = NaN; }
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x));
+      });
+    };
+    const fromText = text => {
+      const lines = text.replace(/\r/g, "").split("\n").filter(l => l.trim() !== "");
+      if (!lines.length) return false;
+      const sep = lines.some(l => l.includes("\t")) ? "\t" : ",";
+      const cells = lines.map(l => l.split(sep).map(c => c.trim().replace(/^"(.*)"$/, "$1")));
+      if (cells[0].length < 2) return false;
+      const hasHead = cells[0].slice(1).some(c => !isFinite(parseNum(c)));
+      const head = hasHead ? cells.shift() : ["", ...read().head];
+      if (!cells.length) return false;
+      const cols = Math.max(...cells.map(r => r.length));
+      table.innerHTML = `<thead><tr>${Array.from({ length: cols }, (_, i) => `<th>${esc(head[i] || (i ? "系列" + i : ""))}</th>`).join("")}</tr></thead>` +
+        `<tbody>${cells.map(r => `<tr>${Array.from({ length: cols }, (_, i) => {
+          const x = parseNum(r[i] || "");
+          return `<td>${i && isFinite(x) ? x.toLocaleString("ja-JP") : esc(r[i] || "")}</td>`;
+        }).join("")}</tr>`).join("")}</tbody>`;
+      prep(); render();
+      return true;
+    };
+    let tm;
+    table.addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(render, 120); });
+    table.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
+    const onPaste = e => {
+      const text = (e.clipboardData || window.clipboardData).getData("text");
+      if (!/[\t,\n]/.test(text.trim())) return; // 数字1つだけならそのセルに貼る
+      e.preventDefault();
+      if (fromText(text)) say("貼った表で、グラフと集計を作り直しました");
+      else say("表として読めませんでした（1列目に項目名、2列目から数字）");
+    };
+    fig.addEventListener("paste", onPaste);
+    const pad = document.createElement("textarea");
+    pad.className = "sheet-pad"; pad.setAttribute("aria-label", "ここに表を貼る");
+    fig.appendChild(pad);
+    fig.querySelectorAll("[data-sheet-paste]").forEach(b => b.addEventListener("click", () => { pad.value = ""; pad.focus(); say("Excel やスプレッドシートでコピーした表を ⌘V / Ctrl+V で貼ってください"); }));
+    pad.addEventListener("blur", () => { pad.value = ""; });
+    fig.querySelectorAll("[data-sheet-reset]").forEach(b => b.addEventListener("click", () => { table.innerHTML = initial; prep(); render(); }));
+    prep(); render();
+    sheets.push({ fig, onPaste });
+  });
+  // どこにもフォーカスがないときの貼り付けは、表示中のスライドの表へ
+  document.addEventListener("paste", e => {
+    const t = e.target;
+    if (t.closest && t.closest("[data-sheet],input,textarea,[contenteditable]")) return;
+    const s = sheets.find(x => x.fig.closest(".slide.active"));
+    if (s) s.onPaste(e);
+  });
+
+  /* ---------- 上に重ねて開く補足（details.why.float）：下にはみ出すなら上へ開く ---------- */
+  deck.querySelectorAll("details.why.float").forEach(d => d.addEventListener("toggle", () => {
+    if (!d.open) return;
+    d.classList.remove("up");
+    const s = d.closest(".slide"), b = d.querySelector(".body");
+    if (!s || !b) return;
+    const k = s.getBoundingClientRect().height / H || 1;
+    if ((b.getBoundingClientRect().bottom - s.getBoundingClientRect().top) / k > H - 12) d.classList.add("up");
+  }));
+
+  /* ---------- data-tabs：切り替え ---------- */
+  deck.querySelectorAll("[data-tabs]").forEach(g => {
+    const btns = [...g.querySelectorAll("[data-tab]")];
+    const panels = [...g.querySelectorAll("[data-panel]")];
+    const pick = k => {
+      btns.forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === k)));
+      panels.forEach(p => { p.hidden = p.dataset.panel !== k; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => pick(b.dataset.tab)));
+    const first = btns.find(b => b.hasAttribute("data-default")) || btns[0];
+    if (first) pick(first.dataset.tab);
+  });
+
+  /* ---------- .quiz：クイズ ---------- */
+  deck.querySelectorAll(".quiz").forEach(q => {
+    q.querySelectorAll(".choices > button").forEach(b => b.addEventListener("click", () => {
+      if (q.classList.contains("answered")) return;
+      b.classList.add("picked");
+      q.classList.add("answered");
+    }));
+  });
+
+  /* ---------- data-rank：重みを動かすと順位が入れ替わる ---------- */
+  deck.querySelectorAll("[data-rank]").forEach(box => {
+    let cfg;
+    try { cfg = JSON.parse(box.querySelector("script[type='application/json']").textContent); }
+    catch (e) { console.warn("data-rank の JSON が読めません", e); return; }
+    const wrap = document.createElement("div");
+    wrap.className = "rank";
+    const left = document.createElement("div");
+    const right = document.createElement("div");
+    right.className = "opts";
+    const max = cfg.max || 5;
+    const sliders = cfg.criteria.map(c => {
+      const f = document.createElement("div");
+      f.className = "field";
+      f.innerHTML = `<label><span></span><b></b></label><input type="range" min="0" max="5" step="1">`;
+      f.querySelector("span").textContent = c.label;
+      const inp = f.querySelector("input");
+      inp.value = c.weight;
+      left.appendChild(f);
+      return { c, inp, out: f.querySelector("b") };
+    });
+    const cards = cfg.options.map(o => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="name"></div><div class="score"></div><div class="meter"><i></i></div><div class="note"></div>`;
+      d.querySelector(".name").textContent = o.name;
+      d.querySelector(".note").textContent = o.note || "";
+      right.appendChild(d);
+      return { o, d };
+    });
+    const rowH = cfg.rowHeight || 124;
+    right.style.height = rowH * cards.length + "px";
+    const update = () => {
+      let wsum = 0;
+      sliders.forEach(s => { s.out.textContent = "重み " + s.inp.value; wsum += Number(s.inp.value); });
+      cards.forEach(k => {
+        const raw = sliders.reduce((a, s) => a + Number(s.inp.value) * (k.o.scores[s.c.key] || 0), 0);
+        k.score = wsum ? raw / (wsum * max) * 100 : 0;
+      });
+      [...cards].sort((a, b) => b.score - a.score).forEach((k, i) => {
+        k.d.style.transform = `translateY(${i * rowH}px)`;
+        k.d.classList.toggle("top", i === 0 && wsum > 0);
+        const s = k.d.querySelector(".score");
+        s.dataset.format = "int"; s.dataset.unit = "点";
+        tween(s, k.score);
+        k.d.querySelector(".meter>i").style.width = k.score + "%";
+      });
+    };
+    left.addEventListener("input", update);
+    wrap.append(left, right);
+    box.appendChild(wrap);
+    update();
+  });
+
+  /* ---------- pre.code：色付けと、→ で行を順番に強調 ---------- */
+  const KW = "const|let|var|function|return|if|else|for|while|await|async|import|from|export|def|class|new|in|of|try|catch|throw|true|false|null|undefined|True|False|None|and|or|not|with|as|yield|lambda|SELECT|FROM|WHERE|GROUP|BY|ORDER|JOIN|ON|LIMIT";
+  const paint = (line, py) => {
+    const re = new RegExp((py ? "(#.*$)" : "(\\/\\/.*$)") +
+      "|(\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`)|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(" + KW + ")\\b", "g");
+    let out = "", last = 0, m;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? "c" : m[2] ? "s" : m[3] ? "d" : "k";
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(line.slice(last));
+  };
+  deck.querySelectorAll("pre.code").forEach(pre => {
+    const py = /^(py|python|sh|bash|yaml)$/.test(pre.dataset.lang || "");
+    const lines = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "").split("\n");
+    pre.innerHTML = lines.map(l => `<span class="ln">${paint(l, py) || " "}</span>`).join("");
+  });
+  const setHl = (pre, stage) => {
+    const groups = pre.dataset.highlight.split("|");
+    const lines = pre.querySelectorAll(".ln");
+    const on = new Set();
+    if (stage > 0) groups[stage - 1].split(",").forEach(part => {
+      const [a, b] = part.split("-").map(Number);
+      for (let n = a; n <= (b || a); n++) on.add(n);
+    });
+    pre.classList.toggle("hl-on", stage > 0);
+    lines.forEach((l, i) => l.classList.toggle("hl", on.has(i + 1)));
+  };
+
+  /* ---------- ページ送りの手順（.step と コード強調） ---------- */
+  const plans = slides.map(s => {
+    const acts = [];
+    s.querySelectorAll(".step, pre.code[data-highlight]").forEach(el => {
+      if (el.matches("pre")) {
+        el.dataset.highlight.split("|").forEach((_, i) =>
+          acts.push({ run: () => setHl(el, i + 1), undo: () => setHl(el, i) }));
+      } else {
+        acts.push({
+          run: () => { s.querySelectorAll(".step.current").forEach(x => x.classList.remove("current")); el.classList.add("shown", "current"); },
+          undo: () => el.classList.remove("shown", "current"),
+        });
+      }
+    });
+    return acts;
+  });
+  const done = slides.map(() => 0);
+  const setSteps = (i, n) => {
+    const p = plans[i];
+    while (done[i] > n) p[--done[i]].undo();
+    while (done[i] < n) p[done[i]++].run();
+  };
+
+  /* ---------- 画面の部品 ---------- */
+  const el = (tag, cls, html) => { const e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; return e; };
+  const bar = el("div", "ugk-bar"); deck.appendChild(bar);
+  const hud = el("div", "ugk-hud", `
+    <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
+    <span class="count"></span><span class="sp"></span>
+    <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
+  const notesBox = el("div", "ugk-notes");
+  const help = el("div", "ugk-help", `<div>
+    <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
+    <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
+    <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
+  const toast = el("div", "ugk-toast");
+  body.append(hud, notesBox, help, toast);
+  const say = msg => { toast.textContent = msg; toast.classList.add("on"); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove("on"), 1800); };
+
+  /* ---------- 表示 ---------- */
+  let cur = -1, overview = false, presenter = null;
+  const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
+  const render = () => {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === cur);
+      s.classList.toggle("past", i < cur);
+      s.setAttribute("aria-hidden", String(i !== cur));
+    });
+    bar.style.width = ((cur + 1) / slides.length * 100) + "%";
+    hud.querySelector(".count").textContent = `${cur + 1} / ${slides.length}`;
+    const n = slides[cur].querySelector(".notes");
+    notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
+    drawPresenter();
+  };
+  /* ---------- data-morph：同じ名前の要素が、前のページの位置・大きさ・色から、次のページへ変形してつながる ---------- */
+  const morphMode = deck.dataset.transition === "morph";
+  const MORPH_MS = 900, MORPH_EASE = "cubic-bezier(.65,0,.25,1)";
+  const shownIn = (el, slide) => { for (let e = el; e && e !== slide; e = e.parentElement) if (e.classList.contains("step") && !e.classList.contains("shown")) return false; return true; };
+  // 見えている位置（アニメーション中なら途中の位置）
+  const seenRect = (el, slide) => {
+    const r = el.getBoundingClientRect(), s = slide.getBoundingClientRect(), k = s.width / W || 1;
+    return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
+  };
+  // 動きを止めたときの位置（まだ表示していないページ用。transform を無視して、置かれた場所だけを測る）
+  const layoutRect = (el, slide) => {
+    let x = 0, y = 0, e = el;
+    while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; const p = e.offsetParent; if (p && p !== slide && !slide.contains(p)) break; e = p; }
+    return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+  };
+  // 見えているままの写しを作る（class に頼らず、計算済みの見た目を全部書き込む）
+  const snapshot = (el, a) => {
+    const c = el.cloneNode(true);
+    const copy = (src, dst) => {
+      if (!(src instanceof Element)) return;
+      const cs = getComputedStyle(src);
+      for (let i = 0; i < cs.length; i++) dst.style.setProperty(cs[i], cs.getPropertyValue(cs[i]));
+      dst.style.animation = "none"; dst.style.transition = "none";
+      ["data-morph", "data-count", "data-out", "data-show", "id", "data-morph-enter"].forEach(k => dst.removeAttribute && dst.removeAttribute(k));
+      for (let i = 0; i < src.children.length; i++) copy(src.children[i], dst.children[i]);
+    };
+    copy(el, c);
+    Object.assign(c.style, { position: "absolute", margin: "0", right: "auto", bottom: "auto", width: a.w + "px", height: a.h + "px",
+      transform: "none", transformOrigin: "50% 50%", pointerEvents: "none", zIndex: "0", visibility: "visible", opacity: "1" });
+    c.classList.add("ugk-ghost");
+    c.setAttribute("aria-hidden", "true");
+    return c;
+  };
+  const LOOK = ["backgroundColor", "color", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "opacity", "borderColor"];
+  const measureMorph = (from, to) => {
+    const pairs = [];
+    const olds = new Map();
+    from.querySelectorAll("[data-morph]").forEach(el => {
+      if (!shownIn(el, from) || !el.offsetWidth) return;
+      if (parseFloat(getComputedStyle(el).opacity) < .05) return;
+      olds.set(el.dataset.morph, el);
+    });
+    to.querySelectorAll("[data-morph]").forEach(el => {
+      const o = olds.get(el.dataset.morph);
+      if (!o || !(el instanceof HTMLElement) || !el.offsetWidth) return;
+      const cs = getComputedStyle(o);
+      const a = seenRect(o, from);
+      const counting = o.hasAttribute("data-count") && el.hasAttribute("data-count");
+      // 数え直す数字は、写しを重ねず新しい方だけを動かす（二重に見えない）
+      const same = counting || (o.innerHTML === el.innerHTML && cs.backgroundImage === getComputedStyle(el).backgroundImage);
+      pairs.push({ o, n: el, a, look: LOOK.reduce((m, k) => (m[k] = cs[k], m), {}), same,
+        ghost: same ? null : snapshot(o, a), count: counting ? o._v : null });
+    });
+    return pairs;
+  };
+  const runMorph = (pairs, to) => {
+    const skip = new Set();
+    pairs.forEach(p => {
+      if (!shownIn(p.n, to)) return;
+      const b = layoutRect(p.n, to), a = p.a;
+      if (!b.w || !b.h) return;
+      const leaf = !p.n.firstElementChild && p.n.textContent.trim() !== "";
+      let sx = a.w / b.w, sy = a.h / b.h;
+      if (leaf) sx = sy = a.h / b.h; // 文字は縦横比を保って拡大縮小する
+      const dx = (a.x + a.w / 2) - (b.x + b.w / 2), dy = (a.y + a.h / 2) - (b.y + b.h / 2);
+      const cs = getComputedStyle(p.n);
+      const own = cs.transform === "none" ? "" : " " + cs.transform;
+      const start = { transform: `translate(${dx}px,${dy}px) scale(${sx},${sy})${own}` }, end = { transform: own.trim() || "none" };
+      LOOK.forEach(k => { if (k !== "opacity" && p.look[k] !== cs[k]) { start[k] = p.look[k]; end[k] = cs[k]; } });
+      if (/Radius/.test(Object.keys(start).join())) ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"].forEach(k => {
+        if (start[k] === undefined) { start[k] = p.look[k]; end[k] = cs[k]; }
+      });
+      const delay = Number(p.n.dataset.morphDelay || 0);
+      p.n.style.visibility = ""; // すばやく戻ったとき、前の変形で隠したままにしない
+      p.n.getAnimations().forEach(x => x.id === "ugk-morph" && x.cancel());
+      // 後片付けは実時間ではなく、アニメーションの終わりに合わせる（ゆっくり再生しても崩れない）
+      const after = (anim, fn) => anim.finished.then(fn, fn);
+      if (p.same) {
+        const an = p.n.animate([start, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
+        an.id = "ugk-morph";
+        p.o.style.visibility = "hidden";
+        after(an, () => { p.o.style.visibility = ""; });
+      } else {
+        // 中身や模様がちがう：前の形の写しを下に敷き、新しい方が浮かび上がってから写しを消す
+        const g = p.ghost;
+        g.style.left = a.x + "px"; g.style.top = a.y + "px";
+        to.insertBefore(g, to.firstChild);
+        const gsy = b.h / a.h, gsx = leaf ? gsy : b.w / a.w;
+        const toB = `translate(${-dx}px,${-dy}px) scale(${gsx},${gsy})`;
+        after(g.animate([{ transform: "none", opacity: 1 }, { opacity: 1, offset: .4 }, { transform: toB, opacity: 0 }], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "both" }), () => g.remove());
+        const an = p.n.animate([{ ...start, opacity: 0 }, { opacity: 1, offset: .45 }, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
+        an.id = "ugk-morph";
+        p.o.style.visibility = "hidden";
+        after(an, () => { p.o.style.visibility = ""; });
+      }
+      if (p.count !== null && isFinite(p.count)) { p.n._v = p.count; tween(p.n, Number(p.n.dataset.count)); skip.add(p.n); }
+    });
+    return skip;
+  };
+
+  const go = (i, atEnd) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    const canMorph = morphMode && prev !== -1 && !reduce && !overview;
+    const pairs = canMorph ? measureMorph(slides[prev], slides[i]) : [];
+    cur = i;
+    setSteps(i, atEnd ? plans[i].length : 0);
+    const skip = pairs.length ? runMorph(pairs, slides[i]) : null;
+    render();
+    if (prev !== -1) countUp(slides[i], skip);
+    const h = "#" + (i + 1);
+    if (location.hash !== h) history.replaceState(null, "", h);
+  };
+  const next = () => {
+    if (done[cur] < plans[cur].length) { setSteps(cur, done[cur] + 1); drawPresenter(); }
+    else go(cur + 1);
+  };
+  const prev = () => {
+    if (done[cur] > 0) { setSteps(cur, done[cur] - 1); drawPresenter(); }
+    else go(cur - 1, true);
+  };
+
+  /* ---------- 大きさ合わせ・一覧 ---------- */
+  const fit = () => deck.style.setProperty("--scale", Math.min(innerWidth / W, innerHeight / H));
+  const layoutOverview = () => {
+    const n = slides.length, gap = 24;
+    const cols = Math.ceil(Math.sqrt(n * 1.1)), rows = Math.ceil(n / cols);
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H);
+    const offX = (W - cols * W * s - (cols - 1) * gap) / 2, offY = (H - rows * H * s - (rows - 1) * gap) / 2;
+    slides.forEach((sl, i) => {
+      sl.style.setProperty("--os", s);
+      sl.style.setProperty("--ox", offX + (i % cols) * (W * s + gap) + "px");
+      sl.style.setProperty("--oy", offY + Math.floor(i / cols) * (H * s + gap) + "px");
+    });
+  };
+  const toggleOverview = on => {
+    overview = on === undefined ? !overview : on;
+    if (overview) layoutOverview();
+    deck.classList.toggle("overview", overview);
+  };
+  deck.addEventListener("click", e => {
+    if (!overview) return;
+    const s = e.target.closest(".slide");
+    if (s) { toggleOverview(false); go(slides.indexOf(s)); }
+  });
+
+  /* ---------- 全画面 ---------- */
+  const full = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const r = d.documentElement; (r.requestFullscreen || r.webkitRequestFullscreen || (() => say("全画面にできません"))).call(r); }
+  };
+
+  /* ---------- 発表者画面（P）：メモ・次のスライド・経過時間 ---------- */
+  let started = 0;
+  const openPresenter = () => {
+    const w = window.open("", "ugk-presenter", "width=960,height=600");
+    if (!w) { say("ポップアップを許可してください"); return; }
+    presenter = w; started = Date.now();
+    w.document.open();
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>発表者画面</title>
+      <style>body{margin:0;padding:28px 34px;background:#111317;color:#eee;font:18px/1.7 system-ui,sans-serif}
+      .top{display:flex;gap:28px;align-items:baseline;border-bottom:1px solid #333;padding-bottom:14px}
+      .t{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}.c{color:#999}.n{font-size:22px}
+      #notes{margin-top:18px;font-size:24px;line-height:1.8}#next{margin-top:24px;color:#9aa;font-size:17px}
+      button{font:inherit;background:#2a2d34;color:#eee;border:0;border-radius:8px;padding:6px 16px;margin-right:6px;cursor:pointer}</style>
+      <div class="top"><span class="t" id="timer">00:00</span><span class="c" id="clock"></span><span class="n" id="pos"></span>
+      <span style="flex:1"></span><button id="b">‹ 戻る</button><button id="f">次へ ›</button><button id="r">時間リセット</button></div>
+      <div id="title" style="margin-top:14px;font-size:20px;color:#bbb"></div><div id="notes"></div><div id="next"></div>`);
+    w.document.close();
+    w.document.addEventListener("keydown", onKey);
+    w.document.getElementById("b").onclick = prev;
+    w.document.getElementById("f").onclick = next;
+    w.document.getElementById("r").onclick = () => { started = Date.now(); };
+    drawPresenter();
+    clearInterval(openPresenter.t);
+    openPresenter.t = setInterval(() => {
+      if (!presenter || presenter.closed) { clearInterval(openPresenter.t); presenter = null; return; }
+      const s = Math.floor((Date.now() - started) / 1000);
+      presenter.document.getElementById("timer").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      presenter.document.getElementById("clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+    }, 500);
+  };
+  function drawPresenter() {
+    if (!presenter || presenter.closed) return;
+    const d = presenter.document, s = slides[cur], n = s.querySelector(".notes");
+    d.getElementById("pos").textContent = `${cur + 1} / ${slides.length}` + (plans[cur].length ? `（手順 ${done[cur]} / ${plans[cur].length}）` : "");
+    d.getElementById("title").textContent = titleOf(s);
+    d.getElementById("notes").innerHTML = n ? n.innerHTML : "（メモなし）";
+    d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
+  }
+
+  /* ---------- キーボード・スワイプ・マウス ---------- */
+  function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target, tag = (t.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "select" || tag === "textarea" || t.isContentEditable) {
+      if (e.key === "Escape") t.blur();
+      return;
+    }
+    if ((e.key === " " || e.key === "Enter") && (tag === "button" || tag === "summary" || tag === "a")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      ArrowRight: next, ArrowDown: next, PageDown: next, " ": e.shiftKey ? prev : next, Enter: next,
+      ArrowLeft: prev, ArrowUp: prev, PageUp: prev, Backspace: prev,
+      Home: () => go(0), End: () => go(slides.length - 1, true),
+      f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
+      b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
+      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  }
+  document.addEventListener("keydown", onKey);
+  hud.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.a;
+    ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
+       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+  });
+  help.addEventListener("click", () => body.classList.remove("help"));
+  let tx = 0, ty = 0, tOk = false;
+  deck.addEventListener("touchstart", e => {
+    tOk = !e.target.closest("input,button,summary,select,a,[data-tab],[data-orbit],[data-sheet]");
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  deck.addEventListener("touchend", e => {
+    if (!tOk) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next : prev)();
+  }, { passive: true });
+  let idle;
+  const wake = () => { body.classList.add("ui"); clearTimeout(idle); idle = setTimeout(() => body.classList.remove("ui"), 2400); };
+  addEventListener("mousemove", wake);
+  addEventListener("touchstart", wake, { passive: true });
+
+  /* ---------- 印刷：補足を全部開き、順番出しも全部見せる ---------- */
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...deck.querySelectorAll("details.why:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+
+  /* ---------- 一覧ページの見本表示から操作する ---------- */
+  addEventListener("message", e => {
+    const m = e.data && e.data.ugk;
+    if (m === "next") { if (cur >= slides.length - 1) go(0); else go(cur + 1, true); }
+    else if (m === "first") go(0);
+  });
+
+  addEventListener("resize", () => { fit(); if (overview) layoutOverview(); });
+  addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  fit();
+  const start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0, !!start);
+})();
+/* ==== ugoku-slide engine:js END ==== */
+</script>
+
+</body>
+</html>

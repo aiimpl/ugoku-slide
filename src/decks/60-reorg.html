@@ -1,0 +1,418 @@
+<!--meta
+{"title":"4月からの新しい組織｜サンプル情報システム 人事部","style":"和モダン（組織図）","use":"組織変更の全社説明会","group":"一続きに動く",
+ "aim":"人事部長が全社説明会で、縦割りの部から顧客ごとの横断チームへの組み替えを見せ、「自分の課はどこへ行くのか」の不安を消す。",
+ "desc":"生成りの紙に墨の濃淡で描いた組織図。めくると9つの課が、部の列から顧客別3チームの列へそのまま移る。自分の課を押すと行き先・上長・席が出て、案件数を動かすとチームの人数が組み変わる。",
+ "fonts":"https://fonts.googleapis.com/css2?family=BIZ+UDPMincho:wght@400;700&family=Zen+Kaku+Gothic+Antique:wght@400;500;700&display=swap"}
+-->
+<style>
+:root{
+  --bg:#f2ede2; --surface:#faf7f0; --ink:#26231f; --muted:#655e53; --line:#d3c9b6;
+  --accent:#b5361c; --accent-ink:#ffffff; --good:#3d6b4f; --bad:#b5361c; --frame:#d9d2c3;
+  --sumi:#2e2a25; --nezu:#6b6458; --kinari:#faf7f0;
+  --font:"Zen Kaku Gothic Antique","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
+  --font-head:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --font-num:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --head-weight:700; --head-track:.04em; --radius:2px; --shadow:none;
+  --pad-y:56px; --pad-x:80px;
+}
+/* 紙：生成りに、ごく薄い漉きむらと細い枠 */
+.deck{background-color:var(--bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(1100px 600px at 70% 0%,#f7f3ea 0%,transparent 70%)}
+.deck::after{content:"";position:absolute;inset:22px;border:1px solid rgb(38 35 31 / .16);pointer-events:none;z-index:3}
+.slide{color:var(--ink)}
+
+.kicker{position:absolute;left:80px;top:46px;margin:0;display:flex;align-items:center;gap:14px;font-family:var(--font);font-size:14px;font-weight:500;letter-spacing:.28em;color:var(--muted)}
+.kicker i{font-style:normal;font-family:var(--font-head);font-size:15px;letter-spacing:.1em;color:var(--ink)}
+.kicker::before{content:"";width:36px;height:1px;background:var(--ink)}
+.corner{position:absolute;right:80px;top:46px;font-size:14px;letter-spacing:.24em;color:var(--muted)}
+h1{font-family:var(--font-head);font-size:64px;line-height:1.38;letter-spacing:.06em;font-weight:700}
+h2{position:absolute;left:80px;top:84px;margin:0;font-family:var(--font-head);font-size:36px;line-height:1.5;letter-spacing:.05em;font-weight:700;max-width:1080px}
+h1 em,h2 em{font-style:normal;color:var(--accent)}
+.foot{pointer-events:none;left:80px;right:80px;bottom:32px;display:flex;justify-content:space-between;font-size:13px;letter-spacing:.12em;color:var(--muted)}
+
+/* 課の箱：墨＝営業部、鼠＝開発部、生成り＝サポート部（元の部の色のまま動く） */
+.ka{position:absolute}
+.plate{position:absolute;inset:0;border-radius:var(--radius)}
+.d1 .plate{background:var(--sumi)}
+.d2 .plate{background:var(--nezu)}
+.d3 .plate{background:var(--kinari);border:1.5px solid var(--sumi)}
+.ka .nm{position:absolute;left:10px;top:14px;font-size:18px;font-weight:700;letter-spacing:.02em;white-space:nowrap;line-height:1.4}
+.d1 .nm,.d2 .nm{color:#fbf8f1}.d3 .nm{color:var(--ink)}
+.ka .sub{position:absolute;font-size:15px;line-height:1.55;letter-spacing:.04em}
+.d1 .sub{color:#e6ddcc}.d2 .sub{color:#f1ebdf}.d3 .sub{color:var(--muted)}
+.ka .sub b{font-family:var(--font-head);font-size:22px;font-weight:700;letter-spacing:.02em;margin-right:2px}
+.d1 .sub b,.d2 .sub b{color:#fff}.d3 .sub b{color:var(--ink)}
+/* 例の印（朱の一点）：選んだ課にずっと付いていく */
+.rei{position:absolute;width:28px;height:28px;display:grid;place-items:center;background:var(--accent);color:#fff;font-family:var(--font-head);font-size:15px;font-weight:700;border-radius:2px;line-height:1}
+
+.box{position:absolute;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;letter-spacing:.08em;background:var(--surface);border:1px solid var(--ink)}
+.box b{font-family:var(--font-head);font-weight:700;font-size:19px}
+.box small{font-size:14px;color:var(--muted)}
+.lines{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none}
+.lines path{fill:none;stroke:var(--ink);stroke-width:1.2}
+.legend{position:absolute;display:flex;gap:26px;align-items:center;font-size:15px;color:var(--muted);letter-spacing:.06em}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend i{width:18px;height:18px;border-radius:2px;display:inline-block}
+.legend .l1{background:var(--sumi)}.legend .l2{background:var(--nezu)}.legend .l3{background:var(--kinari);border:1.5px solid var(--sumi)}
+
+details.why{background:transparent;border:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);border-radius:0}
+details.why>summary{color:var(--ink);font-size:16px;letter-spacing:.08em;padding:10px 2px}
+details.why>summary::before{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:0;width:18px;height:18px;font-size:15px}
+details.why>.body{font-size:16px;color:var(--muted);padding:0 4px 14px}
+details.why.float[open]>.body{background:var(--surface);border:1px solid var(--ink);border-radius:0;box-shadow:0 12px 30px rgb(38 35 31 / .14);padding:14px 18px}
+details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
+
+/* 1 表紙 */
+.s-cover .title{position:absolute;left:80px;top:150px}
+.s-cover .lead{position:absolute;left:80px;top:430px;width:560px;font-size:20px;line-height:1.9;color:var(--muted);margin:0;letter-spacing:.04em}
+.s-cover .by{position:absolute;left:80px;top:568px;display:flex;gap:40px;font-size:15px;letter-spacing:.14em;color:var(--muted);border-top:1px solid var(--ink);padding-top:14px;width:560px}
+.s-cover .by b{display:block;font-family:var(--font-head);font-size:18px;color:var(--ink);letter-spacing:.1em;margin-top:2px}
+.s-cover .ka{width:96px;height:96px}
+.s-cover .grid-cap{position:absolute;font-size:14px;letter-spacing:.2em;color:var(--muted)}
+.s-cover .arrow{position:absolute;left:1004px;top:386px;font-family:var(--font-head);font-size:15px;letter-spacing:.3em;color:var(--muted);writing-mode:vertical-rl}
+.s-cover .seal{position:absolute;left:612px;top:324px;width:56px;height:56px;border:2px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:14px;line-height:1.15;display:grid;place-items:center;text-align:center;letter-spacing:.04em;transform:rotate(-4deg)}
+
+/* 2 いまの組織 */
+.s-now .ka{width:108px;height:150px}
+.s-now .ka .sub{left:12px;bottom:12px}
+.s-now .rei{left:74px;top:-12px}
+.s-now .kpis{position:absolute;left:80px;right:80px;top:552px;display:grid;grid-template-columns:1fr 1fr 1fr 1.3fr;gap:0;border-top:1px solid var(--ink)}
+.s-now .kpis>div{padding:14px 30px 0 0}
+.s-now .kpis .c{font-size:15px;color:var(--muted);letter-spacing:.08em}
+.s-now .kpis .v{font-family:var(--font-head);font-size:44px;font-weight:700;letter-spacing:.02em;line-height:1.2}
+.s-now .kpis .v small{font-family:var(--font);font-size:18px;margin-left:4px;font-weight:500}
+.s-now .kpis .why{margin-top:22px}
+.s-now .kpis details.why.float.up[open]>.body{left:auto;right:-1px;width:420px}
+
+/* 3 4月から */
+.s-new .ka{width:340px;height:70px}
+.s-new .ka .nm{top:21px;left:18px}
+.s-new .ka .sub{right:18px;top:22px;text-align:right}
+.s-new .ka .sub b{font-size:20px}
+.s-new .rei{left:300px;top:-12px}
+.team{position:absolute;width:340px;height:70px}
+.team .plate{background:transparent;border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);border-radius:0}
+.team .in{position:relative;padding:10px 2px 0}
+.team .tn{font-family:var(--font-head);font-size:24px;font-weight:700;letter-spacing:.08em}
+.team .tl{font-size:15px;color:var(--muted);letter-spacing:.04em;margin-top:2px}
+.team .tp{position:absolute;right:2px;top:10px;font-family:var(--font-head);font-size:30px;font-weight:700}
+.team .tp small{font-family:var(--font);font-size:15px;margin-left:2px;font-weight:500}
+.s-new .msg{position:absolute;left:80px;top:612px;font-size:19px;letter-spacing:.06em}
+.s-new .msg b{color:var(--accent)}
+
+/* 4 自分の課 */
+.pick{position:absolute;left:80px;top:212px;width:1120px;height:430px}
+.pick .rowl{position:absolute;left:0;width:92px;font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:.1em}
+.pick .rowl small{display:block;font-family:var(--font);font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.06em;margin-top:2px}
+.pick [data-tab]{position:absolute;width:128px;height:64px;border:0;background:none;padding:0;cursor:pointer;text-align:left}
+.pick [data-tab] .nm{top:20px}
+.pick [data-tab]:hover .plate{filter:brightness(1.12)}
+.pick [data-tab][aria-selected=true] .plate{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--accent)}
+.pick [data-tab] .rei{left:112px;top:-10px;width:24px;height:24px;font-size:13px;opacity:0;transition:opacity .25s}
+.pick [data-tab][aria-selected=true] .rei{opacity:1}
+.pick .hint{position:absolute;left:0;top:252px;width:500px;font-size:17px;line-height:1.8;color:var(--muted);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
+.pick .hint b{color:var(--ink)}
+.pick .legend{left:0;top:360px}
+.pick .panels{position:absolute;left:560px;top:0;width:560px}
+.pn .to{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:1px solid var(--ink)}
+.pn .to .from{font-size:15px;color:var(--muted);letter-spacing:.08em}
+.pn .to .t{font-family:var(--font-head);font-size:34px;font-weight:700;letter-spacing:.06em}
+.pn .to .t em{font-style:normal;color:var(--accent)}
+.pn dl{display:grid;grid-template-columns:110px 1fr;margin:0;border-bottom:1px solid var(--line)}
+.pn dt,.pn dd{margin:0;padding:11px 0;border-top:1px solid var(--line);font-size:18px;line-height:1.55}
+.pn dl>:nth-child(-n+2){border-top:0}
+.pn dt{font-size:15px;color:var(--muted);letter-spacing:.1em;padding-top:14px}
+.pn dd small{color:var(--muted);font-size:15px;margin-left:6px}
+.pn dd .same{color:var(--good);font-weight:700}
+.floor{position:relative;margin-top:14px;height:92px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.floor>div{position:relative;border:1px solid var(--ink);background:var(--surface);font-size:13px;color:var(--muted);letter-spacing:.08em;padding:6px 8px}
+.floor>div::after{content:"";position:absolute;left:8px;right:8px;bottom:10px;height:30px;background-image:repeating-linear-gradient(90deg,var(--line) 0 26px,transparent 26px 34px)}
+.floor>div.on{border-color:var(--accent);border-width:2px}
+.floor .pin{position:absolute;bottom:14px;width:22px;height:22px;border-radius:50%;background:var(--accent);z-index:1;box-shadow:0 0 0 4px rgb(181 54 28 / .18)}
+
+/* 5 変わる・変わらない */
+.s-keep .cols{position:absolute;left:80px;right:80px;top:218px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.s-keep .col h3{font-family:var(--font-head);font-size:22px;letter-spacing:.14em;padding-bottom:10px;border-bottom:1px solid var(--ink);margin:0}
+.s-keep .col h3 small{font-family:var(--font);font-size:14px;color:var(--muted);letter-spacing:.1em;margin-left:10px;font-weight:500}
+.s-keep .it{display:grid;grid-template-columns:136px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:18px;line-height:1.6}
+.s-keep .it b{font-weight:700;letter-spacing:.06em}
+.s-keep .it span{color:var(--muted)}
+.s-keep .col.chg h3{border-color:var(--accent)}
+.s-keep .kp{position:absolute;left:80px;right:80px;top:540px;display:grid;grid-template-columns:repeat(3,1fr) 1.2fr;gap:0;align-items:end}
+.s-keep .kp>div{padding-right:24px}
+.s-keep .kp .c{font-size:15px;color:var(--muted);letter-spacing:.08em}
+.s-keep .kp .v{font-family:var(--font-head);font-size:52px;font-weight:700;line-height:1.1}
+.s-keep .kp .v small{font-family:var(--font);font-size:18px;font-weight:500;margin-left:4px}
+.s-keep .kp .v.z{color:var(--good)}
+.s-keep .emb{position:absolute;width:14px;bottom:auto}
+.s-keep .emb .plate{background:var(--sumi);border-radius:0}
+
+/* 6 人数の配分 */
+.s-calc .calc{position:absolute;left:80px;top:208px;right:80px;bottom:60px}
+.s-calc .ctl{position:absolute;left:0;top:0;width:400px}
+.s-calc .field>label{font-size:17px;color:var(--ink);letter-spacing:.04em}
+.s-calc .field>label b{font-family:var(--font-head);font-size:22px}
+.s-calc input[type=range]{accent-color:var(--sumi)}
+.s-calc .tot{margin-top:4px;padding-top:12px;border-top:1px solid var(--ink);font-size:16px;color:var(--muted);line-height:1.7}
+.s-calc .tot b{font-family:var(--font-head);font-size:24px;color:var(--ink)}
+.s-calc .bars{position:absolute;left:480px;top:0;width:640px;height:452px}
+.s-calc .base{position:absolute;left:0;right:0;top:342px;border-top:1.5px solid var(--ink)}
+.s-calc .bar{position:absolute;width:160px;top:calc(342px - var(--h) * 2px);height:calc(var(--h) * 2px);transition:top .45s var(--ease),height .45s var(--ease)}
+.s-calc .bar .plate{background:var(--sumi);border-radius:0}
+.s-calc .bar.b2 .plate{background:var(--nezu)}
+.s-calc .bar.b3 .plate{background:var(--kinari);border:1.5px solid var(--sumi)}
+.s-calc .val{position:absolute;width:160px;text-align:center;top:calc(342px - var(--h) * 2px - 52px);font-family:var(--font-head);font-size:38px;font-weight:700;transition:top .45s var(--ease)}
+.s-calc .val small{font-family:var(--font);font-size:16px;font-weight:500;margin-left:2px}
+.s-calc .nm2{position:absolute;top:354px;width:160px;text-align:center;font-family:var(--font-head);font-size:20px;font-weight:700;letter-spacing:.08em}
+.s-calc .per{position:absolute;top:386px;width:160px;text-align:center;font-size:15px;color:var(--muted)}
+.s-calc .per b{color:var(--ink)}
+
+/* 7 日程 */
+.s-end .tl{position:absolute;left:80px;right:80px;top:228px;height:220px}
+.s-end .tl .pt{position:absolute;top:0;width:250px}
+.s-end .tl .pt .dt{font-family:var(--font-head);font-size:30px;font-weight:700;letter-spacing:.04em}
+.s-end .tl .pt .dt small{font-family:var(--font);font-size:15px;color:var(--muted);margin-left:6px;font-weight:500}
+.s-end .tl .pt .dot{position:absolute;left:0;top:58px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink)}
+.s-end .tl .pt.key .dot{background:var(--accent);border-color:var(--accent)}
+.s-end .tl .pt.key .dt{color:var(--accent)}
+.s-end .tl .pt h3{margin:46px 0 6px;font-size:20px;letter-spacing:.06em}
+.s-end .tl .pt p{font-size:17px;line-height:1.7;color:var(--muted);margin:0;width:236px}
+.s-end .ask{position:absolute;left:80px;right:80px;top:500px;display:grid;grid-template-columns:260px 1fr 1fr 1fr;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.s-end .ask>div{padding:16px 22px 16px 0}
+.s-end .ask>div+div{padding-left:22px;border-left:1px solid var(--line)}
+.s-end .ask .h{font-family:var(--font-head);font-size:22px;font-weight:700;line-height:1.5;letter-spacing:.06em}
+.s-end .ask .k{font-size:14px;color:var(--muted);letter-spacing:.14em}
+.s-end .ask .v{font-size:18px;font-weight:700;margin-top:4px;letter-spacing:.04em}
+.s-end .ask .v small{display:block;font-size:15px;color:var(--muted);font-weight:400;margin-top:2px}
+</style>
+
+<main class="deck" data-transition="morph">
+
+  <!-- 1 表紙 -->
+  <section class="slide s-cover" data-title="表紙">
+    <div class="kicker"><i>全社説明会</i>2027年1月20日</div>
+    <div class="corner">SAMPLE JOHO SYSTEM ／ 人事部</div>
+    <h1 class="title">四月から、<br><em>お客さまごと</em>に<br>組み直します。</h1>
+    <p class="lead">部の縦割りをやめ、お客さまの業種ごとに3つのチームをつくります。今日は「自分の課がどこへ行くのか」を、ひとり残らずわかるようにお話しします。</p>
+    <div class="by"><div>話す人<b>人事部長　小野寺 真</b></div><div>時間<b>40分・質問15分</b></div></div>
+    <div class="grid-cap" style="left:860px;top:156px">いまの9課　部ごとに横一列</div>
+    <div class="ka d1" style="left:860px;top:190px"><div class="plate" data-morph="k1"></div></div>
+    <div class="ka d1" style="left:966px;top:190px"><div class="plate" data-morph="k2"></div></div>
+    <div class="ka d1" style="left:1072px;top:190px"><div class="plate" data-morph="k3"></div></div>
+    <div class="ka d2" style="left:860px;top:296px"><div class="plate" data-morph="k4"></div></div>
+    <div class="ka d2" style="left:966px;top:296px"><div class="plate" data-morph="k5"></div><div class="rei" style="left:72px;top:-8px;width:24px;height:24px;font-size:13px" data-morph="rei">例</div></div>
+    <div class="ka d2" style="left:1072px;top:296px"><div class="plate" data-morph="k6"></div></div>
+    <div class="ka d3" style="left:860px;top:402px"><div class="plate" data-morph="k7"></div></div>
+    <div class="ka d3" style="left:966px;top:402px"><div class="plate" data-morph="k8"></div></div>
+    <div class="ka d3" style="left:1072px;top:402px"><div class="plate" data-morph="k9"></div></div>
+    <div class="legend" style="left:860px;top:524px;gap:22px"><span><i class="l1"></i>営業部</span><span><i class="l2"></i>開発部</span><span><i class="l3"></i>サポート部</span></div>
+    <div class="seal">四月<br>新体制</div>
+    <div class="grid-cap" style="left:860px;top:572px;color:var(--ink);letter-spacing:.14em">四月から　この9つが、縦の3列に組み替わる。</div>
+    <aside class="notes">最初に「今日、自分の行き先がわからないまま帰る人をゼロにする」と約束する。右の9つの四角が今の9つの課。このあと、この四角がそのまま動いて新しい組織になります。</aside>
+  </section>
+
+  <!-- 2 いまの組織 -->
+  <section class="slide s-now" data-title="いまの組織">
+    <div class="kicker"><i>一</i>いまの組織</div>
+    <div class="corner">3部・9課・186名</div>
+    <h2>いまは仕事の種類で分けた3部。<br>お客さまの相談は、<em>平均2.6の部</em>をまたいでいる。</h2>
+    <div class="box" style="left:560px;top:204px;width:160px;height:44px" data-morph-enter><b>事業本部</b><small>186名</small></div>
+    <div class="box" style="left:80px;top:276px;width:340px;height:48px;--d:.05" data-morph-enter><b>営業部</b><small>58名　部長 岡田</small></div>
+    <div class="box" style="left:470px;top:276px;width:340px;height:48px" data-morph-enter><b>開発部</b><small>66名　部長 三宅</small></div>
+    <div class="box" style="left:860px;top:276px;width:340px;height:48px" data-morph-enter><b>サポート部</b><small>62名　部長 柴田</small></div>
+    <svg class="lines" viewBox="0 0 1280 720" aria-hidden="true">
+      <path class="draw" d="M640 248V262M250 262H1030M250 262V276M640 262V276M1030 262V276"/>
+      <path class="draw" d="M250 324V342M134 342H366M134 342V360M250 342V360M366 342V360"/>
+      <path class="draw" d="M640 324V342M524 342H756M524 342V360M640 342V360M756 342V360"/>
+      <path class="draw" d="M1030 324V342M914 342H1146M914 342V360M1030 342V360M1146 342V360"/>
+    </svg>
+    <div class="ka d1" style="left:80px;top:360px"><div class="plate" data-morph="k1"></div><span class="nm" data-morph="n1" data-morph-enter>製造営業課</span><div class="sub" data-morph-enter><b>24</b>名<br>課長 田中</div></div>
+    <div class="ka d1" style="left:196px;top:360px"><div class="plate" data-morph="k2"></div><span class="nm" data-morph="n2" data-morph-enter>流通営業課</span><div class="sub" data-morph-enter><b>20</b>名<br>課長 森</div></div>
+    <div class="ka d1" style="left:312px;top:360px"><div class="plate" data-morph="k3"></div><span class="nm" data-morph="n3" data-morph-enter>公共営業課</span><div class="sub" data-morph-enter><b>14</b>名<br>課長 石川</div></div>
+    <div class="ka d2" style="left:470px;top:360px"><div class="plate" data-morph="k4"></div><span class="nm" data-morph="n4" data-morph-enter>工場開発課</span><div class="sub" data-morph-enter><b>28</b>名<br>課長 吉村</div></div>
+    <div class="ka d2" style="left:586px;top:360px"><div class="plate" data-morph="k5"></div><span class="nm" data-morph="n5" data-morph-enter>店舗開発課</span><div class="sub" data-morph-enter><b>22</b>名<br>課長 佐野</div><div class="rei" data-morph="rei">例</div></div>
+    <div class="ka d2" style="left:702px;top:360px"><div class="plate" data-morph="k6"></div><span class="nm" data-morph="n6" data-morph-enter>行政開発課</span><div class="sub" data-morph-enter><b>16</b>名<br>課長 今井</div></div>
+    <div class="ka d3" style="left:860px;top:360px"><div class="plate" data-morph="k7"></div><span class="nm" data-morph="n7" data-morph-enter>工場保守課</span><div class="sub" data-morph-enter><b>26</b>名<br>課長 野口</div></div>
+    <div class="ka d3" style="left:976px;top:360px"><div class="plate" data-morph="k8"></div><span class="nm" data-morph="n8" data-morph-enter>店舗保守課</span><div class="sub" data-morph-enter><b>20</b>名<br>課長 平田</div></div>
+    <div class="ka d3" style="left:1092px;top:360px"><div class="plate" data-morph="k9"></div><span class="nm" data-morph="n9" data-morph-enter>窓口支援課</span><div class="sub" data-morph-enter><b>16</b>名<br>課長 川口</div></div>
+    <div class="legend" style="right:80px;top:214px" data-morph-enter><span><i class="l1"></i>営業部の課</span><span><i class="l2"></i>開発部の課</span><span><i class="l3"></i>サポート部の課</span></div>
+    <div class="kpis">
+      <div><div class="c">1件の相談で関わる部</div><div class="v">2.6<small>部</small></div></div>
+      <div><div class="c">お客さまへの回答まで</div><div class="v"><span data-count="11.2" data-format="dec1">11.2</span><small>日</small></div></div>
+      <div><div class="c">窓口がわかりにくい、の声</div><div class="v">41<small>%</small></div></div>
+      <div><details class="why float up"><summary>この数字の出し方</summary><div class="body">2026年度上期の問い合わせ 2,480件（架空）を、最後に回答した部までたどって数えた。アンケートは主要取引先 120社。</div></details></div>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span>2 ／ 7</span></div>
+    <aside class="notes">左から、営業部・開発部・サポート部。濃い墨が営業、鼠色が開発、生成りがサポートの課。この色は、次のページで動いても変わりません。朱の「例」は店舗開発課。これを目で追ってもらう。</aside>
+  </section>
+
+  <!-- 3 4月から -->
+  <section class="slide s-new" data-title="4月からの組織">
+    <div class="kicker"><i>二</i>四月からの組織</div>
+    <div class="corner">3チーム・9課・186名</div>
+    <h2>4月からは、お客さまの業種ごとの3チーム。<br><em>課はそのまま</em>、課長も同僚も一緒に移る。</h2>
+    <div class="box" style="left:560px;top:204px;width:160px;height:44px" data-morph-enter><b>事業本部</b><small>186名</small></div>
+    <svg class="lines" viewBox="0 0 1280 720" aria-hidden="true">
+      <path class="draw" d="M640 248V262M250 262H1030M250 262V274M640 262V274M1030 262V274"/>
+    </svg>
+    <div class="team" style="left:80px;top:274px"><div class="plate" data-morph="t1"></div><div class="in" data-morph-enter style="--d:.2"><div class="tn">製造業チーム</div><div class="tl">リーダー　岡田 修（今の営業部長）</div><div class="tp">78<small>名</small></div></div></div>
+    <div class="team" style="left:470px;top:274px"><div class="plate" data-morph="t2"></div><div class="in" data-morph-enter style="--d:.25"><div class="tn">小売・流通チーム</div><div class="tl">リーダー　三宅 由紀（今の開発部長）</div><div class="tp">62<small>名</small></div></div></div>
+    <div class="team" style="left:860px;top:274px"><div class="plate" data-morph="t3"></div><div class="in" data-morph-enter style="--d:.3"><div class="tn">公共チーム</div><div class="tl">リーダー　柴田 健（今のサポート部長）</div><div class="tp">46<small>名</small></div></div></div>
+    <div class="ka d1" style="left:80px;top:358px"><div class="plate" data-morph="k1"></div><span class="nm" data-morph="n1">製造営業課</span><div class="sub" data-morph-enter style="--d:.45"><b>24</b>名　課長 田中</div></div>
+    <div class="ka d2" style="left:80px;top:436px"><div class="plate" data-morph="k4"></div><span class="nm" data-morph="n4">工場開発課</span><div class="sub" data-morph-enter style="--d:.45"><b>28</b>名　課長 吉村</div></div>
+    <div class="ka d3" style="left:80px;top:514px"><div class="plate" data-morph="k7"></div><span class="nm" data-morph="n7">工場保守課</span><div class="sub" data-morph-enter style="--d:.45"><b>26</b>名　課長 野口</div></div>
+    <div class="ka d1" style="left:470px;top:358px"><div class="plate" data-morph="k2"></div><span class="nm" data-morph="n2">流通営業課</span><div class="sub" data-morph-enter style="--d:.45"><b>20</b>名　課長 森</div></div>
+    <div class="ka d2" style="left:470px;top:436px"><div class="plate" data-morph="k5"></div><span class="nm" data-morph="n5">店舗開発課</span><div class="sub" data-morph-enter style="--d:.45"><b>22</b>名　課長 佐野</div><div class="rei" data-morph="rei">例</div></div>
+    <div class="ka d3" style="left:470px;top:514px"><div class="plate" data-morph="k8"></div><span class="nm" data-morph="n8">店舗保守課</span><div class="sub" data-morph-enter style="--d:.45"><b>20</b>名　課長 平田</div></div>
+    <div class="ka d1" style="left:860px;top:358px"><div class="plate" data-morph="k3"></div><span class="nm" data-morph="n3">公共営業課</span><div class="sub" data-morph-enter style="--d:.45"><b>14</b>名　課長 石川</div></div>
+    <div class="ka d2" style="left:860px;top:436px"><div class="plate" data-morph="k6"></div><span class="nm" data-morph="n6">行政開発課</span><div class="sub" data-morph-enter style="--d:.45"><b>16</b>名　課長 今井</div></div>
+    <div class="ka d3" style="left:860px;top:514px"><div class="plate" data-morph="k9"></div><span class="nm" data-morph="n9">窓口支援課</span><div class="sub" data-morph-enter style="--d:.45"><b>16</b>名　課長 川口</div></div>
+    <p class="msg" data-morph-enter style="--d:.45">例：<b>店舗開発課</b>は、開発部から<b>小売・流通チーム</b>へ。課の22名と佐野課長は、そのまま一緒です。</p>
+    <div class="legend" style="right:80px;top:214px;--d:.45" data-morph-enter><span><i class="l1"></i>元 営業部</span><span><i class="l2"></i>元 開発部</span><span><i class="l3"></i>元 サポート部</span></div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span>3 ／ 7</span></div>
+    <aside class="notes">めくると、横に並んでいた課が、縦の3列に組み替わる。色は元の部。どの列にも墨・鼠・生成りが1つずつ入る＝1チームで営業から保守まで完結する、と言う。朱の「例」を指でなぞる。</aside>
+  </section>
+
+  <!-- 4 自分の課 -->
+  <section class="slide s-pick" data-title="自分の課を選ぶ">
+    <div class="kicker"><i>三</i>あなたの行き先</div>
+    <div class="corner">押して確かめる</div>
+    <h2>今の課を押すと、<em>行き先・上長・席</em>がわかる。</h2>
+    <div class="pick" data-tabs>
+      <div class="rowl" data-morph-enter style="top:14px;--d:.3">営業部<small>58名</small></div>
+      <div class="rowl" data-morph-enter style="top:90px;--d:.34">開発部<small>66名</small></div>
+      <div class="rowl" data-morph-enter style="top:166px;--d:.38">サポート部<small>62名</small></div>
+      <button class="ka d1" data-tab="k1" style="left:100px;top:0"><span class="plate" data-morph="k1"></span><span class="nm" data-morph="n1">製造営業課</span></button>
+      <button class="ka d1" data-tab="k2" style="left:236px;top:0"><span class="plate" data-morph="k2"></span><span class="nm" data-morph="n2">流通営業課</span></button>
+      <button class="ka d1" data-tab="k3" style="left:372px;top:0"><span class="plate" data-morph="k3"></span><span class="nm" data-morph="n3">公共営業課</span></button>
+      <button class="ka d2" data-tab="k4" style="left:100px;top:76px"><span class="plate" data-morph="k4"></span><span class="nm" data-morph="n4">工場開発課</span></button>
+      <button class="ka d2" data-tab="k5" data-default style="left:236px;top:76px"><span class="plate" data-morph="k5"></span><span class="nm" data-morph="n5">店舗開発課</span><span class="rei" data-morph="rei">例</span></button>
+      <button class="ka d2" data-tab="k6" style="left:372px;top:76px"><span class="plate" data-morph="k6"></span><span class="nm" data-morph="n6">行政開発課</span></button>
+      <button class="ka d3" data-tab="k7" style="left:100px;top:152px"><span class="plate" data-morph="k7"></span><span class="nm" data-morph="n7">工場保守課</span></button>
+      <button class="ka d3" data-tab="k8" style="left:236px;top:152px"><span class="plate" data-morph="k8"></span><span class="nm" data-morph="n8">店舗保守課</span></button>
+      <button class="ka d3" data-tab="k9" style="left:372px;top:152px"><span class="plate" data-morph="k9"></span><span class="nm" data-morph="n9">窓口支援課</span></button>
+      <p class="hint" data-morph-enter style="--d:.3"><b>課ごと動くので、課長と同僚は今と同じです。</b>変わるのは、課の上にいる人（部長 → チームリーダー）と席。</p>
+      <div class="legend" data-morph-enter style="--d:.35"><span><i class="l1"></i>営業部</span><span><i class="l2"></i>開発部</span><span><i class="l3"></i>サポート部</span></div>
+
+      <div class="panels" data-morph-enter style="--d:.2">
+      <div class="pn" data-panel="k1"><div class="to"><span class="from">製造営業課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>田中 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・A島 <small>いまの隣の島</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div class="on">5階 東　製造業<i class="pin" style="left:18px"></i></div><div>5階 西　小売・流通</div><div>4階　公共</div></div></div>
+      <div class="pn" data-panel="k2" hidden><div class="to"><span class="from">流通営業課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>森 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・A島</dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div>5階 東　製造業</div><div class="on">5階 西　小売・流通<i class="pin" style="left:18px"></i></div><div>4階　公共</div></div></div>
+      <div class="pn" data-panel="k3" hidden><div class="to"><span class="from">公共営業課 →</span><span class="t"><em>公共</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>石川 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・A島 <small>5階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div>5階 東　製造業</div><div>5階 西　小売・流通</div><div class="on">4階　公共<i class="pin" style="left:18px"></i></div></div></div>
+      <div class="pn" data-panel="k4" hidden><div class="to"><span class="from">工場開発課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>吉村 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・B島 <small>4階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div class="on">5階 東　製造業<i class="pin" style="left:52px"></i></div><div>5階 西　小売・流通</div><div>4階　公共</div></div></div>
+      <div class="pn" data-panel="k5" hidden><div class="to"><span class="from">店舗開発課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>佐野 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・B島 <small>4階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div>5階 東　製造業</div><div class="on">5階 西　小売・流通<i class="pin" style="left:52px"></i></div><div>4階　公共</div></div></div>
+      <div class="pn" data-panel="k6" hidden><div class="to"><span class="from">行政開発課 →</span><span class="t"><em>公共</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>今井 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・B島 <small>今と同じ階</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div>5階 東　製造業</div><div>5階 西　小売・流通</div><div class="on">4階　公共<i class="pin" style="left:52px"></i></div></div></div>
+      <div class="pn" data-panel="k7" hidden><div class="to"><span class="from">工場保守課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>野口 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div class="on">5階 東　製造業<i class="pin" style="left:86px"></i></div><div>5階 西　小売・流通</div><div>4階　公共</div></div></div>
+      <div class="pn" data-panel="k8" hidden><div class="to"><span class="from">店舗保守課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>平田 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div>5階 東　製造業</div><div class="on">5階 西　小売・流通<i class="pin" style="left:86px"></i></div><div>4階　公共</div></div></div>
+      <div class="pn" data-panel="k9" hidden><div class="to"><span class="from">窓口支援課 →</span><span class="t"><em>公共</em>チームへ</span></div>
+        <dl><dt>課長</dt><dd>川口 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div>5階 東　製造業</div><div>5階 西　小売・流通</div><div class="on">4階　公共<i class="pin" style="left:86px"></i></div></div></div>
+      </div>
+    </div>
+    <div class="foot"><span>席の配置は2月末に確定します（数字・人名は架空のサンプルです）</span><span>4 ／ 7</span></div>
+    <aside class="notes">会場で「自分の課を押してみてください」と呼びかける（配った URL でも同じ画面が開ける）。最初は例の店舗開発課が選ばれている。どの課を押しても「課長：変わらない」が出ることを強調する。</aside>
+  </section>
+
+  <!-- 5 変わる・変わらない -->
+  <section class="slide s-keep" data-title="変わること・変わらないこと">
+    <div class="kicker"><i>四</i>変わること・変わらないこと</div>
+    <div class="emb" style="left:1150px;top:44px;height:31px"><div class="plate" data-morph="t1"></div></div>
+    <div class="emb" style="left:1168px;top:50px;height:25px"><div class="plate" data-morph="t2" style="background:var(--nezu)"></div></div>
+    <div class="emb" style="left:1186px;top:57px;height:18px"><div class="plate" data-morph="t3" style="background:var(--kinari);border:1.5px solid var(--sumi)"></div></div>
+    <h2>給与・評価・勤務地は<em>変わらない</em>。<br>変わるのは、課の上の組み方と席だけ。</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>変わらない<small>4月以降も今のまま</small></h3>
+        <div class="it step"><b>給与・等級</b><span>そのまま。組み替えを理由に下がることはない。</span></div>
+        <div class="it step"><b>課長・同僚</b><span>課ごと動くので、毎日一緒に働く人は同じ。</span></div>
+        <div class="it step"><b>勤務地</b><span>同じビルの中で、階と島が変わるだけ。</span></div>
+        <div class="it step"><b>担当のお客さま</b><span>今の担当を続ける。引き継ぎは発生しない。</span></div>
+      </div>
+      <div class="col chg">
+        <h3>変わる<small>4月1日から</small></h3>
+        <div class="it step"><b>課の上の人</b><span>部長ではなく、チームリーダーに報告する。</span></div>
+        <div class="it step"><b>席</b><span>3月28日（土）に業者が運ぶ。私物は箱に。</span></div>
+        <div class="it step"><b>週の定例</b><span>部の会議がなくなり、チームの朝会（月・木）に。</span></div>
+        <div class="it step"><b>相談の窓口</b><span>お客さまからの相談は、チームで1つの窓口に。</span></div>
+      </div>
+    </div>
+    <div class="kp">
+      <div><div class="c">課長が変わる人</div><div class="v z"><span data-count="0">0</span><small>名</small></div></div>
+      <div><div class="c">勤務地が変わる人</div><div class="v z"><span data-count="0">0</span><small>名</small></div></div>
+      <div><div class="c">席が変わる人</div><div class="v"><span data-count="132">132</span><small>名 ／ 186名</small></div></div>
+      <details class="why float up"><summary>今年度の評価は誰がするのか</summary><div class="body">2026年度（3月まで）の評価は、今の部長と課長が行う。4月からの目標は、4月中にチームリーダー・課長・本人の3人で決める。評価の基準そのものは変えない。</div></details>
+    </div>
+    <div class="foot"><span>数字は架空のサンプルです</span><span>5 ／ 7</span></div>
+    <aside class="notes">→で1行ずつ出す。左の「変わらない」を先に全部出してから、右の「変わる」へ。下の0名・0名を読み上げる。評価の質問は必ず出るので、根拠を開いて答える。</aside>
+  </section>
+
+  <!-- 6 人数の配分 -->
+  <section class="slide s-calc" data-title="チームの人数">
+    <div class="kicker"><i>五</i>チームの人数　動かせます</div>
+    <div class="corner">186名を案件数で分ける</div>
+    <h2>人数は、お客さまの案件数に合わせて配る。<br>今年の見込みなら<em>78・62・46名</em>。</h2>
+    <div class="calc" data-calc data-let="s = m + r + g; pm = 186 * m / s; pr = 186 * r / s; pg = 186 * g / s; per = s / 186">
+      <div class="ctl">
+        <div class="field"><label>製造業の案件（年） <b data-show="m" data-unit="件"></b></label><input type="range" name="m" min="100" max="800" step="5" value="420"></div>
+        <div class="field"><label>小売・流通の案件（年） <b data-show="r" data-unit="件"></b></label><input type="range" name="r" min="100" max="800" step="5" value="335"></div>
+        <div class="field"><label>公共の案件（年） <b data-show="g" data-unit="件"></b></label><input type="range" name="g" min="100" max="800" step="5" value="245"></div>
+        <p class="tot">案件の合計 <b data-out="s" data-format="int"></b> 件 ／ 1人あたり <b data-out="per" data-format="dec1"></b> 件<br>4月は、課の人数を崩さずに端数を合わせる。</p>
+        <details class="why float up"><summary>配り方のきまり</summary><div class="body">チームの人数 ＝ 186名 × そのチームの案件 ÷ 全体の案件。毎年10月に翌年度の見込みで見直し、課ごと動かして合わせる（1人ずつの異動はしない）。</div></details>
+      </div>
+      <div class="bars">
+        <div class="base"></div>
+        <div class="bar b1" style="left:20px;--h:var(--pm)"><div class="plate" data-morph="t1"></div></div>
+        <div class="bar b2" style="left:240px;--h:var(--pr)"><div class="plate" data-morph="t2"></div></div>
+        <div class="bar b3" style="left:460px;--h:var(--pg)"><div class="plate" data-morph="t3"></div></div>
+        <div class="val" style="left:20px;--h:var(--pm)"><span data-out="pm" data-format="int"></span><small>名</small></div>
+        <div class="val" style="left:240px;--h:var(--pr)"><span data-out="pr" data-format="int"></span><small>名</small></div>
+        <div class="val" style="left:460px;--h:var(--pg)"><span data-out="pg" data-format="int"></span><small>名</small></div>
+        <div class="nm2" style="left:20px">製造業</div><div class="nm2" style="left:240px">小売・流通</div><div class="nm2" style="left:460px">公共</div>
+        <div class="per" style="left:20px">8席の島 <b data-out="ceil(pm / 8)" data-format="int"></b></div>
+        <div class="per" style="left:240px">8席の島 <b data-out="ceil(pr / 8)" data-format="int"></b></div>
+        <div class="per" style="left:460px">8席の島 <b data-out="ceil(pg / 8)" data-format="int"></b></div>
+      </div>
+    </div>
+    <div class="foot"><span>島＝8席ひとまとまり（数字は架空のサンプルです）</span><span>6 ／ 7</span></div>
+    <aside class="notes">「なぜこの人数なのか」への答え。公共の案件を増やしてみせて、柱が伸びるのを見せる。1人ずつ動かすのではなく、毎年10月に課ごと見直すことを添える。</aside>
+  </section>
+
+  <!-- 7 日程と相談先 -->
+  <section class="slide s-end" data-title="これからの日程">
+    <div class="kicker"><i>六</i>これからの日程</div>
+    <div class="corner">SAMPLE JOHO SYSTEM ／ 人事部</div>
+    <h2>4月1日までの流れ。わからないことは<br><em>2月14日まで</em>に、遠慮なく聞いてください。</h2>
+    <div class="tl">
+      <svg class="lines" viewBox="0 0 1120 220" style="width:1120px;height:220px" aria-hidden="true"><path class="draw" d="M7 65H1100"/></svg>
+      <div class="pt step" style="left:0"><div class="dt">1.20<small>今日</small></div><i class="dot"></i><h3>全社説明会</h3><p>行き先は、画面の「あなたの行き先」でいつでも見られる。</p></div>
+      <div class="pt step" style="left:290px"><div class="dt">2.03<small>〜2.14</small></div><i class="dot"></i><h3>課長との面談</h3><p>1人15分。気になることを先に聞いておく。</p></div>
+      <div class="pt step" style="left:580px"><div class="dt">3.28<small>土</small></div><i class="dot"></i><h3>席の引っ越し</h3><p>金曜の夕方までに私物を箱へ。PCはそのまま。</p></div>
+      <div class="pt step key" style="left:870px"><div class="dt">4.01<small>水</small></div><i class="dot"></i><h3>新しいチームで始まる</h3><p>初日の朝会は9時半、チームごとに。</p></div>
+    </div>
+    <div class="ask">
+      <div><div class="h">聞きたいことは、<br>ここへ</div></div>
+      <div><div class="k">まず</div><div class="v">自分の課長<small>2月の面談で</small></div></div>
+      <div><div class="k">名前を出さずに</div><div class="v">質問フォーム<small>回答は毎週金曜にまとめて公開</small></div></div>
+      <div><div class="k">直接</div><div class="v">人事部 組織変更窓口<small>内線 2400（平日 9〜18時）</small></div></div>
+    </div>
+    <div class="foot"><span>社名・人名・数字はすべて架空のサンプルです</span><span>7 ／ 7</span></div>
+    <aside class="notes">→で日程を1つずつ出し、最後の4月1日で止める。質問の出し方は3つあり、名前を出さなくてもよいことを必ず言う。締めは「今日わからなかったことは、今日のうちにフォームへ」。</aside>
+  </section>
+
+</main>

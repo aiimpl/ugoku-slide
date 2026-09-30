@@ -76,6 +76,16 @@
       cx = xAt(from + (to - from) * e); place();
     });
   };
+  // 立体（data-orbit）をつかんで dx, dy だけ回す
+  V.orbit = async (sel, dx, dy, dur = 1) => {
+    const el = document.querySelector(sel);
+    const r = el.getBoundingClientRect(), x0 = r.left + r.width / 2, y0 = r.top + r.height / 2;
+    const ev = (type, x, y) => el.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: y, bubbles: true, pointerId: 1, isPrimary: true }));
+    await V.move([x0, y0], 0.3);
+    ev("pointerdown", x0, y0);
+    await tween(dur, e => { cx = x0 + dx * e; cy = y0 + dy * e; place(); ev("pointermove", cx, cy); });
+    ev("pointerup", cx, cy);
+  };
   V.key = k => document.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
   V.type = async (sel, text, dur) => {
     const el = document.querySelector(sel);
