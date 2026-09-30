@@ -72,10 +72,10 @@ p{font-size:20px;line-height:1.85}
 .panel .hd b{font:italic 400 52px/1 var(--serif)}
 .panel .hd span{font-size:22px;font-weight:700}
 .panel ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
-.panel li{font-size:23px;line-height:1.6;padding:15px 0 15px 36px;position:relative;border-bottom:1px solid var(--line)}
+.panel li{font-size:23px;line-height:1.6;padding:10px 0 10px 36px;position:relative;border-bottom:1px solid var(--line)}
 .panel li:last-child{border-bottom:0}
-.panel.ok li::before{content:"";position:absolute;left:2px;top:25px;width:14px;height:7px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
-.panel.ng li::before,.panel.ng li::after{content:"";position:absolute;left:2px;top:30px;width:16px;height:2px;background:var(--bad);transform:rotate(45deg)}
+.panel.ok li::before{content:"";position:absolute;left:2px;top:20px;width:14px;height:7px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
+.panel.ng li::before,.panel.ng li::after{content:"";position:absolute;left:2px;top:25px;width:16px;height:2px;background:var(--bad);transform:rotate(45deg)}
 .panel.ng li::after{transform:rotate(-45deg)}
 .panel.ok .hd b{color:var(--accent)}.panel.ng .hd b{color:var(--bad)}
 details.why{background:rgb(255 255 255 / .6);border:1px solid var(--line);border-radius:14px}
@@ -168,7 +168,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
       </div>
       <div class="panel ng"><div class="hd"><b>Don't</b><span>だめなこと</span></div>
         <ul><li>お客様の名前や連絡先を入れる</li><li>AIの答えをそのまま社外に出す</li><li>採用・評価の判断をまかせる</li><li>個人のアカウントで仕事に使う</li></ul>
-        <details class="why float" style="margin-top:10px"><summary>なぜ個人のアカウントはだめ？</summary><div class="body">個人向けの契約では、入力した内容が学習に使われる設定のことがある。会社の環境は、学習に使われない契約にしている。</div></details>
+        <details class="why" style="margin-top:6px"><summary>なぜ個人のアカウントはだめ？</summary><div class="body">個人向けの契約は、入力が学習に使われうる。</div></details>
       </div>
     </div>
     <aside class="notes">「だめなこと」の4つ目が、いちばん守られていない。理由を開いて説明する。</aside>
@@ -204,10 +204,10 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         <div class="field"><label>1人が議事録に使う時間（週） <b data-show="hours" data-format="dec1" data-unit="時間"></b></label><input type="range" name="hours" min="0.5" max="6" step="0.5" value="2"></div>
         <div class="field"><label>下書きで減らせる割合 <b data-show="cut" data-unit="%"></b></label><input type="range" name="cut" min="10" max="80" step="5" value="50"></div>
         <div class="field"><label>1時間あたりの人件費 <b data-show="wage" data-format="yen"></b></label><input type="range" name="wage" min="2000" max="8000" step="100" value="4200"></div>
-        <details class="why"><summary>計算のしかた</summary><div class="body">年に浮く時間 ＝ 人数 × 週の時間 × 減らせる割合 × 48週。<br>人件費に直すと ＝ 年に浮く時間 × 時給。</div></details>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">年に浮く時間 ＝ 人数 × 週の時間 × 減らせる割合 × 48週。<br>人件費に直すと ＝ 年に浮く時間 × 時給。</div></details>
       </div>
       <div>
-        <p style="font:italic 400 26px var(--serif);color:var(--accent);margin:0">Hours returned per year</p>
+        <p style="font:italic 400 24px var(--serif);color:var(--accent);margin:0">Hours returned per year</p>
         <div class="big-out"><span data-out="yearH"></span><small>時間</small></div>
         <div class="pair">
           <div><span>人件費に直すと</span><b data-out="money" data-format="man"></b></div>

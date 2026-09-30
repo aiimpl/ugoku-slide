@@ -67,6 +67,11 @@ https://aiimpl.github.io/ugoku-slide/   ライセンス：MIT（自由に使い�
   .big .card .grid .mark .step .draw .num .kpi .lead .pill .foot などエンジンの class 名は、別の意味で使わない。
 
 ■ 操作  → / Space 次へ  ← 戻る  F 全画面  O 一覧  N メモ  P 発表者画面  B 暗転  ? 操作一覧
+        数字 そのページへ（12 と打つと12枚目）  D 自動で見せる  E 囲んで直す指示を作る
+■ 自動デモ（D）  ページを送りながら、各ページで操作を1つ見せ、最後に一覧で止まる。何か押すと止まる
+                 見せる操作を決めるときは、その要素に data-demo="1"（番号順）
+■ 囲んで直す（E）  直したい所をドラッグで囲み、どう直すかを書く →「指示をコピー」→ Claude に貼る
+■ 静止表示       ファイル名のあとに ?static を付けて開くと、動きを止め、→ で出す部分も全部出す
 ■ PDF   ブラウザで印刷（Ctrl/⌘+P）→「PDFに保存」。1ページ1枚、補足は開いた状態で出る。
 
 ■ AI（Claude など）に直してもらうとき
@@ -132,6 +137,8 @@ button,input,select{font:inherit;color:inherit}
 .slide.active > :nth-child(5){animation-delay:.24s!important}
 .slide.active > :nth-child(n+6){animation-delay:.3s!important}
 @keyframes ugk-enter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+/* 文の中の要素も変形で動けるように（行内の要素には transform が効かない） */
+:is(span,b,strong,em,i,small,a)[data-morph]{display:inline-block}
 /* 変形してつながる要素（と、それを包む箱）は、ふわっと出る動きを付けない */
 .deck[data-transition=morph] .slide.active > [data-morph],
 .deck[data-transition=morph] .slide.active > :has([data-morph]){animation:none!important}
@@ -339,6 +346,33 @@ body.help .ugk-help{display:grid}
 body.black .deck{opacity:0}
 .deck{transition:opacity .3s}
 
+/* ---------- 自動デモ（D）のカーソル ---------- */
+.ugk-cursor{position:absolute;left:0;top:0;z-index:15;pointer-events:none;opacity:0;margin:-4px 0 0 -4px;
+  transition:transform .5s cubic-bezier(.3,.7,.2,1),opacity .3s;filter:drop-shadow(0 3px 6px rgb(0 0 0 / .35))}
+body.demo .ugk-cursor{opacity:1}
+.ugk-cursor.tap svg{transform:scale(.85)}
+body.demo .ugk-hud{opacity:0!important}
+
+/* ---------- 囲んで直す（E） ---------- */
+.ugk-mark{position:absolute;inset:0;z-index:14;display:none;cursor:crosshair;background:rgb(255 90 54 / .04)}
+body.marking .ugk-mark{display:block}
+.ugk-mark .box{position:absolute;border:3px solid #ff5a36;border-radius:4px;background:rgb(255 90 54 / .08)}
+.ugk-mark .box i{position:absolute;left:-3px;top:-28px;padding:2px 9px;border-radius:6px;background:#ff5a36;color:#fff;font:700 14px/1.5 system-ui,sans-serif;font-style:normal}
+.ugk-mark .box.live,.ugk-mark .box.pending{border-style:dashed}
+.ugk-markpanel{position:fixed;right:16px;top:16px;z-index:25;width:320px;max-height:70vh;overflow:auto;display:none;padding:14px 16px;border-radius:12px;
+  background:rgb(20 20 24 / .94);color:#f2f2f2;font:14px/1.6 system-ui,sans-serif}
+body.marking .ugk-markpanel{display:block}
+.ugk-markpanel ol{margin:8px 0;padding-left:1.4em}
+.ugk-markpanel li span{color:#ff8a6a;margin-right:6px}
+.ugk-markpanel .ask{display:flex;gap:6px;margin:8px 0}
+.ugk-markpanel input{flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid #444;background:#111;color:#fff}
+.ugk-markpanel .row{display:flex;gap:6px;flex-wrap:wrap}
+.ugk-markpanel button{border:0;border-radius:6px;padding:5px 10px;background:#33353c;color:#fff;cursor:pointer;font:inherit}
+.ugk-markpanel button[data-m=copy],.ugk-markpanel .ask button{background:#ff5a36}
+
+/* ---------- 静止表示（?static）：動きを止める ---------- */
+body.static *,body.static *::before,body.static *::after{animation:none!important;transition:none!important}
+
 /* ---------- 一覧（O キー） ---------- */
 .deck.overview{background:var(--frame)}
 .deck.overview .slide{opacity:1!important;visibility:visible!important;width:1280px;height:720px;inset:auto;left:0;top:0;transform-origin:0 0!important;cursor:pointer;
@@ -346,6 +380,7 @@ body.black .deck{opacity:0}
 .deck.overview .slide.active{outline:6px solid var(--accent)}
 .deck.overview .slide:hover{outline-color:var(--muted)}
 .deck.overview .slide *{pointer-events:none;animation:none!important}
+.deck.overview .ugk-cursor,.deck.overview .ugk-mark{display:none}
 .deck.overview .step{opacity:1;transform:none}
 
 @media (prefers-reduced-motion:reduce){
@@ -365,7 +400,7 @@ body.black .deck{opacity:0}
   .step{opacity:1!important;transform:none!important}
   :is(path,line,polyline,polygon,circle,ellipse,rect).draw{stroke-dashoffset:0!important}
   .sheet-pad{display:none}
-  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast{display:none!important}
+  .ugk-hud,.ugk-bar,.ugk-notes,.ugk-help,.ugk-toast,.ugk-cursor,.ugk-mark,.ugk-markpanel{display:none!important}
 }
 /* ==== ugoku-slide engine:css END ==== */
 </style>
@@ -398,7 +433,7 @@ h2{font-size:36px;line-height:1.4;margin-bottom:0}
 h1 em,h2 em{font-style:normal;color:var(--accent)}
 .num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
 .lead{font-size:20px;line-height:1.8;color:var(--muted)}
-.foot{font-size:13px;color:#7a8093;display:flex;justify-content:space-between}
+.foot{font-size:13px;color:#666c80;display:flex;justify-content:space-between}
 details.why{border:0;background:var(--surface);box-shadow:var(--sh-1);border-radius:14px}
 details.why>summary{font-size:16px}
 details.why>.body{font-size:16px}
@@ -436,31 +471,36 @@ details.why>.body{font-size:16px}
 .toast i{width:30px;height:30px;border-radius:50%;background:#e3f5ee;display:grid;place-items:center}
 .toast i::after{content:"";width:10px;height:5px;border-left:2.5px solid var(--good);border-bottom:2.5px solid var(--good);transform:rotate(-45deg) translate(1px,-1px)}
 .toast b{display:block;font-size:16px}
-.chipcard{position:absolute;left:-40px;bottom:0;padding:16px 20px;border-radius:18px;background:var(--surface);box-shadow:var(--sh-2);width:250px}
+.chipcard{position:absolute;left:-40px;bottom:0;padding:16px 20px;width:250px}
+.chipcard .plate{position:absolute;inset:0;border-radius:18px;background:var(--surface);box-shadow:var(--sh-2)}
+.chipcard>*:not(.plate){position:relative}
 .chipcard .k{font-size:14px;color:var(--muted)}
 .chipcard .v{font-family:var(--font-num);font-size:32px;font-weight:700;letter-spacing:-.02em}
 .chipcard .v small{font-family:var(--font);font-size:15px;color:var(--muted);font-weight:500;margin-left:4px}
-.chipcard .v s{color:#a3a8b8;font-size:20px;margin-right:8px;text-decoration-thickness:1.5px}
+.chipcard .v s{color:#868c9e;font-size:20px;margin-right:8px;text-decoration-thickness:1.5px}
 
 /* ---------- 2 いまの課題 ---------- */
-.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:34px}
-.pain{background:var(--surface);border-radius:var(--radius);box-shadow:var(--sh-1);padding:30px 30px 32px}
+.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px}
+.pain{position:relative;padding:30px 30px 32px}
+.pain .plate{position:absolute;inset:0;border-radius:var(--radius);background:var(--surface);box-shadow:var(--sh-1)}
+.pain>*:not(.plate){position:relative}
 .pain .v{font-family:var(--font-num);font-size:64px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .pain .v small{font-family:var(--font);font-size:20px;font-weight:700;margin-left:4px;letter-spacing:0}
 .pain .k{font-size:18px;font-weight:700;margin:14px 0 6px}
 .pain p{font-size:18px;line-height:1.7;color:var(--muted);margin:0}
 .pain.hot .v{color:var(--accent)}
-.flowline{margin-top:26px;display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto;align-items:center;gap:14px;padding:20px 26px;border-radius:var(--radius);background:rgb(255 255 255 / .6);border:1px dashed #cdd3e6}
+.flowline{margin-top:18px;display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto;align-items:center;gap:14px;padding:20px 26px;border-radius:var(--radius);background:rgb(255 255 255 / .6);border:1px dashed #cdd3e6}
 .flowline .n{font-size:17px;font-weight:700;white-space:nowrap}
 .flowline .n small{display:block;font-size:14px;color:var(--muted);font-weight:500}
 .flowline .n.x{color:var(--accent)}
 .flowline .a{height:1px;background:#c9cfe2;position:relative}
 .flowline .a::after{content:"";position:absolute;right:0;top:-4px;border-left:7px solid #c9cfe2;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
-.s-pain .why{margin-top:18px;max-width:640px}
+.s-pain .why{margin-top:14px;max-width:640px}
 
 /* ---------- 3 プランを選ぶ（触る） ---------- */
 .s-price .grid3{position:absolute;left:72px;right:72px;top:176px;bottom:42px;display:grid;grid-template-columns:300px 1fr;gap:26px}
-.panel{background:rgb(255 255 255 / .72);border-radius:22px;box-shadow:var(--sh-1);padding:24px 24px 18px;align-self:end}
+.panel{position:relative;padding:24px 24px 18px;align-self:end}
+.panel::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:22px;background:rgb(255 255 255 / .72);box-shadow:var(--sh-1)}
 .panel .t{font-size:15px;color:var(--muted);font-weight:500}
 .people{display:flex;align-items:baseline;gap:6px;margin:4px 0 8px}
 .people b{font-family:var(--font-num);font-size:54px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
@@ -470,7 +510,7 @@ details.why>.body{font-size:16px}
 .s-price input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 1px rgb(18 24 60 / .08),0 4px 10px rgb(18 24 60 / .18)}
 .s-price input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:#e1e5f2}
 .s-price input[type=range]::-moz-range-progress{height:8px;border-radius:99px;background:var(--accent)}
-.scale{display:flex;justify-content:space-between;font-family:var(--font-num);font-size:13px;color:#8a90a2;margin-top:2px}
+.scale{display:flex;justify-content:space-between;font-family:var(--font-num);font-size:13px;color:#666c80;margin-top:2px}
 .opts{margin-top:14px;border-top:1px solid var(--line)}
 .opt{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
 .opt:last-child{border-bottom:0}
@@ -502,11 +542,11 @@ details.why>.body{font-size:16px}
 .plan ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:7px;font-size:16px}
 .plan li{display:flex;align-items:center;gap:8px}
 .plan li::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;background:var(--tint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.2l2.6 2.6L13 6.4' fill='none' stroke='%233552f2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
-.plan li.no{color:#9aa0b1}
+.plan li.no{color:#6c7286}
 .plan li.no::before{background:#f0f1f5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M6 9h6' stroke='%23a0a6b6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/18px no-repeat}
-.plan li.no em{font-style:normal;font-family:var(--font-num);font-size:13px;margin-left:auto;color:#8a90a2}
+.plan li.no em{font-style:normal;font-family:var(--font-num);font-size:13px;margin-left:auto;color:#6c7286}
 .s-price h2 .bn{color:var(--accent)}
-.s-price .note{position:absolute;right:72px;bottom:14px;font-size:13px;color:#7a8093}
+.s-price .note{position:absolute;right:72px;bottom:14px;font-size:13px;color:#666c80}
 
 /* ---------- 4 見積書 ---------- */
 .quote{position:absolute;left:72px;top:172px;width:640px;height:520px}
@@ -533,7 +573,7 @@ details.why>.body{font-size:16px}
 .deck:not(:has(input[name=s]:checked)) .qchips .o-s,.deck:not(:has(input[name=w]:checked)) .qchips .o-w,
 .deck:not(:has(input[name=p]:checked)) .qchips .o-p,.deck:not(:has(input[name=f]:checked)) .qchips .o-f{display:none}
 .points{position:absolute;left:744px;right:72px;top:172px;display:grid;gap:14px}
-.point{background:rgb(255 255 255 / .75);border-radius:18px;box-shadow:var(--sh-1);padding:18px 22px}
+.point{background:rgb(255 255 255 / .75);border-radius:18px;box-shadow:var(--sh-1);padding:16px 22px}
 .point b{display:block;font-size:19px;margin-bottom:4px}
 .point p{font-size:16px;line-height:1.65;color:var(--muted);margin:0}
 .point .n{font-family:var(--font-num);color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.06em}
@@ -561,7 +601,7 @@ details.why>.body{font-size:16px}
 .after{display:flex;gap:36px;align-items:center;margin-top:8px;padding:18px 26px;border-radius:20px;background:var(--surface);box-shadow:var(--sh-1)}
 .after .k{font-size:17px;font-weight:700}
 .after .v{font-family:var(--font-num);font-size:40px;font-weight:800;letter-spacing:-.02em}
-.after .v s{color:#a3a8b8;font-size:26px;margin-right:10px;text-decoration-thickness:2px}
+.after .v s{color:#868c9e;font-size:26px;margin-right:10px;text-decoration-thickness:2px}
 .after .v small{font-family:var(--font);font-size:17px;margin-left:4px}
 .after .v.accent{color:var(--accent)}
 .after p{font-size:16px;color:var(--muted);margin:0;flex:1}
@@ -580,9 +620,17 @@ details.why>.body{font-size:16px}
 .ans .ex div{flex:1;padding:14px 18px;border-radius:14px;background:#f5f6fa;font-size:16px;color:var(--muted)}
 .ans .ex b{display:block;font-family:var(--font-num);font-size:26px;color:var(--ink);font-weight:800}
 
+.s-faq .cur{position:absolute;right:72px;top:54px}
+.s-faq .cur .plate{border-radius:14px;background:var(--surface);box-shadow:var(--sh-1)}
+.s-faq .cur .in{position:relative;display:flex;align-items:center;gap:12px;padding:10px 20px 10px 18px;white-space:nowrap}
+.s-faq .cur .in>span{font-size:14px;color:var(--muted)}
+.s-faq .cur .in b{font-size:17px;color:var(--accent)}
+
 /* ---------- 7 締め ---------- */
 .close{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:40px}
-.dec{position:relative;background:var(--surface);border-radius:22px;box-shadow:var(--sh-2);padding:30px 32px;min-height:290px}
+.dec{position:relative;padding:30px 32px;min-height:290px}
+.dec .plate{position:absolute;inset:0;border-radius:22px;background:var(--surface);box-shadow:var(--sh-2)}
+.dec>*:not(.plate){position:relative}
 .dec .n{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--tint);color:var(--accent);font-family:var(--font-num);font-weight:800}
 .dec .k{font-size:15px;color:var(--muted);margin-top:14px}
 .dec h3{font-size:30px;margin:4px 0 10px}
@@ -602,8 +650,9 @@ details.why>.body{font-size:16px}
 /* 3ページに着いたとき：白い板だけが先に出ないよう、板も中身と同じ時間にふわっと出す */
 .deck[data-transition=morph] .s-price.active .plan .plate{animation:ugk-enter .7s var(--ease) both;animation-delay:.25s}
 .deck[data-transition=morph] .s-price.active .c-S .plate{animation-delay:.3s}
+.deck[data-transition=morph] .s-price.active .panel::before{animation:ugk-enter .7s var(--ease) both;animation-delay:.25s}
 .deck[data-transition=morph] .s-price.active .c-P .plate{animation-delay:.35s}
-@media (prefers-reduced-motion:reduce){.s-price .plan .plate{animation:none!important}.plan,.plan .plate,.plan .badge,.plan .tot,.plan .tot .v,.plan .tot .d{transition:none}}
+@media (prefers-reduced-motion:reduce){.s-price .plan .plate,.s-price .panel::before{animation:none!important}.plan,.plan .plate,.plan .badge,.plan .tot,.plan .tot .v,.plan .tot .d{transition:none}}
 </style>
 </head>
 <body>
@@ -617,7 +666,7 @@ details.why>.body{font-size:16px}
       <p class="lead">打刻・シフト・申請・給与への受け渡しを1つに。ご利用人数をうかがえれば、この場でいちばんお得なプランをお出しします。</p>
     </div>
     <div class="hero">
-      <div class="app">
+      <div class="app" data-morph-enter>
         <div class="bar"><span>10月2日（金）</span><b>物流センター 東</b></div>
         <div class="clock">08:57<small>出勤</small></div>
         <div class="who">山田 さん ・ 早番シフト 9:00–18:00</div>
@@ -625,8 +674,8 @@ details.why>.body{font-size:16px}
         <div class="week"><i style="height:62%"></i><i style="height:78%"></i><i style="height:70%"></i><i style="height:84%"></i><i class="on" style="height:40%"></i><i style="height:0"></i><i style="height:0"></i></div>
         <div class="days"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
       </div>
-      <div class="toast"><i></i><div><b>9月分の締めが完了</b>給与ソフトへ送信しました</div></div>
-      <div class="chipcard"><div class="k">月末の締め作業</div><div class="v"><s>26時間</s>4<small>時間</small></div></div>
+      <div class="toast" data-morph-enter style="--d:.15"><i></i><div><b>9月分の締めが完了</b>給与ソフトへ送信しました</div></div>
+      <div class="chipcard"><div class="plate" data-morph="close"></div><div class="k" data-morph-enter style="--d:.2">月末の締め作業</div><div class="v" data-morph-enter style="--d:.2"><s>26時間</s>4<small>時間</small></div></div>
     </div>
     <div class="to"><div><span>ご提案先</span>株式会社サンプル物流 様</div><div><span>日付</span>2026年10月2日</div><div><span>担当</span>サンプル勤怠 営業部</div></div>
     <aside class="notes">最初に「今日はこの場で見積まで出します」と言い切る。人数と、欲しい機能を2〜3聞いてから3枚目へ。</aside>
@@ -634,19 +683,19 @@ details.why>.body{font-size:16px}
 
   <section class="slide s-pain" data-title="いまの課題">
     <div class="kicker"><b>01</b> うかがった、いまの勤怠</div>
-    <h2>月末の締めに毎月<em>26時間</em>。<br>そのほとんどが、紙とExcelの突き合わせです。</h2>
+    <h2>月末の締めに毎月<em>26時間</em>。<br>そのほとんどが、紙とExcelの突き合わせ。</h2>
     <div class="pains">
-      <div class="pain hot"><div class="v num"><span data-count="26">26</span><small>時間／月</small></div><div class="k">締め作業</div><p>3拠点の紙のタイムカードを、総務の2名がExcelに打ち直している。</p></div>
-      <div class="pain"><div class="v num"><span data-count="3.1" data-format="dec1">3.1</span><small>%</small></div><div class="k">打刻の漏れと直し</div><p>毎月およそ110件。本人に確認して、手で直している。</p></div>
-      <div class="pain"><div class="v num"><span data-count="4">4</span><small>日</small></div><div class="k">給与計算に渡すまで</div><p>締め日から給与ソフトへ入れるまで。残業の集計がいちばん重い。</p></div>
+      <div class="pain hot"><div class="plate" data-morph="close"></div><div class="v num" data-morph-enter style="--d:.15"><span data-count="26">26</span><small>時間／月</small></div><div class="k" data-morph-enter style="--d:.15">締め作業</div><p data-morph-enter style="--d:.15">3拠点の紙のタイムカードを、総務の2名がExcelに打ち直している。</p></div>
+      <div class="pain" data-morph-enter style="--d:.08"><div class="plate"></div><div class="v num"><span data-count="3.1" data-format="dec1">3.1</span><small>%</small></div><div class="k">打刻の漏れと直し</div><p>毎月およそ110件。本人に確認して、手で直している。</p></div>
+      <div class="pain" data-morph-enter style="--d:.16"><div class="plate"></div><div class="v num"><span data-count="4">4</span><small>日</small></div><div class="k">給与計算に渡すまで</div><p>締め日から給与ソフトへ入れるまで。残業の集計がいちばん重い。</p></div>
     </div>
     <div class="flowline">
-      <div class="n">紙のタイムカード<small>3拠点・120名</small></div><div class="a"></div>
+      <div class="n">紙のタイムカード<small>3拠点・<span data-morph="ppl">120</span>名</small></div><div class="a"></div>
       <div class="n x">Excelへ打ち直し<small class="step">ここをなくす</small></div><div class="a"></div>
       <div class="n x">残業・有給の集計<small class="step">ここを自動に</small></div><div class="a"></div>
       <div class="n">給与ソフト<small>いまは手で入力</small></div>
     </div>
-    <details class="why"><summary>数字のうかがい方</summary><div class="body">9月30日の打ち合わせで、総務課の方にうかがった8月分の実績です。打刻の漏れは、タイムカードの手書き修正の件数を数えたもの。</div></details>
+    <details class="why"><summary>数字のうかがい方</summary><div class="body">9月30日に総務課でうかがった8月分の実績。打刻の漏れは手書き修正の件数。</div></details>
     <div class="foot"><span>数字は架空のサンプルです</span><span>02</span></div>
   </section>
 
@@ -663,12 +712,12 @@ details.why>.body{font-size:16px}
     <div class="kicker"><b>02</b> プランとお見積り</div>
     <h2><span class="num" data-show="n"></span>名・この機能なら、<span class="bn"><span data-global-out="nm"></span></span>がいちばんお得です。</h2>
     <div class="grid3">
-      <div class="panel" data-morph-enter>
-        <div class="t">ご利用人数</div>
-        <div class="people"><b data-show="n"></b><span>名</span></div>
-        <input type="range" name="n" min="10" max="1000" step="10" value="120" aria-label="ご利用人数">
-        <div class="scale"><span>10</span><span>500</span><span>1,000</span></div>
-        <div class="opts">
+      <div class="panel">
+        <div class="t" data-morph-enter>ご利用人数</div>
+        <div class="people"><b data-show="n" data-morph="ppl"></b><span data-morph-enter>名</span></div>
+        <input data-morph-enter type="range" name="n" min="10" max="1000" step="10" value="120" aria-label="ご利用人数">
+        <div class="scale" data-morph-enter><span>10</span><span>500</span><span>1,000</span></div>
+        <div class="opts" data-morph-enter>
           <label class="opt"><b>シフト管理</b><small>ライトは +¥150／人</small><input type="checkbox" name="s" checked></label>
           <label class="opt"><b>申請ワークフロー</b><small>ライトは +¥150／人</small><input type="checkbox" name="w" checked></label>
           <label class="opt"><b>給与ソフト連携</b><small>プロ以外は +¥20,000／月</small><input type="checkbox" name="p"></label>
@@ -705,7 +754,7 @@ details.why>.body{font-size:16px}
 
   <section class="slide s-quote" data-title="お見積り">
     <div class="kicker"><b>03</b> お見積書</div>
-    <h2>この内容で、月額<em class="num" data-global-out="G" data-format="yen"></em>（税込）です。</h2>
+    <h2>この内容で、月額<em class="num" data-global-out="G" data-format="yen"></em>（税込）。</h2>
     <div class="quote">
       <div class="plate pick p-L" data-morph="plan-L"></div><div class="plate pick p-S" data-morph="plan-S"></div><div class="plate pick p-P" data-morph="plan-P"></div>
       <div class="in" data-morph-enter style="--d:.15">
@@ -723,10 +772,10 @@ details.why>.body{font-size:16px}
       </div>
     </div>
     <div class="points">
-      <div class="point"><div class="n">POINT 1</div><b>初期費用は0円</b><p>10月中のお申込みで、設定の代行（通常 ¥100,000）も含みます。</p></div>
-      <div class="point"><div class="n">POINT 2</div><b>人数は月ごとに増減できる</b><p>その月の最大人数で請求。繁忙期だけ増えても、翌月は戻ります。</p></div>
-      <div class="point step"><div class="n">POINT 3</div><b>最初の1か月は無料</b><p>紙のタイムカードと並べて試し、合わなければ費用はかかりません。</p></div>
-      <details class="why"><summary>金額の計算</summary><div class="body">基本料金 ＝ 1人あたりの料金 × 人数（最低料金に満たないときは最低料金）。オプションは、選んだ機能のうちプランに含まれないものだけを足します。</div></details>
+      <div class="point"><div class="n">POINT 1</div><b>初期費用は0円</b><p>10月中のお申込みで、設定の代行（¥100,000）も無料。</p></div>
+      <div class="point"><div class="n">POINT 2</div><b>人数は月ごとに増減できる</b><p>その月の最大人数で請求。翌月には戻ります。</p></div>
+      <div class="point step"><div class="n">POINT 3</div><b>最初の1か月は無料</b><p>紙と並べて試し、合わなければ費用はゼロ。</p></div>
+      <details class="why"><summary>金額の計算</summary><div class="body">基本料金 ＝ 1人あたりの料金 × 人数（最低料金まで）。オプションは、プランに含まれない機能だけを足します。</div></details>
     </div>
     <aside class="notes">前のページで浮き上がったカードが、そのまま見積書になる。金額は前のページの条件から自動で入る。戻ってスイッチを変えれば、見積書も変わる。</aside>
   </section>
@@ -767,15 +816,16 @@ details.why>.body{font-size:16px}
       <div class="ans" data-panel="move"><div class="q">Q3 いまのデータは？</div><h3>Excelの従業員名簿とシフト表を<br>そのまま取り込みます。</h3><p>過去の勤怠は、直近3か月分を無料で移します。形がそろっていなくても、こちらで整えてからお渡しします。</p></div>
       <div class="ans" data-panel="stop"><div class="q">Q4 やめるときは？</div><h3>最初の1か月は無料で、<br>いつでもやめられます。</h3><p>2か月目以降は、契約期間の終わりで解約できます。勤怠のデータはCSVで全部お渡しします。</p></div>
     </div>
+    <div class="cur"><div class="plate pick p-L" data-morph="plan-L"></div><div class="plate pick p-S" data-morph="plan-S"></div><div class="plate pick p-P" data-morph="plan-P"></div><div class="in" data-morph-enter style="--d:.2"><span>いまのお見積り</span><b><span data-global-out="nm"></span>・<span data-global-out="n"></span>名</b></div></div>
     <div class="foot"><span>料金・条件は架空のサンプルです</span><span>06</span></div>
   </section>
 
   <section class="slide s-end" data-title="決めていただきたいこと">
     <div class="kicker"><b>06</b> 本日のお願い</div>
-    <h2>決めていただきたいのは、<em>プランと開始日</em>の2つです。</h2>
+    <h2>決めていただきたいのは、<em>プランと開始日</em>の2つ。</h2>
     <div class="close">
-      <div class="dec"><span class="n">1</span><div class="k">プラン</div><h3><span data-global-out="nm"></span>・<span class="" data-global-out="n"></span>名</h3><div class="v num" data-global-out="G" data-format="yen"><small></small></div><p>月額・税込。3ページ目の条件から出した金額です。</p><p class="perk step">最初の1か月は無料。合わなければ費用はかかりません</p></div>
-      <div class="dec"><span class="n">2</span><div class="k">開始日</div><h3>11月1日から本番</h3><div class="v num">10/9<small>までにお申込み</small></div><p>翌週にアカウントと打刻機をお渡しし、設定を始めます。</p><p class="perk step">10月中のお申込みで、設定の代行（¥100,000）が無料</p></div>
+      <div class="dec"><div class="plate pick p-L" data-morph="plan-L"></div><div class="plate pick p-S" data-morph="plan-S"></div><div class="plate pick p-P" data-morph="plan-P"></div><span class="n" data-morph-enter style="--d:.25">1</span><div class="k" data-morph-enter style="--d:.25">プラン</div><h3 data-morph-enter style="--d:.25"><span data-global-out="nm"></span>・<span class="" data-global-out="n"></span>名</h3><div class="v num" data-morph-enter style="--d:.3" data-global-out="G" data-format="yen"><small></small></div><p data-morph-enter style="--d:.3">月額・税込。3ページ目の条件から出した金額です。</p><p class="perk step">最初の1か月は無料。合わなければ費用はかかりません</p></div>
+      <div class="dec" data-morph-enter style="--d:.1"><div class="plate"></div><span class="n">2</span><div class="k">開始日</div><h3>11月1日から本番</h3><div class="v num">10/9<small>までにお申込み</small></div><p>翌週にアカウントと打刻機をお渡しし、設定を始めます。</p><p class="perk step">10月中のお申込みで、設定の代行（¥100,000）が無料</p></div>
     </div>
     <div class="cta"><div><b>このまま申込書をお送りします</b><span>社内の稟議用に、見積書のPDFも本日中にお送りします。</span></div><div class="who"><b>サンプル勤怠 営業部</b><br>sales@example.jp ／ 03-0000-0000</div></div>
     <aside class="notes">金額は3枚目で決めた条件のまま出ている。「この2つだけ決めていただければ、あとはこちらで進めます」で締める。</aside>
@@ -792,9 +842,11 @@ details.why>.body{font-size:16px}
   const slides = [...deck.querySelectorAll(":scope > .slide")];
   const params = new URLSearchParams(location.search);
   const embed = params.has("embed");
+  const still = params.has("static"); // ?static：動きを止め、全部を出す
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const body = document.body;
   if (embed) body.classList.add("embed");
+  if (still) body.classList.add("static");
 
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -822,7 +874,7 @@ details.why>.body{font-size:16px}
     const from = isFinite(el._v) ? el._v : to;
     el._v = to;
     if (el.hasAttribute("data-sign")) {
-      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev" はマイナスを良いこと（緑）として色を付ける
+      const k = el.dataset.sign === "rev" ? -1 : 1; // data-sign="rev"：マイナスを緑にする
       el.classList.toggle("neg", to * k < 0);
       el.classList.toggle("pos", to * k > 0);
     }
@@ -842,7 +894,7 @@ details.why>.body{font-size:16px}
     try { return new Function("v", "with(Math){with(v){return (" + expr + ");}}"); }
     catch (e) { console.warn("式が読めません:", expr, e); return () => NaN; }
   };
-  // data-calc="global" の値は、ほかのページの data-global-out="式" と、.deck の CSS 変数でも使える
+  // data-calc="global" の値は、ほかのページ（data-global-out）でも使える
   const G = {};
   const globalOuts = [...deck.querySelectorAll("[data-global-out]")].map(el => [el, compile(el.dataset.globalOut)]);
   const updateGlobal = () => globalOuts.forEach(([el, f]) => {
@@ -868,7 +920,7 @@ details.why>.body{font-size:16px}
       const run = f => { try { return Number(f(v)); } catch (e) { return NaN; } };
       outs.forEach(([el, f]) => {
         let x; try { x = f(v); } catch (e) { x = NaN; }
-        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら、その文字を出す
+        if (typeof x === "string") el.textContent = x; else tween(el, Number(x)); // 文字を返す式なら文字を出す
       });
       bars.forEach(([el, f, m]) => {
         const r = Math.max(0, Math.min(1, run(f) / run(m)));
@@ -876,7 +928,7 @@ details.why>.body{font-size:16px}
         fill.style.width = (isFinite(r) ? r * 100 : 0) + "%";
       });
       shows.forEach(el => { el.textContent = format(el, v[el.dataset.show]); });
-      // 入力と途中の計算は CSS 変数（--名前）にも入る。図形の大きさや位置を式で動かせる
+      // 値は CSS 変数 --名前 にも入る（図形を動かせる）
       Object.keys(v).forEach(k => { if (isFinite(v[k])) box.style.setProperty("--" + k, v[k]); });
       if (box.dataset.calc === "global") {
         Object.assign(G, v);
@@ -889,7 +941,7 @@ details.why>.body{font-size:16px}
     update();
   });
   deck.addEventListener("change", e => { if (e.target.matches("select")) e.target.blur(); });
-  // スライダーをマウスで触ったあとは、矢印キーがページ送りに戻るようにする
+  // 入力を触ったあとも、矢印キーでページを送れるようにする
   deck.addEventListener("pointerup", e => {
     if (e.target.matches("input[type=range],input[type=checkbox],input[type=radio]")) setTimeout(() => e.target.blur(), 0);
     else if (e.target.closest("label") && e.target.closest("label").querySelector("input[type=checkbox],input[type=radio]")) setTimeout(() => document.activeElement && document.activeElement.blur && document.activeElement.blur(), 0);
@@ -953,8 +1005,8 @@ details.why>.body{font-size:16px}
     requestAnimationFrame(loop);
   }
 
-  /* ---------- data-sheet：表の数字を直す・Excel から貼ると、グラフと集計が作り直される ---------- */
-  // 「1,200」「▲300」「1.2億」「45件」のように、数字のうしろの単位は読み飛ばす（単位の換算はしない）
+  /* ---------- data-sheet：表を直す・貼ると、グラフと集計を作り直す ---------- */
+  // 「1,200」「▲300」「1.2億」を数にする（単位は読み飛ばす）
   const parseNum = s => {
     const t = String(s).trim().replace(/[−－―]/g, "-").replace(/^[▲△]/, "-").replace(/[,，¥￥\s]/g, "")
       .replace(/[０-９．]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
@@ -1004,6 +1056,7 @@ details.why>.body{font-size:16px}
     })()]);
     let prevVals = null, shape = "";
     const render = () => {
+    if (body.classList.contains("marking")) setTimeout(() => drawMarks());
       const d = read();
       const S = d.head.length, R = d.rows.length;
       const val = (r, s) => { const x = d.rows[r].vals[s]; return isFinite(x) ? x : 0; };
@@ -1012,7 +1065,7 @@ details.why>.body{font-size:16px}
         if (kind === "stack") { let t = 0; for (let s = 0; s < S; s++) t += Math.max(0, val(r, s)); max = Math.max(max, t); }
         else for (let s = 0; s < S; s++) { max = Math.max(max, val(r, s)); min = Math.min(min, val(r, s)); }
       }
-      // data-min で目盛りの下限を決められる（客単価のように、0から描くと平らに見えるとき）
+      // data-min：目盛りの下限
       if (kind !== "stack" && fig.dataset.min !== undefined && isFinite(Number(fig.dataset.min))) min = Math.min(Number(fig.dataset.min), ...d.rows.flatMap(r => r.vals.filter(isFinite)));
       const sc = niceScale(max * 1.02, min);
       max = sc.max; const lo = sc.min, span = max - lo, base = Math.max(lo, Math.min(0, max));
@@ -1131,7 +1184,7 @@ details.why>.body{font-size:16px}
     if (s) s.onPaste(e);
   });
 
-  /* ---------- 上に重ねて開く補足（details.why.float）：下にはみ出すなら上へ開く ---------- */
+  /* ---------- details.why.float：下にはみ出すなら上へ開く ---------- */
   deck.querySelectorAll("details.why.float").forEach(d => d.addEventListener("toggle", () => {
     if (!d.open) return;
     d.classList.remove("up");
@@ -1278,12 +1331,15 @@ details.why>.body{font-size:16px}
     <button data-a="prev" title="前へ (←)">‹</button><button data-a="next" title="次へ (→)">›</button>
     <span class="count"></span><span class="sp"></span>
     <button data-a="overview" title="一覧 (O)">一覧</button><button data-a="notes" title="メモ (N)">メモ</button>
+    <button data-a="demo" title="自動で見せる (D)">デモ</button><button data-a="mark" title="囲んで直す指示を作る (E)">直す</button>
     <button data-a="presenter" title="発表者画面 (P)">発表者</button><button data-a="full" title="全画面 (F)">⛶</button><button data-a="help" title="操作一覧 (?)">?</button>`);
   const notesBox = el("div", "ugk-notes");
   const help = el("div", "ugk-help", `<div>
     <div><kbd>→</kbd>次へ（Space / Enter でも）</div><div><kbd>←</kbd>戻る</div>
     <div><kbd>F</kbd>全画面</div><div><kbd>O</kbd>一覧（Esc で戻る）</div><div><kbd>N</kbd>発表者メモ</div>
     <div><kbd>P</kbd>発表者画面（別ウィンドウ）</div><div><kbd>B</kbd>暗転</div>
+    <div><kbd>D</kbd>自動で見せる（何か押すと止まる）</div><div><kbd>E</kbd>囲んで直す指示を作る</div>
+    <div><kbd>3</kbd><kbd>↵</kbd>数字でそのページへ</div>
     <div><kbd>⌘P</kbd>PDF に保存（1ページ1枚）</div><div><kbd>?</kbd>この一覧</div></div>`);
   const toast = el("div", "ugk-toast");
   body.append(hud, notesBox, help, toast);
@@ -1293,6 +1349,7 @@ details.why>.body{font-size:16px}
   let cur = -1, overview = false, presenter = null;
   const titleOf = s => s ? (s.dataset.title || (s.querySelector("h1,h2,.big") || {}).textContent || "").trim() : "";
   const render = () => {
+    if (body.classList.contains("marking")) setTimeout(() => drawMarks());
     slides.forEach((s, i) => {
       s.classList.toggle("active", i === cur);
       s.classList.toggle("past", i < cur);
@@ -1304,7 +1361,7 @@ details.why>.body{font-size:16px}
     notesBox.innerHTML = n ? n.innerHTML : "<span style='opacity:.6'>このスライドにはメモがありません</span>";
     drawPresenter();
   };
-  /* ---------- data-morph：同じ名前の要素が、前のページの位置・大きさ・色から、次のページへ変形してつながる ---------- */
+  /* ---------- data-morph：前後のページで同じ名前の要素を変形させてつなぐ ---------- */
   const morphMode = deck.dataset.transition === "morph";
   const MORPH_MS = 900, MORPH_EASE = "cubic-bezier(.65,0,.25,1)";
   const shownIn = (el, slide) => { for (let e = el; e && e !== slide; e = e.parentElement) if (e.classList.contains("step") && !e.classList.contains("shown")) return false; return true; };
@@ -1313,13 +1370,13 @@ details.why>.body{font-size:16px}
     const r = el.getBoundingClientRect(), s = slide.getBoundingClientRect(), k = s.width / W || 1;
     return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
   };
-  // 動きを止めたときの位置（まだ表示していないページ用。transform を無視して、置かれた場所だけを測る）
+  // 置かれた場所（transform を無視。まだ出ていないページ用）
   const layoutRect = (el, slide) => {
     let x = 0, y = 0, e = el;
     while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; const p = e.offsetParent; if (p && p !== slide && !slide.contains(p)) break; e = p; }
     return { x, y, w: el.offsetWidth, h: el.offsetHeight };
   };
-  // 見えているままの写しを作る（class に頼らず、計算済みの見た目を全部書き込む）
+  // 見えているままの写し（計算済みの見た目を書き込む）
   const snapshot = (el, a) => {
     const c = el.cloneNode(true);
     const copy = (src, dst) => {
@@ -1352,7 +1409,7 @@ details.why>.body{font-size:16px}
       const cs = getComputedStyle(o);
       const a = seenRect(o, from);
       const counting = o.hasAttribute("data-count") && el.hasAttribute("data-count");
-      // 数え直す数字は、写しを重ねず新しい方だけを動かす（二重に見えない）
+      // 数え直す数字は写しを作らない（二重に見えるため）
       const same = counting || (o.innerHTML === el.innerHTML && cs.backgroundImage === getComputedStyle(el).backgroundImage);
       pairs.push({ o, n: el, a, look: LOOK.reduce((m, k) => (m[k] = cs[k], m), {}), same,
         ghost: same ? null : snapshot(o, a), count: counting ? o._v : null });
@@ -1377,9 +1434,9 @@ details.why>.body{font-size:16px}
         if (start[k] === undefined) { start[k] = p.look[k]; end[k] = cs[k]; }
       });
       const delay = Number(p.n.dataset.morphDelay || 0);
-      p.n.style.visibility = ""; // すばやく戻ったとき、前の変形で隠したままにしない
+      p.n.style.visibility = ""; // すばやく戻ったときの隠れっぱなしを防ぐ
       p.n.getAnimations().forEach(x => x.id === "ugk-morph" && x.cancel());
-      // 後片付けは実時間ではなく、アニメーションの終わりに合わせる（ゆっくり再生しても崩れない）
+      // 後片付けはアニメーションの終わりで（ゆっくり再生でも崩れない）
       const after = (anim, fn) => anim.finished.then(fn, fn);
       if (p.same) {
         const an = p.n.animate([start, end], { duration: MORPH_MS, delay, easing: MORPH_EASE, fill: "backwards" });
@@ -1387,7 +1444,7 @@ details.why>.body{font-size:16px}
         p.o.style.visibility = "hidden";
         after(an, () => { p.o.style.visibility = ""; });
       } else {
-        // 中身や模様がちがう：前の形の写しを下に敷き、新しい方が浮かび上がってから写しを消す
+        // 中身がちがう：前の形の写しを下に敷き、新しい方が出てから消す
         const g = p.ghost;
         g.style.left = a.x + "px"; g.style.top = a.y + "px";
         to.insertBefore(g, to.firstChild);
@@ -1408,11 +1465,11 @@ details.why>.body{font-size:16px}
     i = Math.max(0, Math.min(slides.length - 1, i));
     if (i === cur) return;
     const prev = cur;
-    const canMorph = morphMode && prev !== -1 && !reduce && !overview;
+    const canMorph = morphMode && prev !== -1 && !reduce && !overview && !still;
     const pairs = canMorph ? measureMorph(slides[prev], slides[i]) : [];
     cur = i;
-    setSteps(i, atEnd ? plans[i].length : 0);
-    const skip = pairs.length ? runMorph(pairs, slides[i]) : null;
+    setSteps(i, atEnd || still ? plans[i].length : 0);
+    const skip = pairs.length && !still ? runMorph(pairs, slides[i]) : null;
     render();
     if (prev !== -1) countUp(slides[i], skip);
     const h = "#" + (i + 1);
@@ -1497,6 +1554,159 @@ details.why>.body{font-size:16px}
     d.getElementById("next").textContent = slides[cur + 1] ? "次：" + titleOf(slides[cur + 1]) : "最後のスライドです";
   }
 
+
+  /* ---------- 数字でページへ（3 → 3枚目、12 → 12枚目。Enter ですぐ） ---------- */
+  let digits = "", digitT;
+  const jump = () => { const n = parseInt(digits, 10); digits = ""; if (n) go(n - 1); };
+  const typeDigit = d => {
+    digits += d; say(`${digits} 枚目へ`);
+    clearTimeout(digitT); digitT = setTimeout(jump, 700);
+  };
+
+  /* ---------- 自動デモ（D）：各ページで操作を1つ見せ、最後は一覧 ---------- */
+  // 見せる操作：data-demo の番号順。無ければ スライダー→タブ→クイズ→立体→根拠 から1つ
+  const cursor = el("div", "ugk-cursor", `<svg viewBox="0 0 24 24" width="30" height="30"><path d="M4 2v17l4.6-4.2 3 6.6 3-1.4-2.9-6.4H18z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`);
+  deck.appendChild(cursor);
+  let demoOn = false;
+  // 待つ時間はページの時計で測る（裏のタブでは止まる。撮影でゆっくり再生しても合う）
+  const sleep = ms => new Promise(r => { const end = performance.now() + ms; const f = () => performance.now() >= end ? r() : requestAnimationFrame(f); f(); });
+  const place = (x, y) => { cursor.style.transform = `translate(${x}px,${y}px)`; };
+  const aim = async target => { // 要素の真ん中へカーソルを動かす
+    const r = target.getBoundingClientRect(), d = deck.getBoundingClientRect(), k = d.width / W;
+    place((r.left + r.width / 2 - d.left) / k, (r.top + r.height / 2 - d.top) / k);
+    await sleep(520);
+  };
+  const tap = async target => { await aim(target); cursor.classList.add("tap"); await sleep(160); cursor.classList.remove("tap"); target.click(); };
+  const sweep = async (inp, to, ms) => { // スライダーを to まで動かす
+    const from = Number(inp.value), t0 = performance.now();
+    await aim(inp);
+    while (demoOn) {
+      const k = Math.min(1, (performance.now() - t0) / ms);
+      const v = from + (to - from) * (1 - Math.pow(1 - k, 3)), step = Number(inp.step) || 1;
+      inp.value = Math.round(v / step) * step;
+      inp.dispatchEvent(new Event("input", { bubbles: true }));
+      if (k >= 1) break;
+      await sleep(16);
+    }
+  };
+  const demoPick = s => {
+    const marked = [...s.querySelectorAll("[data-demo]")].sort((a, b) => a.dataset.demo - b.dataset.demo);
+    if (marked.length) return marked;
+    const q = sel => s.querySelector(sel);
+    return [q("[data-calc] input[type=range], .rank input[type=range]") || q("[data-tabs] [data-tab]:nth-of-type(2)") ||
+      q(".quiz .choices > button[data-correct]") || q("[data-orbit]") || q("details.why > summary")].filter(Boolean);
+  };
+  const demoAct = async t => {
+    if (t.matches("input[type=range]")) {
+      const v0 = Number(t.value), hi = Number(t.max), lo = Number(t.min);
+      await sweep(t, v0 + (hi - v0) * 0.8, 1100); await sleep(500);
+      await sweep(t, v0 - (v0 - lo) * 0.5, 900); await sleep(400); await sweep(t, v0, 600);
+    } else if (t.matches("[data-orbit]")) {
+      await aim(t);
+      const o = orbits.find(x => x.box === t), ry = o.ry;
+      for (let k = 0; k <= 60 && demoOn; k++) { o.ry = ry + 90 * Math.sin(k / 60 * Math.PI); o.set(); await sleep(22); }
+    } else if (t.matches("summary")) {
+      await tap(t); await sleep(1600); if (demoOn) t.click();
+    } else { await tap(t); }
+    await sleep(900);
+  };
+  const demo = async () => {
+    if (demoOn) return stopDemo();
+    demoOn = true; body.classList.add("demo"); toggleOverview(false);
+    place(W - 80, H - 60); go(0);
+    for (let i = 0; i < slides.length && demoOn; i++) {
+      if (i) { go(i); }
+      await sleep(1300);
+      while (demoOn && done[cur] < plans[cur].length) { next(); await sleep(750); }
+      for (const t of demoPick(slides[cur])) { if (!demoOn) break; await demoAct(t); }
+    }
+    if (demoOn) toggleOverview(true);
+    stopDemo();
+  };
+  const stopDemo = () => { demoOn = false; body.classList.remove("demo"); };
+  ["keydown", "pointerdown", "wheel"].forEach(ev => addEventListener(ev, e => {
+    if (demoOn && e.isTrusted && !(ev === "keydown" && e.key.toLowerCase() === "d")) stopDemo();
+  }, true));
+
+  /* ---------- 囲んで直す（E）：スライドの上を囲むと、Claude に渡す直しの指示が作れる ---------- */
+  const markLayer = el("div", "ugk-mark");
+  const markPanel = el("div", "ugk-markpanel", `<b>直したい所をドラッグで囲む</b><ol></ol>
+    <form class="ask" hidden><input placeholder="どう直す？（例：文字を大きく）" aria-label="どう直すか"><button>追加</button></form>
+    <div class="row"><button data-m="copy">指示をコピー</button><button data-m="clear">全部消す</button><button data-m="close">閉じる</button></div>`);
+  const askForm = markPanel.querySelector(".ask"), askInput = askForm.querySelector("input");
+  let pending = null; // 囲んだけれど、まだ指示を書いていない範囲
+  deck.appendChild(markLayer); body.appendChild(markPanel);
+  const marks = [];
+  const slideXY = e => { const d = deck.getBoundingClientRect(), k = d.width / W; return [(e.clientX - d.left) / k, (e.clientY - d.top) / k]; };
+  const textsIn = (s, r) => { // 囲んだ中にある文字（先頭2つ）
+    const d = deck.getBoundingClientRect(), k = d.width / W, out = [];
+    s.querySelectorAll("*").forEach(e => {
+      if (out.length >= 2 || e.closest(".notes")) return;
+      if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
+      const b = e.getBoundingClientRect(), cx = (b.left + b.width / 2 - d.left) / k, cy = (b.top + b.height / 2 - d.top) / k;
+      if (b.width && cx >= r.x && cx <= r.x + r.w && cy >= r.y && cy <= r.y + r.h) out.push(e.textContent.trim().replace(/\s+/g, " ").slice(0, 24));
+    });
+    return out;
+  };
+  const drawMarks = () => {
+    markLayer.querySelectorAll(".box:not(.pending)").forEach(b => b.remove());
+    if (!pending) markLayer.querySelectorAll(".box.pending").forEach(b => b.remove());
+    marks.forEach((m, j) => {
+      if (m.page !== cur) return;
+      const b = el("div", "box", `<i>${j + 1}</i>`);
+      Object.assign(b.style, { left: m.x + "px", top: m.y + "px", width: m.w + "px", height: m.h + "px" });
+      markLayer.appendChild(b);
+    });
+    markPanel.querySelector("ol").innerHTML = marks.map(m => `<li><span>${m.page + 1}枚目</span>${esc(m.say || "（指示なし）")}</li>`).join("");
+  };
+  const markText = () => ["次の直しをお願いします（動くスライド。座標は 1280×720 のスライドの中の px）", ...marks.map((m, j) =>
+    `${j + 1}. ${m.page + 1}枚目「${titleOf(slides[m.page]).slice(0, 30)}」の x=${m.x} y=${m.y} 幅${m.w} 高さ${m.h}` +
+    (m.texts.length ? `（中の文字：「${m.texts.join("」「")}」）` : "") + `：${m.say || "（ここを直して）"}`)].join("\n");
+  const copyText = async t => {
+    try { await navigator.clipboard.writeText(t); }
+    catch (err) { const a = document.createElement("textarea"); a.value = t; body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); }
+    say("コピーしました。Claude に貼ってください");
+  };
+  const toggleMark = on => {
+    const v = on === undefined ? !body.classList.contains("marking") : on;
+    body.classList.toggle("marking", v);
+    if (v) { toggleOverview(false); drawMarks(); say("直したい所をドラッグで囲んでください（Esc で終わる）"); }
+  };
+  let drag0 = null, live = null;
+  markLayer.addEventListener("pointerdown", e => {
+    drag0 = slideXY(e);
+    live = el("div", "box live"); markLayer.appendChild(live);
+    try { markLayer.setPointerCapture(e.pointerId); } catch (err) { /* 合成した操作など */ }
+  });
+  markLayer.addEventListener("pointermove", e => {
+    if (!drag0) return;
+    const [x, y] = slideXY(e);
+    Object.assign(live.style, { left: Math.min(x, drag0[0]) + "px", top: Math.min(y, drag0[1]) + "px",
+      width: Math.abs(x - drag0[0]) + "px", height: Math.abs(y - drag0[1]) + "px" });
+  });
+  markLayer.addEventListener("pointerup", e => {
+    if (!drag0) return;
+    const [x, y] = slideXY(e), r = { x: Math.round(Math.min(x, drag0[0])), y: Math.round(Math.min(y, drag0[1])), w: Math.round(Math.abs(x - drag0[0])), h: Math.round(Math.abs(y - drag0[1])) };
+    drag0 = null;
+    if (r.w < 8 || r.h < 8) { live.remove(); return; }
+    live.classList.remove("live"); live.classList.add("pending");
+    pending = { page: cur, ...r, texts: textsIn(slides[cur], r) };
+    askForm.hidden = false; askInput.value = ""; askInput.focus();
+  });
+  askForm.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!pending) return;
+    marks.push({ ...pending, say: askInput.value.trim() });
+    pending = null; askForm.hidden = true; askInput.blur();
+    drawMarks();
+  });
+  markPanel.addEventListener("click", e => {
+    const m = e.target.closest("button")?.dataset.m;
+    if (m === "copy") copyText(markText());
+    if (m === "clear") { marks.length = 0; drawMarks(); }
+    if (m === "close") toggleMark(false);
+  });
+
   /* ---------- キーボード・スワイプ・マウス ---------- */
   function onKey(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -1513,15 +1723,22 @@ details.why>.body{font-size:16px}
       Home: () => go(0), End: () => go(slides.length - 1, true),
       f: full, o: () => toggleOverview(), n: () => body.classList.toggle("notes"), p: openPresenter,
       b: () => body.classList.toggle("black"), "?": () => body.classList.toggle("help"),
-      Escape: () => { if (body.classList.contains("help")) body.classList.remove("help"); else toggleOverview(false); },
+      d: demo, e: () => toggleMark(),
+      Escape: () => {
+        if (body.classList.contains("help")) body.classList.remove("help");
+        else if (body.classList.contains("marking")) toggleMark(false);
+        else toggleOverview(false);
+      },
     }[k];
+    if (/^[0-9]$/.test(k)) { e.preventDefault(); typeDigit(k); return; }
+    if (k === "Enter" && digits) { e.preventDefault(); clearTimeout(digitT); jump(); return; }
     if (act) { e.preventDefault(); act(); }
   }
   document.addEventListener("keydown", onKey);
   hud.addEventListener("click", e => {
     const a = e.target.closest("button")?.dataset.a;
     ({ prev, next, overview: () => toggleOverview(), notes: () => body.classList.toggle("notes"),
-       presenter: openPresenter, full, help: () => body.classList.toggle("help") }[a] || (() => {}))();
+       presenter: openPresenter, full, help: () => body.classList.toggle("help"), demo, mark: () => toggleMark() }[a] || (() => {}))();
   });
   help.addEventListener("click", () => body.classList.remove("help"));
   let tx = 0, ty = 0, tOk = false;

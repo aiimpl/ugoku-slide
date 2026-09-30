@@ -52,7 +52,7 @@ h2 .hl,h1 .hl{background:linear-gradient(transparent 58%,var(--yel) 58% 92%,tran
 .card p{color:var(--muted);font-size:21px;line-height:1.65}
 .card.pink{background:var(--pink)}.card.yel{background:var(--yel)}.card.teal{background:var(--teal)}.card.lav{background:var(--lav)}
 .card.pink p,.card.yel p,.card.teal p,.card.lav p{color:var(--ink)}
-.no{font:400 64px/1 var(--font-head);-webkit-text-stroke:3px var(--ink);color:#fff;text-shadow:5px 5px 0 var(--ink)}
+.no{font:400 64px/1 var(--font-head);color:var(--ink);text-shadow:5px 5px 0 #fff}
 .card h3{font:400 34px/1.3 var(--font-head);margin:16px 0 12px}
 .card.step{display:flex;flex-direction:column}
 .card .meta{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
@@ -77,7 +77,7 @@ input[type=range]::-webkit-slider-runnable-track{height:14px;border:3px solid va
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:var(--pink);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
 input[type=range]::-moz-range-track{height:10px;border:3px solid var(--ink);border-radius:999px;background:var(--yel)}
 input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--pink);border:3px solid var(--ink)}
-.field>label{color:var(--ink);font-weight:800;font-size:19px}
+.field>label{color:var(--ink);font-weight:800;font-size:18px}
 .field>label b{font:400 26px var(--font-num)}
 .meter{height:30px;border:3px solid var(--ink);background:#fff;border-radius:999px}
 .meter>i{background:repeating-linear-gradient(-45deg,var(--pink) 0 12px,#ff8fbc 12px 24px);border-right:3px solid var(--ink)}
@@ -119,7 +119,7 @@ ul.list>li::before{width:16px;height:16px;border:3px solid var(--ink);border-rad
 .total .v{font:400 92px/1.05 var(--font-num);letter-spacing:-.02em}
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}
 .mini>div{border:4px solid var(--ink);border-radius:18px;background:#fff;padding:14px 20px;box-shadow:4px 4px 0 var(--ink)}
-.mini small{font-weight:800;font-size:16px;color:var(--muted)}
+.mini small{font-weight:800;font-size:18px;color:var(--muted)}
 .mini b{display:block;font:400 40px/1.2 var(--font-num)}
 [data-sign].neg{color:var(--accent)}[data-sign].pos{color:var(--good)}
 
@@ -186,7 +186,7 @@ ul.list>li::before{width:16px;height:16px;border:3px solid var(--ink);border-rad
       </div>
       <div>
         <p class="lead" style="color:var(--ink)">「ほかの部署の人と、仕事以外の話をした回数」。在宅と出社がまざる今、偶然の立ち話は放っておくと戻らない。<br><b>年に1度、全員が同じ場所にいる半日</b>をつくる。</p>
-        <details class="why"><summary>根拠：社内アンケート</summary><div class="body">数字は架空のサンプルです。2026年6月、全社員 412人が回答（回答率 98%）。2024年の同じ質問と比べた。「困ったとき相談できる人が他部署にいる」も 61% → 44% に下がった。</div></details>
+        <details class="why float"><summary>根拠：社内アンケート</summary><div class="body">数字は架空のサンプルです。2026年6月、全社員 412人が回答（回答率 98%）。2024年の同じ質問と比べた。「困ったとき相談できる人が他部署にいる」も 61% → 44% に下がった。</div></details>
       </div>
     </div>
         <aside class="notes">ここが一番大事なページ。「楽しいから」ではなく「相談できる相手が減っている」から、という業務の話にする。</aside>
@@ -249,7 +249,7 @@ ul.list>li::before{width:16px;height:16px;border:3px solid var(--ink);border-rad
       <div>
         <div class="total"><small>かかる総額</small><div class="v" data-out="total" data-format="man"></div></div>
         <div style="margin-top:22px"><div class="meter" data-bar="total" data-max="200e4"><i></i></div>
-          <div style="display:flex;justify-content:space-between;font-weight:800;font-size:17px;margin-top:8px"><span>0</span><span>予算の枠 200万円</span></div></div>
+          <div style="display:flex;justify-content:space-between;font-weight:800;font-size:18px;margin-top:8px"><span>0</span><span>予算の枠 200万円</span></div></div>
         <div class="mini">
           <div><small>枠の残り</small><b data-out="rest" data-format="man" data-sign></b></div>
           <div><small>1人あたり</small><b data-out="total/n" data-format="yen"></b></div>

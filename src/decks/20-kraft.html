@@ -90,7 +90,7 @@ input[type=checkbox]{accent-color:var(--accent);width:24px;height:24px}
 
 /* ---- 流れ ---- */
 .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:10px}
-.flow>div>.paper{padding:26px 24px 30px;min-height:360px}
+.flow>div>.paper{padding:26px 24px 30px;min-height:280px}
 .flow .t{font:600 52px/1 var(--font-head)}
 .flow .t small{font-size:20px;margin-left:4px}
 .flow h3{font:600 24px/1.45 var(--font-head);margin:14px 0 8px}
@@ -137,6 +137,9 @@ input[type=checkbox]{accent-color:var(--accent);width:24px;height:24px}
 .apply p{font-size:21px;line-height:1.75;color:var(--muted);margin:0}
 .contact{margin-top:44px;display:flex;gap:40px;align-items:center;font-size:22px}
 .contact b{font:600 34px var(--font-head)}
+.contact .muted{color:#45321f}
+.stamp.on-kraft{color:#7e2419;border-color:#7e2419}
+.stamp.on-kraft::before{border-color:#7e2419}
 </style>
 
 <main class="deck" data-transition="rise">
@@ -189,7 +192,7 @@ input[type=checkbox]{accent-color:var(--accent);width:24px;height:24px}
       <div class="step"><div class="paper" style="transform:rotate(-.6deg)"><span class="ic">3</span><div class="t">11:00</div><h3>ひと針ずつ縫う</h3><p>穴はあけてあるので、糸を通していくだけ。</p></div></div>
       <div class="step"><div class="paper" style="transform:rotate(1.2deg)"><span class="ic">4</span><div class="t">12:30</div><h3>磨いて、名入れ</h3><p>ふちを磨いて仕上げ。最後にお茶を出します。</p></div></div>
     </div>
-    <details class="why" style="margin-top:34px;width:620px"><summary>なぜ縫いは手でやるの？</summary><div class="body">ミシンを使えば30分で終わります。でも、手で縫った糸はほつれにくく、自分で直せます。10年使える1つを作ってほしいので、手縫いにしています。</div></details>
+    <details class="why" style="margin-top:34px;width:1000px"><summary>なぜ縫いは手でやるの？</summary><div class="body">ミシンを使えば30分で終わります。でも、手で縫った糸はほつれにくく、自分で直せます。10年使える1つを作ってほしいので、手縫いにしています。</div></details>
   </section>
 
   <section class="slide" data-title="参加費">
@@ -277,7 +280,7 @@ input[type=checkbox]{accent-color:var(--accent);width:24px;height:24px}
       <div class="step"><div class="paper" style="transform:rotate(-.5deg)"><div class="n">3</div><h3>手ぶらで来る</h3><p>お代は当日でかまいません。</p></div></div>
     </div>
     <div class="contact"><span>電話・店頭でも受けつけます</span><b>000-0000-0000</b><span class="muted">（水曜定休）</span></div>
-    <div style="position:absolute;right:84px;bottom:44px"><div class="stamp" style="position:relative;width:150px;height:150px;transform:rotate(-12deg);font-size:24px">お待ち<br>してます</div></div>
+    <div style="position:absolute;right:84px;bottom:44px"><div class="stamp on-kraft" style="position:relative;width:150px;height:150px;transform:rotate(-12deg);font-size:24px">お待ち<br>してます</div></div>
     <aside class="notes">申込用紙は机に置いておく。「作るものは当日決めていい」と言うと、その場で書いてくれる人が増える。</aside>
   </section>
 

@@ -26,7 +26,7 @@
 /* 版ずれ：ピンクの版が右下にずれて重なる */
 .mis{position:relative;display:inline-block;color:var(--ink)}
 .mis::after{content:attr(data-t);position:absolute;left:6px;top:5px;color:var(--pink);mix-blend-mode:multiply;pointer-events:none;white-space:pre}
-.kicker{font:700 17px var(--font);letter-spacing:.2em;color:var(--ink);display:inline-flex;align-items:center;gap:12px;margin-bottom:18px}
+.kicker{font:700 18px var(--font);letter-spacing:.2em;color:var(--ink);display:inline-flex;align-items:center;gap:12px;margin-bottom:18px}
 .kicker::before{content:"";width:34px;height:14px;background:var(--pink);mix-blend-mode:multiply;box-shadow:4px 3px 0 var(--blue)}
 h2{font-size:46px;line-height:1.3;color:var(--ink);margin-bottom:24px}
 h2 .hl{background:linear-gradient(transparent 55%,color-mix(in srgb,var(--pink) 70%,transparent) 55% 92%,transparent 92%);mix-blend-mode:multiply}
@@ -42,7 +42,7 @@ h2 .hl{background:linear-gradient(transparent 55%,color-mix(in srgb,var(--pink) 
 .kpi .value small{font:700 24px var(--font);text-shadow:none;margin-left:4px}
 /* タブ：切り取り線のチケット */
 .tabs{background:none;padding:0;gap:14px;border-radius:0}
-.tabs>[data-tab]{border:3px solid var(--ink);border-radius:0;background:var(--surface);color:var(--ink);font:400 20px var(--font-head);padding:10px 22px}
+.tabs>[data-tab]{border:3px solid var(--ink);border-radius:0;background:var(--surface);color:var(--ink);font:400 24px var(--font-head);padding:8px 22px}
 .tabs>[data-tab][aria-selected=true]{background:var(--pink);color:var(--ink);box-shadow:5px 4px 0 var(--blue)}
 ul.list{font-size:24px;gap:14px;font-weight:500}
 ul.list>li::before{border-radius:0;width:14px;height:14px;background:var(--pink);box-shadow:3px 2px 0 var(--blue);top:.5em}

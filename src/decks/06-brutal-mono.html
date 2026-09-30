@@ -64,7 +64,7 @@ table.t td b{font:700 30px var(--font-num);letter-spacing:-.03em}
 
 /* 計算 */
 .field{margin-bottom:20px}
-.field>label{font:400 18px var(--font);color:#000}
+.field>label{font:400 20px var(--font);color:#000}
 .field>label b{font:700 24px var(--font-num);color:#000}
 input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:32px}
 input[type=range]::-webkit-slider-runnable-track{height:2px;background:#000}
@@ -76,7 +76,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:30px;background:#000;borde
 .meter.alt>i{background:repeating-linear-gradient(-45deg,#000 0 3px,#fff 3px 8px)}
 .alloc{display:grid;grid-template-columns:120px 1fr 150px;gap:14px;align-items:center;font:400 20px var(--font);margin-bottom:24px}
 .alloc .meter{height:42px}
-.alloc b{font:700 22px var(--font-num);text-align:right}
+.alloc b{font:700 24px var(--font-num);text-align:right}
 [data-sign].neg{color:#fff;background:#000;padding:0 6px}
 [data-sign].pos{color:#000}
 details.why{border:var(--b);border-radius:0;background:#fff;margin-top:14px}
@@ -131,13 +131,13 @@ ol.list>li::before{border-radius:0;background:#000;color:#fff;font-family:var(--
       <div class="cell nl inv" style="display:flex;flex-direction:column;justify-content:space-between">
         <span class="lab">目標 / new customers</span>
         <div class="mono-n" style="font-size:160px">2,000<small>人</small></div>
-        <p style="margin:0">去年の同じ時期は 1,240人。<span class="strike">売上</span> ではなく「初めて買う人」で数える。</p>
+        <p style="margin:0">去年の同じ時期は 1,240人。<br><span class="strike">売上</span> ではなく「初めて買う人」で数える。</p>
       </div>
       <div class="cell" style="display:grid;grid-template-rows:repeat(3,auto) 1fr;gap:0;padding:0">
-        <div style="padding:18px 24px;border-bottom:var(--b)"><span class="lab">budget</span><b style="font:700 36px var(--font-num)">上限 600万円</b></div>
-        <div style="padding:18px 24px;border-bottom:var(--b)"><span class="lab">period</span><b style="font:700 36px var(--font-num)">10/15 — 11/30</b></div>
-        <div style="padding:18px 24px;border-bottom:var(--b)"><span class="lab">product</span><b style="font:700 28px var(--font)">2027年版の手帳 全12種</b></div>
-        <div style="padding:18px 24px">
+        <div style="padding:14px 24px;border-bottom:var(--b)"><span class="lab">budget</span><b style="font:700 36px var(--font-num)">上限 600万円</b></div>
+        <div style="padding:14px 24px;border-bottom:var(--b)"><span class="lab">period</span><b style="font:700 36px var(--font-num)">10/15 — 11/30</b></div>
+        <div style="padding:14px 24px;border-bottom:var(--b)"><span class="lab">product</span><b style="font:700 28px var(--font)">2027年版の手帳 全12種</b></div>
+        <div style="padding:0 24px;align-self:center">
           <details class="why float"><summary>なぜ「新規客」で数える？</summary><div class="body">手帳を買った人の 62% が、翌年も同じ店で買う（去年の会員データ・サンプル）。今年つかまえた1人が、来年以降の売上になる。</div></details>
         </div>
       </div>
@@ -191,7 +191,7 @@ ol.list>li::before{border-radius:0;background:#000;color:#fff;font-family:var(--
         <div class="field"><label>B SNS広告 に <b data-show="adp" data-unit="%"></b></label><input type="range" name="adp" min="0" max="100" step="5" value="40"></div>
         <div class="field"><label>A 店頭イベント に <b data-show="evp" data-unit="%"></b></label><input type="range" name="evp" min="0" max="100" step="5" value="20"></div>
         <p style="margin:0">残りは <b>C 紹介割</b> に回す。</p>
-        <details class="why float"><summary>計算のしかた</summary><div class="body">新規客 ＝ 広告 ÷ 2,600円 ＋ イベント ÷ 4,600円 ＋ 紹介割 ÷ 2,000円（3案の見込みから）。</div></details>
+        <details class="why float"><summary>計算のしかた</summary><div class="body">新規客 ＝ 広告 ÷ 2,600円 ＋ イベント ÷ 4,600円<br>　　　 ＋ 紹介割 ÷ 2,000円（3案の見込みから）</div></details>
         <div class="hatch" style="margin-top:auto;height:110px;border:var(--b);display:grid;place-items:center"><span style="background:#fff;padding:4px 12px;font-size:17px;border:var(--b)">目標に届く組み合わせを、ここで探す</span></div>
       </div>
       <div class="cell nt" style="display:flex;flex-direction:column">

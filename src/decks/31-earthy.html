@@ -8,7 +8,7 @@
 :root{
   --bg:#ece4d4; --surface:#f5efe3; --ink:#33291f; --muted:#62544a; --line:#cfc1a8;
   --accent:#55663a; --accent-ink:#f5efe3; --good:#4d6a32; --bad:#9a4424; --frame:#c9bda6;
-  --clay:#a0512c; --sand:#cdb993; --soil:#6f5a44; --radius:0px; --shadow:none;
+  --clay:#9c4e2a; --sand:#cdb993; --soil:#6f5a44; --radius:0px; --shadow:none;
   --font:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
   --font-num:"Fraunces","Hiragino Mincho ProN","Yu Mincho",serif;
   --head-weight:500; --head-track:.03em; --pad-y:68px; --pad-x:104px;
@@ -77,6 +77,7 @@ ol.list>li::before{background:transparent;border:1px solid var(--accent);color:v
 .road .serif{font-size:88px;line-height:1}
 .road p{font-size:20px;line-height:1.7;color:var(--muted);margin-top:12px}
 .road b{color:var(--ink);font-weight:500}
+.foot{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.slide>.bg::before{animation:none}}
 </style>
 
@@ -126,9 +127,9 @@ ol.list>li::before{background:transparent;border:1px solid var(--accent);color:v
           <div class="col plan" style="--v:80" data-label="2026 予定" data-val="80%"><i></i></div>
         </div>
       </div>
-      <div style="padding-top:8px">
-        <p class="lead" style="margin:0 0 28px">屋根の太陽光で 2 割。<br>残りは、地域の小さな水力と風力から買う電気。</p>
-        <details class="why"><summary>比率の数え方</summary><div class="body">工場3か所と本社の年間使用電力量のうち、再エネ由来の電力量（自家発電＋再エネ由来の契約分）の割合。証書による上乗せは含めていない。</div></details>
+      <div>
+        <p class="lead" style="margin:0 0 20px">屋根の太陽光で 2 割。<br>残りは地域の水力と風力。</p>
+        <details class="why"><summary>比率の数え方</summary><div class="body">工場3か所と本社の使用電力のうち、再エネ由来（自家発電＋再エネ契約）の割合。証書の上乗せは含めない。</div></details>
         <details class="why"><summary>なぜ 2026 年は 80% なのか</summary><div class="body">第二工場の屋根 4,200㎡ に太陽光を増設し、契約の残り 1 本を再エネ由来に切り替える。どちらも発注済み。</div></details>
         <details class="why" style="border-bottom:1px solid var(--line)"><summary>電気代はどう変わったか</summary><div class="body">再エネ契約の単価は 1kWh あたり 1.8 円高い。太陽光の自家発電分で相殺し、年間の電気代は 2022年度比 −4%。</div></details>
       </div>
@@ -203,7 +204,7 @@ ol.list>li::before{background:transparent;border:1px solid var(--accent);color:v
     <div style="position:absolute;right:120px;top:250px;width:360px;padding:0 44px;color:var(--accent-ink)">
       <div style="font-size:16px;letter-spacing:.3em">CONTACT</div>
       <div style="font-size:24px;line-height:1.8;margin-top:18px">サステナビリティ推進室<br>eco@example.jp</div>
-      <div style="font-size:18px;line-height:1.8;margin-top:22px;opacity:.9">工場見学会<br>毎月第2土曜 10:00〜</div>
+      <div style="font-size:18px;line-height:1.8;margin-top:22px">工場見学会<br>毎月第2土曜 10:00〜</div>
     </div>
     <div style="max-width:700px;margin-top:-40px">
       <div class="kicker">Next step</div>

@@ -24,7 +24,7 @@ h2 em,h1 em{font-style:normal;color:var(--accent)}
 /* 数式バー（上端 0〜40px） */
 .fx{position:absolute;left:0;right:0;top:0;height:40px;display:flex;align-items:center;background:#fff;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
 .fx .nb{width:96px;height:100%;display:flex;align-items:center;padding-left:14px;border-right:1px solid var(--line);font-family:var(--mono);font-size:14px;color:var(--ink);font-weight:500}
-.fx .fn{width:44px;text-align:center;font-family:var(--mono);font-style:italic;color:#8a919b;border-right:1px solid var(--line);height:100%;display:grid;place-items:center}
+.fx .fn{width:44px;text-align:center;font-family:var(--mono);font-style:italic;color:#676e78;border-right:1px solid var(--line);height:100%;display:grid;place-items:center}
 .fx .f{padding-left:14px;font-family:var(--mono);font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden}
 .fx .f b{color:var(--accent);font-weight:500}
 .fx .doc{margin-left:auto;padding:0 18px;font-size:13px;letter-spacing:.02em;white-space:nowrap}
@@ -32,7 +32,7 @@ h2 em,h1 em{font-style:normal;color:var(--accent)}
 
 /* シートの見出しタブ（下端 684〜720px）と状態表示 */
 .tabsbar{position:absolute;left:0;right:0;bottom:0;height:36px;display:flex;align-items:stretch;background:var(--hd);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
-.tabsbar .nav{width:44px;display:grid;place-items:center;border-right:1px solid var(--line);font-family:var(--mono);color:#8a919b}
+.tabsbar .nav{width:44px;display:grid;place-items:center;border-right:1px solid var(--line);font-family:var(--mono);color:#676e78}
 .tabsbar .t{padding:0 16px;display:flex;align-items:center;border-right:1px solid var(--line);white-space:nowrap}
 .tabsbar .t.on{background:#fff;color:var(--accent);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent);margin-top:-1px}
 .tabsbar .st{margin-left:auto;display:flex;align-items:center;gap:22px;padding:0 18px;font-size:13px;white-space:nowrap}
@@ -87,7 +87,7 @@ kbd{font-family:var(--mono);font-size:13px;padding:1px 6px;border:1px solid #c3c
 .kpis>div{padding:14px 24px 16px 28px;border-left:1px solid var(--line);position:relative}
 .kpis>div:first-child{border-left:0}
 .kpis .lb{font-size:16px;color:var(--muted);display:flex;justify-content:space-between}
-.kpis .lb i{font-style:normal;font-family:var(--mono);font-size:12px;color:#8a919b}
+.kpis .lb i{font-style:normal;font-family:var(--mono);font-size:12px;color:#676e78}
 .kpis .v{font-family:var(--mono);font-size:54px;font-weight:600;letter-spacing:-.04em;line-height:1.15;margin-top:6px}
 .kpis .v small{font-family:var(--font);font-size:18px;font-weight:500;letter-spacing:0;margin-left:4px;color:var(--muted)}
 .kpis .d{font-family:var(--mono);font-size:16px;margin-top:2px}
@@ -116,14 +116,14 @@ figure.pg{display:contents}
 .sum3 .lb{font-size:14px;color:var(--muted);white-space:nowrap}
 .sum3 .v{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1.2;margin-top:2px;white-space:nowrap}
 .sum3 .v small{font-family:var(--font);font-size:14px;font-weight:500;color:var(--muted);margin-left:2px;letter-spacing:0}
-.sum3 .fm{font-family:var(--mono);font-size:11px;color:#8a919b;margin-top:2px;white-space:nowrap}
+.sum3 .fm{font-family:var(--mono);font-size:11px;color:#676e78;margin-top:2px;white-space:nowrap}
 .sum3>div.cell-sel{background:#fff}
 .pos::before{content:"+"}
 .tool{position:absolute;left:44px;right:56px;top:220px;height:34px;display:flex;align-items:center;gap:8px}
 .tool button{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border:1px solid #c3c8cf;background:#fff;border-radius:3px;font-size:15px;cursor:pointer;color:var(--ink)}
 .tool button:hover{border-color:var(--accent);color:var(--accent)}
 .tool button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
-.tool button.pri kbd{background:rgb(255 255 255 / .16);border-color:rgb(255 255 255 / .45);color:#fff}
+.tool button.pri kbd{background:rgb(0 0 0 / .14);border-color:rgb(255 255 255 / .45);color:#fff}
 .tool button svg{width:16px;height:16px}
 .tool .hint{font-size:15px;color:var(--muted);margin-left:10px;white-space:nowrap}
 .tool .hint b{color:var(--ink);font-weight:500}
@@ -225,7 +225,7 @@ figure.pg{display:contents}
 .track .goal::after{content:"目標 5,250";position:absolute;left:6px;top:-10px;font-family:var(--mono);font-size:13px;white-space:nowrap;color:var(--ink)}
 .legend{display:flex;gap:22px;margin-top:14px;font-size:15px;color:var(--muted)}
 .legend span::before{content:"";display:inline-block;width:12px;height:12px;margin-right:7px;vertical-align:-1px;background:var(--c)}
-.scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:#8a919b;margin-top:6px}
+.scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:#676e78;margin-top:6px}
 
 /* ---------- 7 決めてほしいこと ---------- */
 .s-end .head{position:absolute;left:72px;top:84px;width:1100px}

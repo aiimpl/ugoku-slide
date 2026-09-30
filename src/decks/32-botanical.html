@@ -41,18 +41,18 @@ h2{font-size:40px;line-height:1.55;font-weight:600;margin-bottom:34px}
 .kicker .jp{font:600 16px var(--font);letter-spacing:.12em;margin-left:12px;font-style:normal}
 .spec .v{font:500 96px/1 var(--font-num);letter-spacing:-.01em;margin:10px 0 8px}
 .spec .v small{font:600 24px var(--font);margin-left:6px}
-.spec p{font-size:19px;line-height:1.75;color:var(--muted);margin:0}
+.spec p{font-size:20px;line-height:1.75;color:var(--muted);margin:0}
 .tabs{background:none;border-radius:0;padding:0;gap:34px;border-bottom:1px solid var(--line);width:100%}
 .tabs>[data-tab]{border-radius:0;padding:10px 0 12px;font:600 22px var(--font);letter-spacing:.1em;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
 .tabs>[data-tab] em{font:italic 500 18px var(--font-num);margin-right:10px;color:var(--accent)}
 .tabs>[data-tab][aria-selected=true]{background:none;box-shadow:none;color:var(--ink);border-bottom-color:var(--ink)}
 .menu{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:8px}
 .menu h3{font-size:34px;font-weight:600;letter-spacing:.06em;margin-bottom:14px}
-.menu dl{margin:0;display:grid;grid-template-columns:auto 1fr auto;gap:22px 16px;font-size:23px;align-items:baseline;padding-top:10px}
+.menu dl{margin:0;display:grid;grid-template-columns:auto 1fr auto;gap:22px 16px;font-size:22px;align-items:baseline;padding-top:10px}
 .share{display:flex;align-items:baseline;gap:4px;margin-top:26px;border-top:1px solid var(--line);padding-top:18px;flex-wrap:wrap}
 .share b{font:500 120px/1 var(--font-num);font-variant-numeric:lining-nums}
 .share span{font:500 44px var(--font-num)}
-.share em{font-style:normal;font-size:19px;color:var(--muted);flex-basis:100%}
+.share em{font-style:normal;font-size:20px;color:var(--muted);flex-basis:100%}
 .menu dt{white-space:nowrap}
 .menu dd{margin:0;border-bottom:1px dotted var(--muted);height:.6em}
 .menu dd+dd{border:0;height:auto;font:500 26px var(--font-num)}
@@ -65,12 +65,12 @@ input[type=range]{accent-color:var(--gold)}
 .sub-outs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:26px}
 .sub-outs>div{padding:20px 0}
 .sub-outs>div+div{border-left:1px solid var(--line);padding-left:30px}
-.sub-outs .lbl{font-size:19px;color:var(--muted)}
+.sub-outs .lbl{font-size:20px;color:var(--muted)}
 .sub-outs .val{font:500 52px/1.1 var(--font-num);margin-top:6px}
 details.why{border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;margin-top:6px}
-details.why>summary{font-weight:600;font-size:19px;color:var(--accent);padding:14px 0;letter-spacing:.06em}
+details.why>summary{font-weight:600;font-size:20px;color:var(--accent);padding:14px 0;letter-spacing:.06em}
 details.why>summary::before{content:"❧";background:none;width:auto;font-size:20px;transform:none!important}
-details.why>.body{padding:0 0 14px;font-size:19px;line-height:1.9}
+details.why>.body{padding:0 0 14px;font-size:20px;line-height:1.9}
 details.why.float[open]>.body{background:var(--surface);border:1px solid var(--line);border-radius:2px;padding:16px 22px}
 table.t{font-size:21px}
 table.t th{font-size:18px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--ink)}
@@ -135,7 +135,7 @@ ol.list>li::before{background:none;border:1px solid var(--accent);color:var(--ac
       <div class="step"><div class="no"><em>ii.</em> 徒歩5分のオフィス</div><div class="v"><span data-count="38"></span><small>棟</small></div><p>働く人はおよそ 6,200 人。</p></div>
       <div class="step"><div class="no"><em>iii.</em> 同じ路地のカフェ</div><div class="v"><span data-count="0"></span><small>軒</small></div><p>チェーン店は駅前の 2 軒のみ。</p></div>
     </div>
-    <details class="why" style="max-width:900px;border-top:0"><summary>数え方</summary><div class="body">2026年9月の平日5日、7時〜9時に店舗予定地の前をカウンターで計測（サンプル）。オフィスの棟数は地図から数えた。</div></details>
+    <details class="why" style="max-width:900px;border-top:0"><summary>数え方</summary><div class="body">平日5日・7〜9時に予定地の前で計測（サンプル）。オフィスは地図で数えた。</div></details>
     <aside class="notes">3つ目の「0軒」で間を置く。競合がいないのは弱みにもなり得る点は6枚目で触れる。</aside>
   </section>
 
@@ -178,7 +178,7 @@ ol.list>li::before{background:none;border:1px solid var(--accent);color:var(--ac
       <div>
         <div style="font-size:20px;color:var(--muted)">月の営業利益</div>
         <div class="big-out" data-out="profit" data-format="man" data-sign></div>
-        <p class="lead" style="font-size:19px;margin:8px 0 0">参考　本店の平日の客数は、1日平均 170 人</p>
+        <p class="lead" style="font-size:20px;margin:8px 0 0">参考　本店の平日の客数は、1日平均 170 人</p>
                 <div class="sub-outs">
           <div><div class="lbl">損益分岐の客数</div><div class="val"><span data-out="be" data-unit=" 人/日"></span></div></div>
           <div><div class="lbl">投資の回収</div><div class="val"><span data-out="profit>0 ? 1800e4/profit : 999" data-format="dec1" data-unit=" か月"></span></div></div>
@@ -211,7 +211,7 @@ ol.list>li::before{background:none;border:1px solid var(--accent);color:var(--ac
     <div class="plate">Plate VI</div>
     <div class="kicker">Concerns</div>
     <h2>心配は2つ。どちらも、開く前に手を打てる。<br>撤退の線も先に決めておく。</h2>
-    <div class="grid cols-3" style="gap:56px;margin-top:6px">
+    <div class="grid cols-2" style="gap:56px;margin-top:6px;max-width:1000px">
       <div class="step" style="border-top:1px solid var(--ink);padding-top:24px">
         <div class="latin" style="color:var(--accent);font-size:24px">i.</div>
         <h3 style="font-size:28px;margin:6px 0 14px">路地が知られていない</h3>
@@ -222,13 +222,12 @@ ol.list>li::before{background:none;border:1px solid var(--accent);color:var(--ac
         <h3 style="font-size:28px;margin:6px 0 14px">焙煎が追いつかない</h3>
         <p class="lead" style="font-size:20px;line-height:1.9">豆の量が 1.4 倍になる。本店の焙煎を週4日から5日に増やせば足りる。</p>
       </div>
-      <div class="step" style="border-top:1px solid var(--accent);padding-top:24px">
-        <div class="latin" style="color:var(--accent);font-size:24px">iii.</div>
-        <h3 style="font-size:28px;margin:6px 0 14px">それでも届かなければ</h3>
-        <p class="lead" style="font-size:20px;line-height:1.9">開店6か月で1日100人に届かなければ、席を減らして豆の販売店に切り替える。</p>
-      </div>
     </div>
-    <details class="why" style="max-width:640px;margin-top:40px"><summary>本店が手薄にならないか</summary><div class="body">店長は二号店に移さず、本店の副店長を昇格させる。本店の人員は 6 名のまま。</div></details>
+    <div class="step" style="display:flex;align-items:baseline;gap:28px;max-width:1000px;margin-top:28px;padding:16px 0 0;border-top:1px solid var(--accent)">
+      <div class="latin" style="color:var(--accent);font-size:24px;flex:none">Exit</div>
+      <p class="lead" style="font-size:20px;line-height:1.9;margin:0"><b style="color:var(--ink);font-weight:600">撤退の線</b>　開店6か月で1日100人に届かなければ、豆の販売店に切り替える。</p>
+    </div>
+    <details class="why" style="max-width:1000px;margin-top:20px"><summary>本店が手薄にならないか</summary><div class="body">店長は二号店に移さず、本店の副店長を昇格させる。本店の人員は 6 名のまま。</div></details>
   </section>
 
   <section class="slide cover dark" data-title="決めてほしいこと">

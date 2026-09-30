@@ -126,9 +126,12 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
 .pn dd small{color:var(--muted);font-size:15px;margin-left:6px}
 .pn dd .same{color:var(--good);font-weight:700}
 .floor{position:relative;margin-top:14px;height:92px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.floor>div{position:relative;border:1px solid var(--ink);background:var(--surface);font-size:13px;color:var(--muted);letter-spacing:.08em;padding:6px 8px}
+.floor>div{position:relative;isolation:isolate;font-size:13px;color:var(--muted);letter-spacing:.08em;padding:6px 8px}
 .floor>div::after{content:"";position:absolute;left:8px;right:8px;bottom:10px;height:30px;background-image:repeating-linear-gradient(90deg,var(--line) 0 26px,transparent 26px 34px)}
-.floor>div.on{border-color:var(--accent);border-width:2px}
+/* 島の地（チームの場所）：前のページのチームの帯から変形して来て、次のページの印へ縮む */
+.floor .fp{position:absolute;inset:0;z-index:-1;background:var(--surface);border:1px solid var(--ink)}
+.floor>div.on .fp{border:2px solid var(--accent)}
+.slide.active .floor>div::after{animation:ugk-fade .5s var(--ease) both;animation-delay:.6s}
 .floor .pin{position:absolute;bottom:14px;width:22px;height:22px;border-radius:50%;background:var(--accent);z-index:1;box-shadow:0 0 0 4px rgb(181 54 28 / .18)}
 
 /* 5 変わる・変わらない */
@@ -145,8 +148,8 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
 .s-keep .kp .v{font-family:var(--font-head);font-size:52px;font-weight:700;line-height:1.1}
 .s-keep .kp .v small{font-family:var(--font);font-size:18px;font-weight:500;margin-left:4px}
 .s-keep .kp .v.z{color:var(--good)}
-.s-keep .emb{position:absolute;width:14px;bottom:auto}
-.s-keep .emb .plate{background:var(--sumi);border-radius:0}
+.emb{position:absolute;width:14px;bottom:auto}
+.emb .plate{background:var(--sumi);border-radius:0}
 
 /* 6 人数の配分 */
 .s-calc .calc{position:absolute;left:80px;top:208px;right:80px;bottom:60px}
@@ -295,34 +298,34 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
       <p class="hint" data-morph-enter style="--d:.3"><b>課ごと動くので、課長と同僚は今と同じです。</b>変わるのは、課の上にいる人（部長 → チームリーダー）と席。</p>
       <div class="legend" data-morph-enter style="--d:.35"><span><i class="l1"></i>営業部</span><span><i class="l2"></i>開発部</span><span><i class="l3"></i>サポート部</span></div>
 
-      <div class="panels" data-morph-enter style="--d:.2">
-      <div class="pn" data-panel="k1"><div class="to"><span class="from">製造営業課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>田中 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・A島 <small>いまの隣の島</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div class="on">5階 東　製造業<i class="pin" style="left:18px"></i></div><div>5階 西　小売・流通</div><div>4階　公共</div></div></div>
-      <div class="pn" data-panel="k2" hidden><div class="to"><span class="from">流通営業課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>森 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・A島</dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div>5階 東　製造業</div><div class="on">5階 西　小売・流通<i class="pin" style="left:18px"></i></div><div>4階　公共</div></div></div>
-      <div class="pn" data-panel="k3" hidden><div class="to"><span class="from">公共営業課 →</span><span class="t"><em>公共</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>石川 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・A島 <small>5階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div>5階 東　製造業</div><div>5階 西　小売・流通</div><div class="on">4階　公共<i class="pin" style="left:18px"></i></div></div></div>
-      <div class="pn" data-panel="k4" hidden><div class="to"><span class="from">工場開発課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>吉村 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・B島 <small>4階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div class="on">5階 東　製造業<i class="pin" style="left:52px"></i></div><div>5階 西　小売・流通</div><div>4階　公共</div></div></div>
-      <div class="pn" data-panel="k5" hidden><div class="to"><span class="from">店舗開発課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>佐野 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・B島 <small>4階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div>5階 東　製造業</div><div class="on">5階 西　小売・流通<i class="pin" style="left:52px"></i></div><div>4階　公共</div></div></div>
-      <div class="pn" data-panel="k6" hidden><div class="to"><span class="from">行政開発課 →</span><span class="t"><em>公共</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>今井 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・B島 <small>今と同じ階</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div>5階 東　製造業</div><div>5階 西　小売・流通</div><div class="on">4階　公共<i class="pin" style="left:52px"></i></div></div></div>
-      <div class="pn" data-panel="k7" hidden><div class="to"><span class="from">工場保守課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>野口 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div class="on">5階 東　製造業<i class="pin" style="left:86px"></i></div><div>5階 西　小売・流通</div><div>4階　公共</div></div></div>
-      <div class="pn" data-panel="k8" hidden><div class="to"><span class="from">店舗保守課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>平田 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div>5階 東　製造業</div><div class="on">5階 西　小売・流通<i class="pin" style="left:86px"></i></div><div>4階　公共</div></div></div>
-      <div class="pn" data-panel="k9" hidden><div class="to"><span class="from">窓口支援課 →</span><span class="t"><em>公共</em>チームへ</span></div>
-        <dl><dt>課長</dt><dd>川口 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
-        <div class="floor"><div>5階 東　製造業</div><div>5階 西　小売・流通</div><div class="on">4階　公共<i class="pin" style="left:86px"></i></div></div></div>
+      <div class="panels">
+      <div class="pn" data-panel="k1"><div class="to" data-morph-enter style="--d:.2"><span class="from">製造営業課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>田中 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・A島 <small>いまの隣の島</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div class="on"><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span><i class="pin" data-morph-enter style="left:18px;--d:.5"></i></div><div><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span></div><div><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span></div></div></div>
+      <div class="pn" data-panel="k2" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">流通営業課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>森 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・A島</dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span></div><div class="on"><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span><i class="pin" data-morph-enter style="left:18px;--d:.5"></i></div><div><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span></div></div></div>
+      <div class="pn" data-panel="k3" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">公共営業課 →</span><span class="t"><em>公共</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>石川 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・A島 <small>5階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span></div><div><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span></div><div class="on"><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span><i class="pin" data-morph-enter style="left:18px;--d:.5"></i></div></div></div>
+      <div class="pn" data-panel="k4" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">工場開発課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>吉村 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・B島 <small>4階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div class="on"><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span><i class="pin" data-morph-enter style="left:52px;--d:.5"></i></div><div><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span></div><div><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span></div></div></div>
+      <div class="pn" data-panel="k5" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">店舗開発課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>佐野 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・B島 <small>4階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span></div><div class="on"><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span><i class="pin" data-morph-enter style="left:52px;--d:.5"></i></div><div><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span></div></div></div>
+      <div class="pn" data-panel="k6" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">行政開発課 →</span><span class="t"><em>公共</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>今井 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・B島 <small>今と同じ階</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span></div><div><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span></div><div class="on"><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span><i class="pin" data-morph-enter style="left:52px;--d:.5"></i></div></div></div>
+      <div class="pn" data-panel="k7" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">工場保守課 →</span><span class="t"><em>製造業</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>野口 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>岡田 修 リーダー <small>今の営業部長</small></dd><dt>席</dt><dd>5階 東側・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div class="on"><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span><i class="pin" data-morph-enter style="left:86px;--d:.5"></i></div><div><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span></div><div><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span></div></div></div>
+      <div class="pn" data-panel="k8" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">店舗保守課 →</span><span class="t"><em>小売・流通</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>平田 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>三宅 由紀 リーダー <small>今の開発部長</small></dd><dt>席</dt><dd>5階 西側・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span></div><div class="on"><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span><i class="pin" data-morph-enter style="left:86px;--d:.5"></i></div><div><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span></div></div></div>
+      <div class="pn" data-panel="k9" hidden><div class="to" data-morph-enter style="--d:.2"><span class="from">窓口支援課 →</span><span class="t"><em>公共</em>チームへ</span></div>
+        <dl data-morph-enter style="--d:.26"><dt>課長</dt><dd>川口 課長 <span class="same">変わらない</span></dd><dt>その上</dt><dd>柴田 健 リーダー <small>今のサポート部長</small></dd><dt>席</dt><dd>4階・C島 <small>3階から移る</small></dd><dt>お客さま</dt><dd>今の担当のまま</dd></dl>
+        <div class="floor"><div><i class="fp" data-morph="t1"></i><span data-morph-enter style="--d:.4">5階 東　製造業</span></div><div><i class="fp" data-morph="t2"></i><span data-morph-enter style="--d:.4">5階 西　小売・流通</span></div><div class="on"><i class="fp" data-morph="t3"></i><span data-morph-enter style="--d:.4">4階　公共</span><i class="pin" data-morph-enter style="left:86px;--d:.5"></i></div></div></div>
       </div>
     </div>
     <div class="foot"><span>席の配置は2月末に確定します（数字・人名は架空のサンプルです）</span><span>4 ／ 7</span></div>
@@ -334,7 +337,7 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
     <div class="kicker"><i>四</i>変わること・変わらないこと</div>
     <div class="emb" style="left:1150px;top:44px;height:31px"><div class="plate" data-morph="t1"></div></div>
     <div class="emb" style="left:1168px;top:50px;height:25px"><div class="plate" data-morph="t2" style="background:var(--nezu)"></div></div>
-    <div class="emb" style="left:1186px;top:57px;height:18px"><div class="plate" data-morph="t3" style="background:var(--kinari);border:1.5px solid var(--sumi)"></div></div>
+    <div class="emb" style="left:1186px;top:57px;height:18px"><div class="plate" data-morph="t3" style="background:#d6ccb9"></div></div>
     <h2>給与・評価・勤務地は<em>変わらない</em>。<br>変わるのは、課の上の組み方と席だけ。</h2>
     <div class="cols">
       <div class="col">
@@ -400,6 +403,10 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px}
     <h2>4月1日までの流れ。わからないことは<br><em>2月14日まで</em>に、遠慮なく聞いてください。</h2>
     <div class="tl">
       <svg class="lines" viewBox="0 0 1120 220" style="width:1120px;height:220px" aria-hidden="true"><path class="draw" d="M7 65H1100"/></svg>
+      <!-- 3チームの印：前のページの人数の柱が縮んで、4月1日の先に並ぶ -->
+      <div class="emb" style="left:1052px;top:9px;height:31px"><div class="plate" data-morph="t1"></div></div>
+      <div class="emb" style="left:1070px;top:15px;height:25px"><div class="plate" data-morph="t2" style="background:var(--nezu)"></div></div>
+      <div class="emb" style="left:1088px;top:22px;height:18px"><div class="plate" data-morph="t3" style="background:#d6ccb9"></div></div>
       <div class="pt step" style="left:0"><div class="dt">1.20<small>今日</small></div><i class="dot"></i><h3>全社説明会</h3><p>行き先は、画面の「あなたの行き先」でいつでも見られる。</p></div>
       <div class="pt step" style="left:290px"><div class="dt">2.03<small>〜2.14</small></div><i class="dot"></i><h3>課長との面談</h3><p>1人15分。気になることを先に聞いておく。</p></div>
       <div class="pt step" style="left:580px"><div class="dt">3.28<small>土</small></div><i class="dot"></i><h3>席の引っ越し</h3><p>金曜の夕方までに私物を箱へ。PCはそのまま。</p></div>

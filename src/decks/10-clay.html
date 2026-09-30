@@ -27,7 +27,7 @@ p{font-size:22px;line-height:1.8}
 .clay.coral{background:var(--accent)}.clay.sun{background:var(--sun)}.clay.mint{background:var(--mint)}.clay.grape{background:var(--grape)}.clay.sky{background:var(--sky)}.clay.pink{background:var(--pink)}
 .clay p{margin:0;color:var(--ink)}
 .num{font:700 96px/1 var(--font-num);letter-spacing:-.01em;white-space:nowrap}
-.num small{font:800 30px var(--font);margin-left:4px}
+.num small{font:800 32px var(--font);margin-left:4px}
 
 /* ぶたのちょきんばこ（CSS で描く） */
 .pig{position:relative;width:360px;height:300px;transform:scale(1.18);transform-origin:left top}
@@ -76,7 +76,7 @@ p{font-size:22px;line-height:1.8}
 .vs ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
 .vs li{background:rgb(255 255 255 / .7);border-radius:22px;padding:12px 20px;font-size:23px;font-weight:700;box-shadow:inset 2px 3px 6px rgb(255 255 255 / .8),inset -2px -3px 6px rgb(0 0 0 / .06)}
 details.why{border:0;border-radius:28px;background:#fff;box-shadow:var(--clay-s);margin-top:24px}
-details.why>summary{color:var(--ink);font:800 21px var(--font);padding:14px 22px}
+details.why>summary{color:var(--ink);font:800 22px var(--font);padding:14px 22px}
 details.why>summary::before{background:var(--sun);color:var(--ink);width:28px;height:28px;font-size:22px}
 details.why>.body{color:var(--ink);font-size:20px;padding:0 24px 18px}
 details.why.float[open]>.body{background:#fff;border:0;box-shadow:var(--clay);border-radius:28px}
@@ -186,7 +186,7 @@ input[type=range]::-moz-range-thumb{width:40px;height:40px;border-radius:50%;bac
         <div class="field"><label>1かげつの おこづかい <b data-show="money" data-unit="えん"></b></label><input type="range" name="money" min="300" max="2000" step="100" value="800"></div>
         <div class="field"><label>ためる わりあい <b data-show="rate" data-unit="%"></b></label><input type="range" name="rate" min="10" max="100" step="10" value="50"></div>
         <div class="field" style="margin-bottom:6px"><label>ほしいものの ねだん <b data-show="price" data-unit="えん"></b></label><input type="range" name="price" min="1000" max="8000" step="500" value="4000"></div>
-        <details class="why"><summary>どうやって けいさんするの？</summary><div class="body">ためる おかね ＝ おこづかい × わりあい。<br>かえるまで ＝ ねだん ÷ ためる おかね（はんぱは 1かげつ たす）。</div></details>
+        <details class="why float"><summary>どうやって けいさんするの？</summary><div class="body">ためる おかね ＝ おこづかい × わりあい。<br>かえるまで ＝ ねだん ÷ ためる おかね（はんぱは 1かげつ たす）。</div></details>
       </div>
       <div class="outs">
         <div class="clay sun"><span class="l">かえるまで あと</span><div class="num" style="font-size:130px"><span data-out="months"></span><small style="font-size:40px">かげつ</small></div></div>

@@ -6,7 +6,7 @@
 -->
 <style>
 :root{
-  --bg:#0a0f1f; --surface:rgb(255 255 255 / .08); --ink:#f3f6ff; --muted:#b9c2dc; --line:rgb(255 255 255 / .16); --accent:#6fe3ff; --accent-ink:#06121c;
+  --bg:#0a0f1f; --surface:rgb(255 255 255 / .08); --ink:#f3f6ff; --muted:#dde3f3; --line:rgb(255 255 255 / .16); --accent:#6fe3ff; --accent-ink:#06121c;
   --vio:#a58bff; --pink:#ff7ab8; --frame:#05070f; --radius:24px; --good:#6ff0b0; --bad:#ff8a9a;
   --shadow:0 20px 50px rgb(0 0 0 / .35),inset 0 1px 0 rgb(255 255 255 / .22);
   --font:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
@@ -19,7 +19,7 @@
 .orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.75;animation:drift 18s ease-in-out infinite alternate}
 .orb.c{background:#1fb6ff}.orb.v{background:#7b4dff}.orb.p{background:#ff4f9a;opacity:.5}
 @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,-30px) scale(1.08)}}
-.glass{background:linear-gradient(135deg,rgb(255 255 255 / .14),rgb(255 255 255 / .05));border:1px solid rgb(255 255 255 / .2);border-radius:var(--radius);
+.glass{background:linear-gradient(135deg,rgb(255 255 255 / .14),rgb(255 255 255 / .05)),rgb(8 12 30 / .22);border:1px solid rgb(255 255 255 / .2);border-radius:var(--radius);
   -webkit-backdrop-filter:blur(26px) saturate(150%);backdrop-filter:blur(26px) saturate(150%);box-shadow:var(--shadow);padding:26px 30px;position:relative}
 .kicker{font:600 16px var(--font-num);letter-spacing:.18em;color:var(--accent)}
 h1{font:600 64px/1.2 var(--font-head);letter-spacing:-.02em}
@@ -218,7 +218,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   </section>
 
   <section class="slide center" data-title="次回">
-    <div class="bg"><div class="orb c" style="width:560px;height:560px;left:120px;top:-200px"></div><div class="orb v" style="width:560px;height:560px;right:80px;bottom:-260px"></div><div class="orb p" style="width:300px;height:300px;left:760px;top:120px"></div></div>
+    <div class="bg"><div class="orb c" style="width:560px;height:560px;left:-60px;top:-240px"></div><div class="orb v" style="width:560px;height:560px;right:80px;bottom:-260px"></div><div class="orb p" style="width:300px;height:300px;left:760px;top:120px"></div></div>
     <div class="glass" style="padding:56px 80px;max-width:900px">
       <div class="kicker">NEXT REVIEW</div>
       <h1 style="margin:18px 0 16px">次回の定例は<br><span class="grad">12月10日（木）</span></h1>

@@ -38,7 +38,7 @@ h2{font-size:44px;line-height:1.3;margin-bottom:30px}
 h2 em,.y{font-style:normal;color:var(--accent)}
 .r{color:var(--red)}
 .lead{color:var(--muted);font-size:22px}
-.foot{color:var(--muted);font:500 14px var(--font-num);letter-spacing:.08em}
+.foot{color:var(--muted);font:500 15px var(--font-num);letter-spacing:.08em}
 .glitch{position:relative;display:inline-block}
 .glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none}
 .glitch::before{color:var(--cy);transform:translate(-3px,0);clip-path:inset(12% 0 64% 0);mix-blend-mode:screen;animation:gl1 3.2s steps(1) infinite}
@@ -90,7 +90,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:30px;border:0;border-radiu
 .sevrow{display:grid;grid-template-columns:130px 1fr 80px;align-items:center;gap:20px;padding:22px 0;border-bottom:1px solid var(--line)}
 .sevrow b{font:700 56px/1 var(--font-num);text-align:right}
 .sevrow .meter{height:24px}
-.sevrow .sev{font-size:16px}
+.sevrow .sev{font-size:15px}
 .sevrow .meter>i{animation:grow 1s var(--ease) both}
 .sevrow.h .meter>i{background:var(--accent);box-shadow:0 0 12px var(--accent)}
 .sevrow.m .meter>i{background:var(--cy);box-shadow:0 0 12px var(--cy)}
@@ -111,13 +111,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:30px;border:0;border-radiu
 /* ---- 脆弱性ごと ---- */
 .vuln{display:grid;grid-template-columns:1fr 370px;gap:40px}
 .vuln h3{font-size:38px;line-height:1.4;margin:18px 0 26px}
-.vuln dl{display:grid;grid-template-columns:120px 1fr;gap:0;margin:0;font-size:23px;line-height:1.6}
+.vuln dl{display:grid;grid-template-columns:120px 1fr;gap:0;margin:0;font-size:22px;line-height:1.6}
 .vuln dt,.vuln dd{padding:14px 0;border-top:1px solid var(--line)}
 .vuln dt{font:700 15px var(--font-num);letter-spacing:.2em;color:var(--cy);padding-top:20px}
 .vuln dd{margin:0}
 .gauge{background:var(--surface);clip-path:var(--cut);padding:24px 28px;border-top:3px solid var(--red)}
 .gauge.h{border-top-color:var(--accent)}
-.gauge small{font:700 14px var(--font-num);letter-spacing:.24em;color:var(--muted)}
+.gauge small{font:700 15px var(--font-num);letter-spacing:.24em;color:var(--muted)}
 .gauge .v{font:700 130px/1 var(--font-num);letter-spacing:-.03em;color:var(--red);margin:8px 0 4px}
 .gauge.h .v{color:var(--accent)}
 .gauge .v span{font-size:30px;color:var(--muted)}
@@ -134,7 +134,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:30px;border:0;border-radiu
 .cmp{display:grid;gap:18px;margin-top:34px}
 .cmp .meter{height:18px}
 .cmp>div{display:grid;grid-template-columns:130px 1fr 150px;gap:16px;align-items:center;font-size:18px;color:var(--muted)}
-.cmp b{font:700 26px var(--font-num);color:var(--ink);text-align:right}
+.cmp b{font:700 24px var(--font-num);color:var(--ink);text-align:right}
 .verdict{margin-top:34px;padding:20px 26px;background:var(--surface);border-left:3px solid var(--accent);font-size:21px}
 .verdict b{font:700 32px var(--font-num);color:var(--accent)}
 

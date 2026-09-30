@@ -75,6 +75,7 @@ ul.list>li::before{border-radius:0;width:9px;height:9px;transform:rotate(45deg);
 .est .sep{background:linear-gradient(transparent,var(--gold),transparent)}
 .field>label{color:var(--muted);font-size:19px;letter-spacing:.06em}
 .field>label b{font:400 30px var(--font-num);color:var(--gold-2)}
+.est .field{margin-bottom:0;gap:2px}
 input[type=range]{accent-color:var(--gold)}
 .row2{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding:12px 0;font-size:20px;color:var(--muted);letter-spacing:.06em}
 .row2 b{font:400 38px var(--font-num);color:var(--ink);letter-spacing:.02em}
@@ -86,6 +87,7 @@ details.why>summary{color:var(--gold);font-size:18px;letter-spacing:.08em}
 details.why>summary::before{border-radius:0;transform:rotate(45deg);background:none;border:1px solid var(--gold);width:14px;height:14px;font-size:0;margin:0 4px}
 details.why[open]>summary::before{transform:rotate(45deg);background:var(--gold)}
 details.why>.body{color:var(--muted);font-size:18px}
+details.why.float[open]>.body{border-radius:0;line-height:1.65;padding-top:12px;padding-bottom:12px}
 .gifts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;width:100%;margin-top:10px}
 .gift{position:relative;background:var(--bg);padding:48px 26px 44px;border:1px solid var(--gold);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px)}
 .gift::before{content:"";position:absolute;inset:8px;border:1px solid var(--line);clip-path:inherit}
@@ -178,6 +180,7 @@ details.why>.body{color:var(--muted);font-size:18px}
         <div class="field"><label>お料理（1名） <b data-show="dish" data-format="yen"></b></label><input type="range" name="dish" min="12000" max="30000" step="1000" value="18000"></div>
         <div class="field"><label>お飲み物（1名） <b data-show="drink" data-format="yen"></b></label><input type="range" name="drink" min="3000" max="9000" step="500" value="5000"></div>
         <div class="field"><label>衣装・写真 <b data-show="dress" data-format="man"></b></label><input type="range" name="dress" min="200000" max="1200000" step="50000" value="600000"></div>
+        <details class="why float"><summary>見積もりの内訳について</summary><div class="body">総額 ＝ 人数 ×（料理＋飲み物）＋ 会場・装花・演出 85万円 ＋ 衣装・写真。<br>ご祝儀は1名3万円で計算。税・サービス料込み。</div></details>
       </div>
       <div class="sep"></div>
       <div>
@@ -185,7 +188,6 @@ details.why>.body{color:var(--muted);font-size:18px}
         <div class="row2"><span>会場・装花・演出</span><b>¥850,000</b></div>
         <div class="row2"><span>ご祝儀の見込み</span><b><span style="font-family:var(--font)">− </span><span data-out="gift" data-format="yen"></span></b></div>
         <div class="total"><div class="label">自己負担の目安</div><div class="v" data-out="own" data-format="yen" data-sign></div></div>
-        <details class="why float"><summary>見積もりの内訳について</summary><div class="body">総額 ＝ 人数 ×（料理＋飲み物）＋ 会場・装花・演出 85万円 ＋ 衣装・写真。<br>ご祝儀は1名3万円で計算した目安です。税・サービス料込み。</div></details>
       </div>
     </div>
     <aside class="notes">ふたりに人数のスライダーを触ってもらう。料理の単価を上げても自己負担が思ったほど増えないことを見せる。</aside>

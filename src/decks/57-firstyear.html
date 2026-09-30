@@ -7,7 +7,7 @@
 <style>
 :root{
   --bg:#f2ece1; --surface:#fbf8f2; --ink:#1f1c2c; --muted:#5d5867; --line:#d8cfbf;
-  --accent:#ef4f2c; --accent-ink:#1f1c2c; --accent-text:#c23b1c; --lilac:#c5b8f2; --lilac-deep:#a996ea; --lilac-ink:#d6cdf7;
+  --accent:#f25c3a; --accent-ink:#1f1c2c; --accent-text:#b3341a; --accent-num:#dd431e; --lilac:#c5b8f2; --lilac-deep:#a996ea; --lilac-ink:#d6cdf7;
   --good:#1f1c2c; --bad:#c23b1c; --frame:#e4dccd;
   --font:"LINE Seed JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
   --font-num:"Bricolage Grotesque","LINE Seed JP","Hiragino Sans",sans-serif;
@@ -30,7 +30,7 @@
 
 /* ---------- 共通：月の大きな数字 ---------- */
 .mohead{left:72px;top:62px;display:flex;align-items:flex-start;gap:16px}
-.mo{font-family:var(--font-num);font-weight:800;font-size:176px;line-height:.8;letter-spacing:-.045em;color:var(--accent);white-space:nowrap}
+.mo{font-family:var(--font-num);font-weight:800;font-size:176px;line-height:.8;letter-spacing:-.045em;color:var(--accent-num);white-space:nowrap}
 .mo-lab{padding-top:14px;font-size:15px;color:var(--muted);line-height:1.5}
 .mo-lab .u{font-family:var(--font);font-size:26px;letter-spacing:.02em;font-weight:800;margin-bottom:8px}
 .mo-lab b{display:block;font-family:var(--font-num);font-size:15px;letter-spacing:.2em;color:var(--ink);font-weight:700}
@@ -144,7 +144,7 @@ details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 8px;background:var
 .s-quiz .hint{border:2px dashed #a79c8a;border-radius:18px;text-align:center;font-size:18px;color:var(--muted);line-height:1.65;
   background:repeating-linear-gradient(90deg,transparent 0 30px,rgb(31 28 44 / .06) 30px 62px) 18px 62px / calc(100% - 36px) 120px no-repeat}
 .s-quiz .hint .hq{position:absolute;left:0;right:0;top:40px}
-.s-quiz .hint b{display:block;font-family:var(--font-num);font-size:64px;color:var(--accent);line-height:1;font-weight:800;-webkit-text-stroke:2px var(--ink)}
+.s-quiz .hint b{display:block;font-family:var(--font-num);font-size:64px;color:var(--accent-num);line-height:1;font-weight:800;-webkit-text-stroke:2px var(--ink)}
 .s-quiz .hint .hx{position:absolute;left:18px;right:18px;bottom:18px;display:flex;justify-content:space-between;border-top:2px dashed #a79c8a;padding-top:6px}
 .s-quiz .hint .hx i{font-style:normal;font-family:var(--font-num);font-size:13px;font-weight:700;color:var(--muted);width:34px;text-align:center}
 .s-quiz .answered .hint{display:none}
@@ -198,7 +198,7 @@ details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 8px;background:var
 .line .sta{position:relative;text-align:center;font-size:15px;font-weight:700;line-height:1.35;padding-top:30px}
 .line .sta::before{content:"";position:absolute;left:50%;top:0;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
 .line .sta.on::before{background:var(--accent);width:26px;height:26px;margin-left:-13px;top:-3px}
-.line .sta small{display:block;font-family:var(--font-num);font-size:14px;font-weight:700;color:var(--muted)}
+.line .sta small{display:block;font-family:var(--font-num);font-size:14px;font-weight:700;color:#48435a}
 .line .rail{position:absolute;left:12.5%;right:12.5%;top:9px;border-top:2px solid var(--ink)}
 .s-oct .body{left:80px;top:342px;width:580px}
 .s-oct .why{left:80px;top:430px;width:380px}
@@ -253,7 +253,7 @@ details.why.float[open]>.body{top:auto;bottom:100%;margin:0 0 8px;background:var
 .res .three>div + div{padding-left:14px;border-left:1px solid rgb(31 28 44 / .3)}
 .res .three .lab{font-size:14px}
 .res .three .v{font-family:var(--font-num);font-weight:700;font-size:32px;letter-spacing:-.02em;white-space:nowrap}
-.res .three .v.hot{color:var(--accent-text)}
+.res .three .v.hot{color:#a8301a}
 
 /* ================= 8 締め ================= */
 .s-end .kick{left:80px;top:70px;font-family:var(--font-num);font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--accent-text)}

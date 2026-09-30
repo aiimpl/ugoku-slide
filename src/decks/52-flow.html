@@ -8,7 +8,7 @@
 :root{
   --bg:#fbfaf6; --surface:#ffffff; --ink:#1b1e24; --muted:#585d66; --line:#d9dbd6;
   --accent:#cc3d0f; --accent-ink:#ffffff; --good:#1d7a4e; --bad:#cc3d0f; --frame:#e4e3dd;
-  --soft:#fbe6dc;
+  --soft:#fbe6dc; --accent-deep:#b3340b;
   --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
   --font-num:"DM Mono","SF Mono",ui-monospace,Menlo,"Hiragino Sans",monospace;
   --head-weight:700; --head-track:.01em; --radius:3px; --shadow:none;
@@ -43,7 +43,7 @@ h1 em,h2 em{font-style:normal;color:var(--accent)}
 .node .who{font-size:15px;color:var(--muted);margin-top:4px}
 .node .d{margin-top:auto;font-size:26px;font-weight:700;letter-spacing:-.01em;line-height:1}
 .node .d small{font-family:var(--font);font-size:14px;margin-left:2px}
-.node.w .d,.node.w .no{color:var(--accent)}
+.node.w .d,.node.w .no{color:var(--accent-deep)}
 .node.w .tag{position:absolute;right:10px;top:12px;font-size:13px;font-weight:700;color:var(--accent);border:1px solid var(--accent);padding:0 5px;background:var(--surface)}
 .arrows{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none;overflow:visible}
 .arrows path{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:square}
@@ -73,8 +73,8 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px;border-colo
 .s-cover .node .in{padding:7px 9px 8px;justify-content:space-between}
 .s-cover .node .no{font-size:13px}
 .s-cover .node .sn{font-size:15px;font-weight:700;white-space:nowrap}
-.s-cover .node.w .sn{color:var(--accent)}
-.s-cover .node.w .no{color:var(--accent)}
+.s-cover .node.w .sn{color:var(--accent-deep)}
+.s-cover .node.w .no{color:var(--accent-deep)}
 .s-cover .ttl{position:absolute;left:80px;top:478px;font-size:14px;font-family:var(--font-num);color:var(--muted);letter-spacing:.1em}
 .s-cover .meta{position:absolute;left:880px;top:486px;width:320px;border-top:1.5px solid var(--ink)}
 .s-cover .meta div{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
@@ -174,7 +174,11 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px;border-colo
 .s-calc .cmp .r{display:grid;grid-template-columns:88px 1fr 60px;align-items:center;gap:10px;font-size:15px;color:var(--muted);margin:6px 0}
 .s-calc .cmp .bar{height:14px;border:1.5px solid var(--ink);background:var(--surface);transition:width .45s var(--ease)}
 .s-calc .cmp .bar.now{width:calc(var(--t) * 5px)}
-.s-calc .cmp .bar.nx{width:30px;background:var(--accent);border-color:var(--accent)}
+.s-calc .cmp .bar.nx{width:30px;height:14px;border:0;background:none;display:flex}
+/* 3工程の箱が、そのまま「6分」の帯に縮む（撮る2分・承認1分・経理3分、1分＝5px） */
+.s-calc .cmp .sg{display:block;position:relative;height:100%}
+.s-calc .cmp .sg .plate{border:0;border-radius:0;background:var(--ink)}
+.s-calc .cmp .sg .plate.wait{background:var(--accent)}
 .s-calc .cmp .m{font-family:var(--font-num);font-size:15px;color:var(--ink)}
 .s-calc .res{position:relative}
 .s-calc .res .cap{font-size:16px;color:var(--muted);font-weight:500}
@@ -390,16 +394,16 @@ details.why.float.up[open]>.body{top:auto;bottom:100%;margin:0 0 6px;border-colo
     <h2>月600件なら、会社全体で<em>年1,560時間</em>が浮く。</h2>
     <div class="calc" data-calc data-let="save = max(t - 6, 0); h = n * save * 12 / 60; yen = h * w; fte = h / 1800; c = min(h / 160, 60); rows = floor(c / 10); rem = c - rows * 10">
       <div>
-        <div class="field"><label>月の精算件数（全社） <b data-show="n" data-unit="件"></b></label><input type="range" name="n" min="100" max="2000" step="50" value="600"></div>
-        <div class="field"><label>今の1件の手間（申請＋承認＋経理） <b data-show="t" data-unit="分"></b></label><input type="range" name="t" min="8" max="40" step="1" value="19"></div>
-        <div class="field"><label>1時間あたりの人件費 <b data-show="w" data-format="yen"></b></label><input type="range" name="w" min="2500" max="6000" step="100" value="3800"></div>
+        <div class="field" data-morph-enter><label>月の精算件数（全社） <b data-show="n" data-unit="件"></b></label><input type="range" name="n" min="100" max="2000" step="50" value="600"></div>
+        <div class="field" data-morph-enter><label>今の1件の手間（申請＋承認＋経理） <b data-show="t" data-unit="分"></b></label><input type="range" name="t" min="8" max="40" step="1" value="19"></div>
+        <div class="field" data-morph-enter><label>1時間あたりの人件費 <b data-show="w" data-format="yen"></b></label><input type="range" name="w" min="2500" max="6000" step="100" value="3800"></div>
         <div class="cmp">
-          <div class="r"><span>今</span><i class="bar now"></i><span class="m" data-show="t" data-unit="分"></span></div>
-          <div class="r"><span>11月から</span><i class="bar nx"></i><span class="m">6分</span></div>
+          <div class="r" data-morph-enter style="--d:.1"><span>今</span><i class="bar now"></i><span class="m" data-show="t" data-unit="分"></span></div>
+          <div class="r"><span data-morph-enter style="--d:.1">11月から</span><i class="bar nx"><i class="sg" style="width:5px"><i class="plate" data-morph="b1"></i></i><i class="sg" style="width:5px"><i class="plate" data-morph="b2"></i></i><i class="sg" style="width:5px"><i class="plate wait" data-morph="b4"></i></i><i class="sg" style="width:7.5px"><i class="plate" data-morph="b6"></i></i><i class="sg" style="width:7.5px"><i class="plate" data-morph="b7"></i></i></i><span class="m" data-morph-enter style="--d:.1">6分</span></div>
         </div>
-        <details class="why float up"><summary>計算のしかた</summary><div class="body">浮く時間 ＝ 件数 ×（今の手間 − 6分）× 12か月。6分は試行2課の実測（撮る2分・承認1分・経理3分）。人件費は、賞与と社会保険を含めた1時間あたり。1,800時間を1人の年間の勤務時間とした。</div></details>
+        <details class="why float up" data-morph-enter style="--d:.15"><summary>計算のしかた</summary><div class="body">浮く時間 ＝ 件数 ×（今の手間 − 6分）× 12か月。6分は試行2課の実測（撮る2分・承認1分・経理3分）。人件費は、賞与と社会保険を含めた1時間あたり。1,800時間を1人の年間の勤務時間とした。</div></details>
       </div>
-      <div class="res">
+      <div class="res" data-morph-enter style="--d:.1">
         <div class="cap">年間で浮く時間</div>
         <div class="big"><span data-out="h" data-format="int"></span><span style="font-family:var(--font);font-size:30px;font-weight:700;margin-left:6px">時間</span></div>
         <div class="pair">

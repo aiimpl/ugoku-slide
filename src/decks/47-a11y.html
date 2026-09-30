@@ -30,6 +30,7 @@ h2{font-size:54px;line-height:1.3;margin-bottom:26px}
 .lv .no{height:100%;display:grid;place-items:center;font-size:44px;font-weight:700;border-right:4px solid #fff}
 .lv .nm{padding:0 22px;font-weight:700;font-size:30px}
 .lv .act{padding:10px 22px;font-size:26px;border-left:4px solid #fff}
+.lvs .lv{min-height:76px;margin-bottom:8px}
 .lv.l3{border-width:6px;border-color:var(--accent)}
 .lv.l3 .no{background:repeating-linear-gradient(45deg,var(--accent) 0 8px,#000 8px 16px);color:#000}
 .lv.l3 .no span{background:var(--accent);padding:0 10px}
@@ -93,7 +94,7 @@ ol.list>li::before{border-radius:0;background:var(--accent);color:#000;width:60p
     <aside class="notes">→キーで1つずつ出る。3つ出したら、もう一度3つを声に出して繰り返す。</aside>
   </section>
 
-  <section class="slide" data-title="避難の合図" data-enter="none">
+  <section class="slide lvs" data-title="避難の合図" data-enter="none">
     <div class="bg"></div>
     <div class="band"><b>避難の合図</b><span>警戒レベル</span><span class="pg">3 / 7</span></div>
     <h2 style="margin-bottom:18px">レベル4 で、全員が避難します。</h2>
@@ -101,7 +102,7 @@ ol.list>li::before{border-radius:0;background:var(--accent);color:#000;width:60p
     <div class="lv l3"><div class="no"><span>3</span></div><div class="nm">高齢者等避難</div><div class="act"><span class="mark">避難</span>お年寄り・体の不自由な方と、その家族</div></div>
     <div class="lv l4"><div class="no">4</div><div class="nm">避難指示</div><div class="act"><span class="mark">避難</span>危ない場所にいる全員</div></div>
     <div class="lv"><div class="no">5</div><div class="nm">緊急安全確保</div><div class="act">すでに災害が起きている。命を守る行動を</div></div>
-    <details class="why" style="margin-top:6px"><summary>レベル5 を待ってはいけない理由</summary><div class="body">レベル5 は、すでに災害が起きているという知らせです。外に出るほうが危ないこともあります。避難はレベル4 までに終えます。</div></details>
+    <details class="why" style="margin-top:4px"><summary>レベル5 を待ってはいけない理由</summary><div class="body">レベル5 は、すでに災害が起きたという知らせ。外に出るほうが危ないこともあります。</div></details>
     <aside class="notes">色の区別がしにくい方のために、レベル3は斜めの線、レベル4は黄色の塗りつぶしと太い枠で区別している。「避難」の四角が付いた行が、動くべき合図。</aside>
   </section>
 
@@ -113,7 +114,7 @@ ol.list>li::before{border-radius:0;background:var(--accent);color:#000;width:60p
       <div>
         <div class="field"><label>家族の人数 <b data-show="p" data-unit=" 人"></b></label><input type="range" name="p" min="1" max="8" value="3" aria-label="家族の人数"></div>
         <div class="field"><label>備える日数 <b data-show="d" data-unit=" 日"></b></label><input type="range" name="d" min="1" max="7" value="3" aria-label="備える日数"></div>
-        <details class="why"><summary>数え方</summary><div class="body">水：1人 1日 3リットル（飲み水と調理）。<br>食料：1人 1日 3食。<br>トイレ袋：1人 1日 5回。</div></details>
+        <details class="why float"><summary>数え方</summary><div class="body">水：1人 1日 3リットル（飲み水と調理）。<br>食料：1人 1日 3食。<br>トイレ袋：1人 1日 5回。</div></details>
       </div>
       <div style="display:grid;gap:14px;align-content:start">
         <div class="box y" style="display:grid;grid-template-columns:150px 1fr;align-items:center;padding:14px 26px"><span style="font-weight:700">水</span><span><span class="big y" data-out="w"></span><span class="unit"> リットル</span><br><span style="font-size:26px">2リットルのペットボトル <b data-out="b" data-unit=" 本"></b></span></span></div>

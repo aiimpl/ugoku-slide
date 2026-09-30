@@ -8,7 +8,7 @@
 :root{
   --bg:#e8e8e6; --surface:#f5f5f4; --ink:#1c1c1c; --muted:#555553; --line:#c4c4c1;
   --accent:#cf1f1f; --accent-ink:#fff; --good:#1c1c1c; --bad:#cf1f1f; --frame:#b9b9b6;
-  --g1:#d3d3d0; --g2:#a9a9a6; --g3:#6f6f6c; --g4:#3a3a39;
+  --g1:#d3d3d0; --g2:#a9a9a6; --g3:#646461; --g4:#3a3a39;
   --radius:0px; --shadow:none;
   --font:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
   --font-num:"IBM Plex Sans JP","Hiragino Sans",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -33,13 +33,14 @@ h2 em,.red{font-style:normal;color:var(--accent)}
 .tone>div:nth-child(1){background:var(--surface)}
 .tone>div:nth-child(2){background:var(--g1)}
 .tone>div:nth-child(3){background:var(--g4);color:#f2f2f0}
-.tone .l{font:500 15px var(--mono);letter-spacing:.08em;color:inherit;opacity:.8}
+.tone .l{font:500 15px var(--mono);letter-spacing:.08em;color:inherit}
 .tone .v{font:700 84px/1 var(--font-num);letter-spacing:-.03em;margin:18px 0 10px;font-variant-numeric:tabular-nums}
 .tone .v small{font-size:26px;margin-left:6px;letter-spacing:0;font-weight:500}
 .tone .d{margin-top:auto;font-size:19px;border-top:1px solid currentColor;padding-top:12px;display:flex;justify-content:space-between}
 .tone .d b{font:500 20px var(--mono)}
 .tone .alert{outline:4px solid var(--accent);outline-offset:-4px}
 .tone .alert .v,.tone .alert .d b{color:var(--accent)}
+.tone .alert .d b{font-size:24px;font-weight:700;line-height:1}
 .chart{height:360px;gap:22px;border-bottom:2px solid var(--ink);padding-top:40px;margin-bottom:40px}
 .chart>.col>i{border-radius:0;background:var(--g3)}
 .chart>.col.dim>i{background:var(--g2)}
@@ -100,9 +101,9 @@ ol.list>li.red::before{background:var(--accent)}
     <h1>月次報告<br>2027年5月度</h1>
     <p class="lead" style="margin-top:28px">サンプル化成株式会社　経営企画部<br>2027年6月12日　取締役会</p>
     <div style="position:absolute;right:72px;top:84px;width:300px;color:#f2f2f0">
-      <div class="mono" style="font-size:15px;letter-spacing:.1em;opacity:.8">本日の審議事項</div>
-      <div style="font:700 200px/1 var(--font-num);color:#fff;margin-top:6px"><span style="color:var(--accent)">1</span></div>
-      <div style="font-size:21px;line-height:1.7;border-top:1px solid #8a8a88;padding-top:14px;margin-top:10px">主力樹脂の価格改定<br><span style="opacity:.8">（報告 4件・審議 1件）</span></div>
+      <div class="mono" style="font-size:15px;letter-spacing:.1em;color:#d2d2cf">本日の審議事項</div>
+      <div style="font:700 200px/1 var(--font-num);color:#fff;margin-top:6px"><span style="color:#ff5a4e">1</span></div>
+      <div style="font-size:21px;line-height:1.7;border-top:1px solid #8a8a88;padding-top:14px;margin-top:10px">主力樹脂の価格改定<br><span style="color:#d2d2cf">（報告 4件・審議 1件）</span></div>
     </div>
     <aside class="notes">冒頭で「今日ご判断いただくのは1点だけ」と宣言する。残りは報告なので短く。</aside>
   </section>

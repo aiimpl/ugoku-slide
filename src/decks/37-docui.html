@@ -7,7 +7,7 @@
 <style>
 :root{
   --bg:#ffffff; --surface:#f7f7f5; --ink:#37352f; --muted:#6f6e69; --line:#e9e9e7;
-  --accent:#2383e2; --accent-ink:#fff; --good:#448361; --bad:#d44c47; --frame:#ececea;
+  --accent:#2383e2; --accent-ink:#fff; --good:#3f7a5a; --bad:#c4403b; --frame:#ececea;
   --radius:6px; --shadow:none;
   --font:"Inter","M PLUS 2","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
   --font-num:"Inter","M PLUS 2",sans-serif; --head-weight:700; --head-track:-.005em;
@@ -26,7 +26,7 @@
 .side .sub{padding-left:16px}
 .side .sub a{font-size:14.5px}
 .side .sub a.on{background:#e3e2e0;color:var(--ink);font-weight:600}
-.crumb{position:absolute;left:300px;top:26px;font-size:15px;color:#7d7c78}
+.crumb{position:absolute;left:300px;top:26px;font-size:15px;color:#686763}
 /* 表紙の帯とアイコン */
 .cover-img{margin:-92px -84px 0 -76px;height:170px;background:
   radial-gradient(circle at 20% 120%,#f5d9b8 0 30%,transparent 30.5%),
@@ -38,7 +38,7 @@ h2{font-size:36px;line-height:1.35;margin-bottom:28px}
 h2::before{content:"";display:block;width:100%;height:1px;background:transparent}
 .props{display:grid;gap:0;font-size:21px;max-width:860px}
 .props .p{display:grid;grid-template-columns:180px 1fr;align-items:center;padding:11px 0;border-bottom:1px solid transparent}
-.props .k{color:#7d7c78;display:flex;align-items:center;gap:8px}
+.props .k{color:#686763;display:flex;align-items:center;gap:8px}
 .props .k::before{content:"≡";color:#b3b2ae}
 .props .u{text-decoration:underline;text-decoration-color:#c7c6c2;text-underline-offset:4px}
 .av{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#e8deee;color:#5a3d78;font-size:13px;font-weight:700;margin-right:4px;vertical-align:1px}
@@ -47,7 +47,7 @@ h2::before{content:"";display:block;width:100%;height:1px;background:transparent
 .tag.blue{background:#e7f3f8;color:#1f6c9f}.tag.green{background:#edf3ec;color:#2f5f3a}.tag.orange{background:#fbecdd;color:#8a4712}
 .callout{display:flex;gap:16px;align-items:flex-start;background:#f1f1ef;border-radius:6px;padding:20px 24px;font-size:22px;line-height:1.7;margin-top:26px;max-width:860px}
 .callout .ci{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 16px var(--font-num);margin-top:2px}
-.callout.warn{background:#fbf3db}.callout.warn .ci{background:#b07d17}
+.callout.warn{background:#fbf3db}.callout.warn .ci{background:#8f6512}
 .callout.ok{background:#edf3ec}.callout.ok .ci{background:var(--good)}
 /* チェックリスト */
 .todo{display:grid;gap:4px;max-width:860px}
@@ -56,20 +56,20 @@ h2::before{content:"";display:block;width:100%;height:1px;background:transparent
 .chk input,.chk .box{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:1.5px solid #5f5e5b;border-radius:3px;cursor:pointer;display:grid;place-items:center;transition:background .2s}
 .chk input:checked{background:var(--accent);border-color:var(--accent)}
 .chk input:checked::after{content:"";width:10px;height:5px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:translateY(-2px) rotate(-45deg)}
-.chk input:checked+span{color:#9b9a97;text-decoration:line-through;text-decoration-color:#b9b8b4}
+.chk input:checked+span{color:#8a8985;text-decoration:line-through;text-decoration-color:#b9b8b4}
 .who{font-style:normal;font-size:16px;background:#f1f1ef;border-radius:4px;padding:2px 10px;color:#5f5e5b}
-.est{font-style:normal;font-size:16px;color:#7d7c78;font-variant-numeric:tabular-nums}
-.left{color:#7d7c78;font-weight:500;margin-left:10px}
+.est{font-style:normal;font-size:16px;color:#686763;font-variant-numeric:tabular-nums}
+.left{color:#686763;font-weight:500;margin-left:10px}
 .due{font-style:normal;font-size:16px;color:var(--bad);font-variant-numeric:tabular-nums}
 .todo.big .chk{font-size:26px;padding:20px 6px;border-bottom:1px solid var(--line);border-radius:0}
 .prog{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
 .prog b{font:600 22px var(--font-num)}
 .meter{height:10px;background:#ebebea}
 .meter>i{background:var(--accent)}
-.hint{font-size:17px;color:#7d7c78;margin-top:18px}
+.hint{font-size:17px;color:#686763;margin-top:18px}
 /* タブ（ページ内の切り替え） */
 .tabs{background:none;padding:0;gap:2px;border-radius:0;border-bottom:1px solid var(--line);width:100%;margin-bottom:18px}
-.tabs>[data-tab]{border-radius:5px 5px 0 0;padding:10px 18px;font-size:18px;font-weight:600;color:#7d7c78}
+.tabs>[data-tab]{border-radius:5px 5px 0 0;padding:10px 18px;font-size:18px;font-weight:600;color:#686763}
 .tabs>[data-tab][aria-selected=true]{background:none;box-shadow:inset 0 -2px 0 var(--ink);color:var(--ink)}
 .blocks{max-width:860px}
 .bl{font-size:26px;line-height:1.65;margin:0;padding:10px 0 10px 32px;position:relative}
@@ -77,7 +77,7 @@ h2::before{content:"";display:block;width:100%;height:1px;background:transparent
 blockquote{margin:22px 0 0;padding:6px 0 6px 22px;border-left:3px solid var(--ink);font-size:24px;line-height:1.7}
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;max-width:860px}
 .blk{border:1px solid var(--line);border-radius:6px;padding:20px 22px 22px}
-.blk .bh{font-size:18px;color:#7d7c78}
+.blk .bh{font-size:18px;color:#686763}
 .blk .bv{font-size:20px;margin-top:6px}
 .blk .bv b{font:700 72px/1.1 var(--font-num);letter-spacing:-.02em;margin:0 4px}
 .blk .bv b.r{color:var(--bad)}
@@ -99,8 +99,8 @@ input[type=range]{accent-color:var(--accent)}
 .rrow.col b.big{display:block;white-space:nowrap;line-height:1.1;margin-top:4px}
 .rrow b.big{font-size:80px;letter-spacing:-.02em;color:var(--ink)}
 .res .meter{margin-top:10px;background:linear-gradient(90deg,transparent 44.2%,#d44c47 44.2% 44.6%,transparent 44.6%),#e6e6e3}
-.scale{display:flex;justify-content:space-between;font-size:15px;color:#7d7c78;margin-top:8px}
-.ph{color:#a3a29e}
+.scale{display:flex;justify-content:space-between;font-size:15px;color:#686763;margin-top:8px}
+.ph{color:#8a8985}
 .empty{margin-top:22px;max-width:860px;padding:22px 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:22px;color:#a3a29e}
 </style>
 

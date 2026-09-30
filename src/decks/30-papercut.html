@@ -31,7 +31,7 @@ h1,h2{color:var(--ink)}
 h2{font-size:44px;line-height:1.45;margin-bottom:26px}
 h2 em{font-style:normal;color:var(--accent)}
 .lead{color:var(--muted)}
-.foot{color:var(--muted);font-size:16px}
+.foot{color:#54463f;font-size:16px}
 /* 紙を重ねたカード：下にもう1枚、色紙がずれてのぞく */
 .paper{position:relative;background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:30px 32px}
 .paper::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--c,var(--peach));transform:translate(8px,10px) rotate(1.2deg);z-index:-1;box-shadow:var(--shadow)}
@@ -43,7 +43,7 @@ h2 em{font-style:normal;color:var(--accent)}
 /* タブ：紙のしおり */
 .tabs{background:none;padding:0;gap:10px}
 .tabs>[data-tab]{background:#f3e6d3;color:var(--muted);border-radius:16px 16px 6px 6px;padding:12px 26px;font:500 21px var(--font);box-shadow:0 2px 4px rgb(90 60 40 / .12)}
-.tabs>[data-tab][aria-selected=true]{background:var(--coral);color:#fff;box-shadow:var(--shadow);transform:translateY(-4px)}
+.tabs>[data-tab][aria-selected=true]{background:var(--accent);color:#fff;box-shadow:var(--shadow);transform:translateY(-4px)}
 .svc{display:grid;grid-template-columns:420px 1fr;gap:48px;align-items:center;flex:1}
 .svc .price{font:500 88px/1 var(--font-num);color:var(--accent)}
 .svc .price small{font-size:24px;color:var(--muted);margin-left:6px;white-space:nowrap}
@@ -57,6 +57,9 @@ details.why{border:0;border-radius:16px;background:var(--surface);box-shadow:var
 details.why>summary{color:var(--accent);font-size:19px;font-weight:500}
 details.why>summary::before{background:var(--mint);color:var(--ink)}
 details.why>.body{color:var(--muted);font-size:18px}
+.paper.s .field{margin-bottom:0;gap:2px}
+.paper.s details.why{margin-top:10px}
+.paper.s details.why>.body{line-height:1.65;padding-bottom:12px}
 .field>label{color:var(--ink);font-size:20px}
 .field>label b{font:500 28px var(--font-num);color:var(--accent)}
 input[type=range]{accent-color:var(--coral)}
@@ -66,8 +69,8 @@ input[type=range]{accent-color:var(--coral)}
 .res.big .v{font-size:72px;color:var(--accent)}
 .meter{height:22px;background:#f0e2cf;box-shadow:inset 0 2px 3px rgb(90 60 40 / .15)}
 .meter>i{background:var(--sage)}
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;flex:1;align-items:start;margin-top:10px}
-.how .n{font:500 96px/1 var(--font-num);color:var(--coral)}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;flex:1;align-items:stretch;align-content:start;margin-top:10px}
+.how .n{font:500 96px/1 var(--font-num);color:#c8664e}
 @media (prefers-reduced-motion:no-preference){
   .slide.active .cloud{animation:pc-drift 14s ease-in-out infinite alternate}
   @keyframes pc-drift{to{transform:translateX(40px)}}

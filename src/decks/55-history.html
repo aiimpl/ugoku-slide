@@ -45,8 +45,8 @@ h2{font-size:34px;line-height:1.5;letter-spacing:.04em;font-weight:700;margin:0}
 .s-cover .years{position:absolute;right:72px;bottom:124px;font-family:var(--font-num);font-size:22px;letter-spacing:.2em;color:var(--muted)}
 .s-cover .body{position:absolute;left:72px;top:150px;width:600px}
 .s-cover .kicker{margin-top:0}
-.s-cover .ky{font-family:var(--font);font-weight:600;letter-spacing:.3em;line-height:1;font-size:15px}
-.s-cover .ky::before{content:"20"}
+.kicker .ky{font-family:var(--font);font-weight:600;letter-spacing:.3em;line-height:1;font-size:15px}
+.kicker .ky::before{content:"20"}
 .s-cover h1{font-size:56px;line-height:1.45;letter-spacing:.04em;font-weight:700}
 .s-cover .lead{font-size:20px;line-height:1.9;color:var(--muted);margin-top:26px}
 .s-cover .colo{position:absolute;left:72px;right:72px;bottom:44px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}
@@ -114,7 +114,7 @@ details.why.float[open]>.body{background:var(--surface);border:1px solid var(--l
 .grat{position:absolute;inset:0}
 .grat .lo{position:absolute;top:0;bottom:0;border-left:1px solid rgb(168 138 85 / .22)}
 .grat .la{position:absolute;left:0;right:0;border-top:1px solid rgb(168 138 85 / .22)}
-.grat span{position:absolute;font-family:var(--font-num);font-style:italic;font-size:13px;color:#8a7f6c;white-space:nowrap}
+.grat span{position:absolute;font-family:var(--font-num);font-style:italic;font-size:13px;color:#6a604f;white-space:nowrap}
 .grat .lo span{bottom:-2px;left:4px}
 .grat .la span{right:0;top:-18px}
 .route{position:absolute;inset:0;overflow:visible}
@@ -181,7 +181,7 @@ input[type=range]:focus-visible{outline:1px dashed var(--accent);outline-offset:
 .nx .why{grid-column:1/-1;margin-top:12px}
 .nx .chart3{position:absolute;left:0;right:0;top:250px;height:200px}
 .nx .gl{position:absolute;left:0;right:0;border-top:1px dotted #bdb097}
-.nx .gl span{position:absolute;left:0;top:-20px;font-family:var(--font-num);font-style:italic;font-size:14px;color:#81776a}
+.nx .gl span{position:absolute;left:0;top:-20px;font-family:var(--font-num);font-style:italic;font-size:14px;color:#6a604f}
 .nx .past{position:absolute;left:0;bottom:0;width:50%;height:25%}
 .nx .proj{position:absolute;left:50%;right:0;top:0;bottom:0;--gg:calc(1 + var(--g) * .01)}
 .nx .proj .ln,.nx .proj .fl{position:absolute;inset:0;
@@ -386,7 +386,7 @@ input[type=range]:focus-visible{outline:1px dashed var(--accent);outline-offset:
   <!-- 5 変えなかった約束 -->
   <section class="slide s-vow" data-title="三つの約束">
     <div class="run"><span>十年の歩み　第四章　変えなかったこと</span><i>Chapter Four</i></div>
-    <div class="kicker">第四章　変えなかったこと</div>
+    <div class="kicker">第四章　変えなかったこと　2016 — <span class="yr ky" data-morph="yr">26</span></div>
     <h2>十年で、変えなかった約束は三つだけです。</h2>
     <div class="vows">
       <div class="vow step"><div class="k">一</div><h3>捨てる前に、一度相談してもらえる会社でいる</h3><p>直せないときは、直せないと言う。買い替えを勧めるのは、そのあと。</p></div>
@@ -400,7 +400,7 @@ input[type=range]:focus-visible{outline:1px dashed var(--accent);outline-offset:
       <details class="why float"><summary>2020年に、出張修理をやめなかった理由</summary><div class="body">法人の仕事が半分になった春、職人を休ませる案もありました。それでも「約束の一」を守るために、家で使う椅子の出張修理に切り替えた。この年に来たお客さまの4割が、いまも定期点検を続けています。</div></details>
     </div>
     <div class="foot"><span>数字は架空のサンプルです</span><span class="folio">— 05 —</span></div>
-    <aside class="notes">→で約束が1つずつ出る。一つずつ読み上げて、それぞれ「なぜ変えなかったか」を一言。下の数字はページを開くと数え上がる。質問が出たら2020年の補足を開く。</aside>
+    <aside class="notes">前のページの「2036」が、章の見出しの「2026」へ縮んで戻ってくる。「十年先を見たうえで、いまの約束に戻ります」と言ってから、→で約束を1つずつ出す。一つずつ読み上げて、それぞれ「なぜ変えなかったか」を一言。下の数字はページを開くと数え上がる。質問が出たら2020年の補足を開く。</aside>
   </section>
 
   <!-- 6 締め -->
@@ -410,24 +410,25 @@ input[type=range]:focus-visible{outline:1px dashed var(--accent);outline-offset:
     <h2>次の十年の年表は、ここにいる皆さんと書きます。</h2>
     <div class="close">
       <div class="blank">
-        <div class="r"><b class="num">2027</b><span>「修理の学校」を開く（予定）</span></div>
-        <div class="r"><b class="num">2028</b><span class="pen"></span></div>
-        <div class="r"><b class="num">2029</b><span class="pen"></span></div>
-        <div class="r"><b class="num">2030</b><span>はじめての海外の工房（検討中）</span></div>
-        <div class="r"><b class="num">2031</b><span class="pen"></span></div>
-        <div class="r"><b class="num">2032</b><span class="pen"></span></div>
-        <div class="r"><b class="num">2033</b><span class="pen"></span></div>
-        <div class="r"><b class="num">2034</b><span class="pen"></span></div>
-        <div class="r"><b class="num">2035</b><span class="pen"></span></div>
-        <div class="r me"><b class="num">2036</b><span>創業二十年。この行は、あなたが書く。</span></div>
+        <div class="r"><b class="num" data-morph="yr">2027</b><span data-morph-enter style="--d:.2">「修理の学校」を開く（予定）</span></div>
+        <div class="r" data-morph-enter style="--d:0.04"><b class="num">2028</b><span class="pen"></span></div>
+        <div class="r" data-morph-enter style="--d:0.08"><b class="num">2029</b><span class="pen"></span></div>
+        <div class="r" data-morph-enter style="--d:0.12"><b class="num">2030</b><span>はじめての海外の工房（検討中）</span></div>
+        <div class="r" data-morph-enter style="--d:0.16"><b class="num">2031</b><span class="pen"></span></div>
+        <div class="r" data-morph-enter style="--d:0.20"><b class="num">2032</b><span class="pen"></span></div>
+        <div class="r" data-morph-enter style="--d:0.24"><b class="num">2033</b><span class="pen"></span></div>
+        <div class="r" data-morph-enter style="--d:0.28"><b class="num">2034</b><span class="pen"></span></div>
+        <div class="r" data-morph-enter style="--d:0.32"><b class="num">2035</b><span class="pen"></span></div>
+        <div class="r me" data-morph-enter style="--d:0.36"><b class="num">2036</b><span>創業二十年。この行は、あなたが書く。</span></div>
       </div>
-      <div class="asks">
+      <div class="asks" data-morph-enter style="--d:.3">
         <div class="a"><i>For our team</i><h3>社員の皆さんへ</h3><p>会場の出口の年表に、「あなたの2036年」を一行書いていってください。記念誌の最後のページに載せます。</p></div>
         <div class="a"><i>For our guests</i><h3>会社説明会の皆さんへ</h3><p>11月の毎週土曜、福岡と東京の工房で見学会を開きます。職人と一緒に、椅子を一脚直してみてください。</p></div>
         <p class="sign">サンプル工房　代表取締役<b>森下 修</b></p>
       </div>
     </div>
     <div class="foot"><span>社名・人名・数字はすべて架空のサンプルです</span><span class="folio">— 06 —</span></div>
+    <aside class="notes">見出しの「2026」が、年表の最初の行「2027」になる。ここからが次の十年。空いた行を指して「ここは皆さんと書きます」と言い、最後の2036年の行で止める。</aside>
   </section>
 
 </main>

@@ -166,6 +166,10 @@ details.why.float[open]>.body{background:var(--surface);border:1px solid var(--i
 .chg{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
 .chg li{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
 .chg li i{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font:500 15px/26px var(--font-num);font-style:normal;text-align:center;margin-top:2px}
+.lab .no{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font:500 15px/26px var(--font-num);font-style:normal;text-align:center}
+.lab .field>label .no{display:inline-block;margin-right:10px;vertical-align:1px}
+.lab .field>label .no+span{margin-right:auto}
+.s-cover .lead .wait{font:400 1em/1 var(--font-num);color:var(--accent-text);margin:0 2px}
 .chg li b{display:block;font-size:19px;font-weight:500;margin-bottom:3px}
 .chg li span{font-size:16px;color:var(--muted);line-height:1.6}
 
@@ -277,6 +281,8 @@ input[type=range]{accent-color:var(--ink)}
 .s-end .contact{position:absolute;left:var(--pad-x);bottom:36px;font-size:15px;color:var(--muted)}
 .s-end .contact b{color:var(--ink);font-weight:500;margin-right:12px}
 
+/* 変形でつながる数字：行内の要素は transform が効かないので、箱にする */
+span[data-morph],b[data-morph]{display:inline-block}
 @media (prefers-reduced-motion:reduce){.bx,.fl,[data-orbit] .orbit .face{transition:none}}
 </style>
 
@@ -333,7 +339,7 @@ input[type=range]{accent-color:var(--ink)}
     </div>
     <div class="kicker"><b>SAMPLE MART</b> 駅前店 改装計画</div>
     <h1>駅前店は、<br>レジを<em>入口へ</em><br>寄せる。</h1>
-    <p class="lead">夕方の行列をなくし、空いた奥を惣菜売場に。<br>改装案を、模型と図面でご覧ください。</p>
+    <p class="lead"><span data-morph-enter>夕方</span><b class="wait" data-morph="wait" data-count="7.5" data-format="dec1">7.5</b><span data-morph-enter>分のレジ待ちをなくし、<br>空いた奥を惣菜売場に。<br>改装案を、模型と図面でご覧ください。</span></p>
     <div class="meta">
       <div><b>MEETING</b>2026.11.18 店長会議</div>
       <div><b>FROM</b>店舗開発部 売場設計課</div>
@@ -348,11 +354,11 @@ input[type=range]{accent-color:var(--ink)}
     <h2>夕方18時、レジの列が<br><em>主通路をふさいでいる</em>。</h2>
     <div class="side">
       <div class="facts">
-        <div><span>18時台の来店</span><b class="num"><span data-count="210"></span><small>人/時</small></b></div>
-        <div class="hot"><span>レジの待ち時間</span><b class="num"><span data-count="7.5" data-format="dec1"></span><small>分</small></b></div>
-        <div class="hot"><span>通路にはみ出す列</span><b class="num"><span data-count="14"></span><small>人</small></b></div>
+        <div data-morph-enter><span>18時台の来店</span><b class="num"><span data-count="210"></span><small>人/時</small></b></div>
+        <div class="hot"><span data-morph-enter style="--d:.06">レジの待ち時間</span><b class="num"><span data-morph="wait" data-count="7.5" data-format="dec1"></span><small data-morph-enter style="--d:.06">分</small></b></div>
+        <div class="hot" data-morph-enter style="--d:.12"><span>通路にはみ出す列</span><b class="num"><span data-count="14"></span><small>人</small></b></div>
       </div>
-      <details class="why"><summary>数え方</summary><div class="body">2026年10月の平日10日間、18〜19時に防犯カメラの映像で列の長さを5分ごとに数えた。来店はドアの通過数（数字は架空のサンプルです）。</div></details>
+      <details class="why" data-morph-enter style="--d:.18"><summary>数え方</summary><div class="body">2026年10月の平日10日間、18〜19時に防犯カメラの映像で列の長さを5分ごとに数えた。来店はドアの通過数（数字は架空のサンプルです）。</div></details>
     </div>
       <div class="plan2d">
         <div class="pz byard" style="left:0px;top:0px;width:684px;height:68.4px"><span>バックヤード</span></div>
@@ -402,8 +408,8 @@ input[type=range]{accent-color:var(--ink)}
     <h2>レジを入口側へ。空いた奥を<br><em>惣菜売場</em>に広げる。</h2>
     <div class="side">
       <ol class="chg">
-        <li class="step"><i>1</i><div><b>レジ3台＋セルフ4台を入口側に</b><span>列はレジ前の専用の帯に並び、主通路をふさがない。</span></div></li>
-        <li class="step"><i>2</i><div><b>通路を1.5m → 1.8mに</b><span>カート同士がすれ違える幅。棚は6列のまま。</span></div></li>
+        <li class="step"><i data-morph="n1">1</i><div><b>レジ3台＋セルフ4台を入口側に</b><span>列はレジ前の専用の帯に並び、主通路をふさがない。</span></div></li>
+        <li class="step"><i data-morph="n2">2</i><div><b>通路を1.5m → 1.8mに</b><span>カート同士がすれ違える幅。棚は6列のまま。</span></div></li>
         <li class="step"><i>3</i><div><b>空いた右奥を惣菜・イートインに</b><span>夕方に売れる惣菜を、帰り道の目の前に置く。</span></div></li>
       </ol>
     </div>
@@ -454,7 +460,7 @@ input[type=range]{accent-color:var(--ink)}
 
   <section class="slide s-lab" data-title="模型で確かめる">
     <div class="lab" data-calc data-let="rows = floor((20 - aw) / (1.2 + aw)); glen = 12 - reg * 2.5; items = (rows * glen + reg * 16) * 2 * 55; area = 704 + reg * 20; ac = round(150 * aw - 30 - (1 - reg) * 60); rc = 120 + self * 24; thr = min(ac, rc); gap = thr - 210; q = max(1, min(8, (210 - thr) / 11 + 2))">
-      <div class="mstage">
+      <div class="mstage" data-morph-enter>
       <div class="model" data-orbit data-rx="-54" data-ry="-18"><div class="orbit" style="--u:15px"><div class="plan3d">
           <div class="bx base" style="--bx:-1.4;--by:-1.4;--bw:40.8;--bd:26.8;--bh:0.8"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
           <div class="fl floor" style="--bx:0;--by:0;--bw:38;--bd:24"></div>
@@ -502,28 +508,28 @@ input[type=range]{accent-color:var(--ink)}
           <div class="bx fig" style="--bx:calc(22.65 + var(--reg) * -4.05);--by:calc(20.9 + var(--reg) * -2.6);--bw:0.45;--bd:0.45;--bh:1.7;--on:clamp(0, calc(var(--q) - 7), 1)"><i class="sh"></i><div class="face fz"></div><div class="face ty"></div><div class="face by"></div><div class="face lx"></div><div class="face rx"></div></div>
       </div></div></div>
       </div>
-      <div class="orbit-hint">ドラッグで回す ／ ダブルクリックで元の向き</div>
+      <div class="orbit-hint" data-morph-enter style="--d:.3">ドラッグで回す ／ ダブルクリックで元の向き</div>
       <div class="ctl">
-        <div class="kicker"><b>03</b> 模型で確かめる</div>
-        <h2><span data-out="'通路' + aw.toFixed(1) + 'm・セルフ' + self + (thr >= 210 ? '台なら、' : '台では、')">通路1.8m・セルフ4台なら、</span><br><em data-out="thr >= 210 ? '夕方の210人をさばける。' : 'あと' + (210 - thr) + '人さばけない。'">夕方の210人をさばける。</em></h2>
-        <label class="sw"><input type="checkbox" name="reg">レジを入口側へ寄せる</label>
-        <div class="field"><label>通路の幅 <b data-show="aw" data-format="dec1" data-unit=" m"></b></label><input type="range" name="aw" min="1.2" max="2.4" step="0.1" value="1.5"></div>
-        <div class="field"><label>セルフレジ <b data-show="self" data-unit=" 台"></b></label><input type="range" name="self" min="0" max="6" step="1" value="0"></div>
+        <div class="kicker" data-morph-enter><b>03</b> 模型で確かめる</div>
+        <h2 data-morph-enter style="--d:.04"><span data-out="'通路' + aw.toFixed(1) + 'm・セルフ' + self + (thr >= 210 ? '台なら、' : '台では、')">通路1.8m・セルフ4台なら、</span><br><em data-out="thr >= 210 ? '夕方の210人をさばける。' : 'あと' + (210 - thr) + '人さばけない。'">夕方の210人をさばける。</em></h2>
+        <label class="sw"><i class="no" data-morph="n1">1</i><input type="checkbox" name="reg" data-morph-enter style="--d:.1"><span data-morph-enter style="--d:.1">レジを入口側へ寄せる</span></label>
+        <div class="field"><label><i class="no" data-morph="n2">2</i><span data-morph-enter style="--d:.14">通路の幅</span> <b data-show="aw" data-format="dec1" data-unit=" m" data-morph-enter style="--d:.14"></b></label><input data-morph-enter style="--d:.14" type="range" name="aw" min="1.2" max="2.4" step="0.1" value="1.5"></div>
+        <div class="field" data-morph-enter style="--d:.18"><label>セルフレジ <b data-show="self" data-unit=" 台"></b></label><input type="range" name="self" min="0" max="6" step="1" value="0"></div>
         <div class="out">
-          <div class="l">1時間に通れる客数</div>
-          <div class="big"><span data-out="thr"></span><small>人</small><span class="gap"><small>210人との差</small> <span data-out="gap" data-sign data-unit=" 人"></span></span></div>
-          <div class="cap">
+          <div class="l" data-morph-enter style="--d:.22">1時間に通れる客数</div>
+          <div class="big"><span data-out="thr" data-morph="thr" data-morph-enter style="--d:.22"></span><small data-morph-enter style="--d:.22">人</small><span class="gap" data-morph-enter style="--d:.22"><small>210人との差</small> <span data-out="gap" data-sign data-unit=" 人"></span></span></div>
+          <div class="cap" data-morph-enter style="--d:.26">
             <span>通路</span><div class="meter" data-bar="ac" data-max="350"><i></i></div><b data-out="ac"></b>
             <span>レジ</span><div class="meter" data-bar="rc" data-max="350"><i></i></div><b data-out="rc"></b>
             <span></span><span class="t">↑ 夕方18時の210人</span>
           </div>
         </div>
         <div class="trio">
-          <div><span>品目数</span><b data-out="items"></b></div>
-          <div><span>売場面積</span><b><span data-out="area"></span><small>㎡</small></b></div>
-          <div><span>棚の列</span><b><span data-out="rows"></span><small>列</small></b></div>
+          <div><span data-morph-enter style="--d:.3">品目数</span><b data-out="items" data-morph="items" data-morph-enter style="--d:.3"></b></div>
+          <div data-morph-enter style="--d:.3"><span>売場面積</span><b><span data-out="area"></span><small>㎡</small></b></div>
+          <div data-morph-enter style="--d:.3"><span>棚の列</span><b><span data-out="rows"></span><small>列</small></b></div>
         </div>
-        <details class="why float"><summary>計算のしかた</summary><div class="body">通れる客数＝通路とレジの少ないほう。通路は幅1mあたり150人/時（列が主通路にかかると−60人）。レジは有人1台40人・セルフ1台24人。品目数は棚の長さ1mあたり55品目。</div></details>
+        <details class="why float" data-morph-enter style="--d:.34"><summary>計算のしかた</summary><div class="body">通れる客数＝通路とレジの少ないほう。通路は幅1mあたり150人/時（列が主通路にかかると−60人）。レジは有人1台40人・セルフ1台24人。品目数は棚の長さ1mあたり55品目。</div></details>
       </div>
     </div>
     <aside class="notes">最初は今の配置のまま。①スイッチでレジを入口へ動かす ②通路を1.8mに ③セルフを4台に、の順で動かすと、並んでいる人（赤い人形）が減っていく。2.1m以上にすると棚が1列沈み、品目が減ることも見せる。</aside>
@@ -533,24 +539,24 @@ input[type=range]{accent-color:var(--ink)}
     <div class="kicker"><b>04</b> 3案の比較</div>
     <h2>品目を減らさずに流れるのは、<em>A案</em>だけ。</h2>
     <div class="opts" data-tabs>
-      <div class="tabs"><button data-tab="a"><b>A</b>入口レジ・通路1.8m<span class="rec">推奨</span></button><button data-tab="b"><b>B</b>入口レジ・通路2.4m</button><button data-tab="c"><b>C</b>レジはそのまま・セルフ増設</button></div>
-      <div class="opt" data-panel="a">
+      <div class="tabs" data-morph-enter><button data-tab="a"><b>A</b>入口レジ・通路1.8m<span class="rec">推奨</span></button><button data-tab="b"><b>B</b>入口レジ・通路2.4m</button><button data-tab="c"><b>C</b>レジはそのまま・セルフ増設</button></div>
+      <div class="opt" data-panel="a" data-morph-enter style="--d:.08">
         <div><div class="mini"><i class="mz deli" style="left:261.0px;top:50.4px;width:66.6px;height:138.6px"></i><i class="mz queue" style="left:81.0px;top:153.0px;width:162.0px;height:27.0px"></i><i class="mw" style="left:0.0px;top:34.2px;width:342.0px;height:2.7px"></i><i class="mg" style="left:81.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:108.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:135.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:162.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:189.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:216.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mr" style="left:81.0px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:109.8px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:138.6px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr s" style="left:171.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:184.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:197.1px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:210.2px;top:185.0px;width:8.1px;height:8.1px"></i></div><div class="cap2">レジ3台＋セルフ4台／棚6列</div></div>
         <div><h3>夕方の210人をさばけて、品目は今と同じ。</h3><p>列はレジ前の帯に収まり、主通路は空く。空いた右奥の18㎡を惣菜に回す。</p>
-          <div class="kv"><div><span>通れる客数</span><b class="ok">216<small>人/時</small></b></div><div><span>品目数</span><b>8,030</b><em>今 7,920</em></div><div><span>工事費</span><b>1,480<small>万円</small></b></div><div><span>休業</span><b>0<small>日</small></b></div></div></div>
+          <div class="kv"><div><span>通れる客数</span><b class="ok">216<small>人/時</small></b></div><div><span>品目数</span><b>8,030</b><em>今 7,920</em></div><div><span>工事費</span><b>1,480<small>万円</small></b></div><div><span>休業</span><b><span data-morph="closed">0</span><small>日</small></b></div></div></div>
       </div>
-      <div class="opt" data-panel="b">
+      <div class="opt" data-panel="b" data-morph-enter style="--d:.08">
         <div><div class="mini"><i class="mz deli" style="left:261.0px;top:50.4px;width:66.6px;height:138.6px"></i><i class="mz queue" style="left:81.0px;top:153.0px;width:162.0px;height:27.0px"></i><i class="mw" style="left:0.0px;top:34.2px;width:342.0px;height:2.7px"></i><i class="mg" style="left:81.0px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:113.4px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:145.8px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mg" style="left:178.2px;top:63.0px;width:10.8px;height:85.5px"></i><i class="mr" style="left:81.0px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:109.8px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:138.6px;top:183.6px;width:23.4px;height:10.8px"></i><i class="mr s" style="left:171.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:184.0px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:197.1px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:210.2px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:223.2px;top:185.0px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:236.2px;top:185.0px;width:8.1px;height:8.1px"></i></div><div class="cap2">レジ3台＋セルフ6台／棚4列</div></div>
         <div><h3>いちばん流れるが、品目が4分の3に減る。</h3><p>通路は広く快適。そのぶん棚が2列減り、日用品の一部を置けなくなる。</p>
-          <div class="kv"><div><span>通れる客数</span><b class="ok">264<small>人/時</small></b></div><div><span>品目数</span><b class="ng">5,940</b><em>今より −25%</em></div><div><span>工事費</span><b>1,720<small>万円</small></b></div><div><span>休業</span><b>0<small>日</small></b></div></div></div>
+          <div class="kv"><div><span>通れる客数</span><b class="ok">264<small>人/時</small></b></div><div><span>品目数</span><b class="ng">5,940</b><em>今より −25%</em></div><div><span>工事費</span><b>1,720<small>万円</small></b></div><div><span>休業</span><b><span data-morph="closed">0</span><small>日</small></b></div></div></div>
       </div>
-      <div class="opt" data-panel="c">
+      <div class="opt" data-panel="c" data-morph-enter style="--d:.08">
         <div><div class="mini"><i class="mz deli" style="left:261.0px;top:50.4px;width:66.6px;height:54.0px"></i><i class="mz queue" style="left:225.0px;top:172.8px;width:54.0px;height:29.7px"></i><i class="mw" style="left:0.0px;top:34.2px;width:342.0px;height:2.7px"></i><i class="mg" style="left:81.0px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:105.3px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:129.6px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:153.9px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:178.2px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mg" style="left:202.5px;top:63.0px;width:10.8px;height:108.0px"></i><i class="mr" style="left:280.8px;top:111.6px;width:23.4px;height:10.8px"></i><i class="mr" style="left:280.8px;top:133.2px;width:23.4px;height:10.8px"></i><i class="mr" style="left:280.8px;top:154.8px;width:23.4px;height:10.8px"></i><i class="mr s" style="left:311.4px;top:109.8px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:121.5px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:133.2px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:144.9px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:156.6px;width:8.1px;height:8.1px"></i><i class="mr s" style="left:311.4px;top:168.3px;width:8.1px;height:8.1px"></i></div><div class="cap2">レジ3台＋セルフ6台（奥のまま）</div></div>
         <div><h3>安いが、列が主通路をふさぐのは変わらない。</h3><p>レジは速くなるが、通路の詰まりが先に来る。夕方の待ちは半分にしかならない。</p>
-          <div class="kv"><div><span>通れる客数</span><b class="ng">135<small>人/時</small></b></div><div><span>品目数</span><b>7,920</b><em>今と同じ</em></div><div><span>工事費</span><b>620<small>万円</small></b></div><div><span>休業</span><b>0<small>日</small></b></div></div></div>
+          <div class="kv"><div><span>通れる客数</span><b class="ng">135<small>人/時</small></b></div><div><span>品目数</span><b>7,920</b><em>今と同じ</em></div><div><span>工事費</span><b>620<small>万円</small></b></div><div><span>休業</span><b><span data-morph="closed">0</span><small>日</small></b></div></div></div>
       </div>
     </div>
-    <div class="base0"><span class="t">比べる相手：今の配置</span><span>通れる客数 <b>120</b>人/時</span><span>品目数 <b>7,920</b></span><span>夕方のレジ待ち <b>7.5</b>分</span><span>必要な客数 <b>210</b>人/時</span></div>
+    <div class="base0"><span class="t" data-morph-enter style="--d:.16">比べる相手：今の配置</span><span><span data-morph-enter style="--d:.16">通れる客数</span> <b data-morph="thr">120</b><span data-morph-enter style="--d:.16">人/時</span></span><span><span data-morph-enter style="--d:.16">品目数</span> <b data-morph="items">7,920</b></span><span data-morph-enter style="--d:.2">夕方のレジ待ち <b>7.5</b>分</span><span data-morph-enter style="--d:.2">必要な客数 <b>210</b>人/時</span></div>
     <p class="note">通れる客数は、前のページの模型と同じ計算（数字は架空のサンプルです）。</p>
     <aside class="notes">タブを A→B→C と押して見比べる。店長からは「B案の広い通路」を推す声が出やすいので、品目が25%減ることを先に言っておく。</aside>
   </section>
@@ -559,7 +565,7 @@ input[type=range]{accent-color:var(--ink)}
     <div class="kicker"><b>05</b> 工事の進め方</div>
     <h2>工事は2月の夜3回。<em>店を閉めずに</em>売場を替える。</h2>
     <div class="two">
-      <div class="quiz">
+      <div class="quiz" data-morph-enter>
         <div class="q">改装のあと、夕方にいちばん売上が伸びる見込みの売場はどこ？</div>
         <div class="choices">
           <button>青果（入口の左）</button>
@@ -569,10 +575,10 @@ input[type=range]{accent-color:var(--ink)}
         <div class="explain">同じ配置に替えた北口店では、18時台の惣菜売上が <b>+23%</b>。レジへ向かう帰り道の正面に置いたことが効いた。</div>
       </div>
       <div class="sched">
-        <div class="r step"><div class="d">2.03<small>TUE NIGHT</small></div><div><h3>レジを入口側へ移す</h3><p>22時閉店後〜翌7時。配線は1月中に先行して床下へ。</p></div></div>
+        <div class="r step"><div class="d"><span data-morph="d1">2.03</span><small>TUE NIGHT</small></div><div><h3>レジを入口側へ移す</h3><p>22時閉店後〜翌7時。配線は1月中に先行して床下へ。</p></div></div>
         <div class="r step"><div class="d">2.10<small>TUE NIGHT</small></div><div><h3>棚を組み替える（6列・1.8m）</h3><p>商品は台車ごと移すので、並べ直しは2時間。</p></div></div>
         <div class="r step"><div class="d">2.17<small>TUE NIGHT</small></div><div><h3>惣菜・イートインをつくる</h3><p>ケース2台とカウンター8席。翌朝から販売。</p></div></div>
-        <div class="zero"><b>0</b><span>日の休業。昼の売場はいつもどおり。</span></div>
+        <div class="zero"><b data-morph="closed">0</b><span data-morph-enter style="--d:.2">日の休業。昼の売場はいつもどおり。</span></div>
       </div>
     </div>
     <aside class="notes">クイズは店長に手を挙げてもらってから押す。工事は火曜の夜3回で、右は→で1行ずつ出す。「休業0日」を最後に強調。</aside>
@@ -631,9 +637,9 @@ input[type=range]{accent-color:var(--ink)}
       </div></div></div>
     </div>
     <div class="asks">
-      <div><div class="no">DECISION 01</div><div class="v">1,480<small>万円</small></div><h3>A案の工事費の承認</h3><p>レジ移設・棚の組み替え・惣菜売場。回収は2年4か月の見込み。</p></div>
-      <div><div class="no">DECISION 02</div><div class="v">2月<small>の火曜夜 3回</small></div><h3>工事日の確定</h3><p>2月3日・10日・17日。夜のシフトは本部から2名応援。</p></div>
-      <div><div class="no">REQUEST</div><div class="v">11.25<small>まで</small></div><h3>店長からのご意見</h3><p>棚の並び・惣菜の品ぞろえへの意見を、売場設計課へ。</p></div>
+      <div data-morph-enter style="--d:.1"><div class="no">DECISION 01</div><div class="v">1,480<small>万円</small></div><h3>A案の工事費の承認</h3><p>レジ移設・棚の組み替え・惣菜売場。回収は2年4か月の見込み。</p></div>
+      <div><div class="no" data-morph-enter style="--d:.14">DECISION 02</div><div class="v"><span data-morph="d1">2.03</span><small data-morph-enter style="--d:.14">から 火曜夜3回</small></div><h3 data-morph-enter style="--d:.14">工事日の確定</h3><p data-morph-enter style="--d:.14">2月3日・10日・17日。夜のシフトは本部から2名応援。</p></div>
+      <div data-morph-enter style="--d:.18"><div class="no">REQUEST</div><div class="v">11.25<small>まで</small></div><h3>店長からのご意見</h3><p>棚の並び・惣菜の品ぞろえへの意見を、売場設計課へ。</p></div>
     </div>
     <div class="contact"><b>店舗開発部 売場設計課</b>内線 0000 ／ 社名・店名・数字はすべて架空のサンプルです</div>
   </section>

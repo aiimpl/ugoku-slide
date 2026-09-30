@@ -12,7 +12,7 @@
   --font-num:"Geist Mono",ui-monospace,"SF Mono",Menlo,"Hiragino Sans",monospace;
   --head-weight:800; --head-track:.01em; --radius:6px; --shadow:none;
   --pad-y:56px; --pad-x:80px;
-  --dim:#5d6892;
+  --dim:#7c88b2;
 }
 /* 地：深い藍に、30°と150°の細い等角グリッド */
 .deck{background:
@@ -81,7 +81,7 @@ details.why>summary::before{border-radius:2px}
 /* ---------- 2 今の構成 ---------- */
 .s-now .body{display:grid;grid-template-columns:600px 1fr;gap:40px;flex:1;margin-top:26px}
 .facts{display:grid;align-content:start}
-.fact{display:grid;grid-template-columns:170px 1fr;align-items:center;gap:22px;padding:28px 0;border-top:1px solid var(--line)}
+.fact{display:grid;grid-template-columns:170px 1fr;align-items:center;gap:22px;padding:22px 0;border-top:1px solid var(--line)}
 .fact:last-of-type{border-bottom:1px solid var(--line)}
 .fact .v{font-family:var(--font-num);font-size:60px;font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--ink)}
 .fact .v small{font-family:var(--font);font-size:20px;font-weight:700;margin-left:4px;letter-spacing:0}
@@ -94,7 +94,7 @@ details.why>summary::before{border-radius:2px}
 .s-now .label{position:absolute;font-family:var(--font-num);font-size:13px;letter-spacing:.1em;color:var(--muted);line-height:1.6}
 .s-now .label b{display:block;font-family:var(--font);font-size:18px;color:var(--ink);letter-spacing:0}
 .s-now .label.l1{right:0;top:12px;text-align:right}
-.s-now .label.l2{left:0;bottom:36px}
+.s-now .label.l2{left:64px;bottom:36px}
 .s-now .label.l2 b{color:var(--bad)}
 
 /* ---------- 3 新しい構成（触る） ---------- */
@@ -150,10 +150,11 @@ details.why>summary::before{border-radius:2px}
 .mile .d{font-family:var(--font-num);font-size:14px;color:var(--accent);letter-spacing:.1em}
 .mile h3{font-size:20px;margin:4px 0 2px}
 .mile p{font-size:18px;color:var(--muted);margin:0;line-height:1.55}
-.s-plan details.why.float{position:absolute;right:80px;top:112px;width:300px;z-index:3;margin:0}
+.s-plan details.why.float{position:absolute;right:80px;top:50px;z-index:3;margin:0}
+.s-plan details.why.float[open]>.body{left:auto;right:-1px;width:410px;font-size:16px;line-height:1.7}
 
 /* ---------- 5 費用 ---------- */
-.cost{display:grid;grid-template-columns:330px 1fr;gap:56px;margin-top:30px;flex:1}
+.cost{display:grid;grid-template-columns:330px 1fr;gap:56px;margin-top:22px;flex:1}
 .cost .field>label{font-size:18px}
 .cost .field>label b{font-family:var(--font-num);font-size:22px;font-weight:600}
 .cost input[type=range]{accent-color:var(--accent)}
@@ -181,10 +182,10 @@ details.why>summary::before{border-radius:2px}
 .sum .k{font-size:16px;color:var(--muted)}
 .sum .n{font-family:var(--font-num);font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1.2}
 .sum .n.accent{color:var(--accent)}
-.cost .why .body{font-size:16px}
+.cost .why .body{font-size:16px;line-height:1.65;padding-bottom:12px}
 .slope{margin:6px 0 4px;border-top:1px solid var(--line)}
 .slope .h{font-family:var(--font-num);font-size:13px;letter-spacing:.16em;color:var(--accent);padding:14px 0 4px}
-.slope .sr{padding:10px 0;border-bottom:1px solid var(--line)}
+.slope .sr{padding:8px 0;border-bottom:1px solid var(--line)}
 .slope .sr span{display:block;font-size:16px;color:var(--muted)}
 .slope .sr b{font-family:var(--font-num);font-size:22px;font-weight:600}
 .slope .sr s{color:var(--dim);text-decoration-thickness:1px;font-weight:500}
@@ -204,10 +205,20 @@ details.why>summary::before{border-radius:2px}
 .s-way .rank .opt.top .meter>i{background:var(--accent)}
 .s-way .rank .opt.top .name::after{content:"推奨";background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:3px;font-family:var(--font-num);font-size:13px;letter-spacing:.1em}
 
+.s-way .pick{position:absolute;left:80px;top:548px;width:360px;padding:18px 22px 16px}
+.s-way .pick .plate{position:absolute;inset:0;background:#141d42}
+.s-way .pick>*:not(.plate){position:relative}
+.s-way .pick .k{font-size:15px;color:var(--muted)}
+.s-way .pick .v{margin-top:4px;line-height:1}
+.s-way .pick .v span{font-family:var(--font-num);font-size:40px;font-weight:600;letter-spacing:-.03em;color:var(--accent)}
+.s-way .pick .v small{font-size:18px;font-weight:700;margin-left:6px;color:var(--ink)}
+
 /* ---------- 7 締め ---------- */
 .asks{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:48px}
-.ask{position:relative;border:1px solid var(--line);background:rgb(16 24 58 / .7);padding:30px 34px 32px;min-height:300px}
-.ask::before{content:"";position:absolute;left:-1px;top:-1px;width:56px;height:3px;background:var(--accent)}
+.ask{position:relative;padding:30px 34px 32px;min-height:300px}
+.ask .plate{position:absolute;inset:0;background:#141d42;box-shadow:inset 0 0 0 1px var(--line)}
+.ask>*:not(.plate){position:relative}
+.ask::before{content:"";position:absolute;z-index:1;left:0;top:0;width:56px;height:3px;background:var(--accent)}
 .ask .no{font-family:var(--font-num);font-size:13px;letter-spacing:.2em;color:var(--accent)}
 .ask h3{font-size:32px;line-height:1.45;margin:14px 0 16px}
 .ask p{font-size:18px;line-height:1.75;color:var(--muted);margin:0}
@@ -230,7 +241,7 @@ details.why>summary::before{border-radius:2px}
   <section class="slide s-cover" data-title="表紙">
     <div class="kicker"><b>SAMPLE HOLDINGS</b> ／ 情報システム部 ／ 経営会議</div>
     <h1>基幹システムを、<br><em>止まらない5層</em>に<br>作り直す。</h1>
-    <p class="lead">17年使ってきた一枚岩のシステムを、18か月かけて層ごとに入れ替えます。全社を止める日はつくりません。</p>
+    <p class="lead">17年使ってきた<span data-morph="mono">一枚岩</span>のシステムを、18か月かけて層ごとに入れ替えます。全社を止める日はつくりません。</p>
     <div class="stage" data-orbit data-rx="-30" data-ry="-36">
       <div class="orbit stack">
         <div class="slab s1"><div class="f top"><span class="no">01</span><span class="nm">画面<small>UI</small></span><span class="mn">基幹システム<small>ONE PROGRAM</small></span></div><div class="f bottom"></div><div class="f front"></div><div class="f back"></div><div class="f right"></div><div class="f left"></div></div>
@@ -247,13 +258,13 @@ details.why>summary::before{border-radius:2px}
 
   <section class="slide s-now" data-title="今の構成">
     <div class="kicker"><b>01</b> ／ 今の基幹システム</div>
-    <h2>今は一枚岩。<em>1か所の障害で、全社の受注が止まる。</em></h2>
+    <h2><span data-morph-enter>今は</span><span data-morph="mono">一枚岩</span><span data-morph-enter>。<em>1か所の障害で、全社の受注が止まる。</em></span></h2>
     <div class="body">
       <div class="facts">
         <div class="fact bad step"><div class="v"><span data-count="41">41</span><small>時間</small></div><p>昨年度、全社で<b>受注が止まった時間</b>。障害は9回、どれも受注と関係のない箇所から始まった。</p></div>
         <div class="fact step"><div class="v"><span data-count="4.2" data-format="dec1">4.2</span><small>か月</small></div><p>画面の項目を1つ足すような<b>小さな改修</b>が、本番に出るまでの平均。全体を試験し直すため。</p></div>
         <div class="fact step"><div class="v"><span data-count="2">2</span><small>人</small></div><p>全体を分かって直せる担当者。<b>うち1人は2028年に定年</b>を迎える。</p></div>
-        <details class="why"><summary>停止41時間の内訳</summary><div class="body">在庫の引き当ての不具合 18時間、月末の請求処理の詰まり 14時間、OS 更新の失敗 9時間。1つのプログラムの中で全部がつながっているので、どこが止まっても受注画面まで止まった。</div></details>
+        <details class="why"><summary>停止41時間の内訳</summary><div class="body">在庫の引き当て 18時間、月末の請求処理 14時間、OS 更新の失敗 9時間。全部がつながっているので、どこが止まっても受注画面まで止まった。</div></details>
       </div>
       <div class="viz mono down">
         <div class="stage" data-orbit data-rx="-30" data-ry="-36">
@@ -286,18 +297,18 @@ details.why>summary::before{border-radius:2px}
         </div>
       </div>
     </div>
-    <div class="side" data-tabs data-morph-enter style="--d:.1">
-      <div class="seg"><button data-tab="ok">平常時</button><button data-tab="down">障害が起きたとき</button></div>
-      <label class="switch"><input type="checkbox" class="mono-toggle"> 今の構成（一枚岩）で比べる</label>
-      <div class="status">
+    <div class="side" data-tabs>
+      <div class="seg" data-morph-enter style="--d:.1"><button data-tab="ok">平常時</button><button data-tab="down">障害が起きたとき</button></div>
+      <label class="switch"><input type="checkbox" class="mono-toggle" data-morph-enter style="--d:.14"><span data-morph-enter style="--d:.14">今の構成（</span><span data-morph="mono">一枚岩</span><span data-morph-enter style="--d:.14">）で比べる</span></label>
+      <div class="status" data-morph-enter style="--d:.18">
         <div class="r r1"><i>01</i><b>画面</b><span class="pill2"><span class="up">稼働中</span><span class="rc">受付を続ける</span><span class="dn">停止</span></span></div>
         <div class="r r2"><i>02</i><b>API</b><span class="pill2"><span class="up">稼働中</span><span class="rc">受付を続ける</span><span class="dn">停止</span></span></div>
         <div class="r r3"><i>03</i><b>業務ロジック</b><span class="pill2"><span class="up">稼働中</span><span class="rc">稼働中</span><span class="dn">停止</span></span></div>
         <div class="r r4"><i>04</i><b>データ</b><span class="pill2"><span class="up">稼働中</span><span class="rc">稼働中</span><span class="dn">停止</span></span></div>
         <div class="r r5"><i>05</i><b>基盤</b><span class="pill2"><span class="up">稼働中</span><span class="rc">稼働中</span><span class="dn">停止</span></span></div>
       </div>
-      <div class="say" data-panel="ok"><p class="n">5つの層は、決まった窓口（API）だけでつながる。<b>1つの層を直す・増やすときに、ほかの層を止めなくていい。</b></p><p class="m">今は5つの役割が1つのプログラムに入っている。<b>どこを直しても、全体を試験して全体を止める。</b></p></div>
-      <div class="say" data-panel="down"><p class="n">受注の処理が落ちても、画面と API は<b>注文の受付を続け、データは失われない</b>。復旧したら、たまった注文を順に処理する。影響は「確定が最大15分遅れる」まで。</p><p class="m">同じ障害で、<b>画面からデータまで全部が止まる</b>。昨年度はこれが9回・41時間あった。</p></div>
+      <div class="say" data-panel="ok" data-morph-enter style="--d:.22"><p class="n">5つの層は、決まった窓口（API）だけでつながる。<b>1つの層を直す・増やすときに、ほかの層を止めなくていい。</b></p><p class="m">今は5つの役割が1つのプログラムに入っている。<b>どこを直しても、全体を試験して全体を止める。</b></p></div>
+      <div class="say" data-panel="down" data-morph-enter style="--d:.22"><p class="n">受注の処理が落ちても、画面と API は<b>注文の受付を続け、データは失われない</b>。復旧したら、たまった注文を順に処理する。影響は「確定が最大15分遅れる」まで。</p><p class="m">同じ障害で、<b>画面からデータまで全部が止まる</b>。昨年度はこれが9回・41時間あった。</p></div>
     </div>
     <div class="hint">ドラッグで回せます ／ ダブルクリックで元の向き</div>
     <aside class="notes">会場で「障害が起きたとき」を押す。赤く沈むのは業務ロジックの1層だけ。次に「今の構成で比べる」を入れると、板がくっついて一枚岩になり、全部が赤く沈む。この2つの見比べがこの提案の芯です。</aside>
@@ -306,7 +317,7 @@ details.why>summary::before{border-radius:2px}
   <section class="slide s-plan" data-title="移行の工程表">
     <div class="kicker"><b>03</b> ／ 移行の工程表</div>
     <h2>下の層から順に、18か月で入れ替える。<br><em>全社を止める日はつくらない。</em></h2>
-    <details class="why float"><summary>なぜ下の層から</summary><div class="body">上の層（画面）は、下の層が新しくなってからでないと作り直せない。基盤とデータを先に移し、古いシステムと新しい層を API でつないで並べて動かす。切り替えは層ごとに、1つずつ戻せる形で行う。</div></details>
+    <details class="why float"><summary>なぜ下の層から</summary><div class="body">画面は下の層が新しくならないと作り直せない。だから基盤とデータから、層ごとに移す。</div></details>
     <div class="gantt q">
       <div class="head"><span><b>2027</b>1Q</span><span>2Q</span><span>3Q</span><span>4Q</span><span><b>2028</b>1Q</span><span>2Q</span></div>
       <div class="cols"><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -336,7 +347,7 @@ details.why>summary::before{border-radius:2px}
           <div class="sr"><span>処理が1日1万件ふえるごとに</span><b><s>+14万円</s> → +6.8万円</b></div>
           <div class="sr"><span>利用者が1人ふえるごとに</span><b><s>+2,500円</s> → +700円</b></div>
         </div>
-        <details class="why"><summary>費用の出し方</summary><div class="body">今の構成は、いちばん混む処理に合わせて全体を大きくするしかない（1日1万件ふえるごとに月14万円）。新しい構成は、混む層だけを増やす。保守・ライセンス・サーバーを合わせた月額（税抜・万円）。</div></details>
+        <details class="why"><summary>費用の出し方</summary><div class="body">今は全体を大きくするしかない。新しい構成は混む層だけ増やす。</div></details>
       </div>
       <div class="lanes">
         <div class="lane" data-morph-enter style="--d:.05">
@@ -351,7 +362,7 @@ details.why>summary::before{border-radius:2px}
         <div class="sum" data-morph-enter style="--d:.25">
           <div><div class="k">1か月で浮く費用</div><div class="n accent" data-out="diff*10000" data-format="man"></div></div>
           <div><div class="k">1年で</div><div class="n" data-out="diff*12*10000" data-format="man"></div></div>
-          <div><div class="k">投資6.2億の回収</div><div class="n"><span data-out="back" data-format="dec1"></span><small style="font-size:20px;font-family:var(--font)">年</small></div></div>
+          <div><div class="k">投資<span data-morph="inv">6.2</span>億の回収</div><div class="n"><span data-out="back" data-format="dec1"></span><small style="font-size:20px;font-family:var(--font)">年</small></div></div>
         </div>
       </div>
     </div>
@@ -371,6 +382,7 @@ details.why>summary::before{border-radius:2px}
           {"name":"業務パッケージに乗り換える","note":"10か月・7.8億円。業務の手順をパッケージに合わせる","scores":{"stop":3,"cost":2,"speed":5,"know":1}}
         ]}</script>
     </div>
+    <div class="pick"><div class="plate" data-morph="plan"></div><div class="k" data-morph-enter style="--d:.2">推奨案の投資と期間</div><div class="v"><span data-morph="inv">6.2</span><small data-morph-enter style="--d:.2">億円 ／ 18か月</small></div></div>
     <div class="foot"><span>評価は情報システム部と各部門長で5段階（数字は架空のサンプルです）</span><span>06</span></div>
   </section>
 
@@ -387,8 +399,8 @@ details.why>summary::before{border-radius:2px}
       </div>
     </div>
     <div class="asks">
-      <div class="ask step"><div class="no">DECISION 01</div><h3>18か月・<span class="n">6.2</span>億円の<br>移行計画</h3><p>2027年1月に着手。半年ごとの切替のたびに、この会議で「続けるか」を判断していただく。</p></div>
-      <div class="ask step"><div class="no">DECISION 02</div><h3>移行チーム<span class="n">8</span>名と<br>外部パートナーの選定</h3><p>社内6名（うち2名は業務部門から）＋外部2社。選定は11月末まで。</p></div>
+      <div class="ask"><div class="plate" data-morph="plan"></div><div class="no" data-morph-enter style="--d:.3">DECISION 01</div><h3><span data-morph-enter style="--d:.3">18か月・</span><span class="n" data-morph="inv">6.2</span><span data-morph-enter style="--d:.3">億円の<br>移行計画</span></h3><p data-morph-enter style="--d:.36">2027年1月に着手。半年ごとの切替のたびに、この会議で「続けるか」を判断していただく。</p></div>
+      <div class="ask step"><div class="plate"></div><div class="no">DECISION 02</div><h3>移行チーム<span class="n">8</span>名と<br>外部パートナーの選定</h3><p>社内6名（うち2名は業務部門から）＋外部2社。選定は11月末まで。</p></div>
     </div>
     <div class="next"><div><b>NEXT</b>2027年7月の経営会議で、基盤の切替結果をご報告します。</div><div><b>CONTACT</b>情報システム部 基幹刷新チーム（内線 4120）</div></div>
     <div class="foot"><span>社名・数字はすべて架空のサンプルです</span><span>07</span></div>

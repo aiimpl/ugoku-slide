@@ -40,7 +40,7 @@ details.why>.body{color:var(--ink);font-size:17px}
 details.why.float[open]>.body{border-radius:2px;box-shadow:0 8px 24px rgb(11 42 85 / .15)}
 input[type=range]{accent-color:var(--accent)}
 .field>label{font-size:18px;color:var(--ink)}
-.field>label b{font:700 24px var(--font-num);color:var(--accent)}
+.field>label b{font:700 26px var(--font-num);color:var(--accent)}
 .meter{border-radius:0;height:14px;background:var(--tint)}
 .meter>i{border-radius:0;background:var(--accent)}
 
@@ -92,7 +92,7 @@ input[type=range]{accent-color:var(--accent)}
 
 /* ---- ロジックツリー ---- */
 .tree{display:grid;grid-template-columns:200px 44px 250px 44px 1fr;align-items:center}
-.tree .root{background:var(--accent);color:#fff;padding:18px 18px;font-size:21px;font-weight:700;line-height:1.45}
+.tree .root{background:var(--accent);color:#fff;padding:18px 18px;font-size:20px;font-weight:700;line-height:1.45}
 .tree .root b{display:block;font:700 34px var(--font-num);margin-top:6px}
 .tree .lk{height:100%;position:relative}
 .tree .lk::before{content:"";position:absolute;left:0;width:50%;top:50%;border-top:1.5px solid var(--ink)}
@@ -106,7 +106,7 @@ input[type=range]{accent-color:var(--accent)}
 .tree .lks>div::after{content:"";position:absolute;left:50%;right:0;top:18%;bottom:18%;border:1.5px solid var(--ink);border-right:0}
 .tree .leaves{display:grid;gap:10px}
 .leaf{display:grid;grid-template-columns:1fr 70px 190px;gap:14px;align-items:center;padding:9px 14px;border:1px solid var(--line);font-size:18px}
-.leaf b{font:700 22px var(--font-num);text-align:right}
+.leaf b{font:700 24px var(--font-num);text-align:right}
 .leaf .meter{height:12px}
 .leaf.key{border-color:var(--hl);background:#fbf3ec}
 .leaf.key b{color:var(--hl)}.leaf.key .meter>i{background:var(--hl)}
@@ -259,7 +259,7 @@ input[type=range]{accent-color:var(--accent)}
         <tr><td>数量減の影響</td><td class="n" data-out="loss" data-format="man" data-sign></td></tr>
         <tr><td>共同配送</td><td class="n" data-out="logi" data-format="man" data-sign></td></tr>
         <tr><td>品目の絞り込み</td><td class="n" data-out="sku" data-format="man" data-sign></td></tr>
-        <tr class="tot"><td><b>2027年度の営業利益</b><br><span class="muted" style="font-size:16px">利益率 <span data-out="op/sales*100" data-format="pct"></span></span></td><td class="n" data-out="op" data-format="man"></td></tr>
+        <tr class="tot"><td><b>2027年度の営業利益</b><br><span class="muted" style="font-size:17px">利益率 <span data-out="op/sales*100" data-format="pct"></span></span></td><td class="n" data-out="op" data-format="man"></td></tr>
       </table>
     </div>
     <div class="src"><span><b>出典：</b>経営企画部 試算</span><span>数字は架空のサンプルです</span><span class="cf">CONFIDENTIAL</span></div>

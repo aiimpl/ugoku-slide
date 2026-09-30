@@ -205,6 +205,8 @@ figure.q{display:contents}
 .dps .chart>.col:last-child::before{color:var(--accent)}
 .dps .chart>.col::after{font-family:var(--font-num);font-size:14px;color:var(--muted)}
 .dps .cap{font-size:13px;color:var(--muted);margin-top:0}
+.ttl h2 .fy{font-family:var(--font-num);font-weight:600;margin:0 2px}
+.s-fx .ttl h2 .fy{margin:0 1px 0 0}
 .ret{position:absolute;left:776px;top:250px;width:424px;border-top:1px solid var(--rule)}
 .ret .r{padding:16px 0 16px;border-bottom:1px solid var(--line)}
 .ret .r .lb{font-size:15px;color:var(--muted)}
@@ -227,6 +229,8 @@ figure.q{display:contents}
 .ir b{display:block;color:var(--ink);font-weight:500;font-size:15px}
 .ir .disc{font-size:12px;line-height:1.6}
 
+/* 変形でつながる数字：行内の要素は transform が効かないので、箱にする */
+span[data-morph],b[data-morph]{display:inline-block}
 @media (prefers-reduced-motion:reduce){.gauge .fill{transition:none}}
 </style>
 
@@ -300,7 +304,7 @@ figure.q{display:contents}
   <section class="slide s-seg" data-enter="none" data-title="セグメント別">
     <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">03</span></div></div>
     <div class="kick in"><b>02</b>セグメント別 ｜ 上期・億円</div>
-    <div class="ttl in"><h2>営業利益の6割は産業機器。<br>医療・計測は利益率が<em>11.2%</em>まで上がり、2本目の柱になった。</h2></div>
+    <div class="ttl in"><h2>営業利益の6割は産業機器。<br>医療・計測は利益率が<em>11.2%</em>まで上がり、2本目の柱に育ちつつある。</h2></div>
     <div class="seg-h in" style="left:80px">事業</div>
     <div class="seg-h in" style="left:320px">売上収益</div>
     <div class="seg-h in" style="left:750px">営業利益</div>
@@ -332,7 +336,7 @@ figure.q{display:contents}
     <div class="seg-m low in n" style="top:516px">3.4<small>%</small><i><b style="color:var(--bad)">−0.7pt</b></i></div>
 
     <details class="why in" style="--d:.3"><summary>ソリューションの利益が減った理由</summary><div class="body">大型案件2件の立ち上げで、先に人件費（外部の技術者 42名）を計上した。売上は下期に計上される見込みで、通期では増益を見込む。</div></details>
-    <div class="tot in" style="--d:.3"><span>合計 売上収益<b class="n">1,284.0</b></span><span>営業利益<b class="n g">142.6</b></span></div>
+    <div class="tot in" style="--d:.3"><span>合計 売上収益<b class="n">1,284.0</b></span><span>営業利益<b class="n g" data-morph="op1h">142.6</b></span></div>
     <div class="ftr"><span>セグメント間の取引は消去済み。調整額は各セグメントに配分</span><span>数字は架空のサンプルです</span></div>
     <aside class="notes">前のページの2本の棒（売上と営業利益）が、そのまま3つの事業に割れて横に並ぶ。棒の長さは、売上どうし・営業利益どうしで比べられる。ソリューションの減益は一時的な要因なので、質問が出たら根拠を開いて答える。</aside>
   </section>
@@ -343,11 +347,11 @@ figure.q{display:contents}
     <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">04</span></div></div>
     <div class="kick in"><b>03</b>四半期の推移 ｜ 億円</div>
     <div class="ttl in"><h2><span data-sheet-out="label(-1)">FY26 2Q</span>の営業利益率は<em><span class="n" data-sheet-out="last(col('営業利益').length?'営業利益':1)/last(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)*100" data-format="pct">11.9%</span></em>。<br><span data-sheet-out="(()=>{const a=col(col('売上収益').length?'売上収益':col('営業利益').length?-1:0),b=col(col('営業利益').length?'営業利益':1);const m=i=>b.at(i)/a.at(i)*100;let d,t;if(a.length>=5){d=m(-1)-m(-5);t='前年同期から'}else if(a.length>=2){d=m(-1)-m(-2);t='前の四半期から'}else return '';if(!isFinite(d))return '';if(Math.abs(d)<.05)return t+'横ばい。';return t+(d<0?'−':'+')+Math.abs(d).toFixed(1)+'pt、'+(d<0?'下がった。':'上がった。')})()">前年同期から+0.6pt、上がった。</span></h2></div>
-    <div class="side in" style="--d:.1">
-      <div><div class="lb">売上収益（最新）</div><div class="v n"><span data-sheet-out="last(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)" data-format="dec1">666.0</span><small>億円</small></div></div>
-      <div><div class="lb">営業利益（最新）</div><div class="v n g"><span data-sheet-out="last(col('営業利益').length?'営業利益':1)" data-format="dec1">79.5</span><small>億円</small></div></div>
-      <div><div class="lb">営業利益 前年同期比</div><div class="v n"><span data-sheet-out="(()=>{const b=col(col('営業利益').length?'営業利益':1);if(b.length<5)return NaN;const p=b.at(-5),c=b.at(-1);if(!(p>0))return c>0?'黒字転換':'—';const g=(c/p-1)*100;return (g<0?'−':'+')+Math.abs(g).toFixed(1)+'%'})()">+16.2%</span></div></div>
-      <div><div class="lb">表の期間の利益率</div><div class="v n"><span data-sheet-out="sum(col('営業利益').length?'営業利益':1)/sum(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)*100" data-format="pct">10.9%</span></div></div>
+    <div class="side">
+      <div class="in" style="--d:.1"><div class="lb">売上収益（最新）</div><div class="v n"><span data-sheet-out="last(col('売上収益').length?'売上収益':col('営業利益').length?-1:0)" data-format="dec1">666.0</span><small>億円</small></div></div>
+      <div class="in" style="--d:.1"><div class="lb">営業利益（最新）</div><div class="v n g"><span data-sheet-out="last(col('営業利益').length?'営業利益':1)" data-format="dec1">79.5</span><small>億円</small></div></div>
+      <div class="in" style="--d:.14"><div class="lb">営業利益 前年同期比</div><div class="v n"><span data-sheet-out="(()=>{const b=col(col('営業利益').length?'営業利益':1);if(b.length<5)return NaN;const p=b.at(-5),c=b.at(-1);if(!(p>0))return c>0?'黒字転換':'—';const g=(c/p-1)*100;return (g<0?'−':'+')+Math.abs(g).toFixed(1)+'%'})()">+16.2%</span></div></div>
+      <div><div class="lb in" style="--d:.14">直近2四半期の営業利益</div><div class="v n g"><span data-morph="op1h" data-sheet-out="(()=>{const b=col(col('営業利益').length?'営業利益':1);return b.length<2?NaN:b.at(-1)+b.at(-2)})()" data-format="dec1">142.6</span><small class="in" style="--d:.14">億円</small></div></div>
     </div>
     <div class="note in" style="--d:.16">決算の数字が確定したら、<b>Excel の四半期表を見出しごとコピーして、このページで ⌘V</b>。グラフ・見出しの利益率・右の4つの数字が作り直される。セルを直接直してもよい。</div>
     <div class="ops in" style="--d:.06">
@@ -378,9 +382,9 @@ figure.q{display:contents}
   <section class="slide s-fx" data-enter="none" data-title="通期見通し">
     <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">05</span></div></div>
     <div class="kick in"><b>04</b>通期の見通し ｜ 下期の想定為替と感応度</div>
-    <div class="ttl in"><h2>下期1ドル145円の前提で、通期の営業利益は<em>300億円</em>。<br>1円の円安で、<em>2.4億円</em>上振れする。</h2></div>
-    <div class="fxbox in" style="--d:.1" data-calc data-let="op = 300 + (u - 145) * 2.4 + (e - 158) * 0.7; rev = 2650 + (u - 145) * 12 + (e - 158) * 3.5">
-      <div class="ctl">
+    <div class="ttl in"><h2>下期1ドル145円の前提で、通期の営業利益は<em><b class="n fy" data-morph="fy">300</b>億円</em>。<br>1円の円安で、<em>2.4億円</em>上振れする。</h2></div>
+    <div class="fxbox" data-calc data-let="op = 300 + (u - 145) * 2.4 + (e - 158) * 0.7; rev = 2650 + (u - 145) * 12 + (e - 158) * 3.5">
+      <div class="ctl in" style="--d:.1">
         <div class="field"><label>下期の想定　1ドル <b data-show="u" data-unit="円"></b></label><input type="range" name="u" min="130" max="165" step="1" value="145"></div>
         <div class="field"><label>下期の想定　1ユーロ <b data-show="e" data-unit="円"></b></label><input type="range" name="e" min="145" max="175" step="1" value="158"></div>
         <div class="sens">
@@ -391,14 +395,14 @@ figure.q{display:contents}
         <details class="why"><summary>感応度の前提</summary><div class="body">下期の外貨建て売上（米ドル 1,000万ドル／月、ユーロ 290万ユーロ／月）と、外貨建ての調達を差し引いた額から算出。上期の実績レートは1ドル148円・1ユーロ161円。</div></details>
       </div>
       <div class="res">
-        <div class="lb">2027年3月期 通期の営業利益（見通し）</div>
-        <div class="big"><span data-out="op" data-format="dec1"></span><small>億円</small></div>
+        <div class="lb in" style="--d:.1">2027年3月期 通期の営業利益（見通し）</div>
+        <div class="big in" style="--d:.1"><span data-out="op" data-format="dec1"></span><small>億円</small></div>
         <div class="gauge"><div class="fill"></div><div class="h1"></div>
-          <div class="mk" style="left:calc(142.6 / 360 * 100%)"><span>上期実績 <b>142.6</b></span></div>
+          <div class="mk" style="left:calc(142.6 / 360 * 100%)"><span>上期実績 <b data-morph="op1h">142.6</b></span></div>
           <div class="mk" style="left:calc(280 / 360 * 100%)"><span>期初予想 <b>280</b></span></div>
         </div>
-        <div class="gscale"><span>0</span><span>90</span><span>180</span><span>270</span><span>360億円</span></div>
-        <div class="trio">
+        <div class="gscale in" style="--d:.14"><span>0</span><span>90</span><span>180</span><span>270</span><span>360億円</span></div>
+        <div class="trio in" style="--d:.18">
           <div><div class="lb muted">期初予想との差</div><div class="v n" data-out="op - 280" data-format="dec1" data-sign></div></div>
           <div><div class="lb muted">売上収益</div><div class="v n"><span data-out="rev"></span><small>億円</small></div></div>
           <div><div class="lb muted">営業利益率</div><div class="v n" data-out="op / rev * 100" data-format="pct"></div></div>
@@ -413,7 +417,7 @@ figure.q{display:contents}
   <section class="slide s-ret" data-enter="none" data-title="株主還元">
     <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">06</span></div></div>
     <div class="kick in"><b>05</b>株主還元 ｜ 1株あたり配当・円</div>
-    <div class="ttl in"><h2>年間配当は<em>86円</em>に増やす予定。<br>9期連続の増配で、配当性向は35%をめざす。</h2></div>
+    <div class="ttl"><h2><span class="in" style="--d:.4">通期の営業利益</span><b class="n fy" data-morph="fy">300</b><span class="in" style="--d:.4">億円の見通しのもと、年間配当は<em>86円</em>に増やす。<br>9期連続の増配で、配当性向は35%をめざす。</span></h2></div>
     <div class="dps in" style="--d:.08">
       <div class="chart">
         <div class="col" style="--v:62" data-label="FY22" data-val="58"><i></i></div>
@@ -437,10 +441,10 @@ figure.q{display:contents}
     <div class="hdr"><div class="co"><i></i>SAMPLE HOLDINGS</div><div>2027年3月期 第2四半期 決算説明会<span class="pg">07</span></div></div>
     <div class="kick in"><b>06</b>本日のまとめ</div>
     <div class="ttl in"><h2>お伝えしたかったのは、この<em>3つ</em>です。</h2></div>
-    <div class="pts in" style="--d:.08">
-      <div class="r step"><div class="no">01</div><div><h3>上期は増収増益。利益率は11.1%</h3><p>原価率の改善が効いた。販管費は人への投資で少し増えた。</p></div><div class="v n">+18.4<small>%</small></div></div>
-      <div class="r step"><div class="no">02</div><div><h3>医療・計測が2本目の柱に</h3><p>営業利益は前年から+35%。保守サービスの契約が1.4倍になった。</p></div><div class="v n g">46.0<small>億円</small></div></div>
-      <div class="r step"><div class="no">03</div><div><h3>通期の営業利益予想を引き上げ</h3><p>280億円 → 300億円。下期の為替は1ドル145円で保守的に置いた。</p></div><div class="v n g">300<small>億円</small></div></div>
+    <div class="pts">
+      <div class="r in" style="--d:.08"><div class="no">01</div><div><h3>上期は増収増益。利益率は11.1%</h3><p>原価率の改善が効いた。販管費は人への投資で少し増えた。</p></div><div class="v n">+18.4<small>%</small></div></div>
+      <div class="r in" style="--d:.2"><div class="no">02</div><div><h3>医療・計測が2本目の柱に</h3><p>営業利益は前年から+35%。保守サービスの契約が1.4倍になった。</p></div><div class="v n g">46.0<small>億円</small></div></div>
+      <div class="r"><div class="no in" style="--d:.32">03</div><div class="in" style="--d:.32"><h3>通期の営業利益予想を引き上げ</h3><p>280億円 → 300億円。下期の為替は1ドル145円で保守的に置いた。</p></div><div class="v n g"><span data-morph="fy">300</span><small class="in" style="--d:.32">億円</small></div></div>
     </div>
     <div class="ir in" style="--d:.16">
       <div><b>次回の開示</b>第3四半期決算 2027年2月9日（予定）</div>
@@ -448,7 +452,7 @@ figure.q{display:contents}
       <div class="disc">本資料の見通しは、現時点で入手できる情報と前提にもとづくもので、実際の業績は変わることがあります。本資料の社名・数字はすべて架空のサンプルです。</div>
     </div>
     <div class="ftr"><span>サンプルホールディングス株式会社 ｜ IR室</span><span>社名・数字はすべて架空のサンプルです</span></div>
-    <aside class="notes">→ で1つずつ出して、最後に質疑へ。為替の質問が来たら5ページ目に戻って、その場でつまみを動かす。</aside>
+    <aside class="notes">3つは上から順に出る（3つ目の300億円は、前のページの見出しから動いてくる）。読み上げたら質疑へ。為替の質問が来たら5ページ目に戻って、その場でつまみを動かす。</aside>
   </section>
 
 </main>
