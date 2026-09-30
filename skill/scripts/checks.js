@@ -18,6 +18,7 @@
     const r = el.getBoundingClientRect(), b = s.getBoundingClientRect(), k = scaleOf(s);
     return { l: (r.left - b.left) / k, t: (r.top - b.top) / k, r: (r.right - b.left) / k, b: (r.bottom - b.top) / k, w: r.width / k, h: r.height / k };
   };
+  const rgba = c => { const m = c.match(/[\d.]+/g) || [0, 0, 0, 0]; return m.map(Number).concat(m.length < 4 ? [1] : []).slice(0, 4); };
   const snip = el => el.textContent.trim().replace(/\s+/g, " ").slice(0, 16);
 
   // 枠からはみ出した文字（px 付き）
@@ -44,10 +45,13 @@
         boxes.push([el, { l: b.left, r: b.right, t: b.top + pad, b: b.bottom - pad, w: b.width, h: b.height - 2 * pad }]);
       });
     });
+    // 上に重ねて開いた根拠（不透明な板）の中と外の組は数えない（下の文字は隠れているだけ）
+    const cover = e => { const b = e.closest("details.why[open] > .body"); if (!b) return null; const cs = getComputedStyle(b); return cs.position === "absolute" && rgba(cs.backgroundColor)[3] > 0.9 ? b : null; };
     const out = [];
     for (let a = 0; a < boxes.length; a++) for (let c = a + 1; c < boxes.length; c++) {
       const [e1, r1] = boxes[a], [e2, r2] = boxes[c];
       if (e1 === e2 || e1.contains(e2) || e2.contains(e1)) continue;
+      if (cover(e1) !== cover(e2)) continue;
       const w = Math.min(r1.r, r2.r) - Math.max(r1.l, r2.l), h = Math.min(r1.b, r2.b) - Math.max(r1.t, r2.t);
       if (w / k > 6 && h / k > 4 && h > Math.min(r1.h, r2.h) * 0.35 && w > Math.min(r1.w, r2.w) * 0.2)
         out.push(`「${snip(e1)}」と「${snip(e2)}」`);
@@ -65,6 +69,10 @@
       const cs = getComputedStyle(el), r = box(el, s);
       const painted = cs.backgroundColor !== "rgba(0, 0, 0, 0)" || cs.backgroundImage !== "none" || parseFloat(cs.borderTopWidth) > 0;
       return painted && r.w * r.h < W * H * 0.8; // 全面の板は数えない
+    });
+    // 背景の飾りの大きな文字（透かしの年号など）も、画面を埋めているので数える
+    s.querySelectorAll(".bg *").forEach(el => {
+      if ([...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && parseFloat(getComputedStyle(el).fontSize) >= 80 && shown(el, s)) els.push(el);
     });
     let top = H, bottom = 0;
     els.forEach(el => { const r = box(el, s); if (r.w && r.h) { top = Math.min(top, r.t); bottom = Math.max(bottom, r.b); } });
@@ -85,23 +93,28 @@
       kids.forEach(c => { const key = c.tagName + "." + c.classList[0]; by[key] = (by[key] || 0) + 1; });
       Object.values(by).forEach(n => { if (n >= 2) counts.add(n); });
     });
+    // 2つのかたまりに分かれて並ぶ場合も数える（ページ全体で同じ形の要素の数）
+    const all = {};
+    s.querySelectorAll("[class]").forEach(e => { if (skipped(e) || !shown(e, s)) return; const key = e.tagName + "." + e.classList[0]; all[key] = (all[key] || 0) + 1; });
+    Object.values(all).forEach(n => { if (n >= 2 && n <= 9) counts.add(n); });
     return { heads, body, counts: [...counts] };
   };
 
   // 文字の色と場所。背景の色は check.py が画像から拾って、コントラスト比を出す
-  const rgba = c => { const m = c.match(/[\d.]+/g) || [0, 0, 0, 0]; return m.map(Number).concat(m.length < 4 ? [1] : []).slice(0, 4); };
   const inks = i => {
     const s = slides()[i], out = [];
     textLeaves(s).forEach(el => {
       const cs = getComputedStyle(el);
       if (cs.webkitBackgroundClip === "text" || cs.backgroundClip === "text") return; // 文字をグラデーションで塗る表現は測らない
+      if (el.closest("[data-orbit]")) return; // 立体の中の文字は、ほかの面の裏に隠れることがあるので測らない
       const fg = rgba(cs.webkitTextFillColor || cs.color);
       fg[3] *= alpha(el, s);
       if (fg[3] < 0.3) return;
       const r = box(el, s);
       if (r.w < 4 || r.h < 4 || r.r < 0 || r.l > W || r.b < 0 || r.t > H) return;
       const px = parseFloat(cs.fontSize);
-      out.push({ text: snip(el), fg, box: [r.l, r.t, r.w, r.h], large: px >= 24 || (px >= 18.66 && Number(cs.fontWeight) >= 700) });
+      const stroke = parseFloat(cs.webkitTextStrokeWidth) > 0 ? rgba(cs.webkitTextStrokeColor) : null; // フチ付きの文字はフチの色でも測る
+      out.push({ text: snip(el), fg, stroke, box: [r.l, r.t, r.w, r.h], large: px >= 24 || (px >= 18.66 && Number(cs.fontWeight) >= 700) });
     });
     return out;
   };
@@ -177,7 +190,12 @@
   };
 
   // 根拠を全部開く
-  const openWhy = i => { const d = [...slides()[i].querySelectorAll("details.why")]; d.forEach(x => { x.open = true; x.dispatchEvent(new Event("toggle")); }); return d.length; };
+  // 根拠を1つだけ開く（k 番目。ほかは閉じる）。根拠の数を返す
+  const openWhy = (i, k) => {
+    const d = [...slides()[i].querySelectorAll("details.why")];
+    d.forEach((x, j) => { x.open = j === k; if (j === k) x.dispatchEvent(new Event("toggle")); });
+    return d.length;
+  };
 
   // 表（data-sheet）に 1.4 倍の数字で 3 行多い表を貼る。集計が「—」になる所を返す
   const sheet = i => {
@@ -199,5 +217,10 @@
 
   const count = () => slides().length;
   const hasSheet = i => !!slides()[i].querySelector("[data-sheet]");
-  window.UGK_CHECK = { count, overflow, overlap, layout, text, inks, fonts, ops, carry, offscreen, steps, calc, openWhy, sheet, hasSheet };
+  // 終わりのある動き（出てくる途中など）が止まるまで待つ。最長3秒
+  const settle = () => Promise.race([
+    Promise.all(document.getAnimations().filter(a => a.playState === "running" && isFinite(a.effect && a.effect.getComputedTiming().endTime))
+      .map(a => a.finished.catch(() => {}))),
+    new Promise(r => setTimeout(r, 3000))]);
+  window.UGK_CHECK = { settle, count, overflow, overlap, layout, text, inks, fonts, ops, carry, offscreen, steps, calc, openWhy, sheet, hasSheet };
 })();

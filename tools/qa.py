@@ -34,6 +34,9 @@ def sheet(out):
 
 
 def main():
+    if any(a in ("-h", "--help") for a in sys.argv[1:]):
+        print(__doc__)
+        return
     show_warn = "--warn" in sys.argv
     pats = [a for a in sys.argv[1:] if not a.startswith("--")]
     files = [p for p in sorted(DOCS.glob("*.html")) if not pats or any(p.stem.startswith(x) for x in pats)]

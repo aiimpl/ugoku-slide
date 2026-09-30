@@ -10,7 +10,7 @@
 画像はスライドと同じフォルダの check/<名前>/ に出る。
   NN.png       → で出す部分を全部出した状態
   NN-0.png     開いた直後（→ で出す部分がまだ隠れている）
-  NN-why.png   根拠（details.why）を全部開いた状態
+  NN-why.png   根拠（details.why）を開いた状態（2つ以上なら NN-why1.png… と1つずつ）
   NN-sheet.png 表（data-sheet）に、1.4倍の数字で3行多い表を貼った状態
   NN-t100.png  前のページから送った途中のコマ（--morph のとき）
 
@@ -48,6 +48,13 @@ def lum(c):
     return 0.2126 * f(c[0] / 255) + 0.7152 * f(c[1] / 255) + 0.0722 * f(c[2] / 255)
 
 
+def ratio_on(fg, bg):
+    a = fg[3]
+    text = [fg[j] * a + bg[j] * (1 - a) for j in range(3)]
+    L1, L2 = lum(text), lum(bg)
+    return (max(L1, L2) + 0.05) / (min(L1, L2) + 0.05)
+
+
 def contrast(png, inks):
     """撮った画像から、文字の後ろの色（文字の色に近い画素を除いた、いちばん多い色）を拾って比べる"""
     try:
@@ -66,10 +73,7 @@ def contrast(png, inks):
         if sum(n for n, _ in colors) < 8:
             continue
         bg = max(colors)[1]
-        a = fg[3]
-        text = [fg[j] * a + bg[j] * (1 - a) for j in range(3)]
-        L1, L2 = lum(text), lum(bg)
-        ratio = (max(L1, L2) + 0.05) / (min(L1, L2) + 0.05)
+        ratio = max(ratio_on(fg, bg), ratio_on(ink["stroke"], bg) if ink.get("stroke") else 0)
         need = 3 if ink["large"] else 4.5
         if ratio < need:
             out.append({"text": ink["text"], "ratio": round(ratio, 2), "need": need})
@@ -161,7 +165,8 @@ def run(html, out=None, morph=False, final=False):
                 for _ in range(steps):
                     page.keyboard.press("ArrowRight")
                     page.wait_for_timeout(150)
-                page.wait_for_timeout(900)
+                page.wait_for_timeout(300)
+            C("settle")
             page.screenshot(path=str(out / f"{i + 1:02d}.png"))
             # 全部出した状態で測る
             P += [f"{pg} はみ出し {o['px']}px「{o['text']}」→ {fix_hint(o['px'])}" for o in C("overflow", i)]
@@ -184,18 +189,23 @@ def run(html, out=None, morph=False, final=False):
             pg = f"{i + 1}枚目"
             page.evaluate(f"location.hash = '#{i + 1}'")
             page.wait_for_timeout(900)
-            if C("openWhy", i):
+            nwhy = C("openWhy", i, -1)
+            for k in range(nwhy):  # 発表では1つずつ開くので、1つずつ開いて測る
+                C("openWhy", i, k)
                 page.wait_for_timeout(600)
-                page.screenshot(path=str(out / f"{i + 1:02d}-why.png"))
-                P += [f"{pg} 根拠を開くとはみ出す {o['px']}px「{o['text']}」→ {fix_hint(o['px'])}" for o in C("overflow", i)]
-                Wn += [f"{pg} 根拠を開くと文字が重なる：{o}" for o in C("overlap", i)]
+                page.screenshot(path=str(out / (f"{i + 1:02d}-why.png" if nwhy == 1 else f"{i + 1:02d}-why{k + 1}.png")))
+                P += [f"{pg} 根拠{k + 1}を開くとはみ出す {o['px']}px「{o['text']}」→ {fix_hint(o['px'])}" for o in C("overflow", i)]
+                Wn += [f"{pg} 根拠{k + 1}を開くと文字が重なる：{o}" for o in C("overlap", i)]
+            if nwhy:
+                C("openWhy", i, -1)
             if C("hasSheet", i):
                 P += [f"{pg} {b}" for b in C("sheet", i)]
                 page.wait_for_timeout(900)
                 page.screenshot(path=str(out / f"{i + 1:02d}-sheet.png"))
                 P += [f"{pg} 表を貼り替えるとはみ出す {o['px']}px「{o['text']}」" for o in C("overflow", i)]
         P += C("calc")
-        P += ["エラー: " + e for e in errors if "fonts.g" not in e]
+        # 書体の読み込みなど、通信の失敗はスライドの不具合ではないので数えない
+        P += ["エラー: " + e for e in errors if "fonts.g" not in e and "Failed to load resource" not in e]
         cr = C("carry")
         browser.close()
     p2, w2 = lint_text(texts, final)
