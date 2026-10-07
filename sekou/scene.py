@@ -13,7 +13,8 @@ import numpy as np
 from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SPEC = json.load(open(os.path.join(HERE, "spec.json")))
+SPEC = json.load(open(os.path.join(HERE, os.environ.get("SEKOU_SPEC", "spec.json"))))
+TAG = os.environ.get("SEKOU_TAG", "")   # 階数ちがいなどの書き出し先の印
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else ["test"]
 MODE = argv[0]
 
@@ -286,38 +287,65 @@ roof_units.append(box("lvf", 3.0, -4.6, TOP + 2.2, 10.0, 0.6, TOP + 2.28, M["uni
 roof_units.append(box("hatch", 11.5, 2.0, TOP + 0.12, 14.0, 4.2, TOP + 2.8, M["conc"]))
 add(bevel(merge(pr + roof_units, "roof"), 0.03), SCHED["鉄骨"][1] + 0.5)
 
-# カーテンウォール：階ごとにガラスと方立
+# カーテンウォール：階ごと・面ごとにガラスと方立（分解図で面ごとに外へ引き出すため分けておく）
 ca, cb = SCHED["外装"]
 cper = (cb - ca) / NF
+FACES = []  # (object, 階, 面)
 for f in range(1, NF + 1):
     z0, z1 = LEV[f - 1] + (0.6 if f == 1 else 0), LEV[f] + 0.12
     yN = north_y(f)
-    g = [box(f"gS{f}", X0 - 0.35, Y0 - 0.45, z0, X1 + 0.35, Y0 - 0.35, z1, M["glass"]),
-         box(f"gN{f}", X0 - 0.35, yN + 0.35, z0, X1 + 0.35, yN + 0.45, z1, M["glass"]),
-         box(f"gW{f}", X0 - 0.45, Y0 - 0.35, z0, X0 - 0.35, yN + 0.35, z1, M["glass"]),
-         box(f"gE{f}", X1 + 0.35, Y0 - 0.35, z0, X1 + 0.45, yN + 0.35, z1, M["glass"])]
-    ms = []
+    side = {k: {"g": [], "m": []} for k in "SNWE"}
+    side["S"]["g"] += [box(f"gS{f}", X0 - 0.35, Y0 - 0.45, z0, X1 + 0.35, Y0 - 0.35, z1, M["glass"]),
+                       box(f"sdS{f}", X0 - 0.47, Y0 - 0.47, z1 - 1.25, X1 + 0.47, Y0 - 0.44, z1 - 0.5, M["span"])]
+    side["N"]["g"] += [box(f"gN{f}", X0 - 0.35, yN + 0.35, z0, X1 + 0.35, yN + 0.45, z1, M["glass"]),
+                       box(f"sdN{f}", X0 - 0.47, yN + 0.44, z1 - 1.25, X1 + 0.47, yN + 0.47, z1 - 0.5, M["span"])]
+    side["W"]["g"] += [box(f"gW{f}", X0 - 0.45, Y0 - 0.35, z0, X0 - 0.35, yN + 0.35, z1, M["glass"]),
+                       box(f"sdW{f}", X0 - 0.47, Y0 - 0.47, z1 - 1.25, X0 - 0.44, yN + 0.47, z1 - 0.5, M["span"])]
+    side["E"]["g"] += [box(f"gE{f}", X1 + 0.35, Y0 - 0.35, z0, X1 + 0.45, yN + 0.35, z1, M["glass"]),
+                       box(f"sdE{f}", X1 + 0.44, Y0 - 0.47, z1 - 1.25, X1 + 0.47, yN + 0.47, z1 - 0.5, M["span"])]
     nx = int((X1 - X0) / 1.5)
     for i in range(nx + 1):
         x = X0 + i * 1.5
-        ms.append(box(f"mS{f}_{i}", x - 0.04, Y0 - 0.6, z0, x + 0.04, Y0 - 0.45, z1, M["mull"]))
-        ms.append(box(f"mN{f}_{i}", x - 0.04, yN + 0.45, z0, x + 0.04, yN + 0.6, z1, M["mull"]))
+        side["S"]["m"].append(box(f"mS{f}_{i}", x - 0.04, Y0 - 0.6, z0, x + 0.04, Y0 - 0.45, z1, M["mull"]))
+        side["N"]["m"].append(box(f"mN{f}_{i}", x - 0.04, yN + 0.45, z0, x + 0.04, yN + 0.6, z1, M["mull"]))
     ny = int((yN - Y0) / 1.5)
     for i in range(ny + 1):
         y = Y0 + i * 1.5
-        ms.append(box(f"mW{f}_{i}", X0 - 0.6, y - 0.04, z0, X0 - 0.45, y + 0.04, z1, M["mull"]))
-        ms.append(box(f"mE{f}_{i}", X1 + 0.45, y - 0.04, z0, X1 + 0.6, y + 0.04, z1, M["mull"]))
-    # 床ごとの横の帯（スパンドレル）
-    for side in ((X0 - 0.62, Y0 - 0.62, X1 + 0.62, Y0 - 0.45), (X0 - 0.62, yN + 0.45, X1 + 0.62, yN + 0.62),
-                 (X0 - 0.62, Y0 - 0.62, X0 - 0.45, yN + 0.62), (X1 + 0.45, Y0 - 0.62, X1 + 0.62, yN + 0.62)):
-        ms.append(box(f"sp{f}", side[0], side[1], z1 - 0.5, side[2], side[3], z1 + 0.1, M["mull"]))
-    sd = [box(f"sdS{f}", X0 - 0.47, Y0 - 0.47, z1 - 1.25, X1 + 0.47, Y0 - 0.44, z1 - 0.5, M["span"]),
-          box(f"sdN{f}", X0 - 0.47, yN + 0.44, z1 - 1.25, X1 + 0.47, yN + 0.47, z1 - 0.5, M["span"]),
-          box(f"sdW{f}", X0 - 0.47, Y0 - 0.47, z1 - 1.25, X0 - 0.44, yN + 0.47, z1 - 0.5, M["span"]),
-          box(f"sdE{f}", X1 + 0.44, Y0 - 0.47, z1 - 1.25, X1 + 0.47, yN + 0.47, z1 - 0.5, M["span"])]
+        side["W"]["m"].append(box(f"mW{f}_{i}", X0 - 0.6, y - 0.04, z0, X0 - 0.45, y + 0.04, z1, M["mull"]))
+        side["E"]["m"].append(box(f"mE{f}_{i}", X1 + 0.45, y - 0.04, z0, X1 + 0.6, y + 0.04, z1, M["mull"]))
+    # 床ごとの横の帯（スパンドレルの化粧）
+    for k, b in (("S", (X0 - 0.62, Y0 - 0.62, X1 + 0.62, Y0 - 0.45)), ("N", (X0 - 0.62, yN + 0.45, X1 + 0.62, yN + 0.62)),
+                 ("W", (X0 - 0.62, Y0 - 0.45, X0 - 0.45, yN + 0.45)), ("E", (X1 + 0.45, Y0 - 0.45, X1 + 0.62, yN + 0.45))):
+        side[k]["m"].append(box(f"sp{f}{k}", b[0], b[1], z1 - 0.5, b[2], b[3], z1 + 0.1, M["mull"]))
     w = ca + cper * (f - 1)
-    add(merge(g + sd, f"glass{f}"), w + cper * 0.5)
-    add(bevel(merge(ms, f"mull{f}"), 0.012), w + cper * 0.2)
+    for k in "SNWE":
+        go = add(merge(side[k]["g"], f"glass{f}{k}"), w + cper * 0.5)
+        mo = add(bevel(merge(side[k]["m"], f"mull{f}{k}"), 0.012), w + cper * 0.2)
+        FACES += [(go, f, k), (mo, f, k)]
+
+# 着工前の地面に図面（通り芯と柱と外形）を描く。基礎が出たら消す
+M["ink"] = mat("ink", srgb("#232427"), 0.9, cut=False)
+M["red"] = mat("red", srgb("#B9502B"), 0.9, cut=False)
+dr = []
+for x in GX:   # 通り芯：一点鎖線
+    y = Y0 - 4.0
+    while y < Y1 + 4.0:
+        dr.append(box("dgx", x - 0.05, y, 0.0, x + 0.05, min(y + 1.6, Y1 + 4.0), 0.03, M["red"]))
+        y += 2.2
+for yy in GY:
+    x = X0 - 4.0
+    while x < X1 + 4.0:
+        dr.append(box("dgy", x, yy - 0.05, 0.0, min(x + 1.6, X1 + 4.0), yy + 0.05, 0.03, M["red"]))
+        x += 2.2
+for x in GX:   # 柱の四角
+    for yy in GY:
+        for a in ((-0.3, -0.3, 0.3, -0.24), (-0.3, 0.24, 0.3, 0.3), (-0.3, -0.3, -0.24, 0.3), (0.24, -0.3, 0.3, 0.3)):
+            dr.append(box("dc", x + a[0], yy + a[1], 0.0, x + a[2], yy + a[3], 0.035, M["ink"]))
+o_ = 0.6
+for a in ((X0 - o_, Y0 - o_, X1 + o_, Y0 - o_ + 0.12), (X0 - o_, Y1 + o_ - 0.12, X1 + o_, Y1 + o_),
+          (X0 - o_, Y0 - o_, X0 - o_ + 0.12, Y1 + o_), (X1 + o_ - 0.12, Y0 - o_, X1 + o_, Y1 + o_)):
+    dr.append(box("do", a[0], a[1], 0.0, a[2], a[3], 0.035, M["ink"]))
+DRAWING = merge(dr, "drawing")
 
 # 1階のエントランスのひさし
 add(bevel(box("canopy", -6, Y0 - 4, 3.6, 6, Y0 - 0.6, 3.9, M["conc"]), 0.04), cb)
@@ -537,6 +565,7 @@ def apply_week(w):
             ob.scale = (1, 1, max(0.02, t))
         else:
             ob.scale = (1, 1, 1)
+    DRAWING.hide_render = w >= SCHED["基礎"][0] + 2
     # 仮設は外装が終わるまで
     end = SCHED["外装"][1]
     for o in TEMP:
@@ -690,13 +719,13 @@ def mode_dusk(first, last, n=12):
     for i in range(first, last + 1):
         k = round(i / (n - 1) * NF)
         for f in range(1, NF + 1):
-            g = bpy.data.objects[f"glass{f}"]
-            g.data.materials.clear()
-            g.data.materials.append(lit if f in order[:k] else M["glass"])
+            for side in "SNWE":
+                g = bpy.data.objects[f"glass{f}{side}"]
+                g.data.materials[0] = lit if f in order[:k] else M["glass"]
         render(f"{OUT}/dusk/d{i:02d}.png")
 
 
-def mode_turn(first, last, n=48):
+def mode_turn(first, last, n=96, step=1):
     """完成した建物の周りを一周する（スライドでドラッグして回す）。太陽は固定なので影も回る"""
     sky_reflect()
     r.film_transparent = True
@@ -711,10 +740,60 @@ def mode_turn(first, last, n=48):
     rad = math.hypot(px - tx, py - ty)
     a0 = math.atan2(py - ty, px - tx)
     os.makedirs(f"{OUT}/turn", exist_ok=True)
-    for i in range(first, last + 1):
+    for i in range(first, last + 1, step):
         a = a0 + 2 * math.pi * i / n
         look(CAM, pos=(tx + rad * math.cos(a), ty + rad * math.sin(a), pz), target=(tx, ty, tz), lens=CAM_PROG["lens"])
         render(f"{OUT}/turn/t{i:02d}.png")
+
+
+def mode_explode(first, last, n=24, gap=4.2, out=7.0):
+    """分解図：階ごとに上下へ離し、外装は面ごとに外へ、床は鉄骨の上へ浮かせる（e = 0 → 1）"""
+    sky_reflect()
+    r.film_transparent = True
+    GROUND.is_shadow_catcher = True
+    TOWN.hide_render = True
+    set_sun(42, 150, 4.2)
+    r.resolution_x, r.resolution_y = 1040, 1200
+    apply_week(SCHED["外構"][1])
+    no_use()
+    look(CAM, pos=(84, -100, 74), target=(0, 0, 24), lens=50)
+    base = {o.name: o.location.copy() for o in bpy.data.objects if o is not CAM}
+    normal = {"S": (0, -1), "N": (0, 1), "W": (-1, 0), "E": (1, 0)}
+    os.makedirs(f"{OUT}/explode", exist_ok=True)
+    for i in range(first, last + 1):
+        t = i / (n - 1)
+        e = t * t * (3 - 2 * t)
+        for o in bpy.data.objects:
+            if o.name in base:
+                o.location = base[o.name].copy()
+        for f in range(1, NF + 1):
+            dz = e * (f - 1) * gap
+            for name in (f"cols{f}", f"beams{f}"):
+                bpy.data.objects[name].location.z += dz
+            bpy.data.objects[f"deck{f}"].location.z += dz + e * 1.4
+        for ob, f, k in FACES:
+            nx_, ny_ = normal[k]
+            ob.location.x += nx_ * e * out
+            ob.location.y += ny_ * e * out
+            ob.location.z += e * (f - 1) * gap
+        bpy.data.objects["roof"].location.z += e * (NF * gap + 2.5)
+        bpy.data.objects["canopy"].location.y -= e * out
+        render(f"{OUT}/explode/x{i:02d}.png")
+
+
+def mode_final():
+    """完成した建物を1コマ（階数ちがいの比較用、SEKOU_TAG ごとに書き出し先を分ける）"""
+    sky_reflect()
+    r.film_transparent = True
+    GROUND.is_shadow_catcher = True
+    TOWN.hide_render = True
+    set_sun(38, 160, 4.2)
+    look(CAM, **CAM_PROG)
+    r.resolution_x, r.resolution_y = 1040, 1200
+    apply_week(SCHED["外構"][1])
+    no_use()
+    os.makedirs(f"{OUT}/vol", exist_ok=True)
+    render(f"{OUT}/vol/v{NF}.png")
 
 
 def mode_test():
@@ -725,8 +804,12 @@ if MODE == "progress":
     mode_progress(int(argv[1]), int(argv[2]))
 elif MODE == "section":
     mode_section(int(argv[1]), int(argv[2]))
+elif MODE == "explode":
+    mode_explode(int(argv[1]), int(argv[2]))
+elif MODE == "final":
+    mode_final()
 elif MODE == "turn":
-    mode_turn(int(argv[1]), int(argv[2]))
+    mode_turn(int(argv[1]), int(argv[2]), 96, int(argv[3]) if len(argv) > 3 else 1)
 elif MODE == "dusk":
     mode_dusk(int(argv[1]), int(argv[2]))
 elif MODE == "lib":

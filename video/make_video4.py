@@ -51,7 +51,7 @@ def scenes(names):
     S = {}
 
     def g(b):  # 工程表の線をつかんで動かすと、ビルが建つ
-        p = slide(b, DECK, 2, chip=CHIP_JS)
+        p = slide(b, DECK, 3, chip=CHIP_JS)
         return p, 9.0, [(0, setv(".drag", 0)), (0, "V.cap('工程表の線を、<em>つかんで動かすと</em>')"), (0.02, "V.from(1500,980)"),
                         (0.7, "V.drag('.slide.active .drag', 52, 7.3, true)"),
                         (3.3, "V.cap('<em>ビルが、1階ずつ建つ。</em>')"),
@@ -59,7 +59,8 @@ def scenes(names):
     S["g"] = g
 
     def r(b):  # 完成したら、ドラッグで回せる
-        p = slide(b, DECK, 2, chip=CHIP_JS)
+        p = slide(b, DECK, 3, chip=CHIP_JS)
+        p.wait_for_function("window.__turnReady === true", timeout=60000)
         p.evaluate(setv(".drag", 52))
         p.wait_for_timeout(800)
         return p, 3.5, [(0, "V.cap('完成したら、<em>ぐるっと回せる。</em>')"),
@@ -67,19 +68,19 @@ def scenes(names):
     S["r"] = r
 
     def s(b):  # めくると、そのまま断面に
-        p = slide(b, DECK, 2, chip=CHIP_JS)
+        p = slide(b, DECK, 3, chip=CHIP_JS)
         return p, 5.0, [(0, setv(".drag", 52)), (0, "V.cap('めくると、<em>そのまま断面に。</em>')"),
                         (0.5, "V.key('ArrowRight')")]
     S["s"] = s
 
     def h(b):  # 冬至の日影
-        p = slide(b, DECK, 4, chip=CHIP_JS)
+        p = slide(b, DECK, 6, chip=CHIP_JS)
         return p, 5.0, [(0, setv("input[name=t]", 8)), (0, "V.cap('冬至の日影も、<em>動かして確かめる。</em>')"),
                         (0.02, "V.from(700,980)"), (0.5, "V.drag('.slide.active input[name=t]', 16, 4.0, true)")]
     S["h"] = h
 
     def d(b):  # 夕景
-        p = slide(b, DECK, 5, chip=CHIP_JS)
+        p = slide(b, DECK, 8, chip=CHIP_JS)
         return p, 3.0, [(0, "document.getAnimations().forEach(a => { a.currentTime = 0; })"),
                         (0, "V.cap('完成の姿は、<em>Blender で。</em>')")]
     S["d"] = d

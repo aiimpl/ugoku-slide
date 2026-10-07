@@ -152,14 +152,16 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
   <section id="v4" class="new-sec">
     <div class="new-head">
       <div><div class="vol">第4弾 ｜ 建設業向け・63</div><h2>パワポのまま、<br>建物が動く。</h2></div>
-      <p>工程表の「今日」の線を動かすと、Blender で描いたビルが杭から1階ずつ建ち上がり、進捗と出来高が計算し直されます。めくると断面に、冬至の日影は8時〜16時を動かして確かめられます。数字・会社名は架空のサンプルです。</p>
+      <p>図面（DXF）1枚を読んで、Blender でビルを組み立てました。工程表の「今日」の線を動かすと杭から1階ずつ建ち上がり、完成したらドラッグで一周回せて、部品ごとにばらせます。冬至の日影は8時〜16時を動かして確かめられ、階数を変えると計算し直します。数字・会社名は架空のサンプルです。</p>
     </div>
     <div class="stage"><iframe title="施工計画 × 3D" loading="lazy" src="slides/63-sekou.html#2"></iframe><span class="hint">クリックして、オレンジの線を左右にドラッグ／→ でめくる</span></div>
     <div class="parts v3">
       <div><b>工程で建つ</b><code>data-calc</code><p>週を動かすと、Blender の53コマから近いものを重ねて見せる。進捗・出来高も同じ週で計算。</p></div>
       <div><b>めくると断面</b><code>data-morph</code><p>建物はページをまたいでつながり、そのまま縦に切れて各階の用途が見える。</p></div>
       <div><b>冬至の日影</b><code>1分ごと</code><p>東京の冬至8〜16時を1分ごとに計算。合計が規制の時間を超えた所が赤くなる。</p></div>
-      <div><b>1ファイルのまま</b><code>.html</code><p>絵は全部ファイルの中に入っているので、メールで送ってもそのまま動く。</p></div>
+      <div><b>図面から</b><code>DXF</code><p>通り芯・階の線・外形だけを読んで、柱の位置・階数・階高・セットバックを取り出す。</p></div>
+      <div><b>回す・ばらす</b><code>96 + 24</code><p>完成したらドラッグで一周。屋上・外装・床・鉄骨にばらして、納まりを見せる。</p></div>
+      <div><b>階数で日影</b><code>6〜8F</code><p>図面の階数を変えて読み直し、同じ条件で日影を計算し直す。</p></div>
     </div>
   </section>
 

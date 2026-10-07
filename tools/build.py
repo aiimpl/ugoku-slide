@@ -73,7 +73,7 @@ def carry(body):
 
 ASSETS = ROOT / "src" / "assets"
 ASSET_RE = re.compile(r'(src="|url\()assets/([\w./-]+)')
-MIME = {".webp": "image/webp", ".jpg": "image/jpeg", ".png": "image/png"}
+MIME = {".webp": "image/webp", ".jpg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml"}
 
 
 def inline_assets(text):

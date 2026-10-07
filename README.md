@@ -79,7 +79,8 @@ python3 tools/morphqa.py 51             # build/morph/51_board.png
 make video2   # 第2弾（26.5秒）→ build/video/ugoku-slide-vol2_26s.mp4
 make video    # 第1弾（26秒）  → build/video/ugoku-slide_26s.mp4
 make video3   # 第3弾（25秒）  → build/video/ugoku-slide-vol3_25s.mp4
-make video4   # 第4弾（25秒）  → build/video/ugoku-slide-vol4_25s.mp4
+make video4   # 第4弾（28.5秒）→ build/video/ugoku-slide-vol4_25s.mp4
+python3 video/make_video5.py ja|en   # 第4弾の2（図面から・29.5秒／英語15秒）
 make clips    # 「囲んで直す」「自動デモ」の短い動画 → build/video/clip_mark.mp4・clip_demo.mp4
 ```
 
@@ -99,11 +100,21 @@ video/fx.js・fx.css   撮影用のテロップとカーソル
 
 ## 第4弾（63 施工計画 × 3D）の建物の作り方
 
+建物は図面（DXF）から作ります。`sekou/make_dxf.py` が見本の図面（平面図・東立面図、1:200）を書き、`sekou/read_dxf.py` がその線（通り芯・階の線・立面の外形）だけを読んで `spec.json` の寸法を作ります。手元の図面を同じレイヤー名で用意すれば、その建物になります。
+
+```
+python3 -m venv .venv && .venv/bin/pip install ezdxf
+.venv/bin/python sekou/make_dxf.py              # 見本の図面 → sekou/drawing/sample.dxf（6 や 7 を渡すと階数ちがい）
+.venv/bin/python sekou/read_dxf.py drawing/sample.dxf   # 図面を読んで spec.json に
+.venv/bin/python sekou/dxf_svg.py drawing/sample.dxf ../src/assets/sekou/drawing.svg  # スライドに載せる図面
+```
+
 63 の建物の絵は、`sekou/` のスクリプトで Blender（5.2）を動かして描いています。寸法と工程は `sekou/spec.json` の1か所だけで、スライドの工程表と同じ値です。
 
 ```
 cd sekou
-./render_all.sh                                   # 工程53・一周48・断面24・夕景12・日影33コマ（Cycles）
+./render_all.sh                                   # 工程53・一周96・断面24・夕景12・日影33コマ（Cycles）
+./render_v2.sh                                    # 分解24コマ・6〜8階の完成と日影
 blender -b --factory-startup -P shade.py           # 冬至の日影33コマと計算結果 data/shade.json
 blender -b --factory-startup -P labels.py          # 断面のラベル位置 data/labels.json
 ./make_assets.sh                                   # WebP にして src/assets/sekou/ へ
@@ -111,7 +122,7 @@ python3 make_deck.py                               # src/decks/63-sekou.html を
 ```
 
 - 建物：柱・H形鋼の梁・床・カーテンウォール（パネルごとに色を揺らしたガラス・スパンドレル）を部材ごとに作り、週ごとに出し入れする。クレーンは建った階に合わせて継ぎ足す
-- 一周：完成した建物の周りをカメラが48コマで回る。スライドでは表紙と、工程表を最後の週まで進めたときにドラッグで回せる
+- 一周：完成した建物の周りをカメラが96コマ（3.75°刻み）で回る。重ねずに一番近い向きのコマを出す。スライドでは表紙と、工程表を最後の週まで進めたときにドラッグで回せる
 - 断面：全部の材質に「x がこれより大きい所は透明」の節を入れ、切る位置を動かす
 - 日影：東京・冬至の8〜16時を1分ごとに、地上4mの面から太陽へ向けた線が建物に当たるかで計算して足し合わせる。規制は第一種中高層住居専用地域（二）の例
 - スライドでは同じ位置にコマを重ね、週（または時刻）に近いコマだけを見せる。画像は書き出し時に data URI にして、1ファイルのまま持ち運べる

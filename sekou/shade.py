@@ -18,7 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 _argv = sys.argv
 sys.argv = ["x", "--", "lib"]
-from scene import (CAM, LEV, NF, OUT, SB, SCHED, SITE, TOP, TOWN, TREES, WBG, X0, X1, Y0, Y1,  # noqa: E402
+from scene import (CAM, LEV, NF, OUT, SB, SCHED, SITE, TAG, TOP, TOWN, TREES, WBG, X0, X1, Y0, Y1,  # noqa: E402
                    apply_week, gm, look, no_use, north_y, r, render, scn, set_sun, srgb, sun_dir)
 sys.argv = _argv
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -169,7 +169,8 @@ look(CAM, pos=(18, -85, 125), target=(0, 26, 0), ortho=132)
 r.resolution_x, r.resolution_y = 1400, 1040
 scn.cycles.samples = 40
 
-os.makedirs(f"{OUT}/shade", exist_ok=True)
+SHD = f"{OUT}/shade{TAG}"   # 階数ちがいは shade_6F などに分ける
+os.makedirs(SHD, exist_ok=True)
 first, last = (int(args[0]), int(args[1])) if len(args) >= 2 else (0, N_FR - 1)
 info = {"frames": []}
 for i in range(first, last + 1):
@@ -179,7 +180,7 @@ for i in range(first, last + 1):
     rgba, H, over = rgba_for(t)
     IMG.pixels.foreach_set(rgba.ravel())
     IMG.update()
-    render(f"{OUT}/shade/h{i:02d}.png")
+    render(f"{SHD}/h{i:02d}.png")
     info["frames"].append({"i": i, "t": t, "alt": round(alt, 2), "az": round(az, 2),
                            "over_m2": round(float(over.sum()) * PX * PX, 1),
                            "max_far_h": round(float(H[ZONE_FAR].max()), 2),
@@ -191,6 +192,6 @@ def at(p):
     return [round(v.x, 4), round(1 - v.y, 4)]
 info["labels"] = {"site": at((sx1 - 6, sy1, 0)), "l5": at((sx1 - 6, sy1 + 5, 0)), "l10": at((sx1 - 6, sy1 + 10, 0)),
                   "north": at((0, sy1 + 30, 0))}
-if first == 0 and last == N_FR - 1:
+if TAG or (first == 0 and last == N_FR - 1):
     os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
-    json.dump(info, open(os.path.join(HERE, "data", "shade.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(info, open(os.path.join(HERE, "data", f"shade{TAG}.json"), "w"), ensure_ascii=False, indent=1)
