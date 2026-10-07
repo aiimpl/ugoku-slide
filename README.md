@@ -105,7 +105,7 @@ video/fx.js・fx.css   撮影用のテロップとカーソル
 cd sekou
 ./render_all.sh                                   # 工程53コマ・断面24コマ・夕景12コマ（Cycles）
 blender -b --factory-startup -P shade.py           # 冬至の日影33コマと計算結果 data/shade.json
-blender -b --factory-startup -P labels.py          # 断面のラベル位置
+blender -b --factory-startup -P labels.py          # 断面のラベル位置 data/labels.json
 ./make_assets.sh                                   # WebP にして src/assets/sekou/ へ
 python3 make_deck.py                               # src/decks/63-sekou.html を書き出す
 ```
