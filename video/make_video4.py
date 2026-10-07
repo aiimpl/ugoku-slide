@@ -1,9 +1,9 @@
-"""第4弾（建設業・63-sekou）の紹介動画（1920×1080・30fps・25秒・音つき）。
+"""第4弾（建設業・63-sekou）の紹介動画（1920×1080・30fps・28.5秒・音つき）。
 
   python3 video/make_video4.py            全部作って build/video/ugoku-slide-vol4_25s.mp4 に
   python3 video/make_video4.py s h        指定した場面だけ撮り直して、つなぎ直す
 
-0–9 工程表の「今日」の線をつかんで動かすとビルが建つ／9–14 めくると断面／14–19 冬至の日影／19–22 夕景／22–25 締め
+0–9 工程表の「今日」の線をつかんで動かすとビルが建つ／9–12.5 完成した建物をドラッグで回す／12.5–17.5 めくると断面／14–19 冬至の日影／19–22 夕景／22–25 締め
 """
 import shutil
 import sys
@@ -58,6 +58,14 @@ def scenes(names):
                         (6.4, "V.cap('進捗も出来高も、<em>その場で計算。</em>')")]
     S["g"] = g
 
+    def r(b):  # 完成したら、ドラッグで回せる
+        p = slide(b, DECK, 2, chip=CHIP_JS)
+        p.evaluate(setv(".drag", 52))
+        p.wait_for_timeout(800)
+        return p, 3.5, [(0, "V.cap('完成したら、<em>ぐるっと回せる。</em>')"),
+                        (0.02, "V.from(1500,900)"), (0.3, "V.orbit('.slide.active .bldg', -432, 0, 2.9)")]
+    S["r"] = r
+
     def s(b):  # めくると、そのまま断面に
         p = slide(b, DECK, 2, chip=CHIP_JS)
         return p, 5.0, [(0, setv(".drag", 52)), (0, "V.cap('めくると、<em>そのまま断面に。</em>')"),
@@ -82,7 +90,7 @@ def scenes(names):
     return [(n, S[n]) for n in names]
 
 
-ORDER = ["g", "s", "h", "d", "e"]
+ORDER = ["g", "r", "s", "h", "d", "e"]
 SEEK = {"e", "s"}
 
 

@@ -122,7 +122,57 @@ M = dict(
     use_off=mat("use_off", srgb("#F3D9B8"), 0.9),
     use_lobby=mat("use_lobby", srgb("#E8590C"), 0.9),
     use_roof=mat("use_roof", srgb("#C7D3DD"), 0.9),
+    span=mat("span", srgb("#2C363F"), 0.35, 0.3),
+    pave=mat("pave", srgb("#D9D4CA"), 0.9, cut=False),
+    curb=mat("curb", srgb("#BDB8AE"), 0.9, cut=False),
+    plant=mat("plant", srgb("#6F8C5A"), 0.95, cut=False),
+    unit=mat("unit", srgb("#C9CDD1"), 0.4, 0.5),
 )
+
+
+def panel_glass(m):
+    """ガラス：1.5m × 階ごとのパネルで少しずつ色を変え、映り込みは残す"""
+    nt = m.node_tree
+    bs = nt.nodes["Principled BSDF"]
+    bs.inputs["Roughness"].default_value = 0.035
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    sc = nt.nodes.new("ShaderNodeVectorMath")
+    sc.operation = "MULTIPLY"
+    sc.inputs[1].default_value = (1 / 1.5, 1 / 1.5, 1 / 3.8)
+    fl = nt.nodes.new("ShaderNodeVectorMath")
+    fl.operation = "FLOOR"
+    wn = nt.nodes.new("ShaderNodeTexWhiteNoise")
+    mix = nt.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.inputs["A"].default_value = (*srgb("#34495A"), 1)
+    mix.inputs["B"].default_value = (*srgb("#4D6779"), 1)
+    nt.links.new(tc.outputs["Object"], sc.inputs[0])
+    nt.links.new(sc.outputs[0], fl.inputs[0])
+    nt.links.new(fl.outputs[0], wn.inputs["Vector"])
+    nt.links.new(wn.outputs["Value"], mix.inputs["Factor"])
+    nt.links.new(mix.outputs["Result"], bs.inputs["Base Color"])
+
+
+panel_glass(M["glass"])
+
+
+def paving(m, size=0.6):
+    """舗装：目地のあるタイル"""
+    nt = m.node_tree
+    bs = nt.nodes["Principled BSDF"]
+    br = nt.nodes.new("ShaderNodeTexBrick")
+    br.inputs["Color1"].default_value = (*srgb("#DCD7CD"), 1)
+    br.inputs["Color2"].default_value = (*srgb("#D2CCC1"), 1)
+    br.inputs["Mortar"].default_value = (*srgb("#B9B3A8"), 1)
+    br.inputs["Scale"].default_value = 1 / size
+    br.inputs["Mortar Size"].default_value = 0.012
+    br.offset = 0.5
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    nt.links.new(tc.outputs["Object"], br.inputs["Vector"])
+    nt.links.new(br.outputs["Color"], bs.inputs["Base Color"])
+
+
+paving(M["pave"])
 
 
 def box(name, x0, y0, z0, x1, y1, z1, m, coll=None):
@@ -159,6 +209,15 @@ def merge(objs, name):
     return ob
 
 
+def bevel(ob, w=0.03):
+    """角を少し丸めて、光が稜線に乗るようにする"""
+    md = ob.modifiers.new("bevel", "BEVEL")
+    md.width = w
+    md.segments = 2
+    md.limit_method = "ANGLE"
+    return ob
+
+
 def north_y(f):
     """f 階（1始まり）の北面の y。上層はセットバック"""
     return Y1 - (SB["depth"] if f >= SB["from"] else 0.0)
@@ -190,12 +249,17 @@ for f in range(1, NF + 1):
     ys = [y for y in GY if y <= yN + 1e-6] + ([yN] if yN not in GY else [])
     w0 = sa + per * (f - 1)
     cols = [box(f"c{f}_{x}_{y}", x - 0.25, y - 0.25, z0, x + 0.25, y + 0.25, z1, M["steel"]) for x in GX for y in ys]
-    add(merge(cols, f"cols{f}"), w0 + per * 0.05, "rise")
+    add(bevel(merge(cols, f"cols{f}"), 0.02), w0 + per * 0.05, "rise")
     bm = []
+    zt, zb = z1 - 0.05, z1 - 0.75   # H 形鋼 700×300
     for y in ys:
-        bm.append(box(f"bx{f}_{y}", X0, y - 0.15, z1 - 0.75, X1, y + 0.15, z1 - 0.05, M["steel"]))
+        bm += [box(f"bxt{f}_{y}", X0, y - 0.15, zt - 0.04, X1, y + 0.15, zt, M["steel"]),
+               box(f"bxb{f}_{y}", X0, y - 0.15, zb, X1, y + 0.15, zb + 0.04, M["steel"]),
+               box(f"bxw{f}_{y}", X0, y - 0.018, zb, X1, y + 0.018, zt, M["steel"])]
     for x in GX:
-        bm.append(box(f"by{f}_{x}", x - 0.15, Y0, z1 - 0.75, x + 0.15, yN, z1 - 0.05, M["steel"]))
+        bm += [box(f"byt{f}_{x}", x - 0.15, Y0, zt - 0.04, x + 0.15, yN, zt, M["steel"]),
+               box(f"byb{f}_{x}", x - 0.15, Y0, zb, x + 0.15, yN, zb + 0.04, M["steel"]),
+               box(f"byw{f}_{x}", x - 0.018, Y0, zb, x + 0.018, yN, zt, M["steel"])]
     add(merge(bm, f"beams{f}"), w0 + per * 0.45)
     add(box(f"deck{f}", X0 - 0.3, Y0 - 0.3, z1 - 0.05, X1 + 0.3, yN + 0.3, z1 + 0.12, M["deck"]), w0 + per * 0.8)
     # 中の用途（断面で見える）
@@ -209,9 +273,18 @@ pr = [box("parS", X0 - 0.3, Y0 - 0.3, TOP, X1 + 0.3, Y0, TOP + 1.1, M["conc"]),
       box("parN", X0 - 0.3, north_y(NF), TOP, X1 + 0.3, north_y(NF) + 0.3, TOP + 1.1, M["conc"]),
       box("parW", X0 - 0.3, Y0, TOP, X0, north_y(NF), TOP + 1.1, M["conc"]),
       box("parE", X1, Y0, TOP, X1 + 0.3, north_y(NF), TOP + 1.1, M["conc"]),
-      box("plant1", -8, -4, TOP + 0.12, 2, 2, TOP + 2.6, M["mull"]),
-      box("plant2", 5, -5, TOP + 0.12, 10, 0, TOP + 1.8, M["mull"])]
-add(merge(pr, "roof"), SCHED["鉄骨"][1] + 0.5)
+      box("cope", X0 - 0.4, Y0 - 0.4, TOP + 1.1, X1 + 0.4, north_y(NF) + 0.4, TOP + 1.18, M["mull"])]
+roof_units = []
+for i, x in enumerate((-9.5, -6.5, -3.5)):
+    roof_units.append(box(f"ch{i}", x - 1.2, -3.2, TOP + 0.12, x + 1.2, 0.6, TOP + 1.9, M["unit"]))
+    for j, yy in enumerate((-2.2, -0.4)):
+        roof_units.append(cyl(f"fan{i}{j}", x, yy, TOP + 1.9, TOP + 2.0, 0.7, M["dark"], 24))
+for i in range(14):   # 目隠しルーバー
+    x = 3.0 + i * 0.5
+    roof_units.append(box(f"lv{i}", x, -4.6, TOP + 0.12, x + 0.08, 0.6, TOP + 2.2, M["unit"]))
+roof_units.append(box("lvf", 3.0, -4.6, TOP + 2.2, 10.0, 0.6, TOP + 2.28, M["unit"]))
+roof_units.append(box("hatch", 11.5, 2.0, TOP + 0.12, 14.0, 4.2, TOP + 2.8, M["conc"]))
+add(bevel(merge(pr + roof_units, "roof"), 0.03), SCHED["鉄骨"][1] + 0.5)
 
 # カーテンウォール：階ごとにガラスと方立
 ca, cb = SCHED["外装"]
@@ -238,12 +311,27 @@ for f in range(1, NF + 1):
     for side in ((X0 - 0.62, Y0 - 0.62, X1 + 0.62, Y0 - 0.45), (X0 - 0.62, yN + 0.45, X1 + 0.62, yN + 0.62),
                  (X0 - 0.62, Y0 - 0.62, X0 - 0.45, yN + 0.62), (X1 + 0.45, Y0 - 0.62, X1 + 0.62, yN + 0.62)):
         ms.append(box(f"sp{f}", side[0], side[1], z1 - 0.5, side[2], side[3], z1 + 0.1, M["mull"]))
+    sd = [box(f"sdS{f}", X0 - 0.47, Y0 - 0.47, z1 - 1.25, X1 + 0.47, Y0 - 0.44, z1 - 0.5, M["span"]),
+          box(f"sdN{f}", X0 - 0.47, yN + 0.44, z1 - 1.25, X1 + 0.47, yN + 0.47, z1 - 0.5, M["span"]),
+          box(f"sdW{f}", X0 - 0.47, Y0 - 0.47, z1 - 1.25, X0 - 0.44, yN + 0.47, z1 - 0.5, M["span"]),
+          box(f"sdE{f}", X1 + 0.44, Y0 - 0.47, z1 - 1.25, X1 + 0.47, yN + 0.47, z1 - 0.5, M["span"])]
     w = ca + cper * (f - 1)
-    add(merge(g, f"glass{f}"), w + cper * 0.5)
-    add(merge(ms, f"mull{f}"), w + cper * 0.2)
+    add(merge(g + sd, f"glass{f}"), w + cper * 0.5)
+    add(bevel(merge(ms, f"mull{f}"), 0.012), w + cper * 0.2)
 
 # 1階のエントランスのひさし
-add(box("canopy", -6, Y0 - 4, 3.6, 6, Y0 - 0.6, 3.9, M["conc"]), cb)
+add(bevel(box("canopy", -6, Y0 - 4, 3.6, 6, Y0 - 0.6, 3.9, M["conc"]), 0.04), cb)
+
+# 外構：敷地の舗装・縁石・植え込み（外構の工期に入ったら）
+fx0_, fy0_, fx1_, fy1_ = SITE
+ex = [box("pave", fx0_, fy0_, 0.0, fx1_, fy1_, 0.06, M["pave"]),
+      box("walk", fx0_ - 6, fy0_ - 3.2, 0.0, fx1_ + 6, fy0_, 0.12, M["pave"]),
+      box("curb", fx0_ - 6, fy0_ - 3.4, 0.0, fx1_ + 6, fy0_ - 3.2, 0.18, M["curb"])]
+for (a0, b0, a1, b1) in ((fx0_ + 1, Y1 + 1.2, X1 + 2, fy1_ - 0.8), (fx0_ + 1, Y0 - 1, X0 - 2.5, Y1 + 0.5),
+                         (X1 + 2.5, Y0 + 2, fx1_ - 1, Y1 + 0.5)):
+    ex.append(box("bed", a0, b0, 0.06, a1, b1, 0.35, M["curb"]))
+    ex.append(box("bedg", a0 + 0.15, b0 + 0.15, 0.06, a1 - 0.15, b1 - 0.15, 0.42, M["plant"]))
+add(merge(ex, "extern"), SCHED["外構"][0])
 
 # ---------------------------------------------------------------- 仮設：仮囲い・現場事務所・クレーン
 fx0, fy0, fx1, fy1 = SITE
@@ -357,10 +445,18 @@ trees = []
 for i, x in enumerate(np.arange(-16, 17, 8.0)):
     y = fy0 - 0.4 - 0.9
     trees.append(cyl(f"tt{i}", x, y, 0, 2.2, 0.15, M["trunk"], 8))
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=1.9, location=(x, y, 3.6))
-    s = bpy.context.object
-    s.data.materials.append(M["tree"])
-    trees.append(s)
+    for k, (dx, dy, dz, rr) in enumerate(((0, 0, 3.7, 1.6), (0.7, 0.3, 3.2, 1.2), (-0.6, -0.2, 3.3, 1.25), (0.1, 0.4, 4.5, 1.1))):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=rr, location=(x + dx, y + dy, dz))
+        s = bpy.context.object
+        tx = bpy.data.textures.new(f"leaf{i}{k}", "CLOUDS")
+        tx.noise_scale = 0.45
+        dm = s.modifiers.new("d", "DISPLACE")
+        dm.texture = tx
+        dm.strength = 0.35
+        bpy.context.view_layer.objects.active = s
+        bpy.ops.object.modifier_apply(modifier="d")
+        s.data.materials.append(M["tree"])
+        trees.append(s)
 TREES = merge(trees, "trees")
 add(TREES, cb + 1)
 
@@ -464,6 +560,16 @@ def apply_week(w):
     JIB.hide_render = w > end
 
 
+def sky_reflect(strength=0.09):
+    """背景は透明のまま、ガラスに空のグラデーションが映るように空を入れる"""
+    sky = world.node_tree.nodes.new("ShaderNodeTexSky")
+    sky.sun_elevation = math.radians(38)
+    sky.sun_rotation = math.radians(160)
+    sky.sun_disc = False
+    world.node_tree.links.new(sky.outputs[0], WBG.inputs[0])
+    WBG.inputs[1].default_value = strength
+
+
 def no_use():
     for o in bpy.data.objects:
         if o.get("use"):
@@ -486,6 +592,7 @@ CAM_PROG = dict(pos=(64, -78, 52), target=(1.5, 2, 13.5), lens=50)
 
 
 def mode_progress(first, last):
+    sky_reflect()
     r.film_transparent = True
     GROUND.is_shadow_catcher = True
     TOWN.hide_render = True
@@ -500,6 +607,7 @@ def mode_progress(first, last):
 
 
 def mode_section(first, last, n=24):
+    sky_reflect()
     r.film_transparent = True
     GROUND.is_shadow_catcher = True
     TOWN.hide_render = True
@@ -588,6 +696,27 @@ def mode_dusk(first, last, n=12):
         render(f"{OUT}/dusk/d{i:02d}.png")
 
 
+def mode_turn(first, last, n=48):
+    """完成した建物の周りを一周する（スライドでドラッグして回す）。太陽は固定なので影も回る"""
+    sky_reflect()
+    r.film_transparent = True
+    GROUND.is_shadow_catcher = True
+    TOWN.hide_render = True
+    set_sun(38, 160, 4.2)
+    r.resolution_x, r.resolution_y = 1040, 1200
+    apply_week(SCHED["外構"][1])
+    no_use()
+    px, py, pz = CAM_PROG["pos"]
+    tx, ty, tz = CAM_PROG["target"]
+    rad = math.hypot(px - tx, py - ty)
+    a0 = math.atan2(py - ty, px - tx)
+    os.makedirs(f"{OUT}/turn", exist_ok=True)
+    for i in range(first, last + 1):
+        a = a0 + 2 * math.pi * i / n
+        look(CAM, pos=(tx + rad * math.cos(a), ty + rad * math.sin(a), pz), target=(tx, ty, tz), lens=CAM_PROG["lens"])
+        render(f"{OUT}/turn/t{i:02d}.png")
+
+
 def mode_test():
     mode_progress(*[int(a) for a in argv[1:3]] if len(argv) > 2 else (30, 30))
 
@@ -596,6 +725,8 @@ if MODE == "progress":
     mode_progress(int(argv[1]), int(argv[2]))
 elif MODE == "section":
     mode_section(int(argv[1]), int(argv[2]))
+elif MODE == "turn":
+    mode_turn(int(argv[1]), int(argv[2]))
 elif MODE == "dusk":
     mode_dusk(int(argv[1]), int(argv[2]))
 elif MODE == "lib":
