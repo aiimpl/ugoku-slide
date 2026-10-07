@@ -71,8 +71,28 @@ def carry(body):
     return sum(joins), len(joins)
 
 
+ASSETS = ROOT / "src" / "assets"
+ASSET_RE = re.compile(r'(src="|url\()assets/([\w./-]+)')
+MIME = {".webp": "image/webp", ".jpg": "image/jpeg", ".png": "image/png"}
+
+
+def inline_assets(text):
+    """src="assets/…" の画像を data URI にして、1ファイルのまま持ち運べるようにする"""
+    import base64
+
+    def rep(m):
+        f = ASSETS / m.group(2)
+        if not f.exists():
+            raise SystemExit(f"画像がありません：{f}")
+        data = base64.b64encode(f.read_bytes()).decode()
+        return f"{m.group(1)}data:{MIME[f.suffix]};base64,{data}"
+    return ASSET_RE.sub(rep, text)
+
+
 def assemble(meta, styles, body, scripts, engine):
     css, js, guide = engine
+    body = inline_assets(body)
+    styles = [inline_assets(s) for s in styles]
     fonts = meta.get("fonts")
     font_tags = ""
     if fonts:

@@ -1,7 +1,7 @@
 # 動くスライド（ugoku-slide）
 
 押すと根拠が開き、数字を動かすと再計算され、めくると図形が次のページへ変形してつながる、スライドの雛形集です。
-雛形は 62 種類。どれも **1ファイルで完結する HTML** で、ダブルクリックするとブラウザで動きます。無料・MIT。
+雛形は 63 種類。どれも **1ファイルで完結する HTML** で、ダブルクリックするとブラウザで動きます。無料・MIT。
 
 **一覧と見本 → https://aiimpl.github.io/ugoku-slide/**
 
@@ -15,7 +15,7 @@
 
 ### Claude のスキルとして入れる
 
-`docs/ugoku-slide-skill.zip` を入れると、「動くスライドで〇〇の資料を作って」と頼むだけで、62種から雛形を選んで作り、崩れの点検までします。
+`docs/ugoku-slide-skill.zip` を入れると、「動くスライドで〇〇の資料を作って」と頼むだけで、63種から雛形を選んで作り、崩れの点検までします。
 
 - claude.ai・デスクトップアプリ：Settings → Capabilities でコードの実行をオン → Customize → Skills →「＋」→ Upload a skill で zip を選ぶ
 - Claude Code：zip を解凍し、`ugoku-slide` フォルダを `~/.claude/skills/` に置く
@@ -79,6 +79,7 @@ python3 tools/morphqa.py 51             # build/morph/51_board.png
 make video2   # 第2弾（26.5秒）→ build/video/ugoku-slide-vol2_26s.mp4
 make video    # 第1弾（26秒）  → build/video/ugoku-slide_26s.mp4
 make video3   # 第3弾（25秒）  → build/video/ugoku-slide-vol3_25s.mp4
+make video4   # 第4弾（25秒）  → build/video/ugoku-slide-vol4_25s.mp4
 make clips    # 「囲んで直す」「自動デモ」の短い動画 → build/video/clip_mark.mp4・clip_demo.mp4
 ```
 
@@ -87,6 +88,7 @@ make clips    # 「囲んで直す」「自動デモ」の短い動画 → build
 ```
 video/make_video2.py  第2弾の台本（場面の順番と操作）
 video/make_video3.py  第3弾の台本（囲んで直す・自動デモ・点検）
+video/make_video4.py  第4弾の台本（工程で建つ・断面・日影・夕景）
 video/stages3.py      第3弾のスライド以外の場面
 video/make_clips.py   操作を見せる短い動画の台本
 video/stages2.py      スライド以外の場面（62本の壁・スキルに頼む・締め）
@@ -94,6 +96,24 @@ video/music2.py       第2弾の BGM
 video/record.py       ページの時計を遅くして撮る
 video/fx.js・fx.css   撮影用のテロップとカーソル
 ```
+
+## 第4弾（63 施工計画 × 3D）の建物の作り方
+
+63 の建物の絵は、`sekou/` のスクリプトで Blender（5.2）を動かして描いています。寸法と工程は `sekou/spec.json` の1か所だけで、スライドの工程表と同じ値です。
+
+```
+cd sekou
+./render_all.sh                                   # 工程53コマ・断面24コマ・夕景12コマ（Cycles）
+blender -b --factory-startup -P shade.py           # 冬至の日影33コマと計算結果 data/shade.json
+blender -b --factory-startup -P labels.py          # 断面のラベル位置
+./make_assets.sh                                   # WebP にして src/assets/sekou/ へ
+python3 make_deck.py                               # src/decks/63-sekou.html を書き出す
+```
+
+- 建物：柱・梁・床・カーテンウォールを部材ごとに作り、週ごとに出し入れする。クレーンは建った階に合わせて継ぎ足す
+- 断面：全部の材質に「x がこれより大きい所は透明」の節を入れ、切る位置を動かす
+- 日影：東京・冬至の8〜16時を1分ごとに、地上4mの面から太陽へ向けた線が建物に当たるかで計算して足し合わせる。規制は第一種中高層住居専用地域（二）の例
+- スライドでは同じ位置にコマを重ね、週（または時刻）に近いコマだけを見せる。画像は書き出し時に data URI にして、1ファイルのまま持ち運べる
 
 ## ライセンス
 

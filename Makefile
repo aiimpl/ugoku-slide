@@ -11,7 +11,7 @@
 
 PYTHON ?= python3
 
-.PHONY: build check qa og video video2 video3 clips serve clean
+.PHONY: build check qa og video video2 video3 video4 clips serve clean
 
 build:
 	$(PYTHON) tools/build.py
@@ -34,6 +34,9 @@ video2: build
 
 video3: build
 	$(PYTHON) video/make_video3.py
+
+video4: build
+	$(PYTHON) video/make_video4.py
 
 clips: build
 	$(PYTHON) video/make_clips.py

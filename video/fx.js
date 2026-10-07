@@ -64,13 +64,14 @@
     el.click();
   };
   // スライダーのつまみをつかんで value まで動かす
-  V.drag = async (sel, to, dur = 1) => {
+  V.drag = async (sel, to, dur = 1, linear = false) => {
     const el = document.querySelector(sel);
     const r = el.getBoundingClientRect(), min = +el.min, max = +el.max, step = +el.step || 1;
     const xAt = v => r.left + 10 + (v - min) / (max - min) * (r.width - 20);
     const from = +el.value;
     await V.move([xAt(from), r.top + r.height / 2], 0.25);
-    await tween(dur, e => {
+    await tween(dur, (eased, k) => {
+      const e = linear ? k * k * (3 - 2 * k) : eased;  // linear のときは、なめらかに一定の速さで
       const v = Math.round((from + (to - from) * e) / step) * step;
       if (+el.value !== v) { el.value = v; el.dispatchEvent(new Event("input", { bubbles: true })); }
       cx = xAt(from + (to - from) * e); place();

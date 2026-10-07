@@ -128,7 +128,7 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="#"><i></i>動くスライド</a>
-  <nav><a href="#v3">第3弾</a><a href="#new">第2弾</a><a href="#how">使い方</a><a href="#skill">スキル</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
+  <nav><a href="#v4">第4弾</a><a href="#v3">第3弾</a><a href="#new">第2弾</a><a href="#how">使い方</a><a href="#skill">スキル</a><a href="#gallery">雛形 {{COUNT}} 種</a><a href="#prompts">頼み方</a><a href="#keys">操作</a><a href="#faq">よくある質問</a><a href="https://github.com/aiimpl/ugoku-slide">GitHub</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -148,6 +148,20 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
       <div class="pick" id="pick"></div>
     </div>
   </div>
+
+  <section id="v4" class="new-sec">
+    <div class="new-head">
+      <div><div class="vol">第4弾 ｜ 建設業向け・63</div><h2>パワポのまま、<br>建物が動く。</h2></div>
+      <p>工程表の「今日」の線を動かすと、Blender で描いたビルが杭から1階ずつ建ち上がり、進捗と出来高が計算し直されます。めくると断面に、冬至の日影は8時〜16時を動かして確かめられます。数字・会社名は架空のサンプルです。</p>
+    </div>
+    <div class="stage"><iframe title="施工計画 × 3D" loading="lazy" src="slides/63-sekou.html#2"></iframe><span class="hint">クリックして、オレンジの線を左右にドラッグ／→ でめくる</span></div>
+    <div class="parts v3">
+      <div><b>工程で建つ</b><code>data-calc</code><p>週を動かすと、Blender の53コマから近いものを重ねて見せる。進捗・出来高も同じ週で計算。</p></div>
+      <div><b>めくると断面</b><code>data-morph</code><p>建物はページをまたいでつながり、そのまま縦に切れて各階の用途が見える。</p></div>
+      <div><b>冬至の日影</b><code>1分ごと</code><p>東京の冬至8〜16時を1分ごとに計算。合計が規制の時間を超えた所が赤くなる。</p></div>
+      <div><b>1ファイルのまま</b><code>.html</code><p>絵は全部ファイルの中に入っているので、メールで送ってもそのまま動く。</p></div>
+    </div>
+  </section>
 
   <section id="v3" class="new-sec">
     <div class="new-head">
